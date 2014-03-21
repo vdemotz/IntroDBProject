@@ -69,6 +69,22 @@ public final class UserServlet extends HttpServlet {
 			// However for this project, security is not a requirement.
 			final String password = request.getParameter("password");
 			
+			User user = dbInterface.getUserByUsernameAndPassword(username, password);
+				//get the user if one exits with this username and password 
+			
+			if (user == null){
+				//System.err.println("user not in DB");
+				//uncomment above (and in else condition) to check if you've putted the correct username/password
+				//we should find a way to write something like "wrong password"
+			}
+			else{
+				//System.err.println(user.getfirstName()+user.getlastName());
+				//uncomment to check validity
+				session.setAttribute(SESSION_USER_LOGGED_IN, true);
+					//add the user to the session
+			}
+			
+			
 			// TODO
 			// Ask the data store interface if it knows this user
 			// Retrieve User

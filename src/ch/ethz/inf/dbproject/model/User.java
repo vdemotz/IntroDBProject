@@ -8,34 +8,40 @@ import java.sql.SQLException;
  */
 public final class User {
 
-	private final int userid; //maybe delete
+	//private final int userid; //given from template
 	private final String username;
-	private final String name;
+	private final String firstName;
+	private final String lastName;
 	
+	/* given from template
 	public User(final int userid, final String username, final String name) {
 		this.userid = userid;
 		this.username = username;
 		this.name = name;
-	}
+	}*/
 	
 	public User(final ResultSet rs) throws SQLException {
-		// TODO These need to be adapted to your schema
-		// TODO Extra properties need to be added
-		this.userid = 1;
-		this.username = rs.getString("name");
-		this.name = rs.getString("password");
+
+		this.username = rs.getString("username");
+		this.firstName = rs.getString("firstName");
+		this.lastName = rs.getString("lastName");
 
 	}
 
-	public int getUserid() {
+	/*given in the template , related to the userid.
+	 * public int getUserid() {
 		return userid;
-	}
+	}*/
 	
 	public String getUsername() {
 		return username;
 	}
 
-	public String getName() {
-		return name;
-	}	
+	public String getfirstName() {
+		return firstName;
+	}
+	
+	public String getlastName() {
+		return lastName;
+	}
 }

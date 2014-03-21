@@ -102,33 +102,26 @@ try {
 		}
 	}
 	
-	public final boolean isUserInDB(String n, String p){
-	try {
-		
-		boolean isIn = false;
-		final Statement stmt = this.sqlConnection.createStatement();
-		final ResultSet rs = stmt.executeQuery("SELECT * FROM Users");
-		final List<User> users = new ArrayList<User>(); 
-		
-		while (rs.next()) {
-			users.add(new User(rs));
+	public final User getUserByUsernameAndPassword(String n, String p){
+				//check in DB if the username 'n' with password 'p' is in it.
+		try {
+			User usr;
+			final Statement stmt = this.sqlConnection.createStatement();
+				//connection to database
+			final ResultSet rs = stmt.executeQuery("SELECT * FROM User WHERE username = '"+n+"' and password = '"+p+"'");
+					//sql request in the table 'User'
+			rs.first(); //necessary, because pointer points before first row at the beginning
+			usr = new User(rs);		
+			rs.close();	
+			stmt.close();	//close ResultSet and Statement
+			return usr;
+			
+		} catch (final SQLException ex) {
+				//if the user isn't in DB, return null
+			//System.err.println("User not in DB");
+			//same as in UserServlet. We have to find a way to write properly that the user not in Db (wrong password for ex.)
+			return null;			
 		}
-		
-		if (users.get(0).getName() == "hello"){
-			isIn = true;
-		}
-		
-		rs.close();
-		stmt.close();
-		
-		
-		return isIn;
-		
-	} catch (final SQLException ex) {
-		System.err.println("Null pointer Exception, dummy guy!");
-		ex.printStackTrace();
-		return true;			
-	}
 	}
 	//TODO Implement all missing data access methods
 
