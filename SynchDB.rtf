@@ -23,21 +23,24 @@ $ sudo chmod -R 640 dmdbp1)\
 4. Change the permissions of the folder dmdbp1 into drwx\'97\'97\
 $ sudo chmod 755 dmdbp1\
 \
-5. Copy the folder into the folder of mysql.\
+5. Change the owner of the files :\
+$ sudo chown -R _mysql dmdbp1/\
+\
+6. Copy the folder into the folder of mysql.\
 $ sudo cp -R dmdbp1 /usr/local/mysql/data/ (or something similar)\
 \
-6. Try to log in :\
+7. Try to log in :\
 $ mysql -h localhost -u root -p dmdbp1\
 \
-7. Create an user dmdb with empty password:\
+8. Create an user dmdb with empty password:\
 > create user dmdb@localhost identified by \'92\'92;\
 \
 \
-8. Give permissions :\
+9. Give permissions :\
 > grant all on dmdbp1.* to dmdb@localhost;\
 \
 \
-9. Try to login with your new identity :\
+10. Try to login with your new identity :\
 $ mysql -h localhost -u dmdb -p dmdbp1\
 (normally, you just have to hit enter when the password is asked)\
 \
