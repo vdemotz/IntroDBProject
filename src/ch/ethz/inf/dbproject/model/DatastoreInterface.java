@@ -55,8 +55,6 @@ public final class DatastoreInterface {
 		/**
 		 * TODO this method should return all the cases in the database
 		 */
-			
-		
 		//Code example for DB access
 try {
 			
@@ -74,7 +72,6 @@ try {
 			return cases;
 			
 		} catch (final SQLException ex) {
-			System.err.println("Null pointer Exception, dummy guy!");
 			ex.printStackTrace();
 			return null;			
 		}
