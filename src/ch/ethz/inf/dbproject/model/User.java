@@ -8,7 +8,7 @@ import java.sql.SQLException;
  */
 public final class User {
 
-	private final int userid;
+	private final int userid; //maybe delete
 	private final String username;
 	private final String name;
 	
