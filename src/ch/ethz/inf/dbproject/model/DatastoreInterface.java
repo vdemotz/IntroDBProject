@@ -59,7 +59,7 @@ public final class DatastoreInterface {
 try {
 			
 			final Statement stmt = this.sqlConnection.createStatement();
-			final ResultSet rs = stmt.executeQuery("SELECT * FROM Cases");
+			final ResultSet rs = stmt.executeQuery("SELECT * FROM `Case`");
 			final List<Case> cases = new ArrayList<Case>(); 
 			
 			while (rs.next()) {

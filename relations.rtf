@@ -5,8 +5,7 @@
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
 
 \f0\fs24 \cf0 Entities :\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 \
+\
 	Case(\ul caseID\ulnone , title, location, isOpen, date, time, description)\
 	CaseNote(\ul caseNoteID\ulnone , \ul caseID\ulnone , text, date)\
 	Category(\ul title\ulnone )\
@@ -14,24 +13,19 @@
 	User(\ul username\ulnone , firstName, lastName, password)\
 	Conviction(\ul convictionID\ulnone , date, endDate)\
 	PersonNote(\ul personNoteID\ulnone , \ul firstName\ulnone , \ul lastName\ulnone , \ul birthDate\ulnone , text, date)\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 \
+\
 Relations :\
 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 	IsIn(\ul caseID\ulnone , \ul title\ulnone )\
+	IsIn(\ul caseID\ulnone , \ul title\ulnone )\
 	Suspected(\ul caseID\ulnone , \ul firstName\ulnone , \ul lastName\ulnone , \ul birthDate\ulnone )\
 	Convicted(\ul firstName\ulnone , \ul lastName\ulnone ,\ul  birthDate\ulnone , \ul caseID\ulnone , \ul convictionID\ulnone )\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 	AuthorCaseNote(\ul caseNoteID\ulnone , userName)\
+	AuthorCaseNote(\ul caseNoteID\ulnone , userName)\
 	AuthorCase(\ul caseID\ulnone , userName)\
 	AuthorPersonNote(\ul personNoteID\ulnone , userName)\
 	PersonNoteRelation(\ul personNoteID\ulnone , firstName, lastName, birthDate)                             //weak relation between PersonNote and Person\
 	CaseNoteRelation(\ul caseNoteID\ulnone , caseID)                     	                                                    //weak relation between CaseNote and Case\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 	Type(\ul title\ulnone , \ul convictionID\ulnone )\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 \
+	Type(\ul title\ulnone , \ul convictionID\ulnone )\
+\
 Merged :\
 /*\
 * There it is. I\'92ve added the sql types I propose for each attribute.\
@@ -40,20 +34,16 @@ Merged :\
 * for each person. (like illness insurance number or so) I\'92ve not written but this change would occurs in :\
 * Person, PersonNote, Suspected, Convicted.\
 */\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
-\cf0 	Case(\ul caseID\ulnone  : SMALLINT, title : VARCHAR (40), location : VARCHAR (40), isOpen : BOOLEAN, date : DATETIME, description : TEXT, authorName : VARCHAR(40))\
-				//caseID is ranged between -32k and 32k. Hopefully enough.\
-				//I propos to merge date and time and to use the type DATETIME which stores both in one go.\
-				//I\'92ve putted VARCHAR(40) for title, location and authorName, but that\'92s totally arbitrary and open to discussion.\
-	CaseNote(\ul caseNoteID\ulnone  : SMALLINT, \ul caseID\ulnone  : SMALLINT, text : TEXT, date : DATETIME, authorName : VARCHAR(40))\
-	Category(\ul title\ulnone  : VARCHAR(40))\
-	Person(\ul firstName\ulnone  : VARCHAR (40), \ul lastName\ulnone  : VARCHAR (40), \ul birthDate\ulnone  : DATE)\
-	User(\ul username\ulnone  : VARCHAR (40), firstName : VARCHAR (40), lastName : VARCHAR (40), password : VARCHAR (40))\
-	Conviction(\ul convictionID\ulnone  : SMALLINT, date : DATE, endDate : DATE)\
-	PersonNote(\ul personNoteID\ulnone  : SMALLINT, \ul firstName\ulnone  : VARCHAR (40), \ul lastName\ulnone  : VARCHAR (40), \ul birthDate\ulnone  : DATE, text : TEXT, date : DATETIME, authorName : VARCHAR (40))\
-	IsIn(\ul caseID\ulnone  : SMALLINT, \ul title\ulnone  : VARCHAR (40))\
-	Suspected(\ul caseID\ulnone  : SMALLINT, \ul firstName\ulnone  : VARCHAR (40), \ul lastName\ulnone  : VARCHAR (40), \ul birthDate\ulnone  : DATE)\
-	Convicted(\ul firstName\ulnone  : VARCHAR (40), \ul lastName\ulnone  : VARCHAR (40),\ul  birthDate\ulnone  : DATE, \ul caseID\ulnone  : SMALLINT, \ul convictionID\ulnone  : SMALLINT)\
-	Type(\ul title\ulnone  : VARCHAR (40), \ul convictionID\ulnone  : SMALLINT)\
+	CaseDetail(\ul caseID\ulnone  : INT not null, title : VARCHAR (40), location : VARCHAR (40), isOpen : BOOLEAN not null, date : DATETIME, description : TEXT, authorName : VARCHAR(40))\
+	CaseNote(\ul caseNoteID\ulnone  : INT not null, \ul caseID\ulnone  : INT not null, text : TEXT, date : DATETIME, authorName : VARCHAR(40))\
+	Category(\ul name\ulnone  : VARCHAR(40) not null)\
+	Person(firstName : VARCHAR (40), lastName : VARCHAR (40), birthDate : DATE, \ul personID\ulnone  : INT not null)\
+	User(\ul username\ulnone  : VARCHAR (40) not null, firstName : VARCHAR (40), lastName : VARCHAR (40), password : VARCHAR (40) not null)\
+	Conviction(\ul convictionID\ulnone  : INT not null, date : DATE, endDate : DATE)\
+	PersonNote(\ul personNoteID\ulnone  : INT not null, \ul personID\ulnone  : INT not null, text : TEXT, date : DATETIME, authorName : VARCHAR (40))\
+	CategoryForCase(\ul caseID\ulnone  : INT not null, \ul categoryName\ulnone  : VARCHAR (40) not null)\
+	Suspected(\ul caseID\ulnone  : INT not null, \ul personID\ulnone  : INT not null\
+	Convicted(\ul personID\ulnone  : INT not null, \ul caseID\ulnone  : INT not null, \ul convictionID\ulnone  : INT not null)\
+	ConvictionType(\ul categoryName\ulnone  : VARCHAR (40) not null, \ul convictionID\ulnone  : INT not null)\
 \
 }
