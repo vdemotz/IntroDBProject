@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
+import java.util.Date;
 import java.sql.SQLException;
 
 public final class Case {
@@ -8,10 +9,13 @@ public final class Case {
 	/**
 	 * TODO The properties of the case should be added here
 	 */
-	private final int id;
+	private final int caseId;
+	private final String title;
+	private final String location;
+	private final boolean isOpen;
+	private final Date date;
 	private final String description;
-	private final String field2;
-	private final int field3;
+	private final String authorName;
 
 	/**
 	 * Construct a new case.
@@ -19,40 +23,65 @@ public final class Case {
 	 * @param description
 	 *            The name of the case
 	 */
-	public Case(final int id, final String description, final String field2,
-			final int field3) {
-		this.id = id;
-		this.description = description;
-		this.field2 = field2;
-		this.field3 = field3;
+	public Case(final int id, final String tit, final String loc,
+			final boolean isOp, final Date da, final String desc,
+			final String authorN) {
+		this.caseId = id;
+		this.title = tit;
+		this.location = loc;
+		this.isOpen = isOp;
+		this.date = da;
+		this.description = desc;
+		this.authorName = authorN;
 	}
 
 	public Case(final ResultSet rs) throws SQLException {
 		// TODO These need to be adapted to your schema
 		// TODO Extra properties need to be added
-		this.id = rs.getInt("id");
+		this.caseId = rs.getInt("caseId");
+		this.title = rs.getString("title");
+		this.location = rs.getString("location");
+		this.isOpen = rs.getBoolean("isOpen");
+		this.date = rs.getDate("date");
 		this.description = rs.getString("description");
-		this.field2 = rs.getString("field2");
-		this.field3 = rs.getInt("field3");
+		this.authorName = rs.getString("authorName");
 	}
 
 	/**
 	 * HINT: In eclipse, use Alt + Shirt + S menu and choose: "Generate Getters
 	 * and Setters to auto-magically generate the getters.
 	 */
+	public int getCaseId() {
+		return caseId;
+	}
+	
+	public int getId() {
+		return caseId;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+	
+	public String getLocation() {
+		return location;
+	}
+	
+	public boolean getIsOpen() {
+		return isOpen;
+	}
+	
+	public Date getDate() {
+		return date;
+	}
+	
 	public String getDescription() {
 		return description;
 	}
-
-	public int getId() {
-		return id;
+	
+	public String getAuthorName() {
+		return authorName;
 	}
 
-	public String getField2() {
-		return field2;
-	}
 
-	public int getField3() {
-		return field3;
-	}
 }
