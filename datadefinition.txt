@@ -13,15 +13,15 @@ create table CaseDetail
      isOpen   boolean not null,
      date   datetime,
      description   text,
-     authorName   varchar(40)
+     authorName   varchar(40) references User
    );
 
 
 create table CaseNote
-   ( caseId   integer,
+   ( caseId   integer references CaseDetail on delete cascade,
      caseNoteId   integer,
      text   text,
-     authorUsername   varchar(40),
+     authorUsername   varchar(40) references User,
      primary key(caseId, caseNoteId)
    );
 
@@ -35,11 +35,11 @@ create table Person
 
 
 create table PersonNote
-   ( personId   integer,
+   ( personId   integer references Person on delete cascade,
      personNoteId   integer,
      text   text,
      date   datetime,
-     authorUsername   varchar(40),
+     authorUsername   varchar(40) references User,
      primary key(personId, personNoteId)
    );
 
