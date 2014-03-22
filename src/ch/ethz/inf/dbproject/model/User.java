@@ -37,11 +37,11 @@ public final class User {
 		return username;
 	}
 
-	public String getfirstName() {
+	public String getFirstName() {
 		return firstName;
 	}
 	
-	public String getlastName() {
+	public String getLastName() {
 		return lastName;
 	}
 }

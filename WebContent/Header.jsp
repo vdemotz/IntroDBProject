@@ -17,7 +17,7 @@
 			<tr>
 				<th id="masterHeader" colspan="2">
 					<h1>Law Enforcement Project</h1>
-					Project by Vincent Demotz
+					Project by Vincent Demotz and Lukas Gianinazzi
 				</th>
 			</tr>
 			<tr id="masterContent">
