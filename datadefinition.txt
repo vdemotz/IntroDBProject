@@ -1,0 +1,87 @@
+create table User
+   ( username   varchar(40) primary key,
+     firstName   varchar(40),
+     lastName   varchar(40),
+     password   varchar(40) not null
+   );
+
+
+create table CaseDetail
+   ( caseId   integer primary key,
+     title   varchar(40) not null,
+     location   varchar(40),
+     isOpen   boolean not null,
+     date   datetime,
+     description   text,
+     authorName   varchar(40) references User
+   );
+
+
+create table CaseNote
+   ( caseId   integer references CaseDetail on delete cascade,
+     caseNoteId   integer,
+     text   text,
+     date datetime,
+     authorUsername   varchar(40) references User,
+     primary key(caseId, caseNoteId)
+   );
+
+
+create table Person
+   ( personId   integer primary key,
+     firstName   varchar(40),
+     lastName   varchar(40),
+     birthdate   date
+   );
+
+
+create table PersonNote
+   ( personId   integer references Person on delete cascade,
+     personNoteId   integer,
+     text   text,
+     date   datetime,
+     authorUsername   varchar(40) references User,
+     primary key(personId, personNoteId)
+   );
+
+
+create table Category
+   ( name   varchar(40) primary key
+   );
+
+
+create table CategoryForCase
+   ( caseId   integer references CaseDetail on delete cascade,
+     categoryName   varchar(40) references Category on delete cascade,
+     primary key (caseId, categoryName)
+   );
+
+
+create table Conviction
+   ( convictionId   integer primary key,
+     startDate   date,
+     endDate   date
+   );
+
+
+create table ConvictionType
+   ( convictionId   integer references Conviction on delete cascade,
+     categoryName   varchar(40) references Category on delete cascade,
+     primary key (convictionId, categoryName)
+   );
+
+
+create table Suspected
+   ( personId   integer references Person on delete cascade,
+     caseId   integer references CaseDetail on delete cascade,
+     primary key (personId, caseId)
+   );
+
+
+create table Convicted
+   ( personId   integer references Person on delete cascade,
+     caseId   integer references CaseId on delete cascade,
+     convictionId   integer references Conviction on delete cascade,
+     primary key (personId, caseId, convictionId)
+   );
+
