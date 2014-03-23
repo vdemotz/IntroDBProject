@@ -4,6 +4,8 @@ package ch.ethz.inf.dbproject.model;
  * This class represents an Address 
  */
 public final class Address {
+	
+	// TODO Decide if we keep this class or not
 
 	private final String city;
 	private final String country;

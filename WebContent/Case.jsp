@@ -9,7 +9,7 @@
 <%=session.getAttribute("caseTable")%>
 
 <%
-	//TODO close or reopen the case
+	// TODO close or reopen the case
 %>
 
 <%

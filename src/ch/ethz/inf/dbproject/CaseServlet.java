@@ -46,41 +46,28 @@ public final class CaseServlet extends HttpServlet {
 		}
 
 		try {
-
+			
 			final Integer id = Integer.parseInt(idString);
 			final Case aCase = this.dbInterface.getCaseById(id);
-
+				//get the case wanted by the user
 			
-			/*******************************************************
-			 * Construct a table to present all properties of a case
-			 *******************************************************/
-			final BeanTableHelper<Case> table = new BeanTableHelper<Case>(
-					"cases" 		/* The table html id property */,
-					"casesTable" /* The table html class property */,
-					Case.class 	/* The class of the objects (rows) that will be displayed */
-			);
+			final BeanTableHelper<Case> table = new BeanTableHelper<Case>("cases",
+					"casesTable", Case.class);
+				//initialize a new table
 
-			// Add columns to the new table
-
-			/*
-			 * Column 1: The name of the item (This will probably have to be changed)
-			 */
 			table.addBeanColumn("Case ID", "caseId");
-
-			/*
-			 * Columns 2 & 3: Some random fields. These should be replaced by i.e. funding progress, or time remaining
-			 */
 			table.addBeanColumn("Title", "title");
 			table.addBeanColumn("Location", "location");
 			table.addBeanColumn("Open", "isOpen");
 			table.addBeanColumn("Date", "date");
 			table.addBeanColumn("Description", "description");
 			table.addBeanColumn("Author Name", "authorName");
+				//add all details to the case table
 
 			table.addObject(aCase);
 			table.setVertical(true);			
 
-			session.setAttribute("caseTable", table);			
+			session.setAttribute("caseTable", table);
 			
 		} catch (final Exception ex) {
 			ex.printStackTrace();

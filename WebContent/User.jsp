@@ -10,8 +10,6 @@ if ((Boolean) session.getAttribute(UserServlet.SESSION_USER_LOGGED_IN)) {
 %>
 	
 <%= session.getAttribute(UserServlet.SESSION_USER_DETAILS) %>
-	
-
 
 <%
 //TODO: Display cases opened by the user

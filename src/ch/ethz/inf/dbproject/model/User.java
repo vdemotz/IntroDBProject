@@ -8,31 +8,30 @@ import java.sql.SQLException;
  */
 public final class User {
 
-	//private final int userid; //given from template
+	//private final int userid;
+	// TODO Decide wether we create an userid or not. (Discussion Lukas and Vincent)
 	private final String username;
 	private final String firstName;
 	private final String lastName;
+	private final String password;
 	
-	/* given from template
-	public User(final int userid, final String username, final String name) {
-		this.userid = userid;
+	// TODO Decide if we really need this constructor
+	public User(final String username, final String firstName, final String lastName, final String password) {
 		this.username = username;
-		this.name = name;
-	}*/
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.password = password;
+	}
 	
 	public User(final ResultSet rs) throws SQLException {
-
+			// Constructor
 		this.username = rs.getString("username");
 		this.firstName = rs.getString("firstName");
 		this.lastName = rs.getString("lastName");
-
+		this.password = rs.getString("password");
 	}
-
-	/*given in the template , related to the userid.
-	 * public int getUserid() {
-		return userid;
-	}*/
 	
+		// Getters
 	public String getUsername() {
 		return username;
 	}

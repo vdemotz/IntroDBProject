@@ -40,23 +40,11 @@ public final class CasesServlet extends HttpServlet {
 		/*******************************************************
 		 * Construct a table to present all our results
 		 *******************************************************/
-		final BeanTableHelper<Case> table = new BeanTableHelper<Case>(
-				"cases" 		/* The table html id property */,
-				"casesTable" /* The table html class property */,
-				Case.class 	/* The class of the objects (rows) that will bedisplayed */
-		);
+		final BeanTableHelper<Case> table = new BeanTableHelper<Case>("cases",
+				"casesTable", Case.class);
 
 		// Add columns to the new table
-
-		/*
-		 * Column 1: The name of the item (This will probably have to be changed)
-		 */
-		 
 		table.addBeanColumn("Case ID", "caseId");
-
-		/*
-		 * Columns 2 & 3: Some random fields. These should be replaced by i.e. funding progress, or time remaining
-		 */
 		table.addBeanColumn("Title", "title");
 		table.addBeanColumn("Location", "location");
 		table.addBeanColumn("Open", "isOpen");
@@ -86,8 +74,7 @@ public final class CasesServlet extends HttpServlet {
 			table.addObjects(this.dbInterface.getAllCases());
 
 		} else if (category != null) {
-
-			// TODO implement this!
+			
 			table.addObjects(this.dbInterface.getProjectsByCategory(category));
 			
 		} else if (filter != null) {

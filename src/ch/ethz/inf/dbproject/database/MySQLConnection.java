@@ -15,7 +15,7 @@ public final class MySQLConnection {
 
 	/*
 	 * The connection parameters. You should change these to point to your
-	 * installation specific values. -- Done!
+	 * installation specific values.
 	 */
 	public static final String USERNAME = "dmdb";
 	public static final String PASSWORD = "";
@@ -46,7 +46,7 @@ public final class MySQLConnection {
 			connection = DriverManager.getConnection("jdbc:mysql://" + HOSTNAME	+ ":" + PORT + "/" + DATABASE, USERNAME, PASSWORD);
 		} catch (final SQLException e) {
 			/**
-			 * Make sure that we really see this error. -- Done!
+			 * Make sure that we really see this error.
 			 */
 			System.err.println("Could not connect to MYSQL. Is the server running?");
 			JOptionPane.showMessageDialog(null,	

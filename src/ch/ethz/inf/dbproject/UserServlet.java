@@ -51,19 +51,8 @@ public final class UserServlet extends HttpServlet {
 			session.setAttribute(SESSION_USER_LOGGED_IN, false);
 		} else {
 			// Logged in
-			final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
-			userDetails.addBeanColumn("Username", "username");
-			userDetails.addBeanColumn("First Name", "firstName");
-			userDetails.addBeanColumn("Last Name", "lastName");
-			
-			userDetails.addObject(loggedUser);
-			userDetails.setVertical(true);
-
 			session.setAttribute(SESSION_USER_LOGGED_IN, true);
-			session.setAttribute(SESSION_USER_DETAILS, userDetails);
 		}
-
-		// TODO display registration
 
 		final String action = request.getParameter("action");
 		if (action != null && action.trim().equals("login") 	&& loggedUser == null) {
@@ -77,23 +66,22 @@ public final class UserServlet extends HttpServlet {
 				//get the user if one exits with this username and password 
 			
 			if (user == null){
-				
+				// TODO display "wrong password" or something like that
 			}
 			else{
-				//System.err.println(user.getfirstName()+user.getlastName());
-				//uncomment to check validity
+				// TODO Add cases created by the User.
 				final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
 				userDetails.addBeanColumn("Username", "username");
 				userDetails.addBeanColumn("First Name", "firstName");
 				userDetails.addBeanColumn("Last Name", "lastName");
-				
+					
 				userDetails.addObject(user);
 				userDetails.setVertical(true);
 				
 				session.setAttribute(SESSION_USER_LOGGED_IN, true);
 				session.setAttribute(SESSION_USER_DETAILS, userDetails);
 				session.setAttribute(UserManagement.SESSION_USER, user);
-					//add the user to the session
+					//add the user to the session, with the details
 			}
 		}
 
