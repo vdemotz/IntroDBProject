@@ -1,0 +1,175 @@
+insert into User
+    values('sherlock', 'Sherlock', 'Holmes', 'baskervilles');
+insert into User
+    values('watson', 'John', 'Watson', 'scarlet');
+
+insert into Category
+    values('Accident');
+insert into Category
+    values('Suicide');
+insert into Category
+    values('Murder');
+insert into Category
+    values('Mass Murder');
+insert into Category
+    values('Blackmail');
+insert into Category
+    values('Theft');
+insert into Category
+    values('Manslaughter');
+
+
+insert into Person (personId, firstName, lastName)
+    values (0, 'Mike', 'Stamford');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+    values(0, 0, 'Old friend from school', 'watson');
+
+
+insert into CaseDetail
+    values(0, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(0, 0, 'Wife: my husband was a pround and happy man. He loved his family and his work. And that he should have taken his life in this way is a mistery and a shock to all who knew him', 'watson');
+
+insert into CategoryForCase
+    values(0, 'Suicide');
+
+
+insert into CaseDetail
+    values(1, 'Death of James Philmore', 'London, Sports Centre', true, '2010-11-26-21-00', '18 year old James Philmore found dead in a sports centre', 'watson');
+
+insert into CategoryForCase
+    values(1, 'Suicide');
+
+
+insert into CaseDetail
+    values(2, 'Death of Beth Davenport', 'London, building Site', true, '2010-11-26-23-00', 'Beth Davenport, Junior Minister of Transport found dead', 'watson');
+
+insert into CategoryForCase
+    values(2, 'Suicide');
+
+
+insert into CaseDetail
+    values(3, 'Death of Jennifer Wilson', 'Brixton, Lauriston Gardens', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment.', 'holmes');
+
+insert into CategoryForCase
+    values(3, 'Suicide');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 0, 'Victim is wearing pink dress, shoes and nailpolish', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 1, 'Rache (German for revenge) is etched onto the floor. The nailpolish of the victim is heavily worn off. The victim probably ment to write Rachel, but could not finish in time.', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 2, 'The victim lies with the face towards the floor.', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 3, 'The victim is left handed. In her mid 30s.', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 4, 'The victims wears a marriage ring, which is not clean on the outside, but clean on the inside. The other jewelry she is wearing is speckless. This may indicate that the victim takes off the marriage ring frequently, but does not take care of it. Probably 10 or more years unhappily married, serial adulterer', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 5, 'The victims hair is messed up and her blazer is wet. No rain and strong wind in London or vicinity. The victims was just staying for one night in London, before returning home to Cardiff. She probably did not get to the hotel', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 6, 'The victims must have carried a pink bag, but it is missing. The murderer must have still got it.', 'holmes');
+
+insert into CategoryForCase
+    values(0, 'Mass Murder');
+
+insert into CategoryForCase
+    values(1, 'Mass Murder');
+
+insert into CategoryForCase
+    values(2, 'Mass Murder');
+
+insert into CategoryForCase
+    values(3, 'Mass Murder');
+
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 7, 'The phone of the victim is not in the bag. Probably the murderer has her phone.', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 8, 'The police sais Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 9, 'Rachel is not a name. Its the password for her email account!', 'holmes');
+
+
+
+insert into Person (personId)
+    values(4);
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+    values(4, 0, 'Husband of the landlady', 'watson');
+
+insert into CaseDetail
+    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', null, 'holmes');
+
+insert into CategoryForCase
+    values(5, 'Murder');
+
+insert into Conviction
+    values(0, '2005-10-10', null);
+
+insert into ConvictionType
+    values(0, 'Murder');
+
+insert into Convicted (personId, caseId, convictionId)
+    values(4, 5, 0);
+
+
+
+
+insert into Person (personId)
+    values (1);
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+    values (1, 0, 'Cab Driver', 'holmes');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+    values (1, 1, 'Middle aged', 'holmes');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+    values (1, 2, 'Two children. Divorced.', 'holmes');
+
+insert into Suspected
+    values (1, 3);
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(3, 10, 'Ok its the taxi driver...and I will just go with him', 'holmes');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+    values (1, 3, 'Terminal illness, desperate, bored, bitter', 'holmes');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+    values (1, 4, 'Was commisioned by someone or something called Moriarty', 'holmes');
+
+insert into Person (personId, LastName)
+    values (2, "Moriarty");
+
+
+insert into CaseDetail
+    values(4, 'Cab Driver is shot', 'Roland-Kerr Further Education College', true, '2010-11-28-24-00', 'The cab driver got shot from someone standing outside the window.', 'watson');
+
+insert into CategoryForCase
+    values(4, 'Manslaughter');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(4, 0, 'Shots fired from a handgun from a large distance. Must have been acclimatised to violence. He only fired when I was in clear danger, so strong moral principles. You are looking for a man with a history of military service, nerves of steel and...', 'holmes');
+
+insert into Person (personId, firstName, lastName)
+    values (3, 'John', 'Watson');
+
+insert into Suspected
+    values (2, 4);
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(4, 1, 'Actually, you know what: ignore me. Its just the shock talking', 'holmes');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+    values(4, 2, 'He was not a very nice man', 'watson');

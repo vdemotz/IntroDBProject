@@ -21,6 +21,7 @@ create table CaseNote
    ( caseId   integer references CaseDetail on delete cascade,
      caseNoteId   integer,
      text   text,
+     date datetime,
      authorUsername   varchar(40) references User,
      primary key(caseId, caseNoteId)
    );
