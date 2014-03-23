@@ -82,6 +82,4 @@ public final class Case {
 	public String getAuthorName() {
 		return authorName;
 	}
-
-
 }

@@ -85,9 +85,7 @@ public final class UserServlet extends HttpServlet {
 			}
 		}
 
-		// Finally, proceed to the User.jsp page which will renden the profile
+		// Finally, proceed to the User.jsp page which will render the profile
 		this.getServletContext().getRequestDispatcher("/User.jsp").forward(request, response);
-
 	}
-
 }

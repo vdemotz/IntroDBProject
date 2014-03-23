@@ -85,7 +85,7 @@ public final class SearchServlet extends HttpServlet {
 			}			
 		}
 
-		// Finally, proceed to the Seaech.jsp page which will render the search results
+		// Finally, proceed to the Search.jsp page which will render the search results
         this.getServletContext().getRequestDispatcher("/Search.jsp").forward(request, response);	        
 	}
 }

@@ -54,10 +54,8 @@ public final class DatastoreInterface {
 			while (rs.next()) {
 				cases.add(new Case(rs));
 			}
-			
 			rs.close();
 			stmt.close();
-
 			return cases;
 			
 		} catch (final SQLException ex) {
@@ -71,7 +69,7 @@ public final class DatastoreInterface {
 		try {
 			final Statement stmt = this.sqlConnection.createStatement();
 			final ResultSet rs = stmt.executeQuery("SELECT * FROM CaseDetail");
-				// TODO change to query
+				// TODO change the query
 			final List<Case> cases = new ArrayList<Case>(); 
 			while (rs.next()) {
 				cases.add(new Case(rs));
@@ -106,6 +104,48 @@ public final class DatastoreInterface {
 		} catch (final SQLException ex) {
 			System.err.println("No user found"); // For tests purposes. Not a problem the method return null!!!
 			return null;			
+		}
+	}
+	
+	public final List<CaseNote> getCaseNoteByCase(int caseID){
+		// TODO better query
+		// for the moment return all comments in DB
+		try {
+
+			final Statement stmt = this.sqlConnection.createStatement();
+			final ResultSet rs = stmt.executeQuery("SELECT * FROM CaseNote");
+			
+			final List<CaseNote> cn = new ArrayList<CaseNote>(); 
+			while (rs.next()) {
+				cn.add(new CaseNote(rs));
+			}
+			rs.close();
+			stmt.close();
+			return cn;
+			
+		} catch (final SQLException ex) {
+			System.err.println("No comment found"); // For tests purposes. Not a problem the method return null!!!
+			return null;			
+		}
+	}
+	
+	public final int addCaseNote(int caseId, String text, java.util.Date date, String authorUSR){
+		// Insert a comment in the DB
+		// TODO update to CaseNote and PersonNote
+		try {
+			final Statement stmt = this.sqlConnection.createStatement();
+			stmt.execute("INSERT INTO CaseNote(caseID, text, date, authorUsername)"+
+			"VALUES("+caseId+",'"+text+"','2012-12-12 00:00:00','"+authorUSR+"')");
+			
+			ResultSet rs = stmt.executeQuery("SELECT * FROM CaseNote WHERE caseNoteId = LAST_INSERT_ID()");
+			rs.first();
+			return new CaseNote(rs).getCaseNoteId();
+			
+			
+		} catch (final SQLException ex) {
+			ex.printStackTrace();
+			System.err.println("Case Note not added");
+			return -1;
 		}
 	}
 	
