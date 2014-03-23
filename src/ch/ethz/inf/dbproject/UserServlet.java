@@ -53,7 +53,11 @@ public final class UserServlet extends HttpServlet {
 			// Logged in
 			final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
 			userDetails.addBeanColumn("Username", "username");
-			userDetails.addBeanColumn("Name", "name");
+			userDetails.addBeanColumn("First Name", "firstName");
+			userDetails.addBeanColumn("Last Name", "lastName");
+			
+			userDetails.addObject(loggedUser);
+			userDetails.setVertical(true);
 
 			session.setAttribute(SESSION_USER_LOGGED_IN, true);
 			session.setAttribute(SESSION_USER_DETAILS, userDetails);
@@ -73,24 +77,24 @@ public final class UserServlet extends HttpServlet {
 				//get the user if one exits with this username and password 
 			
 			if (user == null){
-				//System.err.println("user not in DB");
-				//uncomment above (and in else condition) to check if you've putted the correct username/password
-				//we should find a way to write something like "wrong password"
+				
 			}
 			else{
 				//System.err.println(user.getfirstName()+user.getlastName());
 				//uncomment to check validity
+				final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
+				userDetails.addBeanColumn("Username", "username");
+				userDetails.addBeanColumn("First Name", "firstName");
+				userDetails.addBeanColumn("Last Name", "lastName");
+				
+				userDetails.addObject(user);
+				userDetails.setVertical(true);
+				
 				session.setAttribute(SESSION_USER_LOGGED_IN, true);
+				session.setAttribute(SESSION_USER_DETAILS, userDetails);
+				session.setAttribute(UserManagement.SESSION_USER, user);
 					//add the user to the session
 			}
-			
-			
-			// TODO
-			// Ask the data store interface if it knows this user
-			// Retrieve User
-			// Store this user into the session
-			
-
 		}
 
 		// Finally, proceed to the User.jsp page which will renden the profile
