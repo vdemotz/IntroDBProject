@@ -1,0 +1,98 @@
+------
+--CASES
+------
+
+
+--all cases
+select *
+from CaseDetail;
+
+
+--oldest unresolved cases
+select *
+from CaseDetail
+where isOpen = true
+order by date desc;
+
+
+--template: all notes for a specific case
+select caseNote.*
+from CaseNote caseNote
+where caseNote.caseId = '[...]';
+
+
+--template: list of supsects for a specific case
+select person.*
+from Person person, Suspected suspected, CaseDetail caseDetail
+where caseDetail.caseId = '[...]' and
+      suspected.caseId = caseDetail.caseId and
+      suspected.personId = person.personId;
+
+
+--template: list of convicted people for a specific case (probably empty for open cases)
+select person.*
+from Person person, Convicted convicted, CaseDetail caseDetail
+where caseDetail.caseId = '[...]' and
+      convicted.caseId = caseDetail.caseId and
+      convicted.personId = person.personId;
+
+
+--template: all categories for a specific case
+select categoryForCase.categoryName
+from CaseDetail caseDetail, CategoryForCase categoryForCase
+where caseDetail.caseId = '[...]' and
+      categoryForCase.caseId = caseDetail.caseId and
+
+
+------
+--PEOPLE
+------
+
+
+--all people that are supsected or convicted
+select person.*
+from Person person, Suspected suspected, Convicted conviction
+where person.personId = suspected.personId or person.personid = conviction.personId;
+
+
+--template: person with a specific name
+select person.*
+from Person
+where firstName like '[...]' or lastName like '[...]';
+
+
+--template: person convicted at a specific date
+select person.*
+from Conviction conviction, Convicted convicted, Person person
+where conviction.startDate = '[...]' and
+      conviction.convictionId = convicted.convictionId and
+      convicted.personId = person.personId;
+
+
+--template: person convicted for a specific crime
+select person.*
+from Category category, Conviction conviction, Convicted convicted, ConvitionType convictionType, Person person
+where category.name = '[...]' and
+      convictionType.categoryName = category.name and
+      convictionType.convictionId = conviction.convictionId and
+      convicted.convictionId = conviction.convictionId and
+      convicted.personId = person.personId;
+
+
+--template: all notes for a specific person
+select personNote.*
+from PersonNote personNote
+where personNote.personId = '[...]';
+
+
+--all convictions for a specific person
+select convictionType.categoryName, conviction.startDate, conviction.endDate
+from Conviction conviction, Convicted convicted, ConvictionType convictionType
+where conviction.convictionId = convicted.convictionId and
+      convictionType.convictionId = conviction.convictionId and
+      convicted.personId = 4
+
+
+--all cases in which a person is suspected of
+--TODO
+
