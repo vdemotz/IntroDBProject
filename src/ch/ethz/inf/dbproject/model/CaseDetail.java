@@ -1,7 +1,9 @@
 package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.sql.SQLException;
 
 public final class CaseDetail {
@@ -31,7 +33,7 @@ public final class CaseDetail {
 		this.description = desc;
 		this.authorName = authorN;
 	}
-
+	
 	public CaseDetail(final ResultSet rs) throws SQLException {
 		this.caseId = rs.getInt("caseId");
 		this.title = rs.getString("title");
@@ -42,6 +44,22 @@ public final class CaseDetail {
 		this.date = rs.getDate("date");
 		this.description = rs.getString("description");
 		this.authorName = rs.getString("authorName");
+	}
+	
+	public static List<CaseDetail> getAllCaseDetailsFromResultSet(final ResultSet rs) throws SQLException
+	{
+		return getCaseDetailsFromResultSet(rs, Integer.MAX_VALUE);
+	}
+	
+	public static List<CaseDetail> getCaseDetailsFromResultSet(final ResultSet rs, int maximumCount) throws SQLException
+	{
+		final List<CaseDetail> result = new ArrayList<CaseDetail>();
+		int count = 0;
+		while (rs.next() && count < maximumCount) {
+			result.add(new CaseDetail(rs));
+			count = count + 1;
+		}
+		return result;
 	}
 
 	////

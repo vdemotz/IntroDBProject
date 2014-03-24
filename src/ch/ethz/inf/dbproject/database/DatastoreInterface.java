@@ -29,26 +29,22 @@ public final class DatastoreInterface implements CaseDatastoreInteface, PersonDa
 	
 	@Override
 	public boolean isUsernameAvailable(String username) {
-		// TODO Auto-generated method stub
-		return false;
+		return userDatastore.isUsernameAvailable(username);
 	}
 	
 	@Override
 	public User getUserForUsernameAndPassword(String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
+		return userDatastore.getUserForUsernameAndPassword(username, password);
 	}
 	
 	@Override
 	public List<CaseDetail> getCurrentCasesForUser(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return userDatastore.getCurrentCasesForUser(username);
 	}
 	
 	@Override
 	public User addUser(String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
+		return userDatastore.addUser(username, password);
 	}
 	
 	////
@@ -57,51 +53,42 @@ public final class DatastoreInterface implements CaseDatastoreInteface, PersonDa
 	
 	@Override
 	public List<CaseDetail> getCasesForWhichPersonIsConvicted(int personId) {
-		// TODO Auto-generated method stub
-		return null;
+		return personDatastore.getCasesForWhichPersonIsConvicted(personId);
 	}
 	
 	@Override
 	public List<CaseDetail> getCasesForWhichPersonIsSuspected(int personId) {
-		// TODO Auto-generated method stub
-		return null;
+		return personDatastore.getCasesForWhichPersonIsSuspected(personId);
 	}
 	
 	@Override
 	public List<PersonNote> getPersonNotesForPerson(int personId) {
-		// TODO Auto-generated method stub
-		return null;
+		return personDatastore.getPersonNotesForPerson(personId);
 	}
 	
 	@Override
 	public List<Person> getPersonsForName(String firstName, String lastName) {
-		// TODO Auto-generated method stub
-		return null;
+		return personDatastore.getPersonsForName(firstName, lastName);
 	}
 	
 	@Override
 	public List<Person> getPersonsForConvictionType(String categoryName) {
-		// TODO Auto-generated method stub
-		return null;
+		return personDatastore.getPersonsForConvictionType(categoryName);
 	}
 	
 	@Override
 	public List<Person> getPersonsForConvictionDate(Date startDate) {
-		// TODO Auto-generated method stub
-		return null;
+		return personDatastore.getPersonsForConvictionDate(startDate);
 	}
 	
 	@Override
 	public Person getPersonForId(int personId) {
-		// TODO Auto-generated method stub
-		return null;
+		return personDatastore.getPersonForId(personId);
 	}
 	
 	@Override
-	public PersonNote addPersonNote(int personId, String text,
-			String authorUsername) {
-		// TODO Auto-generated method stub
-		return null;
+	public PersonNote addPersonNote(int personId, String text, String authorUsername) {
+		return personDatastore.addPersonNote(personId, text, authorUsername);
 	}
 	
 	////
@@ -109,51 +96,43 @@ public final class DatastoreInterface implements CaseDatastoreInteface, PersonDa
 	////
 	
 	@Override
-	public CaseDetail getCaseForId(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public CaseDetail getCaseForId(int caseId) {
+		return caseDatastore.getCaseForId(caseId);
 	}
 	
 	@Override
 	public List<CaseDetail> getAllCases() {
-		// TODO Auto-generated method stub
-		return null;
+		return caseDatastore.getAllCases();
 	}
 	
 	@Override
 	public List<CaseNote> getCaseNotesForCase(int caseID) {
-		// TODO Auto-generated method stub
-		return null;
+		return caseDatastore.getCaseNotesForCase(caseID);
 	}
 	
 	@Override
 	public List<CaseDetail> getCasesForCategory(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return caseDatastore.getCasesForCategory(name);
 	}
 	
 	@Override
 	public List<CaseDetail> getCasesForDate(Date date) {
-		// TODO Auto-generated method stub
-		return null;
+		return caseDatastore.getCasesForDate(date);
 	}
 	
 	@Override
 	public CaseNote addCaseNote(int caseId, String text, String authorUsername) {
-		// TODO Auto-generated method stub
-		return null;
+		return caseDatastore.addCaseNote(caseId, text, authorUsername);
 	}
 	
 	@Override
 	public List<CaseDetail> getOpenCases() {
-		// TODO Auto-generated method stub
-		return null;
+		return caseDatastore.getOpenCases();
 	}
 	
 	@Override
 	public List<CaseDetail> getOldestUnresolvedCases() {
-		// TODO Auto-generated method stub
-		return null;
+		return caseDatastore.getOpenCases();
 	}
 
 
