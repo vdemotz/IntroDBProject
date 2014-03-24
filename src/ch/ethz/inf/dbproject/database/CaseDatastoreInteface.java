@@ -60,13 +60,13 @@ public interface CaseDatastoreInteface {
 	
 	/**
 	 * Adds a new caseNote for a specific case to the DB. The note will be created with the date representing the current time.
-	 * If the caseId or the authorUsername refer to entities that don't exist, the behaviour is undefined
+	 * If the caseId or the authorUsername refer to entities that don't exist, null is returned and the DB is not modified
 	 * @param caseId the caseId of the CaseDetail
 	 * @param text the comment of the user
 	 * @param authorUsername the user name
-	 * @return if the parameters are valid, a CaseNote object representing the caseNote just added to the DB
+	 * @return if the parameters are valid, a CaseNote object representing the CaseNote just added to the DB
+	 * 		   otherwise, null is returned
 	 */
-	
 	CaseNote addCaseNote(int caseId, String text, String authorUsername);
 	
 	//TODO: addCase

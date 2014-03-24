@@ -60,6 +60,15 @@ public interface PersonDatastoreInteface {
 	//MODIFY
 	////
 	
+	/**
+	 * Adds a new personNote for a specific person to the DB. The note will be created with the date representing the current time.
+	 * If the personId or the authorUsername refer to entities that don't exist, null is returned and the DB is not modified
+	 * @param personId id of the person
+	 * @param text the comment of the user
+	 * @param authorUsername the user name
+	 * @return if the parameters are valid, a PersonNote object representing the PersonNote just added to the DB
+	 * 		   otherwise, null
+	 */
 	PersonNote addPersonNote(int personId, String text, String authorUsername);
 	
 }

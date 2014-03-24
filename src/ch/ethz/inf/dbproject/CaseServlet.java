@@ -62,13 +62,15 @@ public final class CaseServlet extends HttpServlet {
 		else{
 			try {
 				final Integer id = Integer.parseInt(idString);
+				
+				//set the caseId
+				session.setAttribute("caseId", id);
+				
+				//set the CaseDetail (the header) wanted by the user
 				final CaseDetail aCase = this.dbInterface.getCaseForId(id);
-					// TODO
-					//get the case wanted by the user
 				
 				final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
-					//initialize a new table for the case
-	
+				
 				table.addBeanColumn("Case ID", "caseId");
 				table.addBeanColumn("Title", "title");
 				table.addBeanColumn("Location", "location");
@@ -76,13 +78,12 @@ public final class CaseServlet extends HttpServlet {
 				table.addBeanColumn("Date", "date");
 				table.addBeanColumn("Description", "description");
 				table.addBeanColumn("Author Name", "authorName");
-					//add all details to the case table
-	
+				
 				table.addObject(aCase);
 				table.setVertical(true);			
-				
 				session.setAttribute("caseTable", table);
 				
+				//set all the CaseNotes on the case
 				final BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments", "commentsTable", CaseNote.class);
 				
 				tableComment.addBeanColumn("Case ID", "caseId");
@@ -95,7 +96,6 @@ public final class CaseServlet extends HttpServlet {
 				tableComment.addObjects(cases);
 				
 				session.setAttribute("commentTable", tableComment);
-				session.setAttribute("caseId", id);
 				
 			} catch (final Exception ex) {
 				System.err.println("not able to display the case wanted");
