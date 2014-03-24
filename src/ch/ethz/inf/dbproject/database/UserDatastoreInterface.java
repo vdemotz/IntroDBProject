@@ -6,7 +6,7 @@ import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.User;
 
 
-public interface UserDatastoreInteface {
+public interface UserDatastoreInterface {
 
 	////
 	//QUERY

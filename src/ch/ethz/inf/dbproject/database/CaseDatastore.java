@@ -7,7 +7,7 @@ import java.util.List;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 
-public class CaseDatastore implements CaseDatastoreInteface {
+public class CaseDatastore implements CaseDatastoreInterface {
 
 	private Connection sqlConnection;
 

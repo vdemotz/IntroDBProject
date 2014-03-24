@@ -8,7 +8,7 @@ import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 
-public class PersonDatastore implements PersonDatastoreInteface {
+public class PersonDatastore implements PersonDatastoreInterface {
 
 	private Connection sqlConnection;
 

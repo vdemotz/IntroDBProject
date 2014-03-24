@@ -17,11 +17,11 @@ import ch.ethz.inf.dbproject.model.User;
  * and the database.
  */
 
-public final class DatastoreInterface implements CaseDatastoreInteface, PersonDatastoreInteface, UserDatastoreInteface {
+public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface {
 
-	private CaseDatastoreInteface caseDatastore = new CaseDatastore();
-	private PersonDatastoreInteface personDatastore = new PersonDatastore();
-	private UserDatastoreInteface userDatastore = new UserDatastore();
+	private CaseDatastoreInterface caseDatastore = new CaseDatastore();
+	private PersonDatastoreInterface personDatastore = new PersonDatastore();
+	private UserDatastoreInterface userDatastore = new UserDatastore();
 	
 	////
 	//USER
