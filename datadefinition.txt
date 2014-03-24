@@ -7,13 +7,14 @@ create table User
 
 
 create table CaseDetail
-   ( caseId   integer primary key,
+   ( caseId   integer auto_increment,
      title   varchar(40) not null,
      location   varchar(40),
      isOpen   boolean not null,
      date   datetime,
      description   text,
-     authorName   varchar(40) references User
+     authorName   varchar(40) references User,
+     primary key(caseId)
    );
 
 
@@ -26,6 +27,20 @@ create table CaseNote
      primary key(caseId, caseNoteId)
    );
 
+========PROPOSITION============
+
+create table CaseNote
+   ( 	caseId integer not null,
+	caseNoteId integer auto_increment,
+	text text,
+	date datetime,
+	authorUsername varchar(40) references User,
+	primary key(caseNoteId),
+	foreign key(caseId) references CaseDetail(caseId) on delete cascade
+    );
+
+===============================
+
 
 create table Person
    ( personId   integer primary key,
@@ -34,6 +49,16 @@ create table Person
      birthdate   date
    );
 
+========PROPOSITION============
+
+create table Person
+   ( 	personId   integer auto_increment,
+     	firstName   varchar(40),
+    	lastName   varchar(40),
+    	birthdate   date,
+ 	primary key(personId)
+   );
+===============================
 
 create table PersonNote
    ( personId   integer references Person on delete cascade,
@@ -43,6 +68,20 @@ create table PersonNote
      authorUsername   varchar(40) references User,
      primary key(personId, personNoteId)
    );
+
+========PROPOSITION============
+
+create table PersonNote
+   ( 	PersonId integer not null,
+	PersonNoteId integer auto_increment,
+	text text,
+	date datetime,
+	authorUsername varchar(40) references User,
+	primary key(personNoteId),
+	foreign key(personId) references Person(personId) on delete cascade
+    );
+
+===============================
 
 
 create table Category
@@ -56,9 +95,20 @@ create table CategoryForCase
      primary key (caseId, categoryName)
    );
 
+========PROPOSITION============
+
+create table CategoryForCase
+   ( caseId   integer,
+     categoryName   varchar(40),
+     foreign key(caseId) references CaseDetail(caseId) on delete cascade,
+     foreign key(categoryName) references Category(name) on delete cascade
+   );
+
+===============================
+
 
 create table Conviction
-   ( convictionId   integer primary key,
+   ( convictionId   integer primary key auto_increment,
      startDate   date,
      endDate   date
    );
@@ -70,6 +120,17 @@ create table ConvictionType
      primary key (convictionId, categoryName)
    );
 
+
+========PROPOSITION============
+
+create table ConvictionType
+   ( convictionId   integer references Conviction on delete cascade,
+     categoryName   varchar(40),
+     foreign key(categoryName) references Category(name) on delete cascade,
+     primary key(convictionId)
+   );
+
+===============================
 
 create table Suspected
    ( personId   integer references Person on delete cascade,
