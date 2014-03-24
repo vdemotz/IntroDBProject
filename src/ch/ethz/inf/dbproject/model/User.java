@@ -13,7 +13,10 @@ public final class User {
 	private final String lastName;
 	private final String password;
 	
-	// TODO Decide if we really need this constructor
+	////
+	//CONSTRUCTORS
+	////
+	
 	public User(final String username, final String firstName, final String lastName, final String password) {
 		this.username = username;
 		this.firstName = firstName;
@@ -22,14 +25,16 @@ public final class User {
 	}
 	
 	public User(final ResultSet rs) throws SQLException {
-			// Constructor
 		this.username = rs.getString("username");
 		this.firstName = rs.getString("firstName");
 		this.lastName = rs.getString("lastName");
 		this.password = rs.getString("password");
 	}
 	
-		// Getters
+	////
+	// GETTERS
+	////
+	
 	public String getUsername() {
 		return username;
 	}

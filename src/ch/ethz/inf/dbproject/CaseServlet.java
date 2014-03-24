@@ -11,11 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import ch.ethz.inf.dbproject.database.DatastoreInterface;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Conviction;
-import ch.ethz.inf.dbproject.model.Comment;
-import ch.ethz.inf.dbproject.model.DatastoreInterface;
-import ch.ethz.inf.dbproject.model.Case;
+import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.User;
 import ch.ethz.inf.dbproject.util.UserManagement;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
@@ -53,8 +52,8 @@ public final class CaseServlet extends HttpServlet {
 		
 		if (action != null){
 			final Object id = session.getAttribute("caseId");
-			CaseNote cn = new CaseNote(Integer.parseInt(id.toString()), comment, new Date(), userId);
-		}	
+			CaseNote cn = dbInterface.addCaseNote(Integer.parseInt(id.toString()), comment, userId);
+		}
 		
 		if (idString == null) {
 			this.getServletContext().getRequestDispatcher("/Cases.jsp").forward(request, response);
@@ -63,12 +62,11 @@ public final class CaseServlet extends HttpServlet {
 		else{
 			try {
 				final Integer id = Integer.parseInt(idString);
-				final Case aCase = this.dbInterface.getCaseById(id);
+				final CaseDetail aCase = this.dbInterface.getCaseForId(id);
 					// TODO
 					//get the case wanted by the user
 				
-				final BeanTableHelper<Case> table = new BeanTableHelper<Case>("cases",
-						"casesTable", Case.class);
+				final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
 					//initialize a new table for the case
 	
 				table.addBeanColumn("Case ID", "caseId");
@@ -85,8 +83,7 @@ public final class CaseServlet extends HttpServlet {
 				
 				session.setAttribute("caseTable", table);
 				
-				final BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments",
-						"commentsTable", CaseNote.class);
+				final BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments", "commentsTable", CaseNote.class);
 				
 				tableComment.addBeanColumn("Case ID", "caseId");
 				tableComment.addBeanColumn("Case Note ID", "caseNoteId");
@@ -94,7 +91,7 @@ public final class CaseServlet extends HttpServlet {
 				tableComment.addBeanColumn("Date", "date");
 				tableComment.addBeanColumn("Author Name", "authorUsername");
 				
-				final List<CaseNote> cases = this.dbInterface.getCaseNoteByCase(id);
+				final List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(id);
 				tableComment.addObjects(cases);
 				
 				session.setAttribute("commentTable", tableComment);

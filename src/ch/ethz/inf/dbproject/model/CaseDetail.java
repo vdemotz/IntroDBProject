@@ -4,53 +4,50 @@ import java.sql.ResultSet;
 import java.util.Date;
 import java.sql.SQLException;
 
-public final class Case {
+public final class CaseDetail {
 
-	/**
-	 * TODO The properties of the case should be added here
-	 */
 	private final int caseId;
 	private final String title;
-	private final String location;
+	private final String city;
+	private final String street;
+	private final String zipCode;
 	private final boolean isOpen;
 	private final Date date;
 	private final String description;
 	private final String authorName;
 
-	/**
-	 * Construct a new case.
-	 * 
-	 * @param description
-	 *            The name of the case
-	 */
-	public Case(final int id, final String tit, final String loc,
-			final boolean isOp, final Date da, final String desc,
-			final String authorN) {
+	////
+	//CONSTRUCTORS
+	////
+	
+	public CaseDetail(final int id, final String tit, final String city, final String street, final String zipCode, final boolean isOp, final Date da, final String desc, final String authorN) {
 		this.caseId = id;
 		this.title = tit;
-		this.location = loc;
+		this.city = city;
+		this.street = street;
+		this.zipCode = zipCode;
 		this.isOpen = isOp;
 		this.date = da;
 		this.description = desc;
 		this.authorName = authorN;
 	}
 
-	public Case(final ResultSet rs) throws SQLException {
-		// TODO These need to be adapted to your schema
-		// TODO Extra properties need to be added
+	public CaseDetail(final ResultSet rs) throws SQLException {
 		this.caseId = rs.getInt("caseId");
 		this.title = rs.getString("title");
-		this.location = rs.getString("location");
+		this.city = rs.getString("city");
+		this.street = rs.getString("street");
+		this.zipCode = rs.getString("zipCode");
 		this.isOpen = rs.getBoolean("isOpen");
 		this.date = rs.getDate("date");
 		this.description = rs.getString("description");
 		this.authorName = rs.getString("authorName");
 	}
 
-	/**
-	 * HINT: In eclipse, use Alt + Shirt + S menu and choose: "Generate Getters
-	 * and Setters to auto-magically generate the getters.
-	 */
+	////
+	// GETTERS
+	////
+	
 	public int getCaseId() {
 		return caseId;
 	}
@@ -63,8 +60,16 @@ public final class Case {
 		return title;
 	}
 	
-	public String getLocation() {
-		return location;
+	public String getCity() {
+		return city;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public String getZipCode() {
+		return zipCode;
 	}
 	
 	public boolean getIsOpen() {
@@ -82,4 +87,5 @@ public final class Case {
 	public String getAuthorName() {
 		return authorName;
 	}
+	
 }

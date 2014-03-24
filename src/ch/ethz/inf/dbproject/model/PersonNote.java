@@ -1,31 +1,30 @@
 package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
-import ch.ethz.inf.dbproject.model.DatastoreInterface;
+
+import ch.ethz.inf.dbproject.database.DatastoreInterface;
 
 import java.util.Date;
 import java.sql.SQLException;
 
 public final class PersonNote {
-	private final DatastoreInterface dbInterface = new DatastoreInterface();
-	/**
-	 * TODO The properties of the person note should be added here
-	 */
+	
 	private final int personId;
 	private final int personNoteId;
 	private final String text;
 	private final Date date;
 	private final String authorUsername;
 	
-	/* TODO : See comments in CaseNote for the initialization of the key!
-	*/
-	public PersonNote(final int personId, final String text,
-			final Date date, final String authorUsername){
+	////
+	// CONSTRUCTORS
+	////
+	
+	public PersonNote(final int personId, final int personNoteId, final String text, final Date date, final String authorUsername){
 		this.personId = personId;
 		this.text = text;
 		this.date = date;
 		this.authorUsername = authorUsername;
-		this.personNoteId = this.dbInterface.addPersonNote(personId, text, date, authorUsername);
+		this.personNoteId = personNoteId;
 	}
 
 	public PersonNote(final ResultSet rs) throws SQLException {
@@ -35,7 +34,11 @@ public final class PersonNote {
 		this.date = rs.getDate("date");
 		this.authorUsername = rs.getString("authorUsername");
 	}
-
+	
+	////
+	// GETTERS
+	////
+	
 	public int getPersonId() {
 		return personId;
 	}

@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import ch.ethz.inf.dbproject.model.Case;
-import ch.ethz.inf.dbproject.model.DatastoreInterface;
+import ch.ethz.inf.dbproject.database.DatastoreInterface;
+import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.User;
 import ch.ethz.inf.dbproject.util.UserManagement;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
@@ -62,7 +62,7 @@ public final class UserServlet extends HttpServlet {
 			// However for this project, security is not a requirement.
 			final String password = request.getParameter("password");
 			
-			User user = dbInterface.getUserByUsernameAndPassword(username, password);
+			User user = dbInterface.getUserForUsernameAndPassword(username, password);
 				//get the user if one exits with this username and password 
 			
 			if (user == null){

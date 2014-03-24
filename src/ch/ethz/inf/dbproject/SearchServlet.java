@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import ch.ethz.inf.dbproject.model.Case;
+import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
 /**
@@ -37,10 +37,10 @@ public final class SearchServlet extends HttpServlet {
 		/*******************************************************
 		 * Construct a table to present all our search results
 		 *******************************************************/
-		final BeanTableHelper<Case> table = new BeanTableHelper<Case>(
+		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>(
 				"cases" 		/* The table html id property */,
 				"casesTable" /* The table html class property */,
-				Case.class 	/* The class of the objects (rows) that will bedisplayed */
+				CaseDetail.class 	/* The class of the objects (rows) that will bedisplayed */
 		);
 
 		// Add columns to the new table

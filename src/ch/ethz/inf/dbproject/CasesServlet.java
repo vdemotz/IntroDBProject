@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import ch.ethz.inf.dbproject.model.DatastoreInterface;
-import ch.ethz.inf.dbproject.model.Case;
+import ch.ethz.inf.dbproject.database.DatastoreInterface;
+import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
 /**
@@ -40,8 +40,8 @@ public final class CasesServlet extends HttpServlet {
 		/*******************************************************
 		 * Construct a table to present all our results
 		 *******************************************************/
-		final BeanTableHelper<Case> table = new BeanTableHelper<Case>("cases",
-				"casesTable", Case.class);
+		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
+				"casesTable", CaseDetail.class);
 
 		// Add columns to the new table
 		table.addBeanColumn("Case ID", "caseId");
@@ -75,7 +75,7 @@ public final class CasesServlet extends HttpServlet {
 
 		} else if (category != null) {
 			
-			table.addObjects(this.dbInterface.getProjectsByCategory(category));
+			table.addObjects(this.dbInterface.getCasesForCategory(category));
 			
 		} else if (filter != null) {
 		

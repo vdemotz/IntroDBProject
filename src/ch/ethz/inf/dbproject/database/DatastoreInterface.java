@@ -1,4 +1,4 @@
-package ch.ethz.inf.dbproject.model;
+package ch.ethz.inf.dbproject.database;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -6,59 +6,165 @@ import java.util.Date;
 import java.util.List;
 
 
-import ch.ethz.inf.dbproject.database.MySQLConnection;
+import ch.ethz.inf.dbproject.model.CaseDetail;
+import ch.ethz.inf.dbproject.model.CaseNote;
+import ch.ethz.inf.dbproject.model.Person;
+import ch.ethz.inf.dbproject.model.PersonNote;
+import ch.ethz.inf.dbproject.model.User;
 
 /**
- * This class should be the interface between the web application
- * and the database. Keeping all the data-access methods here
- * will be very helpful for part 2 of the project.
+ * This class is be the interface between the web application
+ * and the database.
  */
 
-	/* I've commented all methods I've written. These methods will be destroyed,
-	 * but it's kind of a template we can use to write the new ones. (we will erase
-	 * them later.)
-	 * 
-	 * All the methods used in other classes are written below, returning null.
-	 * Like that we don't have to change all implementation to build the project.
-	 * 
-	 */
+public final class DatastoreInterface implements CaseDatastoreInteface, PersonDatastoreInteface, UserDatastoreInteface {
 
-public final class DatastoreInterface {
+	private CaseDatastoreInteface caseDatastore = new CaseDatastore();
+	private PersonDatastoreInteface personDatastore = new PersonDatastore();
+	private UserDatastoreInteface userDatastore = new UserDatastore();
+	
+	////
+	//USER
+	////
+	
+	@Override
+	public boolean isUsernameAvailable(String username) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public User getUserForUsernameAndPassword(String username, String password) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<CaseDetail> getCurrentCasesForUser(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public User addUser(String username, String password) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	////
+	//PERSON
+	////
+	
+	@Override
+	public List<CaseDetail> getCasesForWhichPersonIsConvicted(int personId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<CaseDetail> getCasesForWhichPersonIsSuspected(int personId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<PersonNote> getPersonNotesForPerson(int personId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<Person> getPersonsForName(String firstName, String lastName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<Person> getPersonsForConvictionType(String categoryName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<Person> getPersonsForConvictionDate(Date startDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Person getPersonForId(int personId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public PersonNote addPersonNote(int personId, String text,
+			String authorUsername) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	////
+	//CASE
+	////
+	
+	@Override
+	public CaseDetail getCaseForId(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<CaseDetail> getAllCases() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<CaseNote> getCaseNotesForCase(int caseID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<CaseDetail> getCasesForCategory(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<CaseDetail> getCasesForDate(Date date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public CaseNote addCaseNote(int caseId, String text, String authorUsername) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<CaseDetail> getOpenCases() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<CaseDetail> getOldestUnresolvedCases() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	@SuppressWarnings("unused")
-	private Connection sqlConnection;
 
-	public DatastoreInterface() {
-		this.sqlConnection = MySQLConnection.getInstance().getConnection();
-	}
+
+
+
+	////
+	//LEGACY
+	////
 	
-	public final Case getCaseById(final int id){
-		return null;
-	}
 	
-	public final List<Case> getAllCases(){
-		return null;
-	}
-	
-	public final List<Case> getProjectsByCategory(String c) {
-		return null;
-	}
-	
-	public final User getUserByUsernameAndPassword(String n, String p){
-		return null;
-	}
-	
-	public final List<CaseNote> getCaseNoteByCase(int caseID){
-		return null;
-	}
-	
-	public final int addCaseNote(int caseId, String text, java.util.Date date, String authorUSR){
-		return -1;
-	}
-	
-	public final int addPersonNote(int personId, String text, java.util.Date date, String authorUSR){
-		return -1;
-	}
 	/*
 	public final Case getCaseById(final int id) {
 		//get a case by its id
@@ -188,5 +294,4 @@ public final class DatastoreInterface {
 		}
 	}*/
 	
-	//TODO Implement all missing data access methods
 }

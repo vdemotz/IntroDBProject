@@ -11,6 +11,20 @@ public class Conviction {
 	private final Date endDate;
 	private final String type;
 
+	////
+	// CONSTRUCTORS
+	////
+	
+	public Conviction(final Date date, final Date endDate, final String type) {
+		this.date = date;
+		this.endDate = endDate;
+		this.type = type;
+	}
+	
+	////
+	// GETTERS
+	////
+	
 	public Date getDate() {
 		return date;
 	}
@@ -22,13 +36,6 @@ public class Conviction {
 	public String getType() {
 		return type;
 	}
-
 	
-	public Conviction(final Date date, final Date endDate, final String type) {
-		this.date = date;
-		this.endDate = endDate;
-		this.type = type;
-	}
-
 		
 }
