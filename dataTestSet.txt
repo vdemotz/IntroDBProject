@@ -25,8 +25,7 @@ insert into Person (personId, firstName, lastName)
 insert into PersonNote (personId, personNoteId, text, authorUsername)
     values(0, 0, 'Old friend from school', 'watson');
 
-
-insert into CaseDetail
+insert into CaseDetail (key, title, city, isOpen, date, description, authorName)
     values(0, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'holmes');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
@@ -36,22 +35,22 @@ insert into CategoryForCase
     values(0, 'Suicide');
 
 
-insert into CaseDetail
-    values(1, 'Death of James Philmore', 'London, Sports Centre', true, '2010-11-26-21-00', '18 year old James Philmore found dead in a sports centre', 'watson');
+insert into CaseDetail (key, title, city, street, isOpen, date, description, authorName)
+    values(1, 'Death of James Philmore', 'London', 'Westminsterstreet 5', true, '2010-11-26-21-00', '18 year old James Philmore found dead in a sports centre', 'watson');
 
 insert into CategoryForCase
     values(1, 'Suicide');
 
 
-insert into CaseDetail
-    values(2, 'Death of Beth Davenport', 'London, building Site', true, '2010-11-26-23-00', 'Beth Davenport, Junior Minister of Transport found dead', 'watson');
+insert into CaseDetail (key, title, city, isOpen, date, description, authorName)
+    values(2, 'Death of Beth Davenport', 'London', true, '2010-11-26-23-00', 'Beth Davenport, Junior Minister of Transport found dead at building Site', 'watson');
 
 insert into CategoryForCase
     values(2, 'Suicide');
 
 
-insert into CaseDetail
-    values(3, 'Death of Jennifer Wilson', 'Brixton, Lauriston Gardens', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment.', 'holmes');
+insert into CaseDetail (key, title, city, street, zipCode, isOpen, date, description, authorName)
+    values(3, 'Death of Jennifer Wilson', 'London', 'Gardenstreet 5', 'SW2 5HG', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment at Lauriston Gardens', 'holmes');
 
 insert into CategoryForCase
     values(3, 'Suicide');
@@ -153,8 +152,8 @@ insert into Person (personId, LastName)
     values (2, "Moriarty");
 
 
-insert into CaseDetail
-    values(4, 'Cab Driver is shot', 'Roland-Kerr Further Education College', true, '2010-11-28-24-00', 'The cab driver got shot from someone standing outside the window.', 'watson');
+insert into CaseDetail (key, title, city, zipCode, isOpen, date, description, authorName)
+    values(4, 'Cab Driver is shot', 'London', 'CF10 3AT', true, '2010-11-28-24-00', 'The cab driver got shot from someone standing outside the window at Roland-Kerr Further Education College.', 'watson');
 
 insert into CategoryForCase
     values(4, 'Manslaughter');

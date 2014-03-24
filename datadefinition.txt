@@ -9,7 +9,9 @@ create table User
 create table CaseDetail
    ( caseId   integer auto_increment,
      title   varchar(40) not null,
-     location   varchar(40),
+     street   varchar(40),
+     city   varchar(40),
+     zipCode varchar(40),
      isOpen   boolean not null,
      date   datetime,
      description   text,
