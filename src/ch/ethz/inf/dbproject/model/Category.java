@@ -12,7 +12,6 @@ public final class Category {
 	////
 	
 	public Category(final String name) {
-		super();
 		this.name = name;
 	}
 
