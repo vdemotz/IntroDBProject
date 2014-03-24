@@ -8,8 +8,6 @@ import java.sql.SQLException;
  */
 public final class User {
 
-	//private final int userid;
-	// TODO Decide wether we create an userid or not. (Discussion Lukas and Vincent)
 	private final String username;
 	private final String firstName;
 	private final String lastName;

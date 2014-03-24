@@ -2,6 +2,7 @@ package ch.ethz.inf.dbproject.model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -13,7 +14,14 @@ import ch.ethz.inf.dbproject.database.MySQLConnection;
  * will be very helpful for part 2 of the project.
  */
 
-	// TODO Decide if we use statements directly or pre-compiled statements
+	/* I've commented all methods I've written. These methods will be destroyed,
+	 * but it's kind of a template we can use to write the new ones. (we will erase
+	 * them later.)
+	 * 
+	 * All the methods used in other classes are written below, returning null.
+	 * Like that we don't have to change all implementation to build the project.
+	 * 
+	 */
 
 public final class DatastoreInterface {
 
@@ -24,6 +32,30 @@ public final class DatastoreInterface {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
 	}
 	
+	public final Case getCaseById(final int id){
+		return null;
+	}
+	
+	public final List<Case> getAllCases(){
+		return null;
+	}
+	
+	public final List<Case> getProjectsByCategory(String c) {
+		return null;
+	}
+	
+	public final User getUserByUsernameAndPassword(String n, String p){
+		return null;
+	}
+	
+	public final List<CaseNote> getCaseNoteByCase(int caseID){
+		return null;
+	}
+	
+	public final int addCaseNote(int caseId, String text, java.util.Date date, String authorUSR){
+		return -1;
+	}
+	/*
 	public final Case getCaseById(final int id) {
 		//get a case by its id
 		try {
@@ -42,8 +74,9 @@ public final class DatastoreInterface {
 			ex.printStackTrace();
 			return null;			
 		}
-	}
+	}*/
 	
+	/*
 	public final List<Case> getAllCases() {
 		//get all cases from database
 		try {
@@ -63,7 +96,9 @@ public final class DatastoreInterface {
 			return null;			
 		}
 	}
+	*/
 	
+	/*
 	public final List<Case> getProjectsByCategory(String c) {
 		//get cases by category
 		try {
@@ -133,9 +168,9 @@ public final class DatastoreInterface {
 		// Insert a comment in the DB
 		// TODO update to CaseNote and PersonNote
 		try {
+			System.err.println(date.toString());
+
 			final Statement stmt = this.sqlConnection.createStatement();
-			stmt.execute("INSERT INTO CaseNote(caseID, text, date, authorUsername)"+
-			"VALUES("+caseId+",'"+text+"','2012-12-12 00:00:00','"+authorUSR+"')");
 			
 			ResultSet rs = stmt.executeQuery("SELECT * FROM CaseNote WHERE caseNoteId = LAST_INSERT_ID()");
 			rs.first();
@@ -147,7 +182,7 @@ public final class DatastoreInterface {
 			System.err.println("Case Note not added");
 			return -1;
 		}
-	}
+	}*/
 	
 	//TODO Implement all missing data access methods
 }

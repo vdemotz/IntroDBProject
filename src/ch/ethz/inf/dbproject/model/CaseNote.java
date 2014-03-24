@@ -23,6 +23,21 @@ public final class CaseNote {
 	 * @param description
 	 *            The name of the case
 	 */
+	
+	/* TODO : find a clever way to get the unique ID of a new case note, at creation.
+	*
+	* My idea was : when a class, somewhere else (mainly in CaseServlet of course), create
+	* a new CaseNote given it attributes the constructor does :
+	* - initialize all fields but caseNoteId with given attributes
+	* - connect to database, create a CaseNote (via addCaseNote) in it and have it return an unique ID
+	* - initialize the field caseNoteId, consistent with the DB
+	* 
+	* If you have a better idea, go ahead. But I just points out the benefit of that way of doing :
+	* 
+	* - the creation of a case note in java is always consistent with the DB
+	* - we don't need (yet) to iterate through all the existing caseNoteId's
+	* - we don't have to create separately the CaseNote in the DB
+	*/
 	public CaseNote(final int caseId, final String text,
 			final Date date, final String authorUsername){
 		this.caseId = caseId;

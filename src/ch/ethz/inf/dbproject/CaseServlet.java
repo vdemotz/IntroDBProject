@@ -52,7 +52,8 @@ public final class CaseServlet extends HttpServlet {
 		final String idString = request.getParameter("id");
 		
 		if (action != null){
-			CaseNote cn = new CaseNote(4, comment, new Date(), userId);
+			final Object id = session.getAttribute("caseId");
+			CaseNote cn = new CaseNote(Integer.parseInt(id.toString()), comment, new Date(), userId);
 		}	
 		
 		if (idString == null) {
@@ -63,6 +64,7 @@ public final class CaseServlet extends HttpServlet {
 			try {
 				final Integer id = Integer.parseInt(idString);
 				final Case aCase = this.dbInterface.getCaseById(id);
+					// TODO
 					//get the case wanted by the user
 				
 				final BeanTableHelper<Case> table = new BeanTableHelper<Case>("cases",
@@ -96,9 +98,10 @@ public final class CaseServlet extends HttpServlet {
 				tableComment.addObjects(cases);
 				
 				session.setAttribute("commentTable", tableComment);
+				session.setAttribute("caseId", id);
 				
 			} catch (final Exception ex) {
-				System.err.println("not able to display comments or case");
+				System.err.println("not able to display the case wanted");
 				ex.printStackTrace();
 				this.getServletContext().getRequestDispatcher("/Cases.jsp").forward(request, response);
 			}
