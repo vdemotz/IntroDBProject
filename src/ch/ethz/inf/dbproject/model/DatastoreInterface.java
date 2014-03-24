@@ -55,6 +55,10 @@ public final class DatastoreInterface {
 	public final int addCaseNote(int caseId, String text, java.util.Date date, String authorUSR){
 		return -1;
 	}
+	
+	public final int addPersonNote(int personId, String text, java.util.Date date, String authorUSR){
+		return -1;
+	}
 	/*
 	public final Case getCaseById(final int id) {
 		//get a case by its id

@@ -9,20 +9,13 @@ import java.sql.SQLException;
 public final class CaseNote {
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	/**
-	 * TODO The properties of the case should be added here
+	 * TODO The properties of the case note should be added here
 	 */
 	private final int caseId;
 	private final int caseNoteId;
 	private final String text;
 	private final Date date;
 	private final String authorUsername;
-
-	/**
-	 * Construct a new case.
-	 * 
-	 * @param description
-	 *            The name of the case
-	 */
 	
 	/* TODO : find a clever way to get the unique ID of a new case note, at creation.
 	*
