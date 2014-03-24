@@ -1,5 +1,7 @@
 package ch.ethz.inf.dbproject.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 public class Person {
@@ -20,6 +22,13 @@ public class Person {
 		this.birthdate = birthdate;
 	}
 
+	public Person(final ResultSet rs) throws SQLException {
+		this.personId = rs.getInt("personId");
+		this.firstName = rs.getString("firstName");
+		this.lastName = rs.getString("lastName");
+		this.birthdate = rs.getDate("birthdate");
+	}
+	
 	////
 	//GETTERS
 	////
