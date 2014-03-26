@@ -50,4 +50,8 @@ public final class User {
 	public String getUserid(){
 		return username;
 	}
+	
+	public String getPassword(){
+		return password;
+	}
 }

@@ -1,9 +1,6 @@
 package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
-
-import ch.ethz.inf.dbproject.database.DatastoreInterface;
-
 import java.util.Date;
 import java.sql.SQLException;
 

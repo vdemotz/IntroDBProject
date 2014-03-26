@@ -2,6 +2,7 @@ package ch.ethz.inf.dbproject.model;
 
 import java.util.Date;
 
+@SuppressWarnings("deprecation")
 public class Datesql extends Date {
 
 	/**
