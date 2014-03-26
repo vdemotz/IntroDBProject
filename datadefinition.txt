@@ -75,8 +75,9 @@ create table ConvictionType
      categoryName   varchar(40),
      foreign key(categoryName) references Category(name) on delete cascade,
      primary key(convictionId)
-   );
 
+     => foreign key(categoryName) references Category(name) on update cascade on delete set null,
+   );
 
 create table Suspected
    ( personId   integer references Person on delete cascade,
@@ -90,5 +91,7 @@ create table Convicted
      caseId   integer references CaseId on delete cascade,
      convictionId   integer references Conviction on delete cascade,
      primary key (personId, caseId, convictionId)
+
+     =>  caseId integer references CaseId on update cascade on delete set null,
    );
 
