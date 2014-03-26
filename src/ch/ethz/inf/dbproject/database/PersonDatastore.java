@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.model.CaseDetail;
+import ch.ethz.inf.dbproject.model.Datesql;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 
@@ -30,7 +31,6 @@ public class PersonDatastore implements PersonDatastoreInterface {
 
 	@Override
 	public List<PersonNote> getPersonNotesForPerson(int personId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
