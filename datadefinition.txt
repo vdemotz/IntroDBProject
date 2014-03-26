@@ -86,4 +86,3 @@ create table Convicted
      convictionId integer references Conviction on delete cascade,
      primary key (personId, caseId, convictionId)
    );
-
