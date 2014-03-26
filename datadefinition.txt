@@ -1,96 +1,89 @@
 create table User
-   ( username   varchar(40) primary key,
-     firstName   varchar(40),
-     lastName   varchar(40),
-     password   varchar(40) not null
+   ( username varchar(40) primary key,
+     firstName varchar(40),
+     lastName varchar(40),
+     password varchar(40) not null
    );
 
 
 create table CaseDetail
-   ( caseId   integer auto_increment,
-     title   varchar(40) not null,
-     street   varchar(40),
-     city   varchar(40),
+   ( caseId integer primary key auto_increment,
+     title varchar(40) not null,
+     street varchar(40),
+     city varchar(40),
      zipCode varchar(40),
-     isOpen   boolean not null,
-     date   datetime,
-     description   text,
-     authorName   varchar(40) references User,
-     primary key(caseId)
+     isOpen boolean not null,
+     date datetime,
+     description text,
+     authorName varchar(40) references User
    );
 
 
 create table CaseNote
-   ( 	caseId integer not null,
-	caseNoteId integer auto_increment,
-	text text,
-	date datetime,
-	authorUsername varchar(40) references User,
-	primary key(caseNoteId),
-	foreign key(caseId) references CaseDetail(caseId) on delete cascade
+   ( caseId integer references CaseDetail on delete cascade,
+     caseNoteId integer,
+	 text text,
+	 date datetime,
+	 authorUsername varchar(40) references User,
+	 primary key (caseId, caseNoteId)
    );
 
 
 create table Person
-   ( 	personId   integer auto_increment,
-     	firstName   varchar(40),
-    	lastName   varchar(40),
-    	birthdate   date,
- 	primary key(personId)
+   ( personId integer primary key auto_increment,
+     firstName varchar(40),
+     lastName varchar(40),
+     birthdate date
    );
 
 
 create table PersonNote
-   ( 	PersonId integer not null,
-	PersonNoteId integer auto_increment,
-	text text,
-	date datetime,
-	authorUsername varchar(40) references User,
-	primary key(personNoteId),
-	foreign key(personId) references Person(personId) on delete cascade
-    );
+   ( personId integer references Person on delete cascade,
+	 personNoteId integer,
+     text text,
+	 date datetime,
+     authorUsername varchar(40) references User,
+	 primary key (personId, personNoteId)
+   );
+
 
 create table Category
-   ( name   varchar(40) primary key
+   ( name varchar(40) primary key
    );
 
 
 create table CategoryForCase
-   ( caseId   integer,
-     categoryName   varchar(40),
-     foreign key(caseId) references CaseDetail(caseId) on delete cascade,
-     foreign key(categoryName) references Category(name) on delete cascade
+   ( caseId integer references CaseDetail on delete cascade,
+     categoryName varchar(40) references Category on delete cascade,
+     primary key (caseId, categoryName)
    );
 
 
 create table Conviction
-   ( convictionId   integer primary key auto_increment,
-     startDate   date,
-     endDate   date
+   ( convictionId integer primary key auto_increment,
+     startDate date,
+     endDate date
    );
 
 
 create table ConvictionType
-   ( convictionId   integer references Conviction on delete cascade,
-     categoryName   varchar(40),
-     foreign key(categoryName) references Category(name) on delete cascade,
-     primary key(convictionId)
-
-     => foreign key(categoryName) references Category(name) on update cascade on delete set null,
+   ( convictionId integer references Conviction on delete cascade,
+     categoryName varchar(40) references Category on update cascade on delete cascade,
+     primary key (convictionId, categoryName)
    );
 
+
 create table Suspected
-   ( personId   integer references Person on delete cascade,
-     caseId   integer references CaseDetail on delete cascade,
+   ( personId integer references Person on delete cascade,
+     caseId integer references CaseDetail on delete cascade,
      primary key (personId, caseId)
    );
 
 
 create table Convicted
-   ( personId   integer references Person on delete cascade,
-     caseId   integer references CaseId on delete cascade,
-     convictionId   integer references Conviction on delete cascade,
+   ( personId integer references Person on delete cascade,
+     caseId integer references CaseId on delete cascade,
+     convictionId integer references Conviction on delete cascade,
      primary key (personId, caseId, convictionId)
-
-     =>  caseId integer references CaseId on update cascade on delete set null,
    );
+
