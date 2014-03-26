@@ -15,17 +15,19 @@ create table CaseDetail
      isOpen boolean not null,
      date datetime,
      description text,
-     authorName varchar(40) references User
+     authorName varchar(40),
+     foreign key (authorName) references User(username)
    );
 
 
 create table CaseNote
-   ( caseId integer references CaseDetail on delete cascade,
+   ( caseId integer,
      caseNoteId integer,
      text text,
      date datetime,
      authorUsername varchar(40) references User,
-     primary key (caseId, caseNoteId)
+     primary key (caseId, caseNoteId),
+     foreign key (caseId) references CaseDetail(caseId) on delete cascade
    );
 
 
@@ -38,12 +40,14 @@ create table Person
 
 
 create table PersonNote
-   ( personId integer references Person on delete cascade,
+   ( personId integer,
      personNoteId integer,
      text text,
      date datetime,
-     authorUsername varchar(40) references User,
-     primary key (personId, personNoteId)
+     authorUsername varchar(40),
+     primary key (personId, personNoteId),
+     foreign key (authorUsername) references User(username),
+     foreign key (personId) references Person(personId) on delete cascade
    );
 
 
@@ -53,9 +57,11 @@ create table Category
 
 
 create table CategoryForCase
-   ( caseId integer references CaseDetail on delete cascade,
-     categoryName varchar(40) references Category on delete cascade,
-     primary key (caseId, categoryName)
+   ( caseId integer,
+     categoryName varchar(40),
+     primary key (caseId, categoryName),
+     foreign key (caseId) references CaseDetail(caseId) on delete cascade,
+     foreign key (categoryName) references Category(name) on delete cascade
    );
 
 
@@ -67,22 +73,26 @@ create table Conviction
 
 
 create table ConvictionType
-   ( convictionId integer references Conviction on delete cascade,
-     categoryName varchar(40) references Category on update cascade on delete cascade,
-     primary key (convictionId, categoryName)
+   ( convictionId integer,
+     categoryName varchar(40),
+     primary key (convictionId, categoryName),
+     foreign key (convictionId) references Conviction(convictionId) on delete cascade,
+     foreign key (categoryName) references Category(name) on update cascade on delete cascade
    );
 
 
 create table Suspected
-   ( personId integer references Person on delete cascade,
-     caseId integer references CaseDetail on delete cascade,
-     primary key (personId, caseId)
+   ( personId integer,
+     caseId integer,
+     primary key (personId, caseId),
+     foreign key (personId) references Person(personId) on delete cascade,
+     foreign key (caseId) references CaseDetail(caseId) on delete cascade
    );
 
 
 create table Convicted
-   ( personId integer references Person on delete cascade,
-     caseId integer references CaseId on delete cascade,
-     convictionId integer references Conviction on delete cascade,
+   ( personId integer references Person(personId) on delete cascade,
+     caseId integer references CaseId(caseId) on delete cascade,
+     convictionId integer references Conviction(convictionId) on delete cascade,
      primary key (personId, caseId, convictionId)
    );

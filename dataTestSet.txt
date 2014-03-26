@@ -1,5 +1,5 @@
 insert into User
-    values('sherlock', 'Sherlock', 'Holmes', 'baskervilles');
+    values('holmes', 'Sherlock', 'Holmes', 'baskervilles');
 insert into User
     values('watson', 'John', 'Watson', 'scarlet');
 
@@ -20,36 +20,36 @@ insert into Category
 
 
 insert into Person (personId, firstName, lastName)
-    values (0, 'Mike', 'Stamford');
+    values (5, 'Mike', 'Stamford');
 
 insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values(0, 0, 'Old friend from school', 'watson');
+    values(5, 0, 'Old friend from school', 'watson');
 
-insert into CaseDetail (key, title, city, isOpen, date, description, authorName)
-    values(0, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'holmes');
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
+    values(10, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'holmes');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(0, 0, 'Wife: my husband was a pround and happy man. He loved his family and his work. And that he should have taken his life in this way is a mistery and a shock to all who knew him', 'watson');
+    values(10, 0, 'Wife: my husband was a pround and happy man. He loved his family and his work. And that he should have taken his life in this way is a mistery and a shock to all who knew him', 'watson');
 
 insert into CategoryForCase
-    values(0, 'Suicide');
+    values(10, 'Suicide');
 
 
-insert into CaseDetail (key, title, city, street, isOpen, date, description, authorName)
+insert into CaseDetail (caseId, title, city, street, isOpen, date, description, authorName)
     values(1, 'Death of James Philmore', 'London', 'Westminsterstreet 5', true, '2010-11-26-21-00', '18 year old James Philmore found dead in a sports centre', 'watson');
 
 insert into CategoryForCase
     values(1, 'Suicide');
 
 
-insert into CaseDetail (key, title, city, isOpen, date, description, authorName)
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
     values(2, 'Death of Beth Davenport', 'London', true, '2010-11-26-23-00', 'Beth Davenport, Junior Minister of Transport found dead at building Site', 'watson');
 
 insert into CategoryForCase
     values(2, 'Suicide');
 
 
-insert into CaseDetail (key, title, city, street, zipCode, isOpen, date, description, authorName)
+insert into CaseDetail (caseId, title, city, street, zipCode, isOpen, date, description, authorName)
     values(3, 'Death of Jennifer Wilson', 'London', 'Gardenstreet 5', 'SW2 5HG', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment at Lauriston Gardens', 'holmes');
 
 insert into CategoryForCase
@@ -77,7 +77,7 @@ insert into CaseNote (caseId, caseNoteId, text, authorUsername)
     values(3, 6, 'The victims must have carried a pink bag, but it is missing. The murderer must have still got it.', 'holmes');
 
 insert into CategoryForCase
-    values(0, 'Mass Murder');
+    values(10, 'Mass Murder');
 
 insert into CategoryForCase
     values(1, 'Mass Murder');
@@ -93,7 +93,7 @@ insert into CaseNote (caseId, caseNoteId, text, authorUsername)
     values(3, 7, 'The phone of the victim is not in the bag. Probably the murderer has her phone.', 'holmes');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 8, 'The police sais Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'holmes');
+    values(3, 8, 'The police says Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'holmes');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
     values(3, 9, 'Rachel is not a name. Its the password for her email account!', 'holmes');
@@ -106,26 +106,26 @@ insert into Person (personId)
 insert into PersonNote (personId, personNoteId, text, authorUsername)
     values(4, 0, 'Husband of the landlady', 'watson');
 
-insert into CaseDetail
-    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', null, 'holmes');
+insert into CaseDetail (caseId, title, city, isOpen, date, authorName)
+    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', 'holmes');
 
 insert into CategoryForCase
     values(5, 'Murder');
 
 insert into Conviction
-    values(0, '2005-10-10', null);
+    values(1, '2005-10-10', null);
 
 insert into ConvictionType
-    values(0, 'Murder');
+    values(1, 'Murder');
 
 insert into Convicted (personId, caseId, convictionId)
-    values(4, 5, 0);
+    values(4, 5, 1);
 
 
 
 
-insert into Person (personId)
-    values (1);
+insert into Person (personId, firstName, lastName)
+    values (1, 'Hank', 'Smith');
 
 insert into PersonNote (personId, personNoteId, text, authorUsername)
     values (1, 0, 'Cab Driver', 'holmes');
@@ -152,7 +152,7 @@ insert into Person (personId, LastName)
     values (2, "Moriarty");
 
 
-insert into CaseDetail (key, title, city, zipCode, isOpen, date, description, authorName)
+insert into CaseDetail (caseId, title, city, zipCode, isOpen, date, description, authorName)
     values(4, 'Cab Driver is shot', 'London', 'CF10 3AT', true, '2010-11-28-24-00', 'The cab driver got shot from someone standing outside the window at Roland-Kerr Further Education College.', 'watson');
 
 insert into CategoryForCase
