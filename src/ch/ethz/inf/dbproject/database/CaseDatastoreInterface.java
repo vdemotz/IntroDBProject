@@ -6,7 +6,7 @@ import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 
 
-public interface CaseDatastoreInteface {
+public interface CaseDatastoreInterface {
 
 	////
 	//QUERY

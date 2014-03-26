@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 import ch.ethz.inf.dbproject.model.*;
 
-public interface PersonDatastoreInteface {
+public interface PersonDatastoreInterface {
 
 	////
 	//QUERY
