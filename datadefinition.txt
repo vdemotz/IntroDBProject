@@ -94,4 +94,3 @@ create table Convicted
 
      =>  caseId integer references CaseId on update cascade on delete set null,
    );
-
