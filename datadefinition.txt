@@ -22,10 +22,10 @@ create table CaseDetail
 create table CaseNote
    ( caseId integer references CaseDetail on delete cascade,
      caseNoteId integer,
-	 text text,
-	 date datetime,
-	 authorUsername varchar(40) references User,
-	 primary key (caseId, caseNoteId)
+     text text,
+     date datetime,
+     authorUsername varchar(40) references User,
+     primary key (caseId, caseNoteId)
    );
 
 
@@ -39,11 +39,11 @@ create table Person
 
 create table PersonNote
    ( personId integer references Person on delete cascade,
-	 personNoteId integer,
+     personNoteId integer,
      text text,
-	 date datetime,
+     date datetime,
      authorUsername varchar(40) references User,
-	 primary key (personId, personNoteId)
+     primary key (personId, personNoteId)
    );
 
 
