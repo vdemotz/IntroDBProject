@@ -132,7 +132,17 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	
 	@Override
 	public List<CaseDetail> getOldestUnresolvedCases() {
-		return caseDatastore.getOpenCases();
+		return caseDatastore.getOldestUnresolvedCases();
+	}
+
+	@Override
+	public List<CaseDetail> getClosedCases() {
+		return caseDatastore.getClosedCases();
+	}
+
+	@Override
+	public List<CaseDetail> getRecentCases() {
+		return caseDatastore.getRecentCases();
 	}
 
 

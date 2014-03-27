@@ -1,10 +1,12 @@
 package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.sql.SQLException;
 
-public final class CaseNote {
+public final class CaseNote extends ModelObject{
 	
 	private final int caseId;
 	private final int caseNoteId;
@@ -26,6 +28,22 @@ public final class CaseNote {
 		this.text = rs.getString("text");
 		this.date = rs.getDate("date");
 		this.authorUsername = rs.getString("authorUsername");
+	}
+	
+	public static List<? extends ModelObject> getAllModelObjectsFromResultSet(final ResultSet rs) throws SQLException
+	{
+		return getModelObjectsFromResultSet(rs, Integer.MAX_VALUE);
+	}
+	
+	public static List<ModelObject> getModelObjectsFromResultSet(final ResultSet rs, int maximumCount) throws SQLException
+	{
+		final List<ModelObject> result = new ArrayList<ModelObject>();
+		int count = 0;
+		while (rs.next() && count < maximumCount) {
+			result.add(new CaseNote(rs));
+			count = count + 1;
+		}
+		return result;
 	}
 		
 	////

@@ -30,6 +30,18 @@ public interface CaseDatastoreInterface {
 	List<CaseDetail> getOpenCases();
 	
 	/**
+	 * @return A list of all closed cases
+	 */
+	List<CaseDetail> getClosedCases();
+	
+	
+	/**
+	 * @return A list of the recent cases
+	 */
+	List<CaseDetail> getRecentCases();
+	
+	
+	/**
 	 * @return A list of the oldest unresolved cases
 	 */
 	List<CaseDetail> getOldestUnresolvedCases();
