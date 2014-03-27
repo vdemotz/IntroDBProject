@@ -173,8 +173,7 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	*/
 	
 	@Override
-	public PersonNote addPersonNote(int personId, String text,
-			String authorUsername) {
+	public PersonNote addPersonNote(int personId, String text, String authorUsername) {
 		// TODO Auto-generated method stub
 		return null;
 	}
