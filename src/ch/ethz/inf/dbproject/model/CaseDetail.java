@@ -106,4 +106,8 @@ public final class CaseDetail {
 		return authorName;
 	}
 	
+	public String getLocation() {
+		return (this.getZipCode()+" "+this.getCity()+", "+this.getStreet());
+	}
+	
 }

@@ -11,10 +11,39 @@ if (user != null) {
 	// There is a user logged in! Display a greeting!
 %>
 	Welcome back <%=user.getFirstName()%>
+	
+	<%= session.getAttribute(HomeServlet.SESSION_USER_DETAILS) %>
+	
+	The cases you modified / created :
+	
+	
+	<%= session.getAttribute(HomeServlet.SESSION_USER_CASES) %>
+	
 <%
 } else {
 	// No user logged in.%>
 	Welcome!
+	
+	<form action="Home" method="get">
+	<input type="hidden" name="action" value="login" />
+	<table>
+		<tr>
+			<th>Username</th>
+			<td><input type="text" name="username" value="" /></td>
+		</tr>
+		<tr>
+			<th>Password</th>
+			<td><input type="password" name="password" value="" /></td>
+		</tr>
+		<tr>
+			<th colspan="2">
+				<input type="submit" value="Login" />
+			</th>
+		</tr>
+	</table>
+	</form>
+	
+	New User ? Create an <a href="UserCreation">account</a>.
 <%
 }
 %>

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Person;
@@ -43,8 +42,8 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public User addUser(String username, String password) {
-		return userDatastore.addUser(username, password);
+	public User addUser(String username, String password, String lastName, String firstName) {
+		return userDatastore.addUser(username, password, lastName, firstName);
 	}
 	
 	////

@@ -46,5 +46,5 @@ public interface UserDatastoreInterface {
 	 * @return the new user if arguments are valid
 	 */
 	
-	User addUser(String username, String password);
+	User addUser(String username, String password, String lastName, String firstName);
 }
