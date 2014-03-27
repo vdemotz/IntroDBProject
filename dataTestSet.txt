@@ -1,5 +1,5 @@
 insert into User
-    values('sherlock', 'Sherlock', 'Holmes', 'baskervilles');
+    values('holmes', 'Sherlock', 'Holmes', 'baskervilles');
 insert into User
     values('watson', 'John', 'Watson', 'scarlet');
 
@@ -20,64 +20,79 @@ insert into Category
 
 
 insert into Person (personId, firstName, lastName)
-    values (0, 'Mike', 'Stamford');
+    values (5, 'Mike', 'Stamford');
 
 insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values(0, 0, 'Old friend from school', 'watson');
+    values(5, 0, 'Old friend from school', 'watson');
 
-insert into CaseDetail (key, title, city, isOpen, date, description, authorName)
-    values(0, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'holmes');
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
+<<<<<<< HEAD
+<<<<<<< HEAD
+    values(0, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'sherlock');
+=======
+    values(10, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'holmes');
+>>>>>>> FETCH_HEAD
+=======
+    values(10, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'holmes');
+>>>>>>> FETCH_HEAD
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(0, 0, 'Wife: my husband was a pround and happy man. He loved his family and his work. And that he should have taken his life in this way is a mistery and a shock to all who knew him', 'watson');
+    values(10, 0, 'Wife: my husband was a pround and happy man. He loved his family and his work. And that he should have taken his life in this way is a mistery and a shock to all who knew him', 'watson');
 
 insert into CategoryForCase
-    values(0, 'Suicide');
+    values(10, 'Suicide');
 
 
-insert into CaseDetail (key, title, city, street, isOpen, date, description, authorName)
+insert into CaseDetail (caseId, title, city, street, isOpen, date, description, authorName)
     values(1, 'Death of James Philmore', 'London', 'Westminsterstreet 5', true, '2010-11-26-21-00', '18 year old James Philmore found dead in a sports centre', 'watson');
 
 insert into CategoryForCase
     values(1, 'Suicide');
 
 
-insert into CaseDetail (key, title, city, isOpen, date, description, authorName)
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
     values(2, 'Death of Beth Davenport', 'London', true, '2010-11-26-23-00', 'Beth Davenport, Junior Minister of Transport found dead at building Site', 'watson');
 
 insert into CategoryForCase
     values(2, 'Suicide');
 
 
-insert into CaseDetail (key, title, city, street, zipCode, isOpen, date, description, authorName)
+insert into CaseDetail (caseId, title, city, street, zipCode, isOpen, date, description, authorName)
+<<<<<<< HEAD
+<<<<<<< HEAD
+    values(3, 'Death of Jennifer Wilson', 'London', 'Gardenstreet 5', 'SW2 5HG', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment at Lauriston Gardens', 'sherlock');
+=======
+=======
+>>>>>>> FETCH_HEAD
     values(3, 'Death of Jennifer Wilson', 'London', 'Gardenstreet 5', 'SW2 5HG', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment at Lauriston Gardens', 'holmes');
+>>>>>>> FETCH_HEAD
 
 insert into CategoryForCase
     values(3, 'Suicide');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 0, 'Victim is wearing pink dress, shoes and nailpolish', 'holmes');
+    values(3, 0, 'Victim is wearing pink dress, shoes and nailpolish', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 1, 'Rache (German for revenge) is etched onto the floor. The nailpolish of the victim is heavily worn off. The victim probably ment to write Rachel, but could not finish in time.', 'holmes');
+    values(3, 1, 'Rache (German for revenge) is etched onto the floor. The nailpolish of the victim is heavily worn off. The victim probably ment to write Rachel, but could not finish in time.', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 2, 'The victim lies with the face towards the floor.', 'holmes');
+    values(3, 2, 'The victim lies with the face towards the floor.', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 3, 'The victim is left handed. In her mid 30s.', 'holmes');
+    values(3, 3, 'The victim is left handed. In her mid 30s.', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 4, 'The victims wears a marriage ring, which is not clean on the outside, but clean on the inside. The other jewelry she is wearing is speckless. This may indicate that the victim takes off the marriage ring frequently, but does not take care of it. Probably 10 or more years unhappily married, serial adulterer', 'holmes');
+    values(3, 4, 'The victims wears a marriage ring, which is not clean on the outside, but clean on the inside. The other jewelry she is wearing is speckless. This may indicate that the victim takes off the marriage ring frequently, but does not take care of it. Probably 10 or more years unhappily married, serial adulterer', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 5, 'The victims hair is messed up and her blazer is wet. No rain and strong wind in London or vicinity. The victims was just staying for one night in London, before returning home to Cardiff. She probably did not get to the hotel', 'holmes');
+    values(3, 5, 'The victims hair is messed up and her blazer is wet. No rain and strong wind in London or vicinity. The victims was just staying for one night in London, before returning home to Cardiff. She probably did not get to the hotel', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 6, 'The victims must have carried a pink bag, but it is missing. The murderer must have still got it.', 'holmes');
+    values(3, 6, 'The victims must have carried a pink bag, but it is missing. The murderer must have still got it.', 'sherlock');
 
 insert into CategoryForCase
-    values(0, 'Mass Murder');
+    values(10, 'Mass Murder');
 
 insert into CategoryForCase
     values(1, 'Mass Murder');
@@ -90,13 +105,21 @@ insert into CategoryForCase
 
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 7, 'The phone of the victim is not in the bag. Probably the murderer has her phone.', 'holmes');
+    values(3, 7, 'The phone of the victim is not in the bag. Probably the murderer has her phone.', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 8, 'The police sais Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'holmes');
+<<<<<<< HEAD
+<<<<<<< HEAD
+    values(3, 8, 'The police sais Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'sherlock');
+=======
+    values(3, 8, 'The police says Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'holmes');
+>>>>>>> FETCH_HEAD
+=======
+    values(3, 8, 'The police says Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'holmes');
+>>>>>>> FETCH_HEAD
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 9, 'Rachel is not a name. Its the password for her email account!', 'holmes');
+    values(3, 9, 'Rachel is not a name. Its the password for her email account!', 'sherlock');
 
 
 
@@ -106,60 +129,70 @@ insert into Person (personId)
 insert into PersonNote (personId, personNoteId, text, authorUsername)
     values(4, 0, 'Husband of the landlady', 'watson');
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 insert into CaseDetail
-    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', null, 'holmes');
+    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', null, 'sherlock');
+=======
+insert into CaseDetail (caseId, title, city, isOpen, date, authorName)
+    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', 'holmes');
+>>>>>>> FETCH_HEAD
+=======
+insert into CaseDetail (caseId, title, city, isOpen, date, authorName)
+    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', 'holmes');
+>>>>>>> FETCH_HEAD
 
 insert into CategoryForCase
     values(5, 'Murder');
 
 insert into Conviction
-    values(0, '2005-10-10', null);
+    values(1, '2005-10-10', null);
 
 insert into ConvictionType
-    values(0, 'Murder');
+    values(1, 'Murder');
 
 insert into Convicted (personId, caseId, convictionId)
-    values(4, 5, 0);
+    values(4, 5, 1);
 
 
 
 
-insert into Person (personId)
-    values (1);
-
-insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 0, 'Cab Driver', 'holmes');
+insert into Person (personId, firstName, lastName)
+    values (1, 'Hank', 'Smith');
 
 insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 1, 'Middle aged', 'holmes');
+    values (1, 0, 'Cab Driver', 'sherlock');
 
 insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 2, 'Two children. Divorced.', 'holmes');
+    values (1, 1, 'Middle aged', 'sherlock');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+    values (1, 2, 'Two children. Divorced.', 'sherlock');
 
 insert into Suspected
     values (1, 3);
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 10, 'Ok its the taxi driver...and I will just go with him', 'holmes');
+    values(3, 10, 'Ok its the taxi driver...and I will just go with him', 'sherlock');
 
 insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 3, 'Terminal illness, desperate, bored, bitter', 'holmes');
+    values (1, 3, 'Terminal illness, desperate, bored, bitter', 'sherlock');
 
 insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 4, 'Was commisioned by someone or something called Moriarty', 'holmes');
+    values (1, 4, 'Was commisioned by someone or something called Moriarty', 'sherlock');
 
 insert into Person (personId, LastName)
     values (2, "Moriarty");
 
 
-insert into CaseDetail (key, title, city, zipCode, isOpen, date, description, authorName)
+insert into CaseDetail (caseId, title, city, zipCode, isOpen, date, description, authorName)
     values(4, 'Cab Driver is shot', 'London', 'CF10 3AT', true, '2010-11-28-24-00', 'The cab driver got shot from someone standing outside the window at Roland-Kerr Further Education College.', 'watson');
 
 insert into CategoryForCase
     values(4, 'Manslaughter');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(4, 0, 'Shots fired from a handgun from a large distance. Must have been acclimatised to violence. He only fired when I was in clear danger, so strong moral principles. You are looking for a man with a history of military service, nerves of steel and...', 'holmes');
+    values(4, 0, 'Shots fired from a handgun from a large distance. Must have been acclimatised to violence. He only fired when I was in clear danger, so strong moral principles. You are looking for a man with a history of military service, nerves of steel and...', 'sherlock');
 
 insert into Person (personId, firstName, lastName)
     values (3, 'John', 'Watson');
@@ -168,7 +201,7 @@ insert into Suspected
     values (2, 4);
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(4, 1, 'Actually, you know what: ignore me. Its just the shock talking', 'holmes');
+    values(4, 1, 'Actually, you know what: ignore me. Its just the shock talking', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
     values(4, 2, 'He was not a very nice man', 'watson');
