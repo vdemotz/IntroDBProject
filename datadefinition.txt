@@ -15,17 +15,9 @@ create table CaseDetail
      isOpen boolean not null,
      date datetime,
      description text,
-<<<<<<< HEAD
-<<<<<<< HEAD
-     authorName varchar(40) references User(username)
-=======
      authorName varchar(40),
      foreign key (authorName) references User(username)
->>>>>>> FETCH_HEAD
-=======
-     authorName varchar(40),
-     foreign key (authorName) references User(username)
->>>>>>> FETCH_HEAD
+
    );
 
 
