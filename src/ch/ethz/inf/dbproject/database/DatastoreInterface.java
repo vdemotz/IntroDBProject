@@ -7,6 +7,7 @@ import java.util.List;
 
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
+import ch.ethz.inf.dbproject.model.Datesql;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 import ch.ethz.inf.dbproject.model.User;
@@ -76,7 +77,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public List<Person> getPersonsForConvictionDate(Date startDate) {
+	public List<Person> getPersonsForConvictionDate(Datesql startDate) {
 		return personDatastore.getPersonsForConvictionDate(startDate);
 	}
 	

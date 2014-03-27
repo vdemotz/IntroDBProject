@@ -11,9 +11,9 @@ public class UserDatastore implements UserDatastoreInterface {
 
 		private Connection sqlConnection;
 		
-	////
-	// Prepared Statement
-	////
+		////
+		// String for Prepared Statement
+		////
 	private String getUserForUsernameAndPassword = "select * from User where username = ? and password = ?";
 	private String getCurrentCasesForUser = "(select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername = ? and caseNote.caseId = caseDetail.caseId) "+
 	"union "+

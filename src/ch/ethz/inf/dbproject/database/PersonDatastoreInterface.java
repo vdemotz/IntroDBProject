@@ -54,7 +54,7 @@ public interface PersonDatastoreInterface {
 	 * @param startDate
 	 * @return a list of persons that have been convicted at the given date
 	 */
-	List<Person> getPersonsForConvictionDate(Date startDate);
+	List<Person> getPersonsForConvictionDate(Datesql startDate);
 	
 	////
 	//MODIFY
