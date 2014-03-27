@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import ch.ethz.inf.dbproject.model.CaseDetail;
+import ch.ethz.inf.dbproject.model.*;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
 /**
@@ -34,55 +34,52 @@ public final class SearchServlet extends HttpServlet {
 		
 		final HttpSession session = request.getSession(true);
 		
-		/*******************************************************
-		 * Construct a table to present all our search results
-		 *******************************************************/
-		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>(
-				"cases" 		/* The table html id property */,
-				"casesTable" /* The table html class property */,
-				CaseDetail.class 	/* The class of the objects (rows) that will bedisplayed */
-		);
-
-		// Add columns to the new table
-		// TODO Update this to our search preferences
-		table.addBeanColumn("Case Name", "title");
-		table.addBeanColumn("Case Category", "location"); 
-		table.addBeanColumn("Case Attribute", "description");
-
-		/*
-		 * Column 4: This is a special column. It adds a link to view the
-		 * Case. We need to pass the case identifier to the url.
-		 */
-		table.addLinkColumn(""	/* The header. We will leave it empty */,
-				"View Case" 	/* What should be displayed in every row */,
-				"Case?id=" 	/* This is the base url. The final url will be composed from the concatenation of this and the parameter below */, 
-				"id" 			/* For every case displayed, the ID will be retrieved and will be attached to the url base above */);
-
-		// Pass the table to the session. This will allow the respective jsp page to display the table.
-		session.setAttribute("results", table);
-
-		// The filter parameter defines what to show on the cases page
 		final String filter = request.getParameter("filter");
 
 		if (filter != null) {
 		
-			if(filter.equals("description")) {
+			if(filter.equals("firstName") || filter.equals("lastName") || filter.equals("convictionType") || filter.equals("convictionDate")) {
+				
+				final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
+						"personsTable", Person.class);
+				
+				table.addBeanColumn("Person ID", "personId");
+				table.addBeanColumn("Last Name", "lastName");
+				table.addBeanColumn("First Name", "firstName");
+				table.addLinkColumn("", "View Person", "Person?id=", "id");
 
-				// TODO implement this!
-				//final String name = request.getParameter("name");
-				//table.addObjects(this.dbInterface.searchByName(name));
+			} else{
+				final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
+						"casesTable", CaseDetail.class);
 
-			} else if (filter.equals("category")) {
+				table.addBeanColumn("Case ID", "caseId");
+				table.addBeanColumn("Title", "title");
+				table.addBeanColumn("Location", "location");
+				table.addBeanColumn("Open", "isOpen");
+				table.addBeanColumn("Date", "date");
+				table.addBeanColumn("Description", "description");
+				table.addBeanColumn("Author Name", "authorName");
 
-				// TODO implement this!
-				//final String name = request.getParameter("category");
-				// table.addObjects(this.dbInterface.searchByCategory(category));
+				table.addLinkColumn("", "View Case", "Case?id=", "id");
+			}
+			
+			
+			if(filter.equals("firstName")){
+				
+			} else if (filter.equals("lastName")) {
 
-			} else if (filter.equals("anotherattribute")) {
+			} else if (filter.equals("convictionType")) {	
+	
+			} else if (filter.equals("convictionDate")) {	
 
-				// TODO implement this!		
+			} else if (filter.equals("category")) {	
 
-			}			
+			} else if (filter.equals("caseDate")) {	
+
+			} else {
+				
+			}
+				
 		}
 
 		// Finally, proceed to the Search.jsp page which will render the search results

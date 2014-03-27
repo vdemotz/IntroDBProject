@@ -14,6 +14,8 @@
 </div>
 </form>
 
+<hr/>
+
 <form method="get" action="Search">
 <div>
 	<input type="hidden" name="filter" value="lastName" />
@@ -22,6 +24,8 @@
 	<input type="submit" value="Search" title="Search by Last Name" />
 </div>
 </form>
+
+<hr/>
 
 <form method="get" action="Search">
 <div>
@@ -53,6 +57,8 @@
 	<input type="submit" value="Search" title="Search by Category" />
 </div>
 </form>
+
+<hr/>
 
 <form method="get" action="Search">
 <div>
