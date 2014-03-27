@@ -25,8 +25,9 @@ create table CaseNote
      caseNoteId integer,
      text text,
      date datetime,
-     authorUsername varchar(40) references User,
+     authorUsername varchar(40),
      primary key (caseId, caseNoteId),
+     foreign key (authorUsername) references User(username),
      foreign key (caseId) references CaseDetail(caseId) on delete cascade
    );
 
@@ -91,8 +92,11 @@ create table Suspected
 
 
 create table Convicted
-   ( personId integer references Person(personId) on delete cascade,
-     caseId integer references CaseId(caseId) on delete cascade,
-     convictionId integer references Conviction(convictionId) on delete cascade,
-     primary key (personId, caseId, convictionId)
+   ( personId integer,
+     caseId integer,
+     convictionId integer,
+     primary key (personId, caseId, convictionId),
+     foreign key (personId) references Person(personId) on delete cascade,
+     foreign key (caseId) references CaseDetail(caseId) on delete cascade,
+     foreign key (convictionId) references Conviction(convictionId) on delete cascade
    );
