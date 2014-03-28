@@ -32,34 +32,32 @@ public final class CasesServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) 
-			throws ServletException, IOException {
+	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
 		final HttpSession session = request.getSession(true);
 
 		/*******************************************************
 		 * Construct a table to present all our results
 		 *******************************************************/
-		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
-				"casesTable", CaseDetail.class);
+		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
 
 		// Add columns to the new table
 		table.addBeanColumn("Case ID", "caseId");
 		table.addBeanColumn("Title", "title");
-		table.addBeanColumn("Location", "location");
+		//table.addBeanColumn("Location", "location");
 		table.addBeanColumn("Open", "isOpen");
 		table.addBeanColumn("Date", "date");
-		table.addBeanColumn("Description", "description");
+		//table.addBeanColumn("Description", "description");
 		table.addBeanColumn("Author Name", "authorName");
-
+		
 		/*
 		 * Column 4: This is a special column. It adds a link to view the
-		 * Project. We need to pass the case identifier to the url.
+		 * Case. We need to pass the case identifier to the url.
 		 */
 		table.addLinkColumn(""	/* The header. We will leave it empty */,
 				"View Case" 	/* What should be displayed in every row */,
 				"Case?id=" 	/* This is the base url. The final url will be composed from the concatenation of this and the parameter below */, 
-				"id" 			/* For every case displayed, the ID will be retrieved and will be attached to the url base above */);
+				"caseId" 			/* For every case displayed, the ID will be retrieved and will be attached to the url base above */);
 
 		// Pass the table to the session. This will allow the respective jsp page to display the table.
 		session.setAttribute("cases", table);
@@ -79,27 +77,21 @@ public final class CasesServlet extends HttpServlet {
 			
 		} else if (filter != null) {
 		
-			if(filter.equals("open")) {
-
-				// TODO implement this!
-				//table.addObjects(this.dbInterface.getOpenCases());
+			if (filter.equals("open")) {
+				
+				table.addObjects(this.dbInterface.getOpenCases());
 
 			} else if (filter.equals("closed")) {
-
-				// TODO implement this!
-				// table.addObjects(this.dbInterface.getClosedCases());
+				
+				table.addObjects(this.dbInterface.getClosedCases());
 
 			} else if (filter.equals("recent")) {
+				
+				table.addObjects(this.dbInterface.getRecentCases());
 
-				// TODO implement this!
-				// table.addObjects(this.dbInterface.getMostRecentCases());
-
-			}
-			
-			else if (filter.equals("oldest")) {
-
-				// TODO implement this!
-				// table.addObjects(this.dbInterface.getOldestUnsolvedCases());
+			} else if (filter.equals("oldest")) {
+				
+				table.addObjects(this.dbInterface.getOldestUnresolvedCases());
 
 			}
 			

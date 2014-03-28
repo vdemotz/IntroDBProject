@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.sql.SQLException;
 
-public final class CaseDetail {
+public final class CaseDetail extends ModelObject {
 
 	private final int caseId;
 	private final String title;
@@ -46,14 +46,14 @@ public final class CaseDetail {
 		this.authorName = rs.getString("authorName");
 	}
 	
-	public static List<CaseDetail> getAllCaseDetailsFromResultSet(final ResultSet rs) throws SQLException
+	public static List<? extends ModelObject> getAllModelObjectsFromResultSet(final ResultSet rs) throws SQLException
 	{
-		return getCaseDetailsFromResultSet(rs, Integer.MAX_VALUE);
+		return getModelObjectsFromResultSet(rs, Integer.MAX_VALUE);
 	}
-	
-	public static List<CaseDetail> getCaseDetailsFromResultSet(final ResultSet rs, int maximumCount) throws SQLException
+
+	public static List<ModelObject> getModelObjectsFromResultSet(final ResultSet rs, int maximumCount) throws SQLException
 	{
-		final List<CaseDetail> result = new ArrayList<CaseDetail>();
+		final List<ModelObject> result = new ArrayList<ModelObject>();
 		int count = 0;
 		while (rs.next() && count < maximumCount) {
 			result.add(new CaseDetail(rs));
@@ -106,8 +106,17 @@ public final class CaseDetail {
 		return authorName;
 	}
 	
+<<<<<<< HEAD
 	public String getLocation() {
 		return (this.getZipCode()+" "+this.getCity()+", "+this.getStreet());
+=======
+	/**
+	 * virtual getter, composing street, city and zipCode into a readable address
+	 * @return the address of the incident
+	 */
+	public String getLocation() {
+		return getStreet() + " " + getZipCode() + " " + getCity();//TODO: nicely handle null
+>>>>>>> workbranch
 	}
 	
 }

@@ -38,9 +38,7 @@ public final class CaseServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected final void doGet(final HttpServletRequest request, 
-			final HttpServletResponse response) throws ServletException, 
-			IOException {
+	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
 		final HttpSession session = request.getSession(true);
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
@@ -51,15 +49,13 @@ public final class CaseServlet extends HttpServlet {
 		final String idString = request.getParameter("id");
 		
 		if (action != null){
-			final Object id = session.getAttribute("caseId");
+			final Object id = session.getAttribute("caseId");//shouldn't the id be sent as part of the request?
 			CaseNote cn = dbInterface.addCaseNote(Integer.parseInt(id.toString()), comment, userId);
 		}
 		
 		if (idString == null) {
 			this.getServletContext().getRequestDispatcher("/Cases.jsp").forward(request, response);
-		}
-		
-		else{
+		} else {
 			try {
 				final Integer id = Integer.parseInt(idString);
 				
@@ -86,13 +82,13 @@ public final class CaseServlet extends HttpServlet {
 				//set all the CaseNotes on the case
 				final BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments", "commentsTable", CaseNote.class);
 				
-				tableComment.addBeanColumn("Case ID", "caseId");
+				//tableComment.addBeanColumn("Case ID", "caseId");
 				tableComment.addBeanColumn("Case Note ID", "caseNoteId");
 				tableComment.addBeanColumn("Comment", "text");
 				tableComment.addBeanColumn("Date", "date");
 				tableComment.addBeanColumn("Author Name", "authorUsername");
 				
-				final List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(id);
+				final List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(id);//TODO: handle null, empty list
 				tableComment.addObjects(cases);
 				
 				session.setAttribute("commentTable", tableComment);
