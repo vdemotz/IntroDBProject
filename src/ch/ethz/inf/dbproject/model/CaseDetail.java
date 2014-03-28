@@ -106,17 +106,8 @@ public final class CaseDetail extends ModelObject {
 		return authorName;
 	}
 	
-<<<<<<< HEAD
 	public String getLocation() {
-		return (this.getZipCode()+" "+this.getCity()+", "+this.getStreet());
-=======
-	/**
-	 * virtual getter, composing street, city and zipCode into a readable address
-	 * @return the address of the incident
-	 */
-	public String getLocation() {
-		return getStreet() + " " + getZipCode() + " " + getCity();//TODO: nicely handle null
->>>>>>> workbranch
+		return (this.getZipCode()+" "+this.getCity()+", "+this.getStreet());//TODO: nicely handle null
 	}
 	
 }

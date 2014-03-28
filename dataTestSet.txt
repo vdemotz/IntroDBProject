@@ -109,14 +109,8 @@ insert into Person (personId)
 insert into PersonNote (personId, personNoteId, text, authorUsername)
     values(4, 0, 'Husband of the landlady', 'watson');
 
-
 insert into CaseDetail (caseId, title, city, isOpen, date, authorName)
-<<<<<<< HEAD
-values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', 'holmes');
-
-=======
     values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00-00‘, 'holmes');
->>>>>>> workbranch
 
 insert into CategoryForCase
     values(5, 'Murder');
