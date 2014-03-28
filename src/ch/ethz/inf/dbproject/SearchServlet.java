@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import ch.ethz.inf.dbproject.database.DatastoreInterface;
 import ch.ethz.inf.dbproject.model.*;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
@@ -19,7 +20,8 @@ import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 public final class SearchServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-		
+	private final DatastoreInterface dbInterface = new DatastoreInterface();
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -35,7 +37,8 @@ public final class SearchServlet extends HttpServlet {
 		final HttpSession session = request.getSession(true);
 		
 		final String filter = request.getParameter("filter");
-
+		final String description = request.getParameter("description");
+		
 		if (filter != null) {
 		
 			if(filter.equals("firstName") || filter.equals("lastName") || filter.equals("convictionType") || filter.equals("convictionDate")) {
@@ -46,9 +49,24 @@ public final class SearchServlet extends HttpServlet {
 				table.addBeanColumn("Person ID", "personId");
 				table.addBeanColumn("Last Name", "lastName");
 				table.addBeanColumn("First Name", "firstName");
-				table.addLinkColumn("", "View Person", "Person?id=", "id");
+				//table.addLinkColumn("", "View Person", "Person?id=", "id");
+				
+				if(filter.equals("firstName")){
+					table.addObjects(this.dbInterface.getPersonsForName(description, ""));
+					
+				} else if (filter.equals("lastName")) {
+					table.addObjects(this.dbInterface.getPersonsForName("", description));
 
-			} else{
+				} else if (filter.equals("convictionType")) {	
+					table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
+		
+				} else if (filter.equals("convictionDate")) {	
+					table.addObjects(this.dbInterface.getPersonsForConvictionDate(description));
+				}
+				
+				session.setAttribute("results", table);
+
+			} else if(filter.equals("category") || filter.equals("caseDate")){
 				final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
 						"casesTable", CaseDetail.class);
 
@@ -59,27 +77,18 @@ public final class SearchServlet extends HttpServlet {
 				table.addBeanColumn("Date", "date");
 				table.addBeanColumn("Description", "description");
 				table.addBeanColumn("Author Name", "authorName");
-
 				table.addLinkColumn("", "View Case", "Case?id=", "id");
-			}
-			
-			
-			if(filter.equals("firstName")){
 				
-			} else if (filter.equals("lastName")) {
-
-			} else if (filter.equals("convictionType")) {	
-	
-			} else if (filter.equals("convictionDate")) {	
-
-			} else if (filter.equals("category")) {	
-
-			} else if (filter.equals("caseDate")) {	
-
+				if (filter.equals("category")) {	
+					table.addObjects(this.dbInterface.getCasesForCategory(description));
+				} else if (filter.equals("caseDate")) {	
+					//table.addObjects(this.dbInterface.getCasesForDate(date));
+				} 
+				
 			} else {
-				
-			}
-				
+				System.err.println("Error :: Code should not be reachable. Filter equals to :"+filter);
+				final BeanTableHelper<CaseDetail> table = null;
+			}	
 		}
 
 		// Finally, proceed to the Search.jsp page which will render the search results

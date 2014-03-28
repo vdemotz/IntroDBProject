@@ -39,8 +39,7 @@
 					<div class="menuDiv3"><a href="Cases?category=theft">Theft</a></div>
 					<div class="menuDiv3"><a href="Cases?category=other">Other</a></div>
 					<div class="menuDiv1"><a href="Search">Search</a></div>
-					<div class="menuDiv1"><a href="User">User Profile</a></div>
-					
+					<div class="menuDiv1"><a href="PersonsOfInterest">Persons of Interest</a></div>
 				</td>
 				
 				<td id="masterContentPlaceholder">

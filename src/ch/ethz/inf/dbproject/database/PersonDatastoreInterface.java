@@ -56,6 +56,22 @@ public interface PersonDatastoreInterface {
 	 */
 	List<Person> getPersonsForConvictionDate(Datesql startDate);
 	
+	/**
+	 * @param startDate :: String
+	 * @return a list of persons that have been convicted at the given date
+	 */
+	List<Person> getPersonsForConvictionDate(String startDate);
+	
+	/**
+	 * @return a list of persons that are convicted for at least one crime
+	 */
+	List<Person> getAllConvictedPersons();
+	
+	/**
+	 * @return a list of persons that are suspected for at least one crime
+	 */
+	List<Person> getAllSuspectedPersons();
+	
 	////
 	//MODIFY
 	////
@@ -70,5 +86,7 @@ public interface PersonDatastoreInterface {
 	 * 		   otherwise, null
 	 */
 	PersonNote addPersonNote(int personId, String text, String authorUsername);
+
+	
 	
 }

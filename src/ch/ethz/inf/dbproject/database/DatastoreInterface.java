@@ -52,6 +52,17 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	////
 	
 	@Override
+	public List<Person> getAllConvictedPersons() {
+		return personDatastore.getAllConvictedPersons();
+	}
+	
+	@Override
+	public List<Person> getAllSuspectedPersons() {
+		return personDatastore.getAllSuspectedPersons();
+	}
+	
+	
+	@Override
 	public List<CaseDetail> getCasesForWhichPersonIsConvicted(int personId) {
 		return personDatastore.getCasesForWhichPersonIsConvicted(personId);
 	}
@@ -78,6 +89,11 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	
 	@Override
 	public List<Person> getPersonsForConvictionDate(Datesql startDate) {
+		return personDatastore.getPersonsForConvictionDate(startDate);
+	}
+	
+	@Override
+	public List<Person> getPersonsForConvictionDate(String startDate) {
 		return personDatastore.getPersonsForConvictionDate(startDate);
 	}
 	

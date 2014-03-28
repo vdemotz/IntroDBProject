@@ -1,20 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="Header.jsp" %>
 
-<h1>Search</h1>
-
 <hr/>
+
+<h1>Search Persons :</h1>
 
 <form method="get" action="Search">
 <div>
 	<input type="hidden" name="filter" value="firstName" />
 	Search By First Name:
 	<input type="text" name="description" />
-	<input type="submit" value="Search" title="Search by First Name" />
+	<input type="submit" value="Search" title="Search by First Name-" />
 </div>
 </form>
-
-<hr/>
 
 <form method="get" action="Search">
 <div>
@@ -25,8 +23,6 @@
 </div>
 </form>
 
-<hr/>
-
 <form method="get" action="Search">
 <div>
 	<input type="hidden" name="filter" value="convictionType" />
@@ -35,8 +31,6 @@
 	<input type="submit" value="Search" title="Search by Conviction type" />
 </div>
 </form>
-
-<hr/>
 
 <form method="get" action="Search">
 <div>
@@ -49,6 +43,8 @@
 
 <hr/>
 
+Search Cases :
+
 <form method="get" action="Search">
 <div>
 	<input type="hidden" name="filter" value="category" />
@@ -57,8 +53,6 @@
 	<input type="submit" value="Search" title="Search by Category" />
 </div>
 </form>
-
-<hr/>
 
 <form method="get" action="Search">
 <div>
@@ -70,10 +64,7 @@
 </form>
 
 <hr/>
-<%  
-	//TODO Display search results 
-	// session.getAttribute("results");
-%>
+<%= session.getAttribute("results") %>
 
 <hr/>
 

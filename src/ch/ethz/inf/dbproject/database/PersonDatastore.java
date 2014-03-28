@@ -31,6 +31,8 @@ public class PersonDatastore implements PersonDatastoreInterface {
 			"where conviction.startDate = ? and conviction.convictionId = convicted.convictionId and "+
 			"convicted.personId = person.personId";
 	private String getPersonForId = "select * from Person where personId =?";
+	private String getAllConvictedPersons = "select p.* from Person p, Convicted c where p.personId = c.personId";
+	private String getAllSuspectedPersons = "select p.* from Person p, Suspected s where p.personId = s.personId";
 
 	public PersonDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -47,6 +49,38 @@ public class PersonDatastore implements PersonDatastoreInterface {
 				cd.add(new CaseDetail(rs));
 			}
 			return cd;
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	@Override
+	public List<Person> getAllConvictedPersons() {
+		try{
+			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getAllConvictedPersons);
+			ResultSet rs = sqlRequest.executeQuery();
+			List<Person> p = new ArrayList<Person>();
+			while (rs.next()){
+				p.add(new Person(rs));
+			}
+			return p;
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	@Override
+	public List<Person> getAllSuspectedPersons() {
+		try{
+			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getAllSuspectedPersons);
+			ResultSet rs = sqlRequest.executeQuery();
+			List<Person> p = new ArrayList<Person>();
+			while (rs.next()){
+				p.add(new Person(rs));
+			}
+			return p;
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
@@ -127,6 +161,23 @@ public class PersonDatastore implements PersonDatastoreInterface {
 		try{
 			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonsForConvictionDate);
 			sqlRequest.setString(1, startDate.getDatesql());
+			ResultSet rs = sqlRequest.executeQuery();
+			List<Person> p = new ArrayList<Person>();
+			while (rs.next()){
+				p.add(new Person(rs));
+			}
+			return p;
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	@Override
+	public List<Person> getPersonsForConvictionDate(String startDate) {
+		try{
+			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonsForConvictionDate);
+			sqlRequest.setString(1, startDate);
 			ResultSet rs = sqlRequest.executeQuery();
 			List<Person> p = new ArrayList<Person>();
 			while (rs.next()){
