@@ -107,7 +107,7 @@ insert into PersonNote (personId, personNoteId, text, authorUsername)
     values(4, 0, 'Husband of the landlady', 'watson');
 
 insert into CaseDetail (caseId, title, city, isOpen, date, authorName)
-    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00', 'holmes');
+    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00-00‘, 'holmes');
 
 insert into CategoryForCase
     values(5, 'Murder');
@@ -153,7 +153,7 @@ insert into Person (personId, LastName)
 
 
 insert into CaseDetail (caseId, title, city, zipCode, isOpen, date, description, authorName)
-    values(4, 'Cab Driver is shot', 'London', 'CF10 3AT', true, '2010-11-28-24-00', 'The cab driver got shot from someone standing outside the window at Roland-Kerr Further Education College.', 'watson');
+    values(4, 'Cab Driver is shot', 'London', 'CF10 3AT', true, '2010-11-28-00-00', 'The cab driver got shot from someone standing outside the window at Roland-Kerr Further Education College.', 'watson');
 
 insert into CategoryForCase
     values(4, 'Manslaughter');

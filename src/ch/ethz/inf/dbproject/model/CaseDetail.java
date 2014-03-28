@@ -41,8 +41,7 @@ public final class CaseDetail extends ModelObject {
 		this.street = rs.getString("street");
 		this.zipCode = rs.getString("zipCode");
 		this.isOpen = rs.getBoolean("isOpen");
-		this.date  = new Date();//TODO
-		//this.date = rs.getDate("date");
+		this.date = rs.getDate("date");
 		this.description = rs.getString("description");
 		this.authorName = rs.getString("authorName");
 	}
