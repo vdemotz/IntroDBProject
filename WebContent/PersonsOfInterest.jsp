@@ -1,9 +1,16 @@
 <%@page import="ch.ethz.inf.dbproject.PersonsOfInterestServlet"%>
+<%@page import="ch.ethz.inf.dbproject.model.User"%>
+<%@page import="ch.ethz.inf.dbproject.util.UserManagement"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="Header.jsp" %>
 
 <h2>Persons of Interest</h2>
-
+<%
+final User user = (User) session.getAttribute(UserManagement.SESSION_USER);
+if (user != null) {
+%>
+	Do you want to add a person ? Feel free to do it <a href="PersonCreation">here</a>.
+<% } %>
 <form method="get" action="PersonsOfInterest">
 <div>
 	<input type="hidden" name="filter" value="suspected" />
@@ -18,7 +25,7 @@
 </form>
 
 	
-<%= session.getAttribute("results") %>
+<%= session.getAttribute("resultsPersons") %>
 
 
 <%@ include file="Footer.jsp" %>

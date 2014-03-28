@@ -58,7 +58,7 @@ public final class PersonsOfInterestServlet extends HttpServlet {
 			System.err.println("Error :: Code should not be reachable. Filter equals to : "+filter);
 		}
 		
-		session.setAttribute("results", table);
+		session.setAttribute("resultsPersons", table);
 		
 		this.getServletContext().getRequestDispatcher("/PersonsOfInterest.jsp").forward(request, response);
 	}
