@@ -32,4 +32,8 @@ if (user != null) {
 
 <%=session.getAttribute("commentTable")%>
 
+<%=session.getAttribute("suspectsTable")%>
+
+<%=session.getAttribute("convictsTable")%>
+
 <%@ include file="Footer.jsp"%>

@@ -33,13 +33,13 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	//template: cases for a specific date
 	String casesForDateQuery = "select * from CaseDetail where date = ?";
 	//template: suspected persons for a specific case
-	String suspectsForCaseQuery = "select distinct person.*" +
-								  "from Person person, Suspected suspected, CaseDetail caseDetail" +
+	String suspectsForCaseQuery = "select person.* " +
+								  "from Person person, Suspected suspected, CaseDetail caseDetail " +
 				                  "where caseDetail.caseId = ? and suspected.caseId = caseDetail.caseId and suspected.personId = person.personId";
 	//template: convicted persons for a specific case
-	String convictsForCaseQuery = "select distinct person.*" +
-								  "from Person person, Convicted convicted, CaseDetail caseDetail" +
-								  "where caseDetail.caseId = ? and convicted.caseId = caseDetail.caseId and convicted.personId = person.personId;";
+	String convictsForCaseQuery = "select person.* " +
+								  "from Person person, Convicted convicted, CaseDetail caseDetail " +
+								  "where caseDetail.caseId = ? and convicted.caseId = caseDetail.caseId and convicted.personId = person.personId";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -212,7 +212,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	@Override
 	public List<Person> getConvictsForCase(int caseId) {
 		try {
-			suspectsForCaseStatement.setInt(1, caseId);
+			convictsForCaseStatement.setInt(1, caseId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

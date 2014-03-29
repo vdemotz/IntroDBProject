@@ -12,10 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
-import ch.ethz.inf.dbproject.model.CaseNote;
-import ch.ethz.inf.dbproject.model.Conviction;
-import ch.ethz.inf.dbproject.model.CaseDetail;
-import ch.ethz.inf.dbproject.model.User;
+import ch.ethz.inf.dbproject.model.*;
 import ch.ethz.inf.dbproject.util.UserManagement;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
@@ -33,6 +30,67 @@ public final class CaseServlet extends HttpServlet {
 	 */
 	public CaseServlet() {
 		super();
+	}
+	
+	protected BeanTableHelper<CaseDetail> getCaseTableForId(int caseId)
+	{
+		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+		
+		CaseDetail caseDetail = this.dbInterface.getCaseForId(caseId);
+		table.addObject(caseDetail);
+		
+		table.addBeanColumn("Case ID", "caseId");
+		table.addBeanColumn("Title", "title");
+		table.addBeanColumn("Location", "location");
+		table.addBeanColumn("Open", "isOpen");
+		table.addBeanColumn("Date", "date");
+		table.addBeanColumn("Description", "description");
+		table.addBeanColumn("Author Name", "authorName");
+		
+		table.setVertical(true);
+		return table;
+	}
+	
+	protected BeanTableHelper<CaseNote> getCaseNotesTableForCase(int caseId)
+	{
+		BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments", "commentsTable", CaseNote.class);
+	
+		List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(caseId);//TODO: handle null, empty list
+		tableComment.addObjects(cases);
+		
+		//tableComment.addBeanColumn("Case ID", "caseId");
+		tableComment.addBeanColumn("Case Note ID", "caseNoteId");
+		tableComment.addBeanColumn("Comment", "text");
+		tableComment.addBeanColumn("Date", "date");
+		tableComment.addBeanColumn("Author Name", "authorUsername");
+		
+		return tableComment;
+	}
+	
+	protected BeanTableHelper<Person> getSuspectsTableForCase(int caseId)
+	{
+		BeanTableHelper<Person> suspectsTable = new BeanTableHelper<Person>("suspects", "suspectsTable", Person.class);
+		
+		List<Person> suspects = this.dbInterface.getSuspectsForCase(caseId);
+		suspectsTable.addObjects(suspects);
+		
+		suspectsTable.addBeanColumn("Suspect Id", "personId");
+		suspectsTable.addBeanColumn("Name", "name");
+		
+		return suspectsTable;
+	}
+	
+	protected BeanTableHelper<Person> getConvictsTableForCase(int caseId)
+	{
+		BeanTableHelper<Person> suspectsTable = new BeanTableHelper<Person>("convicts", "convictsTable", Person.class);
+		
+		List<Person> convicts = this.dbInterface.getConvictsForCase(caseId);
+		suspectsTable.addObjects(convicts);
+		
+		suspectsTable.addBeanColumn("Convict Id", "personId");
+		suspectsTable.addBeanColumn("Name", "name");
+		
+		return suspectsTable;
 	}
 
 	/**
@@ -61,37 +119,14 @@ public final class CaseServlet extends HttpServlet {
 				
 				//set the caseId
 				session.setAttribute("caseId", id);
-				
 				//set the CaseDetail (the header) wanted by the user
-				final CaseDetail aCase = this.dbInterface.getCaseForId(id);
-				
-				final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
-				
-				table.addBeanColumn("Case ID", "caseId");
-				table.addBeanColumn("Title", "title");
-				table.addBeanColumn("Location", "location");
-				table.addBeanColumn("Open", "isOpen");
-				table.addBeanColumn("Date", "date");
-				table.addBeanColumn("Description", "description");
-				table.addBeanColumn("Author Name", "authorName");
-				
-				table.addObject(aCase);
-				table.setVertical(true);			
-				session.setAttribute("caseTable", table);
-				
-				//set all the CaseNotes on the case
-				final BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments", "commentsTable", CaseNote.class);
-				
-				//tableComment.addBeanColumn("Case ID", "caseId");
-				tableComment.addBeanColumn("Case Note ID", "caseNoteId");
-				tableComment.addBeanColumn("Comment", "text");
-				tableComment.addBeanColumn("Date", "date");
-				tableComment.addBeanColumn("Author Name", "authorUsername");
-				
-				final List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(id);//TODO: handle null, empty list
-				tableComment.addObjects(cases);
-				
-				session.setAttribute("commentTable", tableComment);
+				session.setAttribute("caseTable", getCaseTableForId(id));
+				//list the case notes				
+				session.setAttribute("commentTable", getCaseNotesTableForCase(id));
+				//list the suspects
+				session.setAttribute("suspectsTable", getSuspectsTableForCase(id));
+				//list the convicts
+				session.setAttribute("convictsTable", getConvictsTableForCase(id));
 				
 			} catch (final Exception ex) {
 				System.err.println("not able to display the case wanted");

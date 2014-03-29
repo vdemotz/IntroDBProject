@@ -49,5 +49,8 @@ public class Person extends ModelObject{
 		return birthdate;
 	}
 	
+	public String getName() {
+		return getFirstName() + " " + getLastName();
+	}
 	
 }
