@@ -1,6 +1,8 @@
 insert into User
     values('holmes', 'Sherlock', 'Holmes', 'baskervilles');
 insert into User
+    values('sherlock', 'Sherlock', 'Holmes', 'baskervilles');
+insert into User
     values('watson', 'John', 'Watson', 'scarlet');
 
 insert into Category
@@ -27,7 +29,7 @@ insert into PersonNote (personId, personNoteId, text, authorUsername)
 
 insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
 
-    values(10, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'holmes');
+    values(10, 'Death of Jeffrey Patterson', 'London', true, '2010-12-10-16-00', 'Sir John found dead in office building. Case of death: poisoning', 'sherlock');
 
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
@@ -52,7 +54,7 @@ insert into CategoryForCase
 
 
 insert into CaseDetail (caseId, title, city, street, zipCode, isOpen, date, description, authorName)
-values(3, 'Death of Jennifer Wilson', 'London', 'Gardenstreet 5', 'SW2 5HG', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment at Lauriston Gardens', 'holmes');
+values(3, 'Death of Jennifer Wilson', 'London', 'Gardenstreet 5', 'SW2 5HG', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment at Lauriston Gardens', 'sherlock');
 
 insert into CategoryForCase
     values(3, 'Suicide');
@@ -95,7 +97,7 @@ insert into CaseNote (caseId, caseNoteId, text, authorUsername)
     values(3, 7, 'The phone of the victim is not in the bag. Probably the murderer has her phone.', 'sherlock');
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-values(3, 8, 'The police says Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'holmes');
+values(3, 8, 'The police says Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'sherlock');
 
 
 insert into CaseNote (caseId, caseNoteId, text, authorUsername)
@@ -110,7 +112,7 @@ insert into PersonNote (personId, personNoteId, text, authorUsername)
     values(4, 0, 'Husband of the landlady', 'watson');
 
 insert into CaseDetail (caseId, title, city, isOpen, date, authorName)
-    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00-00‘, 'holmes');
+    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00-00', 'sherlock');
 
 insert into CategoryForCase
     values(5, 'Murder');
@@ -153,7 +155,6 @@ insert into PersonNote (personId, personNoteId, text, authorUsername)
 
 insert into Person (personId, LastName)
     values (2, "Moriarty");
-
 
 insert into CaseDetail (caseId, title, city, zipCode, isOpen, date, description, authorName)
     values(4, 'Cab Driver is shot', 'London', 'CF10 3AT', true, '2010-11-28-00-00', 'The cab driver got shot from someone standing outside the window at Roland-Kerr Further Education College.', 'watson');
