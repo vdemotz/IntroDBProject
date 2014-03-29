@@ -6,7 +6,7 @@ import java.sql.SQLException;
 /**
  * Object that represents a registered in user.
  */
-public final class User {
+public final class User extends ModelObject{
 
 	private final String username;
 	private final String firstName;

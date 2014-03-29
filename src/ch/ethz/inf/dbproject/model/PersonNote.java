@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.util.Date;
 import java.sql.SQLException;
 
-public final class PersonNote {
+public final class PersonNote extends ModelObject {
 	
 	private final int personId;
 	private final int personNoteId;

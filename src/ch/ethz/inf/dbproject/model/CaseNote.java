@@ -29,22 +29,6 @@ public final class CaseNote extends ModelObject{
 		this.date = rs.getDate("date");
 		this.authorUsername = rs.getString("authorUsername");
 	}
-	
-	public static List<? extends ModelObject> getAllModelObjectsFromResultSet(final ResultSet rs) throws SQLException
-	{
-		return getModelObjectsFromResultSet(rs, Integer.MAX_VALUE);
-	}
-	
-	public static List<ModelObject> getModelObjectsFromResultSet(final ResultSet rs, int maximumCount) throws SQLException
-	{
-		final List<ModelObject> result = new ArrayList<ModelObject>();
-		int count = 0;
-		while (rs.next() && count < maximumCount) {
-			result.add(new CaseNote(rs));
-			count = count + 1;
-		}
-		return result;
-	}
 		
 	////
 	// GETTERS

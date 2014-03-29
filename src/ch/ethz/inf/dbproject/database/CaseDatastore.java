@@ -8,6 +8,8 @@ import java.util.List;
 
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
+import ch.ethz.inf.dbproject.model.ModelObject;
+
 
 public class CaseDatastore implements CaseDatastoreInterface {
 
@@ -20,11 +22,13 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	//template: all open or closed cases
 	String openCasesQuery = "select * from CaseDetail where isOpen = ? order by date desc";
 	//template: all notes for a specific case
-	String caseNotesForCaseQuery = "select caseNote.* from CaseNote caseNote where caseNote.caseId = ?";
+	String caseNotesForCaseQuery = "select * from CaseNote where caseId = ?";
 	//template: all recent cases
 	String recentCasesQuery = "select * from CaseDetail order by date desc";
 	//template: oldest unresolved cases
 	String oldestUnresolvedCasesQuery = "select * from CaseDetail where isOpen = true order by date asc";
+	//template: cases for a specific category
+	String casesForCategoryQuery = "select distinct CaseDetail.* from CaseDetail, CategoryForCase where categoryName = ?";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -51,8 +55,29 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		caseNotesForCaseStatement = sqlConnection.prepareStatement(caseNotesForCaseQuery);
 		recentCasesStatement = sqlConnection.prepareStatement(recentCasesQuery);
 		oldestUnresolvedCasesStatement = sqlConnection.prepareStatement(oldestUnresolvedCasesQuery);
+		casesForCategoryStatement = sqlConnection.prepareStatement(casesForCategoryQuery);
 	}
 	
+	////
+	//GENERIC STATEMENT EXECUTION
+	////
+	
+	/**
+	 * Executes a statement, and tries to instantiate a list of ModelObjects of the specified modelClass using the resultSet from the statement
+	 * If the execution of the statement or instantiation raises an SQLException, null is returned.
+	 * @param statement the configured statement to execute and get the results of
+	 * @return a list of modelObjects representing the result of the execution of the statement
+	 */
+	private <T extends ModelObject> List<T> getResults(Class<T> modelClass, PreparedStatement statement)
+	{
+		 try {
+			statement.execute();
+			return ModelObject.getAllModelObjectsWithClassFromResultSet(modelClass, statement.getResultSet());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	/////
 	//Result of type CaseDetail
@@ -70,27 +95,14 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			return null;
 		}
 	}
-
 	
 	/////
 	//Result of type List<CaseDetail>
 	/////
 	
-	@SuppressWarnings("unchecked")
-	private List<CaseDetail> executeCaseDetailListStatement(PreparedStatement statement)
-	{
-		 try {
-			statement.execute();
-			return (List<CaseDetail>)CaseDetail.getAllModelObjectsFromResultSet(statement.getResultSet());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	@Override
 	public List<CaseDetail> getAllCases() {
-		return executeCaseDetailListStatement(allCasesStatement);
+		return getResults(CaseDetail.class, allCasesStatement);
 	}
 
 	@Override
@@ -101,12 +113,12 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			e.printStackTrace();
 			return null;
 		}
-		return executeCaseDetailListStatement(openCasesStatement);
+		return getResults(CaseDetail.class, openCasesStatement);
 	}
 
 	@Override
 	public List<CaseDetail> getOldestUnresolvedCases() {
-		return executeCaseDetailListStatement(oldestUnresolvedCasesStatement);
+		return getResults(CaseDetail.class, oldestUnresolvedCasesStatement);
 	}
 
 	@Override
@@ -117,18 +129,23 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			e.printStackTrace();
 			return null;
 		}
-		return executeCaseDetailListStatement(openCasesStatement);
+		return getResults(CaseDetail.class, openCasesStatement);
 	}
 
 	@Override
 	public List<CaseDetail> getRecentCases() {
-		return executeCaseDetailListStatement(recentCasesStatement);
+		return getResults(CaseDetail.class, recentCasesStatement);
 	}
 	
 	@Override
 	public List<CaseDetail> getCasesForCategory(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			casesForCategoryStatement.setString(1, name);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return getResults(CaseDetail.class, casesForCategoryStatement);
 	}
 	
 	@Override
@@ -137,22 +154,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		return null;
 	}
 	
-	
 	////
 	//Result of type List<CaseNote>
 	////
-	
-	@SuppressWarnings("unchecked")
-	private List<CaseNote> executeCaseNoteListStatement(PreparedStatement statement)
-	{
-		 try {
-			statement.execute();
-			return (List<CaseNote>)CaseNote.getAllModelObjectsFromResultSet(statement.getResultSet());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 	
 	@Override
 	public List<CaseNote> getCaseNotesForCase(int caseId) {
@@ -162,17 +166,13 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			e.printStackTrace();
 			return null;
 		}
-		return executeCaseNoteListStatement(caseNotesForCaseStatement);
+		return getResults(CaseNote.class, caseNotesForCaseStatement);
 	}
 	
-
-
 	@Override
 	public CaseNote addCaseNote(int caseId, String text, String authorUsername) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 
 }

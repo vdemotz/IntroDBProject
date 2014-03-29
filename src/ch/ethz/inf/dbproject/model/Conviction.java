@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Object that represents a conviction.
  */
-public class Conviction {
+public class Conviction extends ModelObject {
 
 	private final Date date;
 	private final Date endDate;
