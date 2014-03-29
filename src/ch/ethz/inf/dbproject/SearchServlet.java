@@ -75,15 +75,17 @@ public final class SearchServlet extends HttpServlet {
 				table.addBeanColumn("Location", "location");
 				table.addBeanColumn("Open", "isOpen");
 				table.addBeanColumn("Date", "date");
-				table.addBeanColumn("Description", "description");
+				//table.addBeanColumn("Description", "description");
 				table.addBeanColumn("Author Name", "authorName");
 				table.addLinkColumn("", "View Case", "Case?id=", "id");
 				
-				if (filter.equals("category")) {	
+				if (filter.equals("category")) {
 					table.addObjects(this.dbInterface.getCasesForCategory(description));
 				} else if (filter.equals("caseDate")) {	
 					//table.addObjects(this.dbInterface.getCasesForDate(date));
-				} 
+				}
+				
+				session.setAttribute("results", table);
 				
 			} else {
 				System.err.println("Error :: Code should not be reachable. Filter equals to :"+filter);

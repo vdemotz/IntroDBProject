@@ -10,6 +10,10 @@
 
 <%=session.getAttribute("categoryTable")%>
 
+<%=session.getAttribute("suspectsTable")%>
+
+<%=session.getAttribute("convictsTable")%>
+
 <%
 	// TODO close or reopen the case
 %>
@@ -33,9 +37,5 @@ if (user != null) {
 %>
 
 <%=session.getAttribute("commentTable")%>
-
-<%=session.getAttribute("suspectsTable")%>
-
-<%=session.getAttribute("convictsTable")%>
 
 <%@ include file="Footer.jsp"%>

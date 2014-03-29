@@ -3,7 +3,7 @@
 
 <hr/>
 
-<h1>Search Persons :</h1>
+<h3>Search Persons :</h3>
 
 <form method="get" action="Search">
 <div>
@@ -43,13 +43,13 @@
 
 <hr/>
 
-Search Cases :
+<h3>Search Cases :</h3>
 
 <form method="get" action="Search">
 <div>
 	<input type="hidden" name="filter" value="category" />
 	Search By Category:
-	<input type="text" name="attribute" />
+	<input type="text" name="description" />
 	<input type="submit" value="Search" title="Search by Category" />
 </div>
 </form>
@@ -58,7 +58,7 @@ Search Cases :
 <div>
 	<input type="hidden" name="filter" value="caseDate" />
 	Search By Date of Case:
-	<input type="text" name="attribute" />
+	<input type="text" name="description" />
 	<input type="submit" value="Search" title="Search by date of Case" />
 </div>
 </form>

@@ -20,7 +20,6 @@ public final class Category extends ModelObject {
 	
 	public Category(ResultSet rs) throws SQLException
 	{
-		//setAttributesFromResultSet(rs);
 		this(rs.getString("name"));
 	}
 

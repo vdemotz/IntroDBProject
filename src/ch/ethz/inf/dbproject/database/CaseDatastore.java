@@ -30,7 +30,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	//template: oldest unresolved cases
 	String oldestUnresolvedCasesQuery = "select * from CaseDetail where isOpen = true order by date asc";
 	//template: cases for a specific category
-	String casesForCategoryQuery = "select distinct CaseDetail.* from CaseDetail, CategoryForCase where categoryName = ?";
+	String casesForCategoryQuery = "select CaseDetail.* from CaseDetail caseDetail, CategoryForCase categoryForCase where categoryName = ? and caseDetail.caseId = categoryForCase.caseId";
 	//template: cases for a specific date
 	String casesForDateQuery = "select * from CaseDetail where date = ?";
 	//template: suspected persons for a specific case
