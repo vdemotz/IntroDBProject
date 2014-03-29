@@ -8,6 +8,7 @@ import java.util.List;
 
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
+import ch.ethz.inf.dbproject.model.Category;
 import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 
@@ -40,6 +41,10 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String convictsForCaseQuery = "select person.* " +
 								  "from Person person, Convicted convicted, CaseDetail caseDetail " +
 								  "where caseDetail.caseId = ? and convicted.caseId = caseDetail.caseId and convicted.personId = person.personId";
+	//template: all categories for a specific case
+	String categoriesForCaseQuery = "select Category.* " +
+									"from CaseDetail caseDetail, CategoryForCase categoryForCase, Category category " +
+								    "where caseDetail.caseId = ? and categoryForCase.caseId = caseDetail.caseId and categoryForCase.categoryName = category.Name";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -51,6 +56,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement casesForDateStatement;
 	PreparedStatement suspectsForCaseStatement;
 	PreparedStatement convictsForCaseStatement;
+	PreparedStatement categoriesForCaseStatement;
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -73,6 +79,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		casesForDateStatement = sqlConnection.prepareStatement(casesForDateQuery);
 		suspectsForCaseStatement = sqlConnection.prepareStatement(suspectsForCaseQuery);
 		convictsForCaseStatement = sqlConnection.prepareStatement(convictsForCaseQuery);
+		categoriesForCaseStatement = sqlConnection.prepareStatement(categoriesForCaseQuery);
 	}
 	
 	////
@@ -96,6 +103,19 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		}
 	}
 	
+	/**
+	 * @param statement a statement whose first parameter is a caseId
+	 * @param caseId the value that the caseId argument will be set to
+	 */
+	private void setCaseId(PreparedStatement statement, int caseId)
+	{
+		try {
+			statement.setInt(1, caseId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/////
 	//QUERY
 	/////
@@ -107,7 +127,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	@Override
 	public CaseDetail getCaseForId(int id) {
 		try {
-			caseForIdStatement.setInt(1, id);
+			setCaseId(caseForIdStatement, id);
 			caseForIdStatement.execute();
 			caseForIdStatement.getResultSet().next();
 			return new CaseDetail(caseForIdStatement.getResultSet());
@@ -185,12 +205,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	
 	@Override
 	public List<CaseNote> getCaseNotesForCase(int caseId) {
-		try {
-			caseNotesForCaseStatement.setInt(1, caseId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		setCaseId(caseNotesForCaseStatement, caseId);
 		return getResults(CaseNote.class, caseNotesForCaseStatement);
 	}
 	
@@ -200,24 +215,24 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	
 	@Override
 	public List<Person> getSuspectsForCase(int caseId) {
-		try {
-			suspectsForCaseStatement.setInt(1, caseId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		setCaseId(suspectsForCaseStatement, caseId);
 		return getResults(Person.class, suspectsForCaseStatement);
 	}
 
 	@Override
 	public List<Person> getConvictsForCase(int caseId) {
-		try {
-			convictsForCaseStatement.setInt(1, caseId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		setCaseId(convictsForCaseStatement, caseId);
 		return getResults(Person.class, convictsForCaseStatement);
+	}
+	
+	/////
+	//Result of type List<Category>
+	/////
+	
+	@Override
+	public List<Category> getCategoriesForCase(int caseId) {
+		setCaseId(categoriesForCaseStatement, caseId);
+		return getResults(Category.class, categoriesForCaseStatement);
 	}
 	
 	////

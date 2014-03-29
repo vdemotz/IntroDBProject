@@ -8,6 +8,8 @@
 
 <%=session.getAttribute("caseTable")%>
 
+<%=session.getAttribute("categoryTable")%>
+
 <%
 	// TODO close or reopen the case
 %>

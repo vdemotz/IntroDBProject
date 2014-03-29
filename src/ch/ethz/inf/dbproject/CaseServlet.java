@@ -92,6 +92,21 @@ public final class CaseServlet extends HttpServlet {
 		
 		return suspectsTable;
 	}
+	
+	protected BeanTableHelper<Category> getCategoriesTableForCase(int caseId)
+	{
+		BeanTableHelper<Category> table = new BeanTableHelper<Category>("categories", "categoryTable", Category.class);
+		
+		List<Category> list = this.dbInterface.getCategoriesForCase(caseId);
+		table.addObjects(list);
+		
+		table.addBeanColumn("Categories", "name");
+		
+		//table.setVertical(true);
+		
+		return table;
+	}
+	
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -121,6 +136,8 @@ public final class CaseServlet extends HttpServlet {
 				session.setAttribute("caseId", id);
 				//set the CaseDetail (the header) wanted by the user
 				session.setAttribute("caseTable", getCaseTableForId(id));
+				//set the Categories for the case
+				session.setAttribute("categoryTable", getCategoriesTableForCase(id));
 				//list the case notes				
 				session.setAttribute("commentTable", getCaseNotesTableForCase(id));
 				//list the suspects

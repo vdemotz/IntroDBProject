@@ -1,6 +1,8 @@
 package ch.ethz.inf.dbproject.model;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Object that represents a conviction.
@@ -19,6 +21,11 @@ public class Conviction extends ModelObject {
 		this.date = date;
 		this.endDate = endDate;
 		this.type = type;
+	}
+	
+	public Conviction(ResultSet rs) throws SQLException
+	{
+		this(rs.getDate("startDate"), rs.getDate("endDate"), rs.getString("type"));
 	}
 	
 	////

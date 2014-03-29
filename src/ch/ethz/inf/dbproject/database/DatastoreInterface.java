@@ -7,6 +7,7 @@ import java.util.List;
 
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
+import ch.ethz.inf.dbproject.model.Category;
 import ch.ethz.inf.dbproject.model.Datesql;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
@@ -169,6 +170,11 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	@Override
 	public List<Person> getConvictsForCase(int caseId) {
 		return caseDatastore.getConvictsForCase(caseId);
+	}
+
+	@Override
+	public List<Category> getCategoriesForCase(int caseId) {
+		return caseDatastore.getCategoriesForCase(caseId);
 	}
 	
 }
