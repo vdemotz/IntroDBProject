@@ -16,7 +16,7 @@ import ch.ethz.inf.dbproject.model.User;
 import ch.ethz.inf.dbproject.util.UserManagement;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
-@WebServlet(description = "Page that displays the user login / logout options.", urlPatterns = { "/PersonsOfInterest" })
+@WebServlet(description = "Page that displays the details regarding a person", urlPatterns = { "/PersonsOfInterest" })
 public final class PersonsOfInterestServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

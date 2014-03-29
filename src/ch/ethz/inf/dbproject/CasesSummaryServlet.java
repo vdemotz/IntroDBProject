@@ -15,7 +15,7 @@ import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
 
-@WebServlet(description = "The home page of the project", urlPatterns = { "/CasesSummary" })
+@WebServlet(description = "Displays Groups of Cases", urlPatterns = { "/CasesSummary" })
 public class CasesSummaryServlet extends HttpServlet {
 
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
