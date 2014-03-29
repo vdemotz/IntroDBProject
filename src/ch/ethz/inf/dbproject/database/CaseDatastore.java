@@ -9,6 +9,7 @@ import java.util.List;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;
+import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 
@@ -45,6 +46,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String categoriesForCaseQuery = "select Category.* " +
 									"from CaseDetail caseDetail, CategoryForCase categoryForCase, Category category " +
 								    "where caseDetail.caseId = ? and categoryForCase.caseId = caseDetail.caseId and categoryForCase.categoryName = category.Name";
+	//template: category summary
+	String categorySummaryQuery = "select categoryName, count(*) as numberOfCases from CategoryForCase group by categoryName";
+	
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -57,6 +61,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement suspectsForCaseStatement;
 	PreparedStatement convictsForCaseStatement;
 	PreparedStatement categoriesForCaseStatement;
+	PreparedStatement categorySummaryStatement;
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -80,6 +85,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		suspectsForCaseStatement = sqlConnection.prepareStatement(suspectsForCaseQuery);
 		convictsForCaseStatement = sqlConnection.prepareStatement(convictsForCaseQuery);
 		categoriesForCaseStatement = sqlConnection.prepareStatement(categoriesForCaseQuery);
+		categorySummaryStatement = sqlConnection.prepareStatement(categorySummaryQuery);
 	}
 	
 	////
@@ -233,6 +239,15 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	public List<Category> getCategoriesForCase(int caseId) {
 		setCaseId(categoriesForCaseStatement, caseId);
 		return getResults(Category.class, categoriesForCaseStatement);
+	}
+	
+	////
+	//Result of type List<CategorySummary>
+	////
+	
+	@Override
+	public List<CategorySummary> getCategorySummary() {
+		return getResults(CategorySummary.class, categorySummaryStatement);
 	}
 	
 	////
