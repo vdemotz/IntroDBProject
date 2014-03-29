@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.database;
 import java.util.List;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
+import ch.ethz.inf.dbproject.model.Person;
 
 
 public interface CaseDatastoreInterface {
@@ -64,6 +65,20 @@ public interface CaseDatastoreInterface {
 	 * @return a list of cases for incidents that occurred on the given date
 	 */
 	List<CaseDetail> getCasesForDate(java.sql.Date date);
+	
+	/**
+	 * @param caseId
+	 * @return a list of persons if the caseId is valid,
+	 * 		   otherwise null
+	 */
+	List<Person> getSuspectsForCase(int caseId);
+	
+	/**
+	 * @param caseId
+	 * @return a list of persons if the caseId is valid,
+	 * 		   otherwise null
+	 */
+	List<Person> getConvictsForCase(int caseId);
 	
 	////
 	//MODIFY

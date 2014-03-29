@@ -160,5 +160,15 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public List<CaseDetail> getRecentCases() {
 		return caseDatastore.getRecentCases();
 	}
+
+	@Override
+	public List<Person> getSuspectsForCase(int caseId) {
+		return caseDatastore.getSuspectsForCase(caseId);
+	}
+
+	@Override
+	public List<Person> getConvictsForCase(int caseId) {
+		return caseDatastore.getConvictsForCase(caseId);
+	}
 	
 }

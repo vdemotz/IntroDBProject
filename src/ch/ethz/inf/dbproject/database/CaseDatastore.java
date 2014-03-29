@@ -9,6 +9,7 @@ import java.util.List;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.ModelObject;
+import ch.ethz.inf.dbproject.model.Person;
 
 
 public class CaseDatastore implements CaseDatastoreInterface {
@@ -31,7 +32,14 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String casesForCategoryQuery = "select distinct CaseDetail.* from CaseDetail, CategoryForCase where categoryName = ?";
 	//template: cases for a specific date
 	String casesForDateQuery = "select * from CaseDetail where date = ?";
-	
+	//template: suspected persons for a specific case
+	String suspectsForCaseQuery = "select distinct person.*" +
+								  "from Person person, Suspected suspected, CaseDetail caseDetail" +
+				                  "where caseDetail.caseId = ? and suspected.caseId = caseDetail.caseId and suspected.personId = person.personId";
+	//template: convicted persons for a specific case
+	String convictsForCaseQuery = "select distinct person.*" +
+								  "from Person person, Convicted convicted, CaseDetail caseDetail" +
+								  "where caseDetail.caseId = ? and convicted.caseId = caseDetail.caseId and convicted.personId = person.personId;";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -41,6 +49,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement recentCasesStatement;
 	PreparedStatement casesForCategoryStatement;
 	PreparedStatement casesForDateStatement;
+	PreparedStatement suspectsForCaseStatement;
+	PreparedStatement convictsForCaseStatement;
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -61,6 +71,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		oldestUnresolvedCasesStatement = sqlConnection.prepareStatement(oldestUnresolvedCasesQuery);
 		casesForCategoryStatement = sqlConnection.prepareStatement(casesForCategoryQuery);
 		casesForDateStatement = sqlConnection.prepareStatement(casesForDateQuery);
+		suspectsForCaseStatement = sqlConnection.prepareStatement(suspectsForCaseQuery);
+		convictsForCaseStatement = sqlConnection.prepareStatement(convictsForCaseQuery);
 	}
 	
 	////
@@ -83,6 +95,10 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			return null;
 		}
 	}
+	
+	/////
+	//QUERY
+	/////
 	
 	/////
 	//Result of type CaseDetail
@@ -177,6 +193,36 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		}
 		return getResults(CaseNote.class, caseNotesForCaseStatement);
 	}
+	
+	////
+	//Result of type List<Person>
+	////
+	
+	@Override
+	public List<Person> getSuspectsForCase(int caseId) {
+		try {
+			suspectsForCaseStatement.setInt(1, caseId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return getResults(Person.class, suspectsForCaseStatement);
+	}
+
+	@Override
+	public List<Person> getConvictsForCase(int caseId) {
+		try {
+			suspectsForCaseStatement.setInt(1, caseId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return getResults(Person.class, convictsForCaseStatement);
+	}
+	
+	////
+	//MODIFY
+	////
 	
 	@Override
 	public CaseNote addCaseNote(int caseId, String text, String authorUsername) {
