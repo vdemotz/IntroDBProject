@@ -8,15 +8,15 @@ import java.sql.SQLException;
 
 public final class CaseDetail extends ModelObject {
 
-	private final int caseId;
-	private final String title;
-	private final String city;
-	private final String street;
-	private final String zipCode;
-	private final boolean isOpen;
-	private final java.sql.Date date;
-	private final String description;
-	private final String authorName;
+	private int caseId;
+	private String title;
+	private String city;
+	private String street;
+	private String zipCode;
+	private boolean isOpen;
+	private java.sql.Date date;
+	private String description;
+	private String authorName;
 
 	////
 	//CONSTRUCTORS
@@ -35,15 +35,7 @@ public final class CaseDetail extends ModelObject {
 	}
 	
 	public CaseDetail(final ResultSet rs) throws SQLException {
-		this.caseId = rs.getInt("caseId");
-		this.title = rs.getString("title");
-		this.city = rs.getString("city");
-		this.street = rs.getString("street");
-		this.zipCode = rs.getString("zipCode");
-		this.isOpen = rs.getBoolean("isOpen");
-		this.date = rs.getDate("date");
-		this.description = rs.getString("description");
-		this.authorName = rs.getString("authorName");
+		super(rs);
 	}
 
 	////

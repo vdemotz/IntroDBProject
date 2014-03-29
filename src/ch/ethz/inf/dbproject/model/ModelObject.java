@@ -1,10 +1,12 @@
 package ch.ethz.inf.dbproject.model;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Date;
 
 public class ModelObject {
 
@@ -13,11 +15,34 @@ public class ModelObject {
 	}
 	
 	/**
-	 * Subclasses should override this method to set their field using the result set
+	 * Experimental:
+	 * Sets all the fields of a ModelObject from a ResultSet assuming default types (except for dates) and the same names for the fields as for the SQL attributes
+	 * If one of the fields is of type java.sql.Date, then getDate is used to retrieve the value, instead of getObject
+	 * If one of the Objects fields doesn't match any column in the ResultSet, the field is left unmodified.
 	 * @param rs
+	 * @throws SQLException
 	 */
 	public ModelObject(ResultSet rs)
 	{
+		Class<?> currentClass = this.getClass();
+		Field[] fields = currentClass.getDeclaredFields();
+		
+		for (int i=0; i<fields.length; i++) {
+			fields[i].setAccessible(true);//in case the field is final, this makes it possible to assign it anyway
+			try {
+				String fieldname = fields[i].getName();
+				Object value;
+				if (fields[i].getType().equals(java.sql.Date.class)) {//the default value for DATETIME SQL attributes is java.sql.Timestamp, but if one uses java.sql.Date getObject would fail
+					value = rs.getDate(fieldname);
+				} else {
+					value = rs.getObject(fieldname);//use default type
+				}
+				fields[i].set(this, value);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			fields[i].setAccessible(false);//enforce java language checks again
+		}
 	}
 
 	/**
