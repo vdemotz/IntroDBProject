@@ -132,7 +132,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public List<CaseDetail> getCasesForDate(Date date) {
+	public List<CaseDetail> getCasesForDate(java.sql.Date date) {
 		return caseDatastore.getCasesForDate(date);
 	}
 	

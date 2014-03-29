@@ -1,7 +1,7 @@
 package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
-import java.util.Date;
+import java.sql.Date;
 import java.sql.SQLException;
 
 public final class PersonNote extends ModelObject {
@@ -9,14 +9,14 @@ public final class PersonNote extends ModelObject {
 	private final int personId;
 	private final int personNoteId;
 	private final String text;
-	private final Date date;
+	private final java.sql.Date date;
 	private final String authorUsername;
 	
 	////
 	// CONSTRUCTORS
 	////
 	
-	public PersonNote(final int personId, final int personNoteId, final String text, final Date date, final String authorUsername){
+	public PersonNote(final int personId, final int personNoteId, final String text, final java.sql.Date date, final String authorUsername){
 		this.personId = personId;
 		this.text = text;
 		this.date = date;
@@ -48,7 +48,7 @@ public final class PersonNote extends ModelObject {
 		return text;
 	}
 
-	public Date getDate() {
+	public java.sql.Date getDate() {
 		return date;
 	}
 

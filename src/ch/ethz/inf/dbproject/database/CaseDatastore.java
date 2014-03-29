@@ -29,6 +29,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String oldestUnresolvedCasesQuery = "select * from CaseDetail where isOpen = true order by date asc";
 	//template: cases for a specific category
 	String casesForCategoryQuery = "select distinct CaseDetail.* from CaseDetail, CategoryForCase where categoryName = ?";
+	//template: cases for a specific date
+	String casesForDateQuery = "select * from CaseDetail where date = ?";
+	
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -37,6 +40,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement oldestUnresolvedCasesStatement;
 	PreparedStatement recentCasesStatement;
 	PreparedStatement casesForCategoryStatement;
+	PreparedStatement casesForDateStatement;
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -56,6 +60,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		recentCasesStatement = sqlConnection.prepareStatement(recentCasesQuery);
 		oldestUnresolvedCasesStatement = sqlConnection.prepareStatement(oldestUnresolvedCasesQuery);
 		casesForCategoryStatement = sqlConnection.prepareStatement(casesForCategoryQuery);
+		casesForDateStatement = sqlConnection.prepareStatement(casesForDateQuery);
 	}
 	
 	////
@@ -149,9 +154,13 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	}
 	
 	@Override
-	public List<CaseDetail> getCasesForDate(Date date) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<CaseDetail> getCasesForDate(java.sql.Date date) {
+		try {
+			casesForDateStatement.setDate(1, date);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return getResults(CaseDetail.class, casesForDateStatement);
 	}
 	
 	////

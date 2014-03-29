@@ -2,14 +2,14 @@ package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
+import java.sql.Date;
 
 public class Person extends ModelObject{
 
 	final int personId;
 	final String firstName;
 	final String lastName;
-	final Date birthdate;
+	final java.sql.Date birthdate;
 	
 	////
 	//CONSTRUCTORS
@@ -45,7 +45,7 @@ public class Person extends ModelObject{
 		return lastName;
 	}
 
-	public Date getBirthdate() {
+	public java.sql.Date getBirthdate() {
 		return birthdate;
 	}
 	

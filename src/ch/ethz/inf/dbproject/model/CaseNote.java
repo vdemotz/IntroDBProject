@@ -2,7 +2,7 @@ package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.sql.SQLException;
 
@@ -11,10 +11,10 @@ public final class CaseNote extends ModelObject{
 	private final int caseId;
 	private final int caseNoteId;
 	private final String text;
-	private final Date date;
+	private final java.sql.Date date;
 	private final String authorUsername;
 	
-	public CaseNote(final int caseId, final int caseNoteId, final String text, final Date date, final String authorUsername){
+	public CaseNote(final int caseId, final int caseNoteId, final String text, final java.sql.Date date, final String authorUsername){
 		this.caseId = caseId;
 		this.text = text;
 		this.date = date;
@@ -46,7 +46,7 @@ public final class CaseNote extends ModelObject{
 		return text;
 	}
 
-	public Date getDate() {
+	public java.sql.Date getDate() {
 		return date;
 	}
 

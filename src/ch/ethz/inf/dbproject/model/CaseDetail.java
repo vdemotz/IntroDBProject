@@ -2,7 +2,7 @@ package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.sql.SQLException;
 
@@ -14,7 +14,7 @@ public final class CaseDetail extends ModelObject {
 	private final String street;
 	private final String zipCode;
 	private final boolean isOpen;
-	private final Date date;
+	private final java.sql.Date date;
 	private final String description;
 	private final String authorName;
 
@@ -78,7 +78,7 @@ public final class CaseDetail extends ModelObject {
 		return isOpen;
 	}
 	
-	public Date getDate() {
+	public java.sql.Date getDate() {
 		return date;
 	}
 	

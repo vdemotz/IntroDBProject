@@ -1,7 +1,6 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.util.List;
-import java.util.Date;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 
@@ -64,7 +63,7 @@ public interface CaseDatastoreInterface {
 	 * @param date
 	 * @return a list of cases for incidents that occurred on the given date
 	 */
-	List<CaseDetail> getCasesForDate(Date date);
+	List<CaseDetail> getCasesForDate(java.sql.Date date);
 	
 	////
 	//MODIFY
