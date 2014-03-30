@@ -46,7 +46,7 @@ public final class PersonsOfInterestServlet extends HttpServlet {
 		table.addBeanColumn("Person ID", "personId");
 		table.addBeanColumn("Last Name", "lastName");
 		table.addBeanColumn("First Name", "firstName");
-		//table.addLinkColumn("", "View Person", "Person?id=", "id");
+		table.addLinkColumn("", "View Person", "Person?id=", "id");
 		
 		if (filter == null){
 			

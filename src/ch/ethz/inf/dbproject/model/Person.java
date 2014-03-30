@@ -36,6 +36,10 @@ public class Person extends ModelObject{
 	public int getPersonId() {
 		return personId;
 	}
+	
+	public int getId() {
+		return personId;
+	}
 
 	public String getFirstName() {
 		return firstName;

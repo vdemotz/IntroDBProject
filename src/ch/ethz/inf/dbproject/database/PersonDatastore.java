@@ -33,6 +33,7 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	private String getPersonForId = "select * from Person where personId =?";
 	private String getAllConvictedPersons = "select p.* from Person p, Convicted c where p.personId = c.personId";
 	private String getAllSuspectedPersons = "select p.* from Person p, Suspected s where p.personId = s.personId";
+	private String addPersonNote = "insert into PersonNote(PersonId, text, date, authorUsername) values(?, ?, ?, ?)";
 
 	public PersonDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -225,8 +226,19 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	
 	@Override
 	public PersonNote addPersonNote(int personId, String text, String authorUsername) {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.addPersonNote);
+			sqlRequest.setInt(1, personId);
+			sqlRequest.setString(2, text);
+			sqlRequest.setString(3, new Datesql().getDateTimesql());
+			sqlRequest.setString(4, authorUsername);
+			sqlRequest.execute();
+
+			return null;
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 
