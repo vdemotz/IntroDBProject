@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import ch.ethz.inf.dbproject.model.*;
 
@@ -54,13 +54,7 @@ public interface PersonDatastoreInterface {
 	 * @param startDate
 	 * @return a list of persons that have been convicted at the given date
 	 */
-	List<Person> getPersonsForConvictionDate(Datesql startDate);
-	
-	/**
-	 * @param startDate :: String
-	 * @return a list of persons that have been convicted at the given date
-	 */
-	List<Person> getPersonsForConvictionDate(String startDate);
+	List<Person> getPersonsForConvictionDate(Date startDate);
 	
 	/**
 	 * @return a list of persons that are convicted for at least one crime

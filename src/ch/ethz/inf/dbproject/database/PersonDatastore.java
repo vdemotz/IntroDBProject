@@ -2,11 +2,9 @@ package ch.ethz.inf.dbproject.database;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.Datesql;
+import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 import ch.ethz.inf.dbproject.model.User;
@@ -158,27 +156,10 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	}
 
 	@Override
-	public List<Person> getPersonsForConvictionDate(Datesql startDate) {
+	public List<Person> getPersonsForConvictionDate(Date startDate) {
 		try{
 			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonsForConvictionDate);
-			sqlRequest.setString(1, startDate.getDatesql());
-			ResultSet rs = sqlRequest.executeQuery();
-			List<Person> p = new ArrayList<Person>();
-			while (rs.next()){
-				p.add(new Person(rs));
-			}
-			return p;
-		} catch (final SQLException ex){
-			ex.printStackTrace();
-			return null;
-		}
-	}
-	
-	@Override
-	public List<Person> getPersonsForConvictionDate(String startDate) {
-		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonsForConvictionDate);
-			sqlRequest.setString(1, startDate);
+			sqlRequest.setString(1, startDate.toString());
 			ResultSet rs = sqlRequest.executeQuery();
 			List<Person> p = new ArrayList<Person>();
 			while (rs.next()){
@@ -230,10 +211,10 @@ public class PersonDatastore implements PersonDatastoreInterface {
 			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.addPersonNote);
 			sqlRequest.setInt(1, personId);
 			sqlRequest.setString(2, text);
-			sqlRequest.setString(3, new Datesql().getDateTimesql());
+			sqlRequest.setString(3, new Datesql().getDatesql());
 			sqlRequest.setString(4, authorUsername);
 			sqlRequest.execute();
-
+			
 			return null;
 		} catch (final SQLException ex){
 			ex.printStackTrace();

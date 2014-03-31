@@ -61,7 +61,7 @@ public final class SearchServlet extends HttpServlet {
 					table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
 		
 				} else if (filter.equals("convictionDate")) {	
-					table.addObjects(this.dbInterface.getPersonsForConvictionDate(description));
+					//table.addObjects(this.dbInterface.getPersonsForConvictionDate(description));
 				}
 				
 				session.setAttribute("results", table);

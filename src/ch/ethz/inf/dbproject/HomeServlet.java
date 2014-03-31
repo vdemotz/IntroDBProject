@@ -78,10 +78,11 @@ public final class HomeServlet extends HttpServlet {
 					//add the user to the session, with the details
 				
 				final BeanTableHelper<CaseDetail> casesUserModified = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+				// Add columns to the new table
+				casesUserModified.addBeanColumn("Case ID", "caseId");
 				casesUserModified.addBeanColumn("Title", "title");
-				casesUserModified.addBeanColumn("Case Id", "caseId");
-				casesUserModified.addBeanColumn("Location", "location");
-				casesUserModified.addBeanColumn("Open ?", "isOpen");
+				//table.addBeanColumn("Location", "location");
+				casesUserModified.addBeanColumn("Open", "isOpen");
 				casesUserModified.addBeanColumn("Date", "date");
 				casesUserModified.addBeanColumn("Author Name", "authorName");
 				

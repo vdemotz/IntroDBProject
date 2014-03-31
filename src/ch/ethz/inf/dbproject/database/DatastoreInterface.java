@@ -1,15 +1,12 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;
 import ch.ethz.inf.dbproject.model.CategorySummary;
-import ch.ethz.inf.dbproject.model.Datesql;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 import ch.ethz.inf.dbproject.model.User;
@@ -90,12 +87,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public List<Person> getPersonsForConvictionDate(Datesql startDate) {
-		return personDatastore.getPersonsForConvictionDate(startDate);
-	}
-	
-	@Override
-	public List<Person> getPersonsForConvictionDate(String startDate) {
+	public List<Person> getPersonsForConvictionDate(Date startDate) {
 		return personDatastore.getPersonsForConvictionDate(startDate);
 	}
 	
