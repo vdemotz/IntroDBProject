@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +34,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	//template: cases for a specific category
 	String casesForCategoryQuery = "select CaseDetail.* from CaseDetail caseDetail, CategoryForCase categoryForCase where categoryName = ? and caseDetail.caseId = categoryForCase.caseId";
 	//template: cases for a specific date
-	String casesForDateQuery = "select * from CaseDetail where date = ?";
+	String casesForDateQuery = "select * from CaseDetail where Date(date) = ?";
+	//template: cases for an approximate date
+	String casesForDateLikeQuery = "select * from CaseDetail where date like ?";
 	//template: suspected persons for a specific case
 	String suspectsForCaseQuery = "select person.* " +
 								  "from Person person, Suspected suspected, CaseDetail caseDetail " +
@@ -62,6 +65,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement convictsForCaseStatement;
 	PreparedStatement categoriesForCaseStatement;
 	PreparedStatement categorySummaryStatement;
+	PreparedStatement casesForDateLikeStatement;
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -86,6 +90,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		convictsForCaseStatement = sqlConnection.prepareStatement(convictsForCaseQuery);
 		categoriesForCaseStatement = sqlConnection.prepareStatement(categoriesForCaseQuery);
 		categorySummaryStatement = sqlConnection.prepareStatement(categorySummaryQuery);
+		casesForDateLikeStatement = sqlConnection.prepareStatement(casesForDateLikeQuery);
 	}
 	
 	////
@@ -201,8 +206,20 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			casesForDateStatement.setDate(1, date);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return null;
 		}
 		return getResults(CaseDetail.class, casesForDateStatement);
+	}
+	
+	@Override
+	public List<CaseDetail> getCasesForDateLike(String date) {
+		try {
+			casesForDateLikeStatement.setString(1, date + "%");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return getResults(CaseDetail.class, casesForDateLikeStatement);
 	}
 	
 	////
@@ -259,5 +276,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 }

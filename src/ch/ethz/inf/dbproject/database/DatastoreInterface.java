@@ -131,6 +131,11 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
+	public List<CaseDetail> getCasesForDateLike(String date) {
+		return caseDatastore.getCasesForDateLike(date);
+	}
+	
+	@Override
 	public CaseNote addCaseNote(int caseId, String text, String authorUsername) {
 		return caseDatastore.addCaseNote(caseId, text, authorUsername);
 	}
@@ -174,5 +179,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public List<CategorySummary> getCategorySummary() {
 		return caseDatastore.getCategorySummary();
 	}
+
+
 	
 }

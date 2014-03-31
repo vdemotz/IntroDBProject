@@ -5,16 +5,17 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
 import java.sql.SQLException;
+import java.text.DateFormat;
 
 public final class CaseNote extends ModelObject{
 	
-	private final int caseId;
-	private final int caseNoteId;
-	private final String text;
-	private final java.sql.Date date;
-	private final String authorUsername;
+	private int caseId;
+	private int caseNoteId;
+	private String text;
+	private java.sql.Timestamp date;
+	private String authorUsername;
 	
-	public CaseNote(final int caseId, final int caseNoteId, final String text, final java.sql.Date date, final String authorUsername){
+	public CaseNote(final int caseId, final int caseNoteId, final String text, final java.sql.Timestamp date, final String authorUsername){
 		this.caseId = caseId;
 		this.text = text;
 		this.date = date;
@@ -23,13 +24,9 @@ public final class CaseNote extends ModelObject{
 	}
 
 	public CaseNote(final ResultSet rs) throws SQLException {
-		this.caseId = rs.getInt("caseId");
-		this.caseNoteId = rs.getInt("caseNoteId");
-		this.text = rs.getString("text");
-		this.date = rs.getDate("date");
-		this.authorUsername = rs.getString("authorUsername");
+		super(rs);
 	}
-		
+	
 	////
 	// GETTERS
 	////
@@ -46,8 +43,13 @@ public final class CaseNote extends ModelObject{
 		return text;
 	}
 
-	public java.sql.Date getDate() {
+	public java.util.Date getDate() {
 		return date;
+	}
+	
+	//returns a string in an format customary to display dates and time
+	public String getDateTimeFormated() {
+		return DateFormat.getDateTimeInstance().format(date);
 	}
 
 	public String getAuthorUsername() {

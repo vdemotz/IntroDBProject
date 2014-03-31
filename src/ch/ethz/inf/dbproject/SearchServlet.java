@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
+import java.sql.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -74,15 +75,15 @@ public final class SearchServlet extends HttpServlet {
 				table.addBeanColumn("Title", "title");
 				table.addBeanColumn("Location", "location");
 				table.addBeanColumn("Open", "isOpen");
-				table.addBeanColumn("Date", "date");
+				table.addBeanColumn("Date", "dateTimeFormated");
 				//table.addBeanColumn("Description", "description");
 				table.addBeanColumn("Author Name", "authorName");
 				table.addLinkColumn("", "View Case", "Case?id=", "id");
 				
 				if (filter.equals("category")) {
 					table.addObjects(this.dbInterface.getCasesForCategory(description));
-				} else if (filter.equals("caseDate")) {	
-					//table.addObjects(this.dbInterface.getCasesForDate(date));
+				} else if (filter.equals("caseDate")) {
+					table.addObjects(this.dbInterface.getCasesForDateLike(description));
 				}
 				
 				session.setAttribute("results", table);

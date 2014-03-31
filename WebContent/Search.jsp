@@ -36,7 +36,7 @@
 <div>
 	<input type="hidden" name="filter" value="convictionDate" />
 	Search By Date of Conviction:
-	<input type="text" name="category" />
+	<input type="text" name="description" />
 	<input type="submit" value="Search" title="Search by date of conviciton" />
 </div>
 </form>
@@ -60,6 +60,7 @@
 	Search By Date of Case:
 	<input type="text" name="description" />
 	<input type="submit" value="Search" title="Search by date of Case" />
+	<br>The input format is yyyy-mm-dd or any prefix thereof, like yyyy-mm or yyyy-mm-d.
 </div>
 </form>
 
