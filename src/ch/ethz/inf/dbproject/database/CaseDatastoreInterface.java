@@ -69,6 +69,13 @@ public interface CaseDatastoreInterface {
 	List<CaseDetail> getCasesForDate(java.sql.Date date);
 	
 	/**
+	 * @param date a string whose format is a prefix of yyyy-mm-dd
+	 * @return a list of cases for incidents that occurred on the given date
+	 * 		   if the string does not denote the prefix of any valid date, the empty list is returned
+	 */
+	List<CaseDetail> getCasesForDateLike(String date);
+	
+	/**
 	 * @param caseId
 	 * @return a list of persons if the caseId is valid,
 	 * 		   otherwise null
@@ -89,8 +96,11 @@ public interface CaseDatastoreInterface {
 	 */
 	List<Category>getCategoriesForCase(int caseId);
 	
-	
+	/**
+	 * @return A list containing summary information about the cases of different categories
+	 */
 	List<CategorySummary>getCategorySummary();
+	
 	
 	////
 	//MODIFY

@@ -16,8 +16,7 @@ public class ModelObject {
 	
 	/**
 	 * Experimental:
-	 * Sets all the fields of a ModelObject from a ResultSet assuming default types (except for dates) and the same names for the fields as for the SQL attributes
-	 * If one of the fields is of type java.sql.Date, then getDate is used to retrieve the value, instead of getObject
+	 * Sets all the fields of a ModelObject from a ResultSet assuming default types and the same names for the fields as for the SQL attributes
 	 * If one of the Objects fields doesn't match any column in the ResultSet, the field is left unmodified.
 	 * @param rs
 	 * @throws SQLException
@@ -31,12 +30,7 @@ public class ModelObject {
 			fields[i].setAccessible(true);//in case the field is final, this makes it possible to assign it anyway
 			try {
 				String fieldname = fields[i].getName();
-				Object value;
-				if (fields[i].getType().equals(java.sql.Date.class)) {//the default value for DATETIME SQL attributes is java.sql.Timestamp, but if one uses java.sql.Date getObject would fail
-					value = rs.getDate(fieldname);
-				} else {
-					value = rs.getObject(fieldname);//use default type
-				}
+				Object value = rs.getObject(fieldname);//use default type
 				fields[i].set(this, value);
 			} catch (Exception e) {
 				e.printStackTrace();

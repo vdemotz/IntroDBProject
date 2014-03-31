@@ -2,9 +2,9 @@ package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
 import java.sql.SQLException;
+import java.text.DateFormat;
 
 public final class CaseDetail extends ModelObject {
 
@@ -14,15 +14,15 @@ public final class CaseDetail extends ModelObject {
 	private String street;
 	private String zipCode;
 	private boolean isOpen;
-	private java.sql.Date date;
 	private String description;
 	private String authorName;
-
+	private java.sql.Timestamp date;
+	
 	////
 	//CONSTRUCTORS
 	////
 	
-	public CaseDetail(final int id, final String tit, final String city, final String street, final String zipCode, final boolean isOp, final Date da, final String desc, final String authorN) {
+	public CaseDetail(final int id, final String tit, final String city, final String street, final String zipCode, final boolean isOp, final java.sql.Timestamp da, final String desc, final String authorN) {
 		this.caseId = id;
 		this.title = tit;
 		this.city = city;
@@ -70,10 +70,6 @@ public final class CaseDetail extends ModelObject {
 		return isOpen;
 	}
 	
-	public java.sql.Date getDate() {
-		return date;
-	}
-	
 	public String getDescription() {
 		return description;
 	}
@@ -82,8 +78,24 @@ public final class CaseDetail extends ModelObject {
 		return authorName;
 	}
 	
+	public java.util.Date getDate() {
+		return date;
+	}
+	
+	//returns a string in an format customary to display dates and time
+	public String getDateTimeFormated() {
+		return DateFormat.getDateTimeInstance().format(date);
+	}
+	
+	//returns a string in an format customary to display dates
+	public String getDateFormated() {
+		return DateFormat.getDateInstance().format(date);
+	}
+	
 	public String getLocation() {
 		return (this.getZipCode()+" "+this.getCity()+", "+this.getStreet());//TODO: nicely handle null
 	}
+	
+	
 	
 }

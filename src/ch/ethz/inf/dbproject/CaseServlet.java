@@ -43,7 +43,7 @@ public final class CaseServlet extends HttpServlet {
 		table.addBeanColumn("Title", "title");
 		table.addBeanColumn("Location", "location");
 		table.addBeanColumn("Open", "isOpen");
-		table.addBeanColumn("Date", "date");
+		table.addBeanColumn("Date / Time", "dateTimeFormated");
 		table.addBeanColumn("Description", "description");
 		table.addBeanColumn("Author Name", "authorName");
 		
@@ -76,7 +76,7 @@ public final class CaseServlet extends HttpServlet {
 		
 		suspectsTable.addBeanColumn("Suspect Id", "personId");
 		suspectsTable.addBeanColumn("Name", "name");
-		//suspectsTable.addLinkColumn("", "Person Details", "Person?id=", "personId");
+		suspectsTable.addLinkColumn("", "Person Details", "Person?id=", "personId");
 		
 		return suspectsTable;
 	}
@@ -90,7 +90,7 @@ public final class CaseServlet extends HttpServlet {
 		
 		table.addBeanColumn("Convict Id", "personId");
 		table.addBeanColumn("Name", "name");
-		//table.addLinkColumn("", "Person Details", "Person?id=", "personId");
+		table.addLinkColumn("", "Person Details", "Person?id=", "personId");
 		
 		return table;
 	}
@@ -123,19 +123,16 @@ public final class CaseServlet extends HttpServlet {
 		final String comment = request.getParameter("comment");
 		final String idString = request.getParameter("id");
 		
-		if (action != null){
-			final Object id = session.getAttribute("caseId");//shouldn't the id be sent as part of the request?
-			CaseNote cn = dbInterface.addCaseNote(Integer.parseInt(id.toString()), comment, userId);
-		}
-		
 		if (idString == null) {
 			this.getServletContext().getRequestDispatcher("/Cases.jsp").forward(request, response);
 		} else {
 			try {
 				final Integer id = Integer.parseInt(idString);
 				
-				//set the caseId
-				session.setAttribute("caseId", id);
+				if (action != null){
+					CaseNote cn = dbInterface.addCaseNote(id, comment, userId);
+				}
+				
 				//set the CaseDetail (the header) wanted by the user
 				session.setAttribute("caseTable", getCaseTableForId(id));
 				//set the Categories for the case
