@@ -123,19 +123,16 @@ public final class CaseServlet extends HttpServlet {
 		final String comment = request.getParameter("comment");
 		final String idString = request.getParameter("id");
 		
-		if (action != null){
-			final Object id = session.getAttribute("caseId");//shouldn't the id be sent as part of the request?
-			CaseNote cn = dbInterface.addCaseNote(Integer.parseInt(id.toString()), comment, userId);
-		}
-		
 		if (idString == null) {
 			this.getServletContext().getRequestDispatcher("/Cases.jsp").forward(request, response);
 		} else {
 			try {
 				final Integer id = Integer.parseInt(idString);
 				
-				//set the caseId
-				session.setAttribute("caseId", id);
+				if (action != null){
+					CaseNote cn = dbInterface.addCaseNote(id, comment, userId);
+				}
+				
 				//set the CaseDetail (the header) wanted by the user
 				session.setAttribute("caseTable", getCaseTableForId(id));
 				//set the Categories for the case

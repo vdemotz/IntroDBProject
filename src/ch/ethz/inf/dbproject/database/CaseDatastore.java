@@ -26,7 +26,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	//template: all open or closed cases
 	String openCasesQuery = "select * from CaseDetail where isOpen = ? order by date desc";
 	//template: all notes for a specific case
-	String caseNotesForCaseQuery = "select * from CaseNote where caseId = ?";
+	String caseNotesForCaseQuery = "select * from CaseNote where caseId = ? order by caseNoteId desc";
 	//template: all recent cases
 	String recentCasesQuery = "select * from CaseDetail order by date desc";
 	//template: oldest unresolved cases
@@ -51,7 +51,15 @@ public class CaseDatastore implements CaseDatastoreInterface {
 								    "where caseDetail.caseId = ? and categoryForCase.caseId = caseDetail.caseId and categoryForCase.categoryName = category.Name";
 	//template: category summary
 	String categorySummaryQuery = "select categoryName, count(*) as numberOfCases from CategoryForCase group by categoryName";
-	
+	//template: get the next id for the case note of a particular case
+	String nextCaseNoteIdForCaseQuery = "select coalesce (max(caseNoteId)+1, 1) from CaseNote where caseId=?";//if there is no caseNote yet, max returns null, coalesce selects the first non-null argument
+	//template add a new note
+	String addCaseNoteRequest = "insert into CaseNote " +
+								"values (?, " +//caseId
+								"?, " +//caseNoteId
+								"?, " +//text
+								"?, " +//date
+								"?)";//authorUsername
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -66,6 +74,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement categoriesForCaseStatement;
 	PreparedStatement categorySummaryStatement;
 	PreparedStatement casesForDateLikeStatement;
+	PreparedStatement nextCaseNoteIdForCaseStatement;
+	PreparedStatement addCaseNoteStatement;
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -91,6 +101,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		categoriesForCaseStatement = sqlConnection.prepareStatement(categoriesForCaseQuery);
 		categorySummaryStatement = sqlConnection.prepareStatement(categorySummaryQuery);
 		casesForDateLikeStatement = sqlConnection.prepareStatement(casesForDateLikeQuery);
+		nextCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(nextCaseNoteIdForCaseQuery);
+		addCaseNoteStatement = sqlConnection.prepareStatement(addCaseNoteRequest);
 	}
 	
 	////
@@ -267,14 +279,48 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		return getResults(CategorySummary.class, categorySummaryStatement);
 	}
 	
+	/////
+	//Helper Queries
+	/////
+	
+	private int getNextCaseNoteIdForCase(int caseId)
+	{
+		try {
+			nextCaseNoteIdForCaseStatement.setInt(1, caseId);
+			nextCaseNoteIdForCaseStatement.execute();
+			nextCaseNoteIdForCaseStatement.getResultSet().next();
+			return nextCaseNoteIdForCaseStatement.getResultSet().getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
 	////
 	//MODIFY
 	////
 	
 	@Override
-	public CaseNote addCaseNote(int caseId, String text, String authorUsername) {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized CaseNote addCaseNote(int caseId, String text, String authorUsername) {
+		//Todo: check if there is a case with that id beforehand, to avoid the exception later on
+		int caseNoteId = getNextCaseNoteIdForCase(caseId);//TODO: it would be nice if this could be nested into the insert query
+		if (caseNoteId == -1) return null;
+		java.util.Date date = new java.util.Date();
+		java.sql.Timestamp datesql = new java.sql.Timestamp(date.getTime());
+		try {
+			addCaseNoteStatement.setInt(1, caseId);
+			addCaseNoteStatement.setInt(2, caseNoteId);
+			addCaseNoteStatement.setString(3, text);
+			addCaseNoteStatement.setObject(4, datesql);
+			addCaseNoteStatement.setString(5, authorUsername);
+			addCaseNoteStatement.execute();
+			//Todo: maybe check with the database if the creation was successful (but then again if there was no exception it should be fine)
+			return new CaseNote(caseId, caseNoteId, text, datesql, authorUsername);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 
 
