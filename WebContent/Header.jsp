@@ -34,6 +34,7 @@
 					<div class="menuDiv1"><a href ="CasesSummary">Categories</a></div>
 					<div class="menuDiv1"><a href="Search">Search</a></div>
 					<div class="menuDiv1"><a href="PersonsOfInterest">Persons of Interest</a></div>
+					<div class="menuDiv2"><a href="PersonCreation">Create new person</a></div>
 				</td>
 				
 				<td id="masterContentPlaceholder">
