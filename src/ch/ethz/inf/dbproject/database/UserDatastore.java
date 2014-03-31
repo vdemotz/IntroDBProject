@@ -5,45 +5,88 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
 import ch.ethz.inf.dbproject.model.CaseDetail;
+import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.User;
 
 public class UserDatastore implements UserDatastoreInterface {
 
-		private Connection sqlConnection;
+	////
+	//Connection
+	////
+	private Connection sqlConnection;
 		
-		////
-		// String for Prepared Statement
-		////
-	private String getUserForUsernameAndPassword = "select * from User where username = ? and password = ?";
-	private String getCurrentCasesForUser = "(select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername = ? and caseNote.caseId = caseDetail.caseId) "+
+	////
+	// String for Prepared Statement
+	////
+	//particular user for an username and a password
+	private String getUserForUsernameAndPasswordString = "select * from User where username = ? and password = ?";
+	//cases for a particular user
+	private String getCurrentCasesForUserString = "(select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername like ? and caseNote.caseId = caseDetail.caseId) "+
 	"union "+
-	"(select CaseDetail.* from CaseDetail caseDetail where caseDetail.authorName = ?) order by date desc";
-	private String addUser = "insert into User(username, firstName, lastName, password) values(?, ?, ?, ?)";
-	private String isUsernameAvailable = "select * from User where username = ?";
+	"(select * from CaseDetail where authorName like ? order by date desc)";
+	//add User
+	private String addUserString = "insert into User(username, firstName, lastName, password) values(?, ?, ?, ?)";
+	//check if username is available
+	private String isUsernameAvailableString = "select * from User where username = ?";
 	
-	/**
-	 * new UserDatastore with connection to database
-	 */
+	
+	////
+	//Prepared Statements
+	////
+	private PreparedStatement getUserForUsernameAndPasswordStatement;
+	private PreparedStatement getCurrentCasesForUserStatement;
+	private PreparedStatement addUserStatement;
+	private PreparedStatement isUsernameAvailableStatement;
+	
+	////
+	//Constructor
+	////
 	public UserDatastore() {
 			this.sqlConnection = MySQLConnection.getInstance().getConnection();
+			try {
+				prepareStatements();
+			} catch (SQLException e){
+				e.printStackTrace();
+			}
+			
 	}
 	
+	private void prepareStatements() throws SQLException {
+		getUserForUsernameAndPasswordStatement = sqlConnection.prepareStatement(getUserForUsernameAndPasswordString);
+		getCurrentCasesForUserStatement = sqlConnection.prepareStatement(getCurrentCasesForUserString);
+		addUserStatement = sqlConnection.prepareStatement(addUserString);
+		isUsernameAvailableStatement = sqlConnection.prepareStatement(isUsernameAvailableString);
+	}
+	
+	/**
+	 * Executes a statement, and tries to instantiate a list of ModelObjects of the specified modelClass using the resultSet from the statement
+	 * If the execution of the statement or instantiation raises an SQLException, null is returned.
+	 * @param statement the configured statement to execute and get the results of
+	 * @return a list of modelObjects representing the result of the execution of the statement
+	 */
+	private <T extends ModelObject> List<T> getResults(Class<T> modelClass, PreparedStatement statement)
+	{
+		 try {
+			statement.execute();
+			return ModelObject.getAllModelObjectsWithClassFromResultSet(modelClass, statement.getResultSet());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	////
+	//Return type User
+	////
 	@Override
 	public User getUserForUsernameAndPassword(String username, String password) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getUserForUsernameAndPassword);
-			sqlRequest.setString(1, username);
-			sqlRequest.setString(2, password);
-			ResultSet rs = sqlRequest.executeQuery();
-			if (!rs.first()){
-				sqlRequest.close();
-				rs.close();
-				return null;
-			}
-			User usr = new User(rs);
-			sqlRequest.close();
-			rs.close();
-			return usr;
+
+			getUserForUsernameAndPasswordStatement.setString(1, username);
+			getUserForUsernameAndPasswordStatement.setString(2, password);
+			ResultSet rs = getUserForUsernameAndPasswordStatement.executeQuery();
+			if (!rs.first()){return null;}
+			return new User(rs);
 			
 		} catch (final SQLException ex){
 			ex.printStackTrace();
@@ -51,41 +94,36 @@ public class UserDatastore implements UserDatastoreInterface {
 		}
 	}
 
+	////
+	//Return type List<CaseDetail>
+	////
 	@Override
 	public List<CaseDetail> getCurrentCasesForUser(String username) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getCurrentCasesForUser);
-			sqlRequest.setString(1, username);
-			sqlRequest.setString(2, username);
-			ResultSet rs = sqlRequest.executeQuery();
-			List<CaseDetail> lcd = new ArrayList<CaseDetail>();
-			
-			while(rs.next()){
-				lcd.add(new CaseDetail(rs));
-			}
-			sqlRequest.close();
-			rs.close();
-			return lcd;
-			
+			getCurrentCasesForUserStatement.setString(1, username);
+			getCurrentCasesForUserStatement.setString(2, username);
+			return getResults(CaseDetail.class, getCurrentCasesForUserStatement);
 		} catch (final SQLException ex){
 			System.err.println("failed to retrieve cases from user");
 			ex.printStackTrace();
 			return null;
 		}
 	}
+	
+	
+	////
+	//Add
+	////
 
 	@Override
 	public User addUser(String username, String password, String lastName, String firstName) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.addUser);
-			sqlRequest.setString(1, username);
-			sqlRequest.setString(2, firstName);
-			sqlRequest.setString(3, lastName);
-			sqlRequest.setString(4, password);
-			sqlRequest.execute();
-			sqlRequest.close();
+			addUserStatement.setString(1, username);
+			addUserStatement.setString(2, firstName);
+			addUserStatement.setString(3, lastName);
+			addUserStatement.setString(4, password);
+			addUserStatement.execute();
 			return new User(username, firstName, lastName, password);
-			
 		} catch (final SQLException ex){
 			System.err.println("failed to add user");
 			ex.printStackTrace();
@@ -96,16 +134,9 @@ public class UserDatastore implements UserDatastoreInterface {
 	@Override
 	public boolean isUsernameAvailable(String username) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.isUsernameAvailable);
-			sqlRequest.setString(1, username);
-			ResultSet rs = sqlRequest.executeQuery();
-			if (!rs.first()){
-				sqlRequest.close();
-				rs.close();
-				return false;
-			}
-			sqlRequest.close();
-			rs.close();
+			isUsernameAvailableStatement.setString(1, username);
+			ResultSet rs = isUsernameAvailableStatement.executeQuery();
+			if (!rs.first()){ return false; }
 			return true;
 			 
 		} catch (final SQLException ex){

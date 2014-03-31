@@ -33,13 +33,41 @@ public final class HomeServlet extends HttpServlet {
     public HomeServlet() {
         super();
     }
+    
+	protected BeanTableHelper<User> tableUserDetails(User usr) {
+		final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
+		userDetails.addBeanColumn("Username", "username");
+		userDetails.addBeanColumn("First Name", "firstName");
+		userDetails.addBeanColumn("Last Name", "lastName");
+			
+		userDetails.addObject(usr);
+		return userDetails;
+	}
+	
+	protected BeanTableHelper<CaseDetail> tableCasesUserModified(String username) {
+		final BeanTableHelper<CaseDetail> casesUserModified = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+		// Add columns to the new table
+		casesUserModified.addBeanColumn("Case ID", "caseId");
+		casesUserModified.addBeanColumn("Title", "title");
+		//table.addBeanColumn("Location", "location");
+		casesUserModified.addBeanColumn("Open", "isOpen");
+		casesUserModified.addBeanColumn("Date", "date");
+		casesUserModified.addBeanColumn("Author Name", "authorName");
+			
+		casesUserModified.addLinkColumn("", "View Case", "Case?id=", "id");
+
+		casesUserModified.addObjects(this.dbInterface.getCurrentCasesForUser(username));
+		return casesUserModified;
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		final HttpSession session = request.getSession(true);
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
+		final String action = request.getParameter("action");
 
 		if (loggedUser == null) {
 			// Not logged in!
@@ -47,53 +75,28 @@ public final class HomeServlet extends HttpServlet {
 		} else {
 			// Logged in
 			session.setAttribute(SESSION_USER_LOGGED_IN, true);
+			session.setAttribute(SESSION_USER_DETAILS, tableUserDetails(loggedUser));
+			session.setAttribute(SESSION_USER_CASES, tableCasesUserModified(loggedUser.getUsername()));
 		}
 
-		final String action = request.getParameter("action");
 		if (action != null && action.trim().equals("login") 	&& loggedUser == null) {
 
 			final String username = request.getParameter("username");
-			// Note: It is really not safe to use HTML get method to send passwords.
-			// However for this project, security is not a requirement.
 			final String password = request.getParameter("password");
 			
 			User user = dbInterface.getUserForUsernameAndPassword(username, password);
-				//get the user if one exits with this username and password 
+			session.setAttribute(UserManagement.SESSION_USER, user);
 			
-			if (user == null){
-				// TODO display "wrong password" or something like that
-			}
-			else{
-				// TODO Add cases created by the User.
-				final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
-				userDetails.addBeanColumn("Username", "username");
-				userDetails.addBeanColumn("First Name", "firstName");
-				userDetails.addBeanColumn("Last Name", "lastName");
-					
-				userDetails.addObject(user);
-				
-				session.setAttribute(SESSION_USER_LOGGED_IN, true);
-				session.setAttribute(SESSION_USER_DETAILS, userDetails);
-				session.setAttribute(UserManagement.SESSION_USER, user);
-					//add the user to the session, with the details
-				
-				final BeanTableHelper<CaseDetail> casesUserModified = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
-				// Add columns to the new table
-				casesUserModified.addBeanColumn("Case ID", "caseId");
-				casesUserModified.addBeanColumn("Title", "title");
-				//table.addBeanColumn("Location", "location");
-				casesUserModified.addBeanColumn("Open", "isOpen");
-				casesUserModified.addBeanColumn("Date", "date");
-				casesUserModified.addBeanColumn("Author Name", "authorName");
-				
-				casesUserModified.addLinkColumn("", "View Case", "Case?id=", "id");
-				
-				casesUserModified.addObjects(this.dbInterface.getCurrentCasesForUser(username));
-				session.setAttribute(SESSION_USER_CASES, casesUserModified);
-			}
+			session.setAttribute(SESSION_USER_DETAILS, tableUserDetails(user));
+			session.setAttribute(SESSION_USER_CASES, tableCasesUserModified(user.getUsername()));
+			
+		} else if( action != null && action.trim().equals("logout")){
+			session.setAttribute(SESSION_USER_LOGGED_IN, false);
+			session.setAttribute(UserManagement.SESSION_USER, null);
 		}
 
-		// Finally, proceed to the User.jsp page which will render the profile
+		// Finally, proceed to the Home.jsp page which will render the profile
 		this.getServletContext().getRequestDispatcher("/Home.jsp").forward(request, response);
-	}        
+	}
 }
+

@@ -19,6 +19,13 @@ if (user != null) {
 	
 	<%= session.getAttribute(HomeServlet.SESSION_USER_CASES) %>
 	
+<form method="get" action="Home">
+	<div>
+		<input type="hidden" name="action" value="logout" />
+		<input type="submit" value="Logout" title="Logout" />
+	</div>
+</form>
+	
 <%
 } else {
 	// No user logged in.%>

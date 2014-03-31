@@ -35,6 +35,19 @@ public final class UserServlet extends HttpServlet {
 	public UserServlet() {
 		super();
 	}
+	
+	protected BeanTableHelper<User> tableUserDetails(User usr)
+	{
+		final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
+		userDetails.addBeanColumn("Username", "username");
+		userDetails.addBeanColumn("First Name", "firstName");
+		userDetails.addBeanColumn("Last Name", "lastName");
+			
+		userDetails.addObject(usr);
+		userDetails.setVertical(true);
+		return userDetails;
+		
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -55,11 +68,10 @@ public final class UserServlet extends HttpServlet {
 		}
 
 		final String action = request.getParameter("action");
+		
 		if (action != null && action.trim().equals("login") 	&& loggedUser == null) {
 
 			final String username = request.getParameter("username");
-			// Note: It is really not safe to use HTML get method to send passwords.
-			// However for this project, security is not a requirement.
 			final String password = request.getParameter("password");
 			
 			User user = dbInterface.getUserForUsernameAndPassword(username, password);
@@ -69,17 +81,8 @@ public final class UserServlet extends HttpServlet {
 				// TODO display "wrong password" or something like that
 			}
 			else{
-				// TODO Add cases created by the User.
-				final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
-				userDetails.addBeanColumn("Username", "username");
-				userDetails.addBeanColumn("First Name", "firstName");
-				userDetails.addBeanColumn("Last Name", "lastName");
-					
-				userDetails.addObject(user);
-				userDetails.setVertical(true);
-				
 				session.setAttribute(SESSION_USER_LOGGED_IN, true);
-				session.setAttribute(SESSION_USER_DETAILS, userDetails);
+				session.setAttribute(SESSION_USER_DETAILS, tableUserDetails(user));
 				session.setAttribute(UserManagement.SESSION_USER, user);
 					//add the user to the session, with the details
 			}

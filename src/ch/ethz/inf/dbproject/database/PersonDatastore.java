@@ -3,224 +3,252 @@ package ch.ethz.inf.dbproject.database;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import ch.ethz.inf.dbproject.model.Datesql;
+import java.sql.Timestamp;
 import ch.ethz.inf.dbproject.model.CaseDetail;
+import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 import ch.ethz.inf.dbproject.model.User;
 
 public class PersonDatastore implements PersonDatastoreInterface {
 
+	////
+	//Connection
+	////
 	private Connection sqlConnection;
 	
 	////
 	// String for Prepared Statement
 	////
-	private String getCasesForWhichPersonIsConvicted = "select cd.* from CaseDetail cd, Convicted c "+
+	//particular cases for convicted person
+	private String getCasesForWhichPersonIsConvictedString = "select cd.* from CaseDetail cd, Convicted c "+
 			"where c.personId = ? and cd.caseId = c.caseId";
-	private String getCasesForWhichPersonIsSuspected = "select cd.* from CaseDetail cd, Suspected s "+
+	//particular cases for suspected person
+	private String getCasesForWhichPersonIsSuspectedString = "select cd.* from CaseDetail cd, Suspected s "+
 			"where s.personId = ? and cd.caseId = s.caseId";
-	private String getPersonNotesForPerson = "select * from PersonNote where personId = ?";
-	private String getPersonsForName = "select * from Person where firstName like ? or lastName like ?";
-	private String getPersonsForConvictionType = "select p.* from Convicted convicted, Person p, ConvictionType convictionType "+
+	//get person note for particular person
+	private String getPersonNotesForPersonString = "select * from PersonNote where personId = ?";
+	//get persons for a particular first name or last name
+	private String getPersonsForNameString = "select * from Person where firstName like ? or lastName like ?";
+	//persons for particular conviction type
+	private String getPersonsForConvictionTypeString = "select p.* from Convicted convicted, Person p, ConvictionType convictionType "+
 			"where convicted.personId = p.personId and convicted.convictionId = convictionType.convictionId and "+
 			"convictionType.categoryName = ?";
-	private String getPersonsForConvictionDate = "select person.* from Conviction conviction, Convicted convicted, Person person "+
+	//persons for particular date
+	private String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Convicted convicted, Person person "+
 			"where conviction.startDate = ? and conviction.convictionId = convicted.convictionId and "+
 			"convicted.personId = person.personId";
-	private String getPersonForId = "select * from Person where personId =?";
-	private String getAllConvictedPersons = "select p.* from Person p, Convicted c where p.personId = c.personId";
-	private String getAllSuspectedPersons = "select p.* from Person p, Suspected s where p.personId = s.personId";
-	private String addPersonNote = "insert into PersonNote(PersonId, text, date, authorUsername) values(?, ?, ?, ?)";
+	//particular person for an Id
+	private String getPersonForIdString = "select * from Person where personId =?";
+	//all convicted persons
+	private String getAllConvictedPersonsString = "select p.* from Person p, Convicted c where p.personId = c.personId";
+	//all suspected persons
+	private String getAllSuspectedPersonsString = "select p.* from Person p, Suspected s where p.personId = s.personId";
+	
+	//add a person
+	private String addPersonNoteString = "insert into PersonNote(PersonId, PersonNoteId, text, date, authorUsername) values(?, ?, ?, ?, ?)";
+	//get the max Id for person notes for a particular person
+	private String getMaxPersonNoteIdForPersonIdString = "select max(personNoteId) from PersonNote where personId = ?";
+	
+	////
+	//Prepared Statements
+	////
+	private PreparedStatement getCasesForWhichPersonIsConvictedStatement;
+	private PreparedStatement getCasesForWhichPersonIsSuspectedStatement;
+	private PreparedStatement getPersonNotesForPersonStatement;
+	private PreparedStatement getPersonsForNameStatement;
+	private PreparedStatement getPersonsForConvictionTypeStatement;
+	private PreparedStatement getPersonsForConvictionDateStatement;
+	private PreparedStatement getPersonForIdStatement;
+	private PreparedStatement getAllConvictedPersonsStatement;
+	private PreparedStatement getAllSuspectedPersonsStatement;
+	private PreparedStatement addPersonNoteStatement;
+	private PreparedStatement getMaxPersonNoteIdForPersonIdStatement;
+	
+	private Timestamp time;
 
+	////
+	//Constructor
+	////
 	public PersonDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
+		try {
+			prepareStatements();
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
+		time = new Timestamp(0);
+		
 	}
+
+	private void prepareStatements() throws SQLException {
+		getCasesForWhichPersonIsConvictedStatement = sqlConnection.prepareStatement(getCasesForWhichPersonIsConvictedString);
+		getCasesForWhichPersonIsSuspectedStatement = sqlConnection.prepareStatement(getCasesForWhichPersonIsSuspectedString);
+		getPersonNotesForPersonStatement = sqlConnection.prepareStatement(getPersonNotesForPersonString);
+		getPersonsForNameStatement = sqlConnection.prepareStatement(getPersonsForNameString);
+		getPersonsForConvictionTypeStatement = sqlConnection.prepareStatement(getPersonsForConvictionTypeString);
+		getPersonsForConvictionDateStatement = sqlConnection.prepareStatement(getPersonsForConvictionDateString);
+		getPersonForIdStatement = sqlConnection.prepareStatement(getPersonForIdString);
+		getAllConvictedPersonsStatement = sqlConnection.prepareStatement(getAllConvictedPersonsString);
+		getAllSuspectedPersonsStatement = sqlConnection.prepareStatement(getAllSuspectedPersonsString);
+		addPersonNoteStatement = sqlConnection.prepareStatement(addPersonNoteString);
+		getMaxPersonNoteIdForPersonIdStatement = sqlConnection.prepareStatement(getMaxPersonNoteIdForPersonIdString);
+	}
+
+	/**
+	 * Executes a statement, and tries to instantiate a list of ModelObjects of the specified modelClass using the resultSet from the statement
+	 * If the execution of the statement or instantiation raises an SQLException, null is returned.
+	 * @param statement the configured statement to execute and get the results of
+	 * @return a list of modelObjects representing the result of the execution of the statement
+	 */
+	private <T extends ModelObject> List<T> getResults(Class<T> modelClass, PreparedStatement statement)
+	{
+		 try {
+			statement.execute();
+			return ModelObject.getAllModelObjectsWithClassFromResultSet(modelClass, statement.getResultSet());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	////
+	//Return type List<CaseDetail>
+	////
 	
 	@Override
 	public List<CaseDetail> getCasesForWhichPersonIsConvicted(int personId) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getCasesForWhichPersonIsConvicted);
-			sqlRequest.setInt(1, personId);
-			ResultSet rs = sqlRequest.executeQuery();
-			List<CaseDetail> cd = new ArrayList<CaseDetail>();
-			while (rs.next()){
-				cd.add(new CaseDetail(rs));
-			}
-			return cd;
+			getCasesForWhichPersonIsConvictedStatement.setInt(1, personId);
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
-	}
-	
-	@Override
-	public List<Person> getAllConvictedPersons() {
-		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getAllConvictedPersons);
-			ResultSet rs = sqlRequest.executeQuery();
-			List<Person> p = new ArrayList<Person>();
-			while (rs.next()){
-				p.add(new Person(rs));
-			}
-			return p;
-		} catch (final SQLException ex){
-			ex.printStackTrace();
-			return null;
-		}
-	}
-	
-	@Override
-	public List<Person> getAllSuspectedPersons() {
-		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getAllSuspectedPersons);
-			ResultSet rs = sqlRequest.executeQuery();
-			List<Person> p = new ArrayList<Person>();
-			while (rs.next()){
-				p.add(new Person(rs));
-			}
-			return p;
-		} catch (final SQLException ex){
-			ex.printStackTrace();
-			return null;
-		}
+		return getResults(CaseDetail.class, getCasesForWhichPersonIsConvictedStatement);
 	}
 
 	@Override
 	public List<CaseDetail> getCasesForWhichPersonIsSuspected(int personId) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getCasesForWhichPersonIsSuspected);
-			sqlRequest.setInt(1, personId);
-			ResultSet rs = sqlRequest.executeQuery();
-			List<CaseDetail> cd = new ArrayList<CaseDetail>();
-			while (rs.next()){
-				cd.add(new CaseDetail(rs));
-			}
-			return cd;
+			getCasesForWhichPersonIsSuspectedStatement.setInt(1, personId);
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
+		return getResults(CaseDetail.class, getCasesForWhichPersonIsSuspectedStatement);
 	}
+	
+	////
+	//Return type List<PersonNote>
+	////
 
 	@Override
 	public List<PersonNote> getPersonNotesForPerson(int personId) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonNotesForPerson);
-			sqlRequest.setInt(1, personId);
-			ResultSet rs = sqlRequest.executeQuery();
-			List<PersonNote> pn = new ArrayList<PersonNote>();
-			while (rs.next()){
-				pn.add(new PersonNote(rs));
-			}
-			return pn;
+			getPersonNotesForPersonStatement.setInt(1, personId);
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
+		return getResults(PersonNote.class, getPersonNotesForPersonStatement);
 	}
+	
+	////
+	//Return type List<Person>
+	////
 
 	@Override
 	public List<Person> getPersonsForName(String firstName, String lastName) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonsForName);
-			sqlRequest.setString(1, firstName);
-			sqlRequest.setString(2, lastName);
-			ResultSet rs = sqlRequest.executeQuery();
-			List<Person> p = new ArrayList<Person>();
-			while (rs.next()){
-				p.add(new Person(rs));
-			}
-			return p;
+			getPersonsForNameStatement.setString(1, firstName);
+			getPersonsForNameStatement.setString(2, lastName);
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
+		return getResults(Person.class, getPersonsForNameStatement);
 	}
 
 	@Override
 	public List<Person> getPersonsForConvictionType(String categoryName) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonsForConvictionType);
-			sqlRequest.setString(1, categoryName);
-			ResultSet rs = sqlRequest.executeQuery();
-			List<Person> p = new ArrayList<Person>();
-			while (rs.next()){
-				p.add(new Person(rs));
-			}
-			return p;
+			getPersonsForConvictionTypeStatement.setString(1, categoryName);
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
+		return getResults(Person.class, getPersonsForConvictionTypeStatement);
 	}
 
 	@Override
 	public List<Person> getPersonsForConvictionDate(Date startDate) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonsForConvictionDate);
-			sqlRequest.setString(1, startDate.toString());
-			ResultSet rs = sqlRequest.executeQuery();
-			List<Person> p = new ArrayList<Person>();
-			while (rs.next()){
-				p.add(new Person(rs));
-			}
-			return p;
+			getPersonsForConvictionDateStatement.setString(1, startDate.toString());
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
+		return getResults(Person.class, getPersonsForConvictionDateStatement);
 	}
+	
+	@Override
+	public List<Person> getAllConvictedPersons() {
+		return getResults(Person.class, getAllConvictedPersonsStatement);
+	}
+	
+	@Override
+	public List<Person> getAllSuspectedPersons() {
+		return getResults(Person.class, getAllSuspectedPersonsStatement);
+	}
+	
+	////
+	//Return type person
+	////
 	
 	@Override
 	public Person getPersonForId(int personId) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.getPersonForId);
-			sqlRequest.setInt(1, personId);
-			ResultSet rs = sqlRequest.executeQuery();
-			if (!rs.first()){
-				sqlRequest.close();
-				rs.close();
-				return null;
-			}
-			Person p = new Person(rs);
-			rs.close();
-			sqlRequest.close();
-			return p;
+			getPersonForIdStatement.setInt(1, personId);
+			ResultSet rs = getPersonForIdStatement.executeQuery();
+			if (!rs.first()){ return null; }
+			return new Person(rs);
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
 	}
-
-
 	
-	/**
-	* - initialize all fields but caseNoteId with given attributes
-	* - connect to database, create a CaseNote (via addCaseNote) in it and have it return an unique ID
-	* - initialize the field caseNoteId, consistent with the DB
-
-	* - the creation of a case note in java is always consistent with the DB
-	* - we don't need (yet) to iterate through all the existing caseNoteId's
-	* - we don't have to create separately the CaseNote in the DB
-	*/
+	////
+	//Add
+	////
 	
 	@Override
 	public PersonNote addPersonNote(int personId, String text, String authorUsername) {
 		try{
-			PreparedStatement sqlRequest = sqlConnection.prepareStatement(this.addPersonNote);
-			sqlRequest.setInt(1, personId);
-			sqlRequest.setString(2, text);
-			sqlRequest.setString(3, new Datesql().getDatesql());
-			sqlRequest.setString(4, authorUsername);
-			sqlRequest.execute();
-			
-			return null;
+			int personNoteId = getMaxPersonNoteIdForPersonId(personId);
+			Timestamp t = new Timestamp(time.getTime());
+			addPersonNoteStatement.setInt(1, personId);
+			addPersonNoteStatement.setInt(2, personNoteId);
+			addPersonNoteStatement.setString(3, text);
+			addPersonNoteStatement.setTimestamp(4, t);
+			addPersonNoteStatement.setString(5, authorUsername);
+			addPersonNoteStatement.execute();
+			return new PersonNote(personId, personNoteId, text, t, authorUsername);
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
 	}
-
-
+	
+	private int getMaxPersonNoteIdForPersonId(int personId) {
+		try{
+			getMaxPersonNoteIdForPersonIdStatement.setInt(1, personId);
+			ResultSet rs = getMaxPersonNoteIdForPersonIdStatement.executeQuery();
+			if (!rs.first()){ return 0; }
+			return (rs.getInt("max(personNoteId)")+1);
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return -1;
+		}
+	}
 }
