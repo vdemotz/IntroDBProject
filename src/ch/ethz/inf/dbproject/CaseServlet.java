@@ -134,11 +134,11 @@ public final class CaseServlet extends HttpServlet {
 				final String comment = request.getParameter("comment");
 				CaseNote cn = dbInterface.insertIntoCaseNote(id, comment, username);
 				
-			} else if ("closeCase".equals(action)) {
+			} else if ("closeCase".equals(action) && caseDetail.getIsOpen()) {
 				dbInterface.insertIntoCaseNote(id, "closed case", username);//keep notes of the closing / opening
 				didUpdateCase = dbInterface.updateCaseIsOpen(id, false);
 				
-			} else if ("openCase".equals(action)) {
+			} else if ("openCase".equals(action) && !caseDetail.getIsOpen()) {
 				didUpdateCase = dbInterface.updateCaseIsOpen(id, true);
 				dbInterface.insertIntoCaseNote(id, "opened case", username);//keep notes of the closing / opening
 			}
