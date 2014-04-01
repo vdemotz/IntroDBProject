@@ -35,7 +35,7 @@ public final class HomeServlet extends HttpServlet {
     }
     
 	protected BeanTableHelper<User> tableUserDetails(User usr) {
-		final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "userDetails", User.class);
+		final BeanTableHelper<User> userDetails = new BeanTableHelper<User>("userDetails", "contentTable", User.class);
 		userDetails.addBeanColumn("Username", "username");
 		userDetails.addBeanColumn("First Name", "firstName");
 		userDetails.addBeanColumn("Last Name", "lastName");
@@ -45,7 +45,7 @@ public final class HomeServlet extends HttpServlet {
 	}
 	
 	protected BeanTableHelper<CaseDetail> tableCasesUserModified(String username) {
-		final BeanTableHelper<CaseDetail> casesUserModified = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+		final BeanTableHelper<CaseDetail> casesUserModified = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 		// Add columns to the new table
 		casesUserModified.addBeanColumn("Case ID", "caseId");
 		casesUserModified.addBeanColumn("Title", "title");

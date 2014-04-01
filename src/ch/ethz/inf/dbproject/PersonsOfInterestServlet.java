@@ -41,7 +41,7 @@ public final class PersonsOfInterestServlet extends HttpServlet {
 		final String filter = request.getParameter("filter");
 		
 		final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
-				"personsTable", Person.class);
+				"contentTable", Person.class);
 		
 		table.addBeanColumn("Person ID", "personId");
 		table.addBeanColumn("Last Name", "lastName");

@@ -7,7 +7,7 @@
 <% final CaseDetail caseDetail = (CaseDetail) session.getAttribute("caseDetail"); %>
 
 
-<h1>Case Details</h1>
+<h2>Case Details</h2>
 
 <%=session.getAttribute("caseTable")%>
 

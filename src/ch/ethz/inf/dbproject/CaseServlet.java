@@ -34,7 +34,7 @@ public final class CaseServlet extends HttpServlet {
 	
 	protected BeanTableHelper<CaseDetail> getCaseTableForId(int caseId)
 	{
-		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "borderedContentTable", CaseDetail.class);
 		
 		CaseDetail caseDetail = this.dbInterface.getCaseForId(caseId);
 		table.addObject(caseDetail);
@@ -45,7 +45,7 @@ public final class CaseServlet extends HttpServlet {
 		table.addBeanColumn("Open", "isOpen");
 		table.addBeanColumn("Date / Time", "dateTimeFormated");
 		table.addBeanColumn("Description", "description");
-		table.addBeanColumn("Author Name", "authorName");
+		table.addBeanColumn("Opened by", "authorName");
 		
 		table.setVertical(true);
 		return table;
@@ -53,7 +53,7 @@ public final class CaseServlet extends HttpServlet {
 	
 	protected BeanTableHelper<CaseNote> getCaseNotesTableForCase(int caseId)
 	{
-		BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments", "commentsTable", CaseNote.class);
+		BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments", "contentTable", CaseNote.class);
 	
 		List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(caseId);//TODO: handle null, empty list
 		tableComment.addObjects(cases);
@@ -61,15 +61,15 @@ public final class CaseServlet extends HttpServlet {
 		//tableComment.addBeanColumn("Case ID", "caseId");
 		tableComment.addBeanColumn("Case Note ID", "caseNoteId");
 		tableComment.addBeanColumn("Comment", "text");
-		tableComment.addBeanColumn("Date", "date");
-		tableComment.addBeanColumn("Author Name", "authorUsername");
+		tableComment.addBeanColumn("Date", "dateTimeFormated");
+		tableComment.addBeanColumn("Opened by", "authorUsername");
 		
 		return tableComment;
 	}
 	
 	protected BeanTableHelper<Person> getSuspectsTableForCase(int caseId)
 	{
-		BeanTableHelper<Person> suspectsTable = new BeanTableHelper<Person>("suspects", "suspectsTable", Person.class);
+		BeanTableHelper<Person> suspectsTable = new BeanTableHelper<Person>("suspects", "contentTable", Person.class);
 		
 		List<Person> suspects = this.dbInterface.getSuspectsForCase(caseId);
 		suspectsTable.addObjects(suspects);
@@ -83,7 +83,7 @@ public final class CaseServlet extends HttpServlet {
 	
 	protected BeanTableHelper<Person> getConvictsTableForCase(int caseId)
 	{
-		BeanTableHelper<Person> table = new BeanTableHelper<Person>("convicts", "convictsTable", Person.class);
+		BeanTableHelper<Person> table = new BeanTableHelper<Person>("convicts", "contentTable", Person.class);
 		
 		List<Person> convicts = this.dbInterface.getConvictsForCase(caseId);
 		table.addObjects(convicts);
@@ -97,7 +97,7 @@ public final class CaseServlet extends HttpServlet {
 	
 	protected BeanTableHelper<Category> getCategoriesTableForCase(int caseId)
 	{
-		BeanTableHelper<Category> table = new BeanTableHelper<Category>("categories", "categoryTable", Category.class);
+		BeanTableHelper<Category> table = new BeanTableHelper<Category>("categories", "contentTable", Category.class);
 		
 		List<Category> list = this.dbInterface.getCategoriesForCase(caseId);
 		table.addObjects(list);

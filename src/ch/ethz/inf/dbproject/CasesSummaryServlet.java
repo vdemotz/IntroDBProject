@@ -22,7 +22,7 @@ public class CasesSummaryServlet extends HttpServlet {
 	
 	private BeanTableHelper<CategorySummary> getCategorySummaryTable()
 	{
-		BeanTableHelper<CategorySummary> table = new BeanTableHelper<CategorySummary>("categorySummary", "casesTable", CategorySummary.class);
+		BeanTableHelper<CategorySummary> table = new BeanTableHelper<CategorySummary>("categorySummary", "contentTable", CategorySummary.class);
 		table.addObjects(dbInterface.getCategorySummary());
 		
 		table.addBeanColumn("Category", "categoryName");

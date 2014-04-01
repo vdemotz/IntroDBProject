@@ -45,7 +45,7 @@ public final class SearchServlet extends HttpServlet {
 			if(filter.equals("firstName") || filter.equals("lastName") || filter.equals("convictionType") || filter.equals("convictionDate")) {
 				
 				final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
-						"personsTable", Person.class);
+						"contentTable", Person.class);
 				
 				table.addBeanColumn("Person ID", "personId");
 				table.addBeanColumn("Last Name", "lastName");
@@ -69,7 +69,7 @@ public final class SearchServlet extends HttpServlet {
 
 			} else if(filter.equals("category") || filter.equals("caseDate")){
 				final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
-						"casesTable", CaseDetail.class);
+						"contentTable", CaseDetail.class);
 
 				table.addBeanColumn("Case ID", "caseId");
 				table.addBeanColumn("Title", "title");

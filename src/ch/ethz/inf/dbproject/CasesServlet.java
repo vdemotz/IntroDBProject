@@ -39,7 +39,7 @@ public final class CasesServlet extends HttpServlet {
 		/*******************************************************
 		 * Construct a table to present all our results
 		 *******************************************************/
-		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 
 		// Add columns to the new table
 		table.addBeanColumn("Case ID", "caseId");
@@ -47,7 +47,7 @@ public final class CasesServlet extends HttpServlet {
 		//table.addBeanColumn("Location", "location");
 		table.addBeanColumn("Open", "isOpen");
 		table.addBeanColumn("Date", "dateFormated");
-		table.addBeanColumn("Author Name", "authorName");
+		table.addBeanColumn("Opened by", "authorName");
 		
 		/*
 		 * Column 4: This is a special column. It adds a link to view the
