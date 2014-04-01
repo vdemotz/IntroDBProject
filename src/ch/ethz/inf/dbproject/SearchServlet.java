@@ -78,7 +78,7 @@ public final class SearchServlet extends HttpServlet {
 				table.addBeanColumn("Date", "dateTimeFormated");
 				//table.addBeanColumn("Description", "description");
 				table.addBeanColumn("Author Name", "authorName");
-				table.addLinkColumn("", "View Case", "Case?id=", "id");
+				table.addLinkColumn("", "View Case", "Case?caseId=", "id");
 				
 				if (filter.equals("category")) {
 					table.addObjects(this.dbInterface.getCasesForCategory(description));

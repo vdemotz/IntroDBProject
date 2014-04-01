@@ -54,7 +54,7 @@ public final class HomeServlet extends HttpServlet {
 		casesUserModified.addBeanColumn("Date", "date");
 		casesUserModified.addBeanColumn("Author Name", "authorName");
 			
-		casesUserModified.addLinkColumn("", "View Case", "Case?id=", "id");
+		casesUserModified.addLinkColumn("", "View Case", "Case?caseId=", "id");
 
 		casesUserModified.addObjects(this.dbInterface.getCurrentCasesForUser(username));
 		return casesUserModified;

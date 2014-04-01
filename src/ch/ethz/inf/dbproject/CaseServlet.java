@@ -109,48 +109,92 @@ public final class CaseServlet extends HttpServlet {
 		return table;
 	}
 	
+	private void handleInvalidRequest(final HttpServletRequest request) throws ServletException, IOException
+	{
+		System.err.println("invalid case id");
+		
+	}
 
+
+	private CaseDetail handleActionsForRequest(final HttpServletRequest request, final CaseDetail caseDetail)
+	{
+		final HttpSession session = request.getSession(true);
+		final int id = caseDetail.getCaseId();
+		
+		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
+		final String username = request.getParameter("username");
+		
+		boolean didUpdateCase = false;
+		
+		if (loggedUser != null && loggedUser.getUsername().equals(username)) {//do not modify if the user is logged out, or the user changed in the mean time
+			
+			final String action = request.getParameter("action");
+			
+			if ("addComment".equals(action) && caseDetail.getIsOpen()) {//cannot add comments to closed cases
+				final String comment = request.getParameter("comment");
+				CaseNote cn = dbInterface.insertIntoCaseNote(id, comment, username);
+				
+			} else if ("closeCase".equals(action)) {
+				dbInterface.insertIntoCaseNote(id, "closed case", username);//keep notes of the closing / opening
+				didUpdateCase = dbInterface.updateCaseIsOpen(id, false);
+				
+			} else if ("openCase".equals(action)) {
+				didUpdateCase = dbInterface.updateCaseIsOpen(id, true);
+				dbInterface.insertIntoCaseNote(id, "opened case", username);//keep notes of the closing / opening
+			}
+		}
+		
+		if (didUpdateCase) {
+			return this.dbInterface.getCaseForId(id);
+		}
+		return caseDetail;
+	}
+	
+	private void handleValidRequest(final HttpServletRequest request, CaseDetail caseDetail)
+	{	
+		final HttpSession session = request.getSession(true);
+		
+		//perform actions, if any and get the new case detail
+		caseDetail = handleActionsForRequest(request, caseDetail);
+		final int id = caseDetail.getCaseId();
+		session.setAttribute("caseDetail", caseDetail);
+		
+		//set the CaseDetail (the header) wanted by the user
+		session.setAttribute("caseTable", getCaseTableForId(id));
+		//set the Categories for the case
+		session.setAttribute("categoryTable", getCategoriesTableForCase(id));
+		//list the case notes				
+		session.setAttribute("commentTable", getCaseNotesTableForCase(id));
+		//list the suspects
+		session.setAttribute("suspectsTable", getSuspectsTableForCase(id));
+		//list the convicts
+		session.setAttribute("convictsTable", getConvictsTableForCase(id));
+	}
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-
-		final HttpSession session = request.getSession(true);
-		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
-
-		final String action = request.getParameter("action");
-		final String userId = request.getParameter("user_id");
-		final String comment = request.getParameter("comment");
-		final String idString = request.getParameter("id");
 		
-		if (idString == null) {
-			this.getServletContext().getRequestDispatcher("/Cases.jsp").forward(request, response);
-		} else {
-			try {
-				final Integer id = Integer.parseInt(idString);
-				
-				if (action != null){
-					CaseNote cn = dbInterface.addCaseNote(id, comment, userId);
-				}
-				
-				//set the CaseDetail (the header) wanted by the user
-				session.setAttribute("caseTable", getCaseTableForId(id));
-				//set the Categories for the case
-				session.setAttribute("categoryTable", getCategoriesTableForCase(id));
-				//list the case notes				
-				session.setAttribute("commentTable", getCaseNotesTableForCase(id));
-				//list the suspects
-				session.setAttribute("suspectsTable", getSuspectsTableForCase(id));
-				//list the convicts
-				session.setAttribute("convictsTable", getConvictsTableForCase(id));
-				
-			} catch (final Exception ex) {
-				System.err.println("not able to display the case wanted");
-				ex.printStackTrace();
-				this.getServletContext().getRequestDispatcher("/Cases.jsp").forward(request, response);
-			}
-			
-			this.getServletContext().getRequestDispatcher("/Case.jsp").forward(request, response);
+		final String idString = request.getParameter("caseId");
+		
+		boolean invalidId = false;
+		int id = 0;
+		CaseDetail caseDetail = null;
+		try {
+			id = Integer.parseInt(idString);
+			caseDetail = this.dbInterface.getCaseForId(id);
+			if (caseDetail == null) invalidId = true;
+		} catch (Exception ex) {	
+			invalidId = true;
 		}
+
+		if (invalidId == true) {
+			handleInvalidRequest(request);
+		} else {
+			handleValidRequest(request, caseDetail);
+		}
+		
+		this.getServletContext().getRequestDispatcher("/Case.jsp").forward(request, response);
 	}
 }
