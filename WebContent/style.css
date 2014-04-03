@@ -17,24 +17,25 @@ table#masterTable {
 }
 
 table#masterTable > tbody > tr > th#masterHeader {
-	background: #66CCFF;
-	height: 100px;
+	background: #FEFEFE;
+	height: 70px;
 	vertical-align: middle;
-	border-bottom: 1px solid #100f35;
+	padding-left: 20px;
+	text-align:left;
 }
 
 table#masterTable > tbody > tr > td#masterFooter {
-	border-top: 1px solid #100f35;
-	background: #66CCFF;
+	border-top: 1px solid #EEEEEE;
+	background: #FCFCFC;
 	text-align: right;
 }
 
 td#masterContentMenu {
-	background: #66CCFF;
-	border-right: 1px solid #100f35;	
-	width: 200px; 
+	background: #FEFEFE;
+	width: 160px; 
 	vertical-align: top;
 	padding: 10px;
+	padding-left: 21px;
 }
 
 div.menuDiv2 {
@@ -50,7 +51,7 @@ div.menuDiv1, div.menuDiv2, div.menuDiv3 {
 }
 
 div.menuDiv1:HOVER, div.menuDiv2:HOVER, div.menuDiv3:HOVER {
-	background: #585874;	
+	background: #FFEEEE;	
 }
 
 div.menuDiv1 a, div.menuDiv2 a, div.menuDiv3 a  {
@@ -63,52 +64,54 @@ div.menuDiv1 a, div.menuDiv2 a, div.menuDiv3 a  {
 	padding-bottom: 2px;
 }
 
+a {
+	color:black;
+}
+a:HOVER {
+	color:black;
+	background: #FFEEEE;	
+}
+
 table#masterTable > tbody > tr#masterContent {
 	height: 100%;
 }
 
 td#masterContentPlaceholder {
 	vertical-align: top;
-	padding: 10px;
+	background: #FEFEFE;
+	
 }
 
-table.casesTable {
-	width: 100%;	
-	border-bottom: 2px solid black;
-	border-right: 2px solid black;
-	border-left: 1px solid black;
+table.borderedContentTable {
+	background: #FCFCFC;
+	border: 1px solid lightgrey;
+	margin-left: 5px;
+	margin-right: 15px;
+	margin-top: 15px;
+	margin-bottom: 15px;
 }
 
-table.casesTable td, table.casesTable th {
-	border-left: 1px solid black;
-	border-top: 1px solid black;
-	text-align: center;
+
+table.borderedContentTable td, table.borderedContentTable th {
+	border-left: 1px solid lightgrey;
+	padding: 6px;
+	padding-left: 9px;
+	padding-right: 9px;
+	text-align: left;
 }
 
-table.casesTable th {
-	border-top: 2px solid black;
-	border-bottom: 1px solid black;
-	background: #66CCFF;	
+table.contentTable {
+	background: #FCFCFC;
+	border: 1px solid lightgrey;
+	margin-left: 5px;
+	margin-right: 15px;
+	margin-top: 15px;
+	margin-bottom: 15px;
 }
 
-table.casesTable {
-	width: 300px;	
-	border-bottom: 2px solid black;
-	border-right: 1px solid black;
-	border-top: 1px solid black;
-}
-
-table.casesTable td, table.casesTable th {
-	padding: 5px 5px 5px 5px;
-	border-right: 1px solid black;
-	border-top: 1px solid black;
-	text-align: center;
-}
-
-table.casesTable th {
-	border-top: 1px solid black;
-	border-left: 2px solid black;
-	border-right: 1px solid black;
-	background: #66CCFF;
-	text-align: right;	
+table.contentTable td, table.contentTable th {
+	padding: 6px;
+	padding-left: 9px;
+	padding-right: 9px;
+	text-align: left;
 }

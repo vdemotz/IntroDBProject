@@ -39,7 +39,7 @@ public final class CasesServlet extends HttpServlet {
 		/*******************************************************
 		 * Construct a table to present all our results
 		 *******************************************************/
-		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 
 		// Add columns to the new table
 		table.addBeanColumn("Case ID", "caseId");
@@ -47,7 +47,7 @@ public final class CasesServlet extends HttpServlet {
 		//table.addBeanColumn("Location", "location");
 		table.addBeanColumn("Open", "isOpen");
 		table.addBeanColumn("Date", "dateFormated");
-		table.addBeanColumn("Author Name", "authorName");
+		table.addBeanColumn("Opened by", "authorName");
 		
 		/*
 		 * Column 4: This is a special column. It adds a link to view the
@@ -55,7 +55,7 @@ public final class CasesServlet extends HttpServlet {
 		 */
 		table.addLinkColumn(""	/* The header. We will leave it empty */,
 				"View Case" 	/* What should be displayed in every row */,
-				"Case?id=" 	/* This is the base url. The final url will be composed from the concatenation of this and the parameter below */, 
+				"Case?caseId=" 	/* This is the base url. The final url will be composed from the concatenation of this and the parameter below */, 
 				"caseId" 			/* For every case displayed, the ID will be retrieved and will be attached to the url base above */);
 
 		// Pass the table to the session. This will allow the respective jsp page to display the table.

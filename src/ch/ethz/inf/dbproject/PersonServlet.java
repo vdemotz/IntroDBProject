@@ -35,7 +35,7 @@ public final class PersonServlet extends HttpServlet {
 	
 	protected BeanTableHelper<Person> tablePersonDetail(int Id)
 	{
-		BeanTableHelper<Person> table = new BeanTableHelper<Person>("person", "personTable", Person.class);
+		BeanTableHelper<Person> table = new BeanTableHelper<Person>("person", "contentTable", Person.class);
 		
 		table.addBeanColumn("Last Name", "lastName");
 		table.addBeanColumn("First Name", "firstName");
@@ -52,7 +52,7 @@ public final class PersonServlet extends HttpServlet {
 	
 	protected BeanTableHelper<CaseDetail> tableConvicted(int Id)
 	{
-		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 		
 		table.addBeanColumn("Cases", "title");
 		table.addLinkColumn("", "View Case", "Case?id=", "id");
@@ -63,7 +63,7 @@ public final class PersonServlet extends HttpServlet {
 	
 	protected BeanTableHelper<CaseDetail> tableSuspected(int Id)
 	{
-		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "casesTable", CaseDetail.class);
+		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 		
 		table.addBeanColumn("Cases", "title");
 		table.addLinkColumn("", "View Case", "Case?id=", "id");
@@ -74,7 +74,7 @@ public final class PersonServlet extends HttpServlet {
 	
 	protected BeanTableHelper<PersonNote> tablePersonNotes(int Id)
 	{
-		BeanTableHelper<PersonNote> table = new BeanTableHelper<PersonNote>("personNotes", "personNotesTable", PersonNote.class);
+		BeanTableHelper<PersonNote> table = new BeanTableHelper<PersonNote>("personNotes", "contentTable", PersonNote.class);
 		
 		table.addBeanColumn("Author", "authorUsername");
 		table.addBeanColumn("Date", "date");

@@ -45,7 +45,7 @@ public final class SearchServlet extends HttpServlet {
 			if(filter.equals("namePerson") || filter.equals("convictionType") || filter.equals("convictionDate")) {
 				
 				final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
-						"personsTable", Person.class);
+						"contentTable", Person.class);
 				
 				table.addBeanColumn("Person ID", "personId");
 				table.addBeanColumn("Last Name", "lastName");
@@ -68,7 +68,7 @@ public final class SearchServlet extends HttpServlet {
 
 			} else if(filter.equals("category") || filter.equals("caseDate")){
 				final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
-						"casesTable", CaseDetail.class);
+						"contentTable", CaseDetail.class);
 
 				table.addBeanColumn("Case ID", "caseId");
 				table.addBeanColumn("Title", "title");
@@ -77,7 +77,7 @@ public final class SearchServlet extends HttpServlet {
 				table.addBeanColumn("Date", "dateTimeFormated");
 				//table.addBeanColumn("Description", "description");
 				table.addBeanColumn("Author Name", "authorName");
-				table.addLinkColumn("", "View Case", "Case?id=", "id");
+				table.addLinkColumn("", "View Case", "Case?caseId=", "id");
 				
 				if (filter.equals("category")) {
 					table.addObjects(this.dbInterface.getCasesForCategory(description));

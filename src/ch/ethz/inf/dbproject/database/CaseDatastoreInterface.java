@@ -112,10 +112,28 @@ public interface CaseDatastoreInterface {
 	 * @param caseId the caseId of the CaseDetail
 	 * @param text the comment of the user
 	 * @param authorUsername the user name
-	 * @return if the parameters are valid, a CaseNote object representing the CaseNote just added to the DB
+	 * @return if the parameters are valid and the insertion succeeds, a CaseNote object representing the CaseNote just added to the DB
 	 * 		   otherwise, null is returned
 	 */
-	CaseNote addCaseNote(int caseId, String text, String authorUsername);
+	CaseNote insertIntoCaseNote(int caseId, String text, String authorUsername);
 	
-	//TODO: addCase
+	/**
+	 * @param caseId the id of the case
+	 * @param isOpen the new isOpen value for the case
+	 * @return if the operation succeeds true, otherwise false
+	 */
+	boolean updateCaseIsOpen(int caseId, boolean isOpen);
+	
+	/**
+	 * @param title
+	 * @param city
+	 * @param zipCode
+	 * @param street
+	 * @param date
+	 * @param description
+	 * @param authorUsername
+	 * @return if the parameters are valid and insertion succeeds, an object representing the new CaseDetail
+	 * 		   otherwise null
+	 */
+	CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, java.sql.Timestamp date, String description, String authorUsername);
 }

@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.model.CaseDetail;
@@ -136,11 +137,6 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public CaseNote addCaseNote(int caseId, String text, String authorUsername) {
-		return caseDatastore.addCaseNote(caseId, text, authorUsername);
-	}
-	
-	@Override
 	public List<CaseDetail> getOpenCases() {
 		return caseDatastore.getOpenCases();
 	}
@@ -178,6 +174,21 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	@Override
 	public List<CategorySummary> getCategorySummary() {
 		return caseDatastore.getCategorySummary();
+	}
+
+	@Override
+	public CaseNote insertIntoCaseNote(int caseId, String text, String authorUsername) {
+		return caseDatastore.insertIntoCaseNote(caseId, text, authorUsername);
+	}
+
+	@Override
+	public boolean updateCaseIsOpen(int caseId, boolean isOpen) {
+		return caseDatastore.updateCaseIsOpen(caseId, isOpen);
+	}
+
+	@Override
+	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, Timestamp date, String description, String authorUsername) {
+		return caseDatastore.insertIntoCaseDetail(title, city, zipCode, street, date, description, authorUsername);
 	}
 
 

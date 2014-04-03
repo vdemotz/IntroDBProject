@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,12 +55,14 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	//template: get the next id for the case note of a particular case
 	String nextCaseNoteIdForCaseQuery = "select coalesce (max(caseNoteId)+1, 1) from CaseNote where caseId=?";//if there is no caseNote yet, max returns null, coalesce selects the first non-null argument
 	//template add a new note
-	String addCaseNoteRequest = "insert into CaseNote " +
+	String insertIntoCaseNoteQuery = "insert into CaseNote " +
 								"values (?, " +//caseId
 								"?, " +//caseNoteId
 								"?, " +//text
 								"?, " +//date
 								"?)";//authorUsername
+	//template set case is open
+	String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -75,7 +78,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement categorySummaryStatement;
 	PreparedStatement casesForDateLikeStatement;
 	PreparedStatement nextCaseNoteIdForCaseStatement;
-	PreparedStatement addCaseNoteStatement;
+	PreparedStatement insertIntoCaseNoteStatement;
+	PreparedStatement updateCaseIsOpenStatement;
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -102,7 +106,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		categorySummaryStatement = sqlConnection.prepareStatement(categorySummaryQuery);
 		casesForDateLikeStatement = sqlConnection.prepareStatement(casesForDateLikeQuery);
 		nextCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(nextCaseNoteIdForCaseQuery);
-		addCaseNoteStatement = sqlConnection.prepareStatement(addCaseNoteRequest);
+		insertIntoCaseNoteStatement = sqlConnection.prepareStatement(insertIntoCaseNoteQuery);
+		updateCaseIsOpenStatement = sqlConnection.prepareStatement(updateCaseIsOpenQuery);
 	}
 	
 	////
@@ -123,19 +128,6 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
-		}
-	}
-	
-	/**
-	 * @param statement a statement whose first parameter is a caseId
-	 * @param caseId the value that the caseId argument will be set to
-	 */
-	private void setCaseId(PreparedStatement statement, int caseId)
-	{
-		try {
-			statement.setInt(1, caseId);
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -171,13 +163,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 
 	@Override
 	public List<CaseDetail> getOpenCases() {
-		try {
-			openCasesStatement.setBoolean(1, true);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return getResults(CaseDetail.class, openCasesStatement);
+		return getCasesWithIsOpen(true);
 	}
 
 	@Override
@@ -187,13 +173,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 
 	@Override
 	public List<CaseDetail> getClosedCases() {
-		try {
-			openCasesStatement.setBoolean(1, false);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return getResults(CaseDetail.class, openCasesStatement);
+		return getCasesWithIsOpen(false);
 	}
 
 	@Override
@@ -283,6 +263,32 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	//Helper Queries
 	/////
 	
+	/**
+	 * @param statement a statement whose first parameter is a caseId
+	 * @param caseId the value that the caseId argument will be set to
+	 */
+	private void setCaseId(PreparedStatement statement, int caseId)
+	{
+		try {
+			statement.setInt(1, caseId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * if isOpen = true, same semantic as getOpenCases, otherwise same as getClosedCases
+	 */
+	private List<CaseDetail> getCasesWithIsOpen(boolean isOpen) {
+		try {
+			openCasesStatement.setBoolean(1, isOpen);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return getResults(CaseDetail.class, openCasesStatement);
+	}
+	
 	private int getNextCaseNoteIdForCase(int caseId)
 	{
 		try {
@@ -301,26 +307,44 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	////
 	
 	@Override
-	public synchronized CaseNote addCaseNote(int caseId, String text, String authorUsername) {
-		//Todo: check if there is a case with that id beforehand, to avoid the exception later on
-		int caseNoteId = getNextCaseNoteIdForCase(caseId);//TODO: it would be nice if this could be nested into the insert query
-		if (caseNoteId == -1) return null;
-		java.util.Date date = new java.util.Date();
-		java.sql.Timestamp datesql = new java.sql.Timestamp(date.getTime());
+	public CaseNote insertIntoCaseNote(int caseId, String text, String authorUsername) {
+		synchronized (this.getClass()) {//TODO: it would be nice if this could be nested into the insert query (then no lock would be necessary here)
+			int caseNoteId = getNextCaseNoteIdForCase(caseId);
+			if (caseNoteId == -1) return null;
+			java.util.Date date = new java.util.Date();
+			java.sql.Timestamp datesql = new java.sql.Timestamp(date.getTime());
+			try {
+				insertIntoCaseNoteStatement.setInt(1, caseId);
+				insertIntoCaseNoteStatement.setInt(2, caseNoteId);
+				insertIntoCaseNoteStatement.setString(3, text);
+				insertIntoCaseNoteStatement.setObject(4, datesql);
+				insertIntoCaseNoteStatement.setString(5, authorUsername);
+				insertIntoCaseNoteStatement.execute();
+				return new CaseNote(caseId, caseNoteId, text, datesql, authorUsername);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
+
+	@Override
+	public boolean updateCaseIsOpen(int caseId, boolean isOpen) {
 		try {
-			addCaseNoteStatement.setInt(1, caseId);
-			addCaseNoteStatement.setInt(2, caseNoteId);
-			addCaseNoteStatement.setString(3, text);
-			addCaseNoteStatement.setObject(4, datesql);
-			addCaseNoteStatement.setString(5, authorUsername);
-			addCaseNoteStatement.execute();
-			//Todo: maybe check with the database if the creation was successful (but then again if there was no exception it should be fine)
-			return new CaseNote(caseId, caseNoteId, text, datesql, authorUsername);
+			updateCaseIsOpenStatement.setBoolean(1, isOpen);
+			updateCaseIsOpenStatement.setInt(2, caseId);
+			updateCaseIsOpenStatement.execute();
+			return updateCaseIsOpenStatement.getUpdateCount() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return null;
+			return false;
 		}
-		
+	}
+
+	@Override
+	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, Timestamp date, String description, String authorUsername) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

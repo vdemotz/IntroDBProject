@@ -16,8 +16,7 @@
 		<table id="masterTable" cellpadding="0" cellspacing="0">
 			<tr>
 				<th id="masterHeader" colspan="2">
-					<h1>Law Enforcement Project</h1>
-					Project by Vincent Demotz and Lukas Gianinazzi
+					<h1>LFORCE</h1>
 				</th>
 			</tr>
 			<tr id="masterContent">
