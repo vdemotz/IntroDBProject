@@ -21,9 +21,12 @@ public class UserDatastore implements UserDatastoreInterface {
 	//particular user for an username and a password
 	private String getUserForUsernameAndPasswordString = "select * from User where username = ? and password = ?";
 	//cases for a particular user
-	private String getCurrentCasesForUserString = "(select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername like ? and caseNote.caseId = caseDetail.caseId) "+
+	/*private String getCurrentCasesForUserString = "(select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername like ? and caseNote.caseId = caseDetail.caseId) "+
 	"union "+
-	"(select * from CaseDetail where authorName like ? order by date desc)";
+	"(select caseDetail2.* from CaseDetail caseDetail2 where authorName like ?) order by date desc";*/
+	private String getCurrentCasesForUserString = "select caseId, title, street, city, zipCode, isOpen, date, description, authorName from ((select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername = ? and caseNote.caseId = caseDetail.caseId) "+
+			"union "+
+			"(select CaseDetail.* from CaseDetail caseDetail where caseDetail.authorName = ?))as P order by date desc";
 	//add User
 	private String addUserString = "insert into User(username, firstName, lastName, password) values(?, ?, ?, ?)";
 	//check if username is available

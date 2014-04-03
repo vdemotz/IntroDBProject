@@ -42,7 +42,7 @@ public final class SearchServlet extends HttpServlet {
 		
 		if (filter != null) {
 		
-			if(filter.equals("firstName") || filter.equals("lastName") || filter.equals("convictionType") || filter.equals("convictionDate")) {
+			if(filter.equals("namePerson") || filter.equals("convictionType") || filter.equals("convictionDate")) {
 				
 				final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
 						"personsTable", Person.class);
@@ -51,12 +51,11 @@ public final class SearchServlet extends HttpServlet {
 				table.addBeanColumn("Last Name", "lastName");
 				table.addBeanColumn("First Name", "firstName");
 				//table.addLinkColumn("", "View Person", "Person?id=", "id");
-				
-				if(filter.equals("firstName")){
-					table.addObjects(this.dbInterface.getPersonsForName(description, ""));
 					
-				} else if (filter.equals("lastName")) {
-					table.addObjects(this.dbInterface.getPersonsForName("", description));
+				if (filter.equals("namePerson")) {
+					final String lastName = request.getParameter("lastName");
+					final String firstName = request.getParameter("firstName");
+					table.addObjects(this.dbInterface.getPersonsForName(firstName, lastName));
 
 				} else if (filter.equals("convictionType")) {	
 					table.addObjects(this.dbInterface.getPersonsForConvictionType(description));

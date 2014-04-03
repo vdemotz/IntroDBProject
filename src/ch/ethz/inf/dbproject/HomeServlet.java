@@ -85,10 +85,14 @@ public final class HomeServlet extends HttpServlet {
 			final String password = request.getParameter("password");
 			
 			User user = dbInterface.getUserForUsernameAndPassword(username, password);
-			session.setAttribute(UserManagement.SESSION_USER, user);
+			if (user != null) {
+				session.setAttribute(UserManagement.SESSION_USER, user);
 			
-			session.setAttribute(SESSION_USER_DETAILS, tableUserDetails(user));
-			session.setAttribute(SESSION_USER_CASES, tableCasesUserModified(user.getUsername()));
+				session.setAttribute(SESSION_USER_DETAILS, tableUserDetails(user));
+				session.setAttribute(SESSION_USER_CASES, tableCasesUserModified(user.getUsername()));
+			} else {
+				// TODO display "wrong password"
+			}
 			
 		} else if( action != null && action.trim().equals("logout")){
 			session.setAttribute(SESSION_USER_LOGGED_IN, false);

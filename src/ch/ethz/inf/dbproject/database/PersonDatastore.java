@@ -29,7 +29,7 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	//get person note for particular person
 	private String getPersonNotesForPersonString = "select * from PersonNote where personId = ?";
 	//get persons for a particular first name or last name
-	private String getPersonsForNameString = "select * from Person where firstName like ? or lastName like ?";
+	private String getPersonsForNameString = "select * from Person where firstName like ? or lastName like ? ";
 	//persons for particular conviction type
 	private String getPersonsForConvictionTypeString = "select p.* from Convicted convicted, Person p, ConvictionType convictionType "+
 			"where convicted.personId = p.personId and convicted.convictionId = convictionType.convictionId and "+

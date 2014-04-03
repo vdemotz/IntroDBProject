@@ -100,8 +100,7 @@ public final class PersonServlet extends HttpServlet {
 		final String idString = request.getParameter("id");
 		
 		if (action != null){
-			final Object id = session.getAttribute("personId");
-			PersonNote pn = dbInterface.addPersonNote(Integer.parseInt(id.toString()), comment, userId);
+			PersonNote pn = dbInterface.addPersonNote(Integer.parseInt(idString), comment, userId);
 		}
 		
 		if (idString == null) {

@@ -7,19 +7,12 @@
 
 <form method="get" action="Search">
 <div>
-	<input type="hidden" name="filter" value="firstName" />
-	Search By First Name:
-	<input type="text" name="description" />
-	<input type="submit" value="Search" title="Search by First Name-" />
-</div>
-</form>
-
-<form method="get" action="Search">
-<div>
-	<input type="hidden" name="filter" value="lastName" />
-	Search By Last Name:
-	<input type="text" name="description" />
-	<input type="submit" value="Search" title="Search by Last Name" />
+	<input type="hidden" name="filter" value="namePerson" />
+	Search By First Name / Last Name:
+	<input type="text" name="firstName" />
+	<input type="text" name="lastName" />
+	<input type="submit" value="Search" title="Search by Name" />
+	<br> Note that you can use '*' and '%'.
 </div>
 </form>
 

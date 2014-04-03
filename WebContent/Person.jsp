@@ -17,6 +17,7 @@ if (user != null) {
 	// User is logged in. He can add a comment
 %>
  	<form action="Person" method="get">
+ 		<input type="hidden" name="id" value = <%=request.getParameter("id")%> >
 		<input type="hidden" name="action" value="add_comment" />
 		<input type="hidden" name="user_id" value="<%= user.getUsername() %>" />
 		Add Comment
