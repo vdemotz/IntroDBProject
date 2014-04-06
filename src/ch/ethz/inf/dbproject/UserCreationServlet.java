@@ -58,6 +58,7 @@ public final class UserCreationServlet extends HttpServlet {
 		final String action = request.getParameter("action");
 		if (action != null && action.trim().equals("creation") 	&& loggedUser == null) {
 
+			//get the entries of the new user
 			final String username = request.getParameter("username");
 			final String password1 = request.getParameter("password1");
 			final String password2 = request.getParameter("password2");
@@ -108,7 +109,7 @@ public final class UserCreationServlet extends HttpServlet {
 				this.dbInterface.addUser(username, password1, lastName, firstName);
 			}
 		}
-
+		//proceed and display the user creation page
 		this.getServletContext().getRequestDispatcher("/UserCreation.jsp").forward(request, response);
 	}
 }

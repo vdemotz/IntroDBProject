@@ -1,6 +1,5 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.Date;
 import java.util.List;
 import ch.ethz.inf.dbproject.model.*;
 
@@ -54,7 +53,7 @@ public interface PersonDatastoreInterface {
 	 * @param startDate
 	 * @return a list of persons that have been convicted at the given date
 	 */
-	List<Person> getPersonsForConvictionDate(Date startDate);
+	List<Person> getPersonsForConvictionDate(String startDate);
 	
 	/**
 	 * @return a list of persons that are convicted for at least one crime
@@ -81,6 +80,23 @@ public interface PersonDatastoreInterface {
 	 */
 	PersonNote addPersonNote(int personId, String text, String authorUsername);
 
+	
+	/**
+	 * Adds a new Person to the DB.
+	 * @param firstName first name of the person
+	 * @param lastName last name of the person
+	 * @param date the birthdate of the person
+	 * @return if parameters are valid, a Person object representing the Person just added
+	 */
+	Person addPerson(String firstName, String lastName, String date);
+
+	/**
+	 * Add a new suspicion entry
+	 * @param caseId the case for which the person is suspected
+	 * @param personId the person id of the person
+	 * @return true parameters are valid and updated was made in database
+	 */
+	boolean setPersonSuspected(int caseId, int personId);
 	
 	
 }

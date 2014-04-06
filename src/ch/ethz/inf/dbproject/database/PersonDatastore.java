@@ -1,14 +1,14 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.sql.Timestamp;
+import java.text.ParseException;
+
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
-import ch.ethz.inf.dbproject.model.User;
 
 public class PersonDatastore implements PersonDatastoreInterface {
 
@@ -29,14 +29,14 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	//get person note for particular person
 	private String getPersonNotesForPersonString = "select * from PersonNote where personId = ?";
 	//get persons for a particular first name or last name
-	private String getPersonsForNameString = "select * from Person where firstName like ? or lastName like ? ";
+	private String getPersonsForNameString = "select * from Person where firstName like ? and lastName like ? or firstName is null or lastName is null";
 	//persons for particular conviction type
 	private String getPersonsForConvictionTypeString = "select p.* from Convicted convicted, Person p, ConvictionType convictionType "+
 			"where convicted.personId = p.personId and convicted.convictionId = convictionType.convictionId and "+
 			"convictionType.categoryName = ?";
 	//persons for particular date
 	private String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Convicted convicted, Person person "+
-			"where conviction.startDate = ? and conviction.convictionId = convicted.convictionId and "+
+			"where conviction.startDate like ? and conviction.convictionId = convicted.convictionId and "+
 			"convicted.personId = person.personId";
 	//particular person for an Id
 	private String getPersonForIdString = "select * from Person where personId =?";
@@ -45,11 +45,18 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	//all suspected persons
 	private String getAllSuspectedPersonsString = "select p.* from Person p, Suspected s where p.personId = s.personId";
 	
-	//add a person
+	//add a personNote
 	private String addPersonNoteString = "insert into PersonNote(PersonId, PersonNoteId, text, date, authorUsername) values(?, ?, ?, ?, ?)";
 	//get the max Id for person notes for a particular person
 	private String getMaxPersonNoteIdForPersonIdString = "select max(personNoteId) from PersonNote where personId = ?";
 	
+	//add a person
+	private String addPersonString = "insert into Person(personId, firstName, lastName, birthdate) values(?, ?, ?, ?)";
+	//get the max Id for person
+	private String getMaxPersonIdString = "select max(PersonId) from Person";
+	
+	//set a person as suspected
+	private String setPersonSuspectedString = "insert into Suspected(personId, caseId) values(?, ?)";
 	////
 	//Prepared Statements
 	////
@@ -64,8 +71,9 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	private PreparedStatement getAllSuspectedPersonsStatement;
 	private PreparedStatement addPersonNoteStatement;
 	private PreparedStatement getMaxPersonNoteIdForPersonIdStatement;
-	
-	private Timestamp time;
+	private PreparedStatement addPersonStatement;
+	private PreparedStatement getMaxPersonIdStatement;
+	private PreparedStatement setPersonSuspectedStatement;
 
 	////
 	//Constructor
@@ -77,8 +85,6 @@ public class PersonDatastore implements PersonDatastoreInterface {
 		} catch (SQLException e){
 			e.printStackTrace();
 		}
-		time = new Timestamp(0);
-		
 	}
 
 	private void prepareStatements() throws SQLException {
@@ -93,6 +99,9 @@ public class PersonDatastore implements PersonDatastoreInterface {
 		getAllSuspectedPersonsStatement = sqlConnection.prepareStatement(getAllSuspectedPersonsString);
 		addPersonNoteStatement = sqlConnection.prepareStatement(addPersonNoteString);
 		getMaxPersonNoteIdForPersonIdStatement = sqlConnection.prepareStatement(getMaxPersonNoteIdForPersonIdString);
+		addPersonStatement = sqlConnection.prepareStatement(addPersonString);
+		getMaxPersonIdStatement = sqlConnection.prepareStatement(getMaxPersonIdString);
+		setPersonSuspectedStatement = sqlConnection.prepareStatement(setPersonSuspectedString);
 	}
 
 	/**
@@ -181,9 +190,9 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	}
 
 	@Override
-	public List<Person> getPersonsForConvictionDate(Date startDate) {
+	public List<Person> getPersonsForConvictionDate(String startDate) {
 		try{
-			getPersonsForConvictionDateStatement.setString(1, startDate.toString());
+			getPersonsForConvictionDateStatement.setString(1, startDate + "%");
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
@@ -224,19 +233,21 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	
 	@Override
 	public PersonNote addPersonNote(int personId, String text, String authorUsername) {
-		try{
-			int personNoteId = getMaxPersonNoteIdForPersonId(personId);
-			Timestamp t = new Timestamp(time.getTime());
-			addPersonNoteStatement.setInt(1, personId);
-			addPersonNoteStatement.setInt(2, personNoteId);
-			addPersonNoteStatement.setString(3, text);
-			addPersonNoteStatement.setTimestamp(4, t);
-			addPersonNoteStatement.setString(5, authorUsername);
-			addPersonNoteStatement.execute();
-			return new PersonNote(personId, personNoteId, text, t, authorUsername);
-		} catch (final SQLException ex){
-			ex.printStackTrace();
-			return null;
+		synchronized (this.getClass()){
+			try{
+				int personNoteId = getMaxPersonNoteIdForPersonId(personId);
+				Timestamp t = new Timestamp(new java.util.Date().getTime());
+				addPersonNoteStatement.setInt(1, personId);
+				addPersonNoteStatement.setInt(2, personNoteId);
+				addPersonNoteStatement.setString(3, text);
+				addPersonNoteStatement.setTimestamp(4, t);
+				addPersonNoteStatement.setString(5, authorUsername);
+				addPersonNoteStatement.execute();
+				return new PersonNote(personId, personNoteId, text, t, authorUsername);
+			} catch (final SQLException ex){
+				ex.printStackTrace();
+				return null;
+			}
 		}
 	}
 	
@@ -246,6 +257,52 @@ public class PersonDatastore implements PersonDatastoreInterface {
 			ResultSet rs = getMaxPersonNoteIdForPersonIdStatement.executeQuery();
 			if (!rs.first()){ return 0; }
 			return (rs.getInt("max(personNoteId)")+1);
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return -1;
+		}
+	}
+	
+	@Override
+	public Person addPerson(String firstName, String lastName, String date){
+		synchronized (this.getClass()){
+			try{
+				int id = this.getMaxPersonId();
+				addPersonStatement.setInt(1, id);
+				addPersonStatement.setString(2, firstName);
+				addPersonStatement.setString(3, lastName);
+				addPersonStatement.setString(4, date);
+				addPersonStatement.execute();
+				try { return new Person(id, firstName, lastName, date);
+				} catch (ParseException e) {
+					e.printStackTrace();
+					return null;
+				}
+			} catch (final SQLException ex){
+				ex.printStackTrace();
+				return null;
+			}
+		}
+	}
+	
+	@Override
+	public boolean setPersonSuspected(int caseId, int personId){
+		try{
+			setPersonSuspectedStatement.setInt(1, personId);
+			setPersonSuspectedStatement.setInt(2, caseId);
+			setPersonSuspectedStatement.execute();
+			return true;
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
+	private int getMaxPersonId() {
+		try{
+			ResultSet rs = getMaxPersonIdStatement.executeQuery();
+			if (!rs.first()){ return 0; }
+			return (rs.getInt("max(personId)")+1);
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return -1;

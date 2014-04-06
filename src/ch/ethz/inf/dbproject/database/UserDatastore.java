@@ -1,7 +1,6 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
 import ch.ethz.inf.dbproject.model.CaseDetail;

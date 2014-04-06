@@ -31,9 +31,14 @@ if (user != null) {
 	// No user logged in.%>
 	Welcome!
 	
+	
 	<form action="Home" method="get">
 	<input type="hidden" name="action" value="login" />
-	<table>
+	<table> 
+		<% if (((Boolean) session.getAttribute(HomeServlet.SESSION_WRONG_PASSWORD))) {
+			//User provided wrong password. %>
+		Sorry, wrong password/username
+		<% } %>
 		<tr>
 			<th>Username</th>
 			<td><input type="text" name="username" value="" /></td>

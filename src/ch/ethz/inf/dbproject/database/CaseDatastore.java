@@ -2,6 +2,7 @@ package ch.ethz.inf.dbproject.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -63,10 +64,18 @@ public class CaseDatastore implements CaseDatastoreInterface {
 								"?)";//authorUsername
 	//template set case is open
 	String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
+<<<<<<< HEAD
 	//template add Suspec
 	String addSuspectQuery = "insert into Suspected values (?, ?)";
 	//template add Convicts
 	String addConvictQuery = "insert into Convicted values (?, ?, ?)";
+=======
+	//template add new case
+	String insertIntoCaseDetailQuery = "insert into CaseDetail (caseId, title, street, city, zipCode, isOpen, date, description, authorName) " +
+							"values(?, ?, ?, ?, ? ,? ,? ,? ,?)";
+	//template get the next id for the case detail
+	String nextCaseDetailIdQuery = "select max(caseId) from CaseDetail";
+>>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -84,8 +93,13 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement nextCaseNoteIdForCaseStatement;
 	PreparedStatement insertIntoCaseNoteStatement;
 	PreparedStatement updateCaseIsOpenStatement;
+<<<<<<< HEAD
 	PreparedStatement addSuspectStatement;
 	PreparedStatement addConvictStatement;
+=======
+	PreparedStatement insertIntoCaseDetailStatement;
+	PreparedStatement nextCaseDetailIdStatement;
+>>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -114,8 +128,13 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		nextCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(nextCaseNoteIdForCaseQuery);
 		insertIntoCaseNoteStatement = sqlConnection.prepareStatement(insertIntoCaseNoteQuery);
 		updateCaseIsOpenStatement = sqlConnection.prepareStatement(updateCaseIsOpenQuery);
+<<<<<<< HEAD
 		addSuspectStatement =  sqlConnection.prepareStatement(addSuspectQuery);
 		addConvictStatement = sqlConnection.prepareStatement(addConvictQuery);
+=======
+		insertIntoCaseDetailStatement = sqlConnection.prepareStatement(insertIntoCaseDetailQuery);
+		nextCaseDetailIdStatement = sqlConnection.prepareStatement(nextCaseDetailIdQuery);
+>>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
 	}
 	
 	////
@@ -310,6 +329,18 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		}
 	}
 	
+	private int getNextCaseDetailId()
+	{
+		try {
+			ResultSet rs = nextCaseDetailIdStatement.executeQuery();
+			if (!rs.first()){ return 0; }
+			return (rs.getInt("max(personId)")+1);
+		} catch (SQLException ex){
+			ex.printStackTrace();
+			return -1;
+		}
+	}
+	
 	////
 	//MODIFY
 	////
@@ -351,9 +382,27 @@ public class CaseDatastore implements CaseDatastoreInterface {
 
 	@Override
 	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, Timestamp date, String description, String authorUsername) {
-		// TODO Auto-generated method stub
-		return null;
+		synchronized (this.getClass()){
+			try {
+				int caseId = getNextCaseDetailId();
+				insertIntoCaseDetailStatement.setInt(1, caseId);
+				insertIntoCaseDetailStatement.setString(2, title);
+				insertIntoCaseDetailStatement.setString(3, street);
+				insertIntoCaseDetailStatement.setString(4, city);
+				insertIntoCaseDetailStatement.setString(5, zipCode);
+				insertIntoCaseDetailStatement.setBoolean(6, true);
+				insertIntoCaseDetailStatement.setString(7, date.toString());
+				insertIntoCaseDetailStatement.setString(8, description);
+				insertIntoCaseDetailStatement.setString(9, authorUsername);
+				insertIntoCaseDetailStatement.execute();
+				return new CaseDetail(caseId, title, city, street, zipCode, true, date, description, authorUsername);
+			} catch (SQLException ex){
+				ex.printStackTrace();
+				return null;
+			}
+		}
 	}
+<<<<<<< HEAD
 
 	@Override
 	public boolean addSuspectToCase(int caseId, int personId) {
@@ -376,4 +425,6 @@ public class CaseDatastore implements CaseDatastoreInterface {
 
 
 
+=======
+>>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
 }

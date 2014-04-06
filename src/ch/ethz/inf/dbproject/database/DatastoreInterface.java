@@ -1,9 +1,7 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
-
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;
@@ -88,7 +86,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public List<Person> getPersonsForConvictionDate(Date startDate) {
+	public List<Person> getPersonsForConvictionDate(String startDate) {
 		return personDatastore.getPersonsForConvictionDate(startDate);
 	}
 	
@@ -100,6 +98,16 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	@Override
 	public PersonNote addPersonNote(int personId, String text, String authorUsername) {
 		return personDatastore.addPersonNote(personId, text, authorUsername);
+	}
+	
+	@Override
+	public Person addPerson(String firstName, String lastName, String date) {
+		return personDatastore.addPerson(firstName, lastName, date);
+	}
+	
+	@Override
+	public boolean setPersonSuspected(int caseId, int personId) {
+		return personDatastore.setPersonSuspected(caseId, personId);
 	}
 	
 	////
@@ -190,6 +198,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, Timestamp date, String description, String authorUsername) {
 		return caseDatastore.insertIntoCaseDetail(title, city, zipCode, street, date, description, authorUsername);
 	}
+<<<<<<< HEAD
 
 	@Override
 	public boolean addSuspectToCase(int caseId, int personId) {
@@ -203,4 +212,6 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 
 
 	
+=======
+>>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
 }
