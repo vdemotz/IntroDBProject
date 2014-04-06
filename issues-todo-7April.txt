@@ -1,4 +1,32 @@
+------
 Issues:
+-----
 
 PersonDatastore: no synchronized needed
 Persons of intrest: duplicate Entries
+CaseDetail is probably not in 3rd Normal Form - the street and zipcode probably functionally determine the city
+String literals, constants
+Search by name Semantics (null values)
+How to display null values, where to handle it (in BeanTableHelper?)
+
+-----
+Todo:
+-----
+
+Must have:
+
+Add Convicts
+Add Conviction
+Testing, Testcases, Error Handling
+Reduce use of string literals
+Consistent naming scheme for static constants
+Fix search by name semantics
+Nicely display null values
+    -composite fields (location, name) need special care
+
+Nice to have:
+
+Link columns with dynamic link names
+We could show some Properties (eg. high normal form) for our schema
+Other aggregate view of Cases, maybe Persons
+    - could show off some advanced grouping queries
