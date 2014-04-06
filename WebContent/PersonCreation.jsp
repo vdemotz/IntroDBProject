@@ -30,12 +30,15 @@ Please <a href="Home">login</a> or create an <a href="UserCreation">account</a> 
 			<td><input type="text" name="firstName" value="" /></td>
 		</tr>
 		<tr>
-			<th>Birth Date(dd/mm/yyyy)</th>
+			<th>Birth Date(yyyy-mm-dd)</th>
 			<td><input type="text" name="birthdate" value=""></td>
 		</tr>
 		
 		<td>Optional :</td>
-		
+		<tr>
+			<th>Case Id</th>
+			<td><input type="text" maxlength="10" name="caseId" value=""/></td>
+		</tr>
 		<tr>
 		        <th>Convicted / Suspected :</th>
 		        <td><select id="type" name="typeOfPerson">
@@ -45,7 +48,7 @@ Please <a href="Home">login</a> or create an <a href="UserCreation">account</a> 
 		        </select></td>
 		</tr>
 		<tr>
-			<th>Date of crime (dd/mm/yyyy)</th>
+			<th>Date of crime (yyyy-mm-dd)</th>
 			<td><input type="text" maxlength="10" name="dateCrime" value=""/></td>
 		</tr>
 		<tr>

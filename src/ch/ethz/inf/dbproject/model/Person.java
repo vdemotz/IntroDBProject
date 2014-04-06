@@ -3,13 +3,15 @@ package ch.ethz.inf.dbproject.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class Person extends ModelObject{
 
 	final int personId;
 	final String firstName;
 	final String lastName;
-	final java.sql.Date birthdate;
+	final java.util.Date birthdate;
 	
 	////
 	//CONSTRUCTORS
@@ -20,6 +22,15 @@ public class Person extends ModelObject{
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.birthdate = birthdate;
+	}
+	
+	public Person(int personId, String firstName, String lastName, String birthdate) throws ParseException {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		this.personId = personId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.birthdate = sdf.parse(birthdate);
 	}
 
 	public Person(final ResultSet rs) throws SQLException {
@@ -49,7 +60,7 @@ public class Person extends ModelObject{
 		return lastName;
 	}
 
-	public java.sql.Date getBirthdate() {
+	public java.util.Date getBirthdate() {
 		return birthdate;
 	}
 	

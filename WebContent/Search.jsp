@@ -12,7 +12,6 @@
 	<input type="text" name="firstName" />
 	<input type="text" name="lastName" />
 	<input type="submit" value="Search" title="Search by Name" />
-	<br> Note that you can use '*' and '%'.
 </div>
 </form>
 
@@ -31,6 +30,7 @@
 	Search By Date of Conviction:
 	<input type="text" name="description" />
 	<input type="submit" value="Search" title="Search by date of conviciton" />
+	<br>The input format is yyyy-mm-dd or any prefix thereof, like yyyy-mm or yyyy-mm-d.
 </div>
 </form>
 

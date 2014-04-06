@@ -55,13 +55,13 @@ public final class SearchServlet extends HttpServlet {
 				if (filter.equals("namePerson")) {
 					final String lastName = request.getParameter("lastName");
 					final String firstName = request.getParameter("firstName");
-					table.addObjects(this.dbInterface.getPersonsForName(firstName, lastName));
+					table.addObjects(this.dbInterface.getPersonsForName(firstName+"%", lastName+"%"));
 
 				} else if (filter.equals("convictionType")) {	
 					table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
 		
 				} else if (filter.equals("convictionDate")) {	
-					//table.addObjects(this.dbInterface.getPersonsForConvictionDate(description));
+					table.addObjects(this.dbInterface.getPersonsForConvictionDate(description));
 				}
 				
 				session.setAttribute("results", table);
