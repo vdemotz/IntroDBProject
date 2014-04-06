@@ -64,19 +64,16 @@ public class CaseDatastore implements CaseDatastoreInterface {
 								"?)";//authorUsername
 	//template set case is open
 	String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
-<<<<<<< HEAD
 	//template add Suspec
 	String addSuspectQuery = "insert into Suspected values (?, ?)";
 	//template add Convicts
 	String addConvictQuery = "insert into Convicted values (?, ?, ?)";
-=======
 	//template add new case
 	String insertIntoCaseDetailQuery = "insert into CaseDetail (caseId, title, street, city, zipCode, isOpen, date, description, authorName) " +
 							"values(?, ?, ?, ?, ? ,? ,? ,? ,?)";
 	//template get the next id for the case detail
 	String nextCaseDetailIdQuery = "select max(caseId) from CaseDetail";
->>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
-	
+
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
 	PreparedStatement openCasesStatement;
@@ -93,14 +90,11 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement nextCaseNoteIdForCaseStatement;
 	PreparedStatement insertIntoCaseNoteStatement;
 	PreparedStatement updateCaseIsOpenStatement;
-<<<<<<< HEAD
 	PreparedStatement addSuspectStatement;
 	PreparedStatement addConvictStatement;
-=======
 	PreparedStatement insertIntoCaseDetailStatement;
 	PreparedStatement nextCaseDetailIdStatement;
->>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
-	
+
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
 		try {
@@ -128,13 +122,10 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		nextCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(nextCaseNoteIdForCaseQuery);
 		insertIntoCaseNoteStatement = sqlConnection.prepareStatement(insertIntoCaseNoteQuery);
 		updateCaseIsOpenStatement = sqlConnection.prepareStatement(updateCaseIsOpenQuery);
-<<<<<<< HEAD
 		addSuspectStatement =  sqlConnection.prepareStatement(addSuspectQuery);
 		addConvictStatement = sqlConnection.prepareStatement(addConvictQuery);
-=======
 		insertIntoCaseDetailStatement = sqlConnection.prepareStatement(insertIntoCaseDetailQuery);
 		nextCaseDetailIdStatement = sqlConnection.prepareStatement(nextCaseDetailIdQuery);
->>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
 	}
 	
 	////
@@ -402,7 +393,6 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			}
 		}
 	}
-<<<<<<< HEAD
 
 	@Override
 	public boolean addSuspectToCase(int caseId, int personId) {
@@ -423,8 +413,4 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		return false;
 	}
 
-
-
-=======
->>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
 }
