@@ -85,9 +85,11 @@ public final class SearchServlet extends HttpServlet {
 				
 			} else {
 				System.err.println("Error :: Code should not be reachable. Filter equals to :"+filter);
-				final BeanTableHelper<CaseDetail> table = null;
-				session.setAttribute("results", table);
+				session.setAttribute("results", "Wrong filter. How did you get that one?");
 			}	
+		} else {
+			//if user didn't already asked something
+			session.setAttribute("results", "No result to display");
 		}
 
 		// Finally, proceed to the Search.jsp page which will render the search results
