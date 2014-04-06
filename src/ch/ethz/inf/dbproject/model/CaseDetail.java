@@ -84,11 +84,13 @@ public final class CaseDetail extends ModelObject {
 	
 	//returns a string in an format customary to display dates and time
 	public String getDateTimeFormated() {
+		if (date == null) return "";
 		return DateFormat.getDateTimeInstance().format(date);
 	}
 	
 	//returns a string in an format customary to display dates
 	public String getDateFormated() {
+		if (date == null) return "";
 		return DateFormat.getDateInstance().format(date);
 	}
 	
