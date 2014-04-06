@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +23,8 @@ public final class CasesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 
+	private int maximalNumberOfCases = 15;
+	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -65,37 +68,35 @@ public final class CasesServlet extends HttpServlet {
 		final String filter = request.getParameter("filter");
 		final String category = request.getParameter("category");
 
+		List<CaseDetail> cases = null;
+		
 		if (filter == null && category == null) {
 
 			// If no filter is specified, then we display all the cases!
-			table.addObjects(this.dbInterface.getAllCases());
+			cases = this.dbInterface.getAllCases();
 
 		} else if (category != null) {
-			
-			table.addObjects(this.dbInterface.getCasesForCategory(category));
+			cases = this.dbInterface.getCasesForCategory(category);
 			
 		} else if (filter != null) {
 		
 			if (filter.equals("open")) {
-				
-				table.addObjects(this.dbInterface.getOpenCases());
+				cases = this.dbInterface.getOpenCases();
 
 			} else if (filter.equals("closed")) {
-				
-				table.addObjects(this.dbInterface.getClosedCases());
+				cases = this.dbInterface.getClosedCases();
 
 			} else if (filter.equals("recent")) {
-				
-				table.addObjects(this.dbInterface.getRecentCases());
+				cases = this.dbInterface.getRecentCases();
 
 			} else if (filter.equals("oldest")) {
-				
-				table.addObjects(this.dbInterface.getOldestUnresolvedCases());
+				cases = this.dbInterface.getOldestUnresolvedCases();
 
 			}
-			
-		} else {
-			throw new RuntimeException("Code should not be reachable!");
+		}
+		
+		if (cases != null) {
+			table.addObjects(cases.subList(0, Math.min(cases.size()-1, maximalNumberOfCases)));
 		}
 
 		// Finally, proceed to the Projects.jsp page which will render the Projects
