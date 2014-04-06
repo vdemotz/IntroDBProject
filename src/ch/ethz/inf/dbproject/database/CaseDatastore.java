@@ -63,6 +63,10 @@ public class CaseDatastore implements CaseDatastoreInterface {
 								"?)";//authorUsername
 	//template set case is open
 	String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
+	//template add Suspec
+	String addSuspectQuery = "insert into Suspected values (?, ?)";
+	//template add Convicts
+	String addConvictQuery = "insert into Convicted values (?, ?, ?)";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -80,6 +84,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement nextCaseNoteIdForCaseStatement;
 	PreparedStatement insertIntoCaseNoteStatement;
 	PreparedStatement updateCaseIsOpenStatement;
+	PreparedStatement addSuspectStatement;
+	PreparedStatement addConvictStatement;
 	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -108,6 +114,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		nextCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(nextCaseNoteIdForCaseQuery);
 		insertIntoCaseNoteStatement = sqlConnection.prepareStatement(insertIntoCaseNoteQuery);
 		updateCaseIsOpenStatement = sqlConnection.prepareStatement(updateCaseIsOpenQuery);
+		addSuspectStatement =  sqlConnection.prepareStatement(addSuspectQuery);
+		addConvictStatement = sqlConnection.prepareStatement(addConvictQuery);
 	}
 	
 	////
@@ -345,6 +353,25 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, Timestamp date, String description, String authorUsername) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean addSuspectToCase(int caseId, int personId) {
+		try {
+			addSuspectStatement.setInt(1, personId);
+			addSuspectStatement.setInt(2, caseId);
+			addSuspectStatement.execute();
+			return addSuspectStatement.getUpdateCount() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean addConvictToCase(int caseId, int personId, int convictionId) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

@@ -25,6 +25,29 @@ public final class CaseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 
+	
+	public static final String BASE_ADDRESS = "Case";
+	
+	public static final String CASE_DETAIL_TABLE_ATTRIBUTE = "CASEdetT";
+	public static final String CATEGORY_TABLE_ATTRIBUTE = "CASEcatT";
+	public static final String SUSPECT_TABLE_ATTRIBUTE = "CASEsusT";
+	public static final String CONVICT_TABLE_ATTRIBUTE = "CASEconT";
+	public static final String CASE_NOTE_TABLE_ATTRIBUTE = "CASEnoteT";
+	
+	public static final String CASE_ID_PARAMETER = "caseId";
+	public static final String USERNAME_PARAMETER = "username";
+	
+	public static final String INTERNAL_COMMENT_PARAMETER ="comment";
+	public static final String INTERNAL_ACTION_PARAMETER = "action";
+	public static final String INTERNAL_ACTION_ADD_NOTE_PARAMETER_VALUE = "addNote";
+	public static final String INTERNAL_ACTION_OPEN_CASE_PARAMETER_VALUE = "openCase";
+	public static final String INTERNAL_ACTION_CLOSE_CASE_PARAMETER_VALUE = "closeCase";
+
+	public static final String INTERNAL_ACTION_ADD_CONVICT_PARAMETER_VALUE = "addConv";
+	public static final String INTERNAL_ACTION_ADD_SUSPECT_PARAMETER_VALUE = "addSusp";
+	
+	
+	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -122,26 +145,31 @@ public final class CaseServlet extends HttpServlet {
 		final int id = caseDetail.getCaseId();
 		
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
-		final String username = request.getParameter("username");
+		final String username = request.getParameter(USERNAME_PARAMETER);
 		
 		boolean didUpdateCase = false;
 		
 		if (loggedUser != null && loggedUser.getUsername().equals(username)) {//do not modify if the user is logged out, or the user changed in the mean time
 			
-			final String action = request.getParameter("action");
+			final String action = request.getParameter(INTERNAL_ACTION_PARAMETER);
 			
-			if ("addComment".equals(action) && caseDetail.getIsOpen()) {//cannot add comments to closed cases
-				final String comment = request.getParameter("comment");
+			if (INTERNAL_ACTION_ADD_NOTE_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {//cannot add comments to closed cases
+				final String comment = request.getParameter(INTERNAL_COMMENT_PARAMETER);
 				CaseNote cn = dbInterface.insertIntoCaseNote(id, comment, username);
 				
-			} else if ("closeCase".equals(action) && caseDetail.getIsOpen()) {
+			} else if (INTERNAL_ACTION_CLOSE_CASE_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
 				dbInterface.insertIntoCaseNote(id, "closed case", username);//keep notes of the closing / opening
 				didUpdateCase = dbInterface.updateCaseIsOpen(id, false);
 				
-			} else if ("openCase".equals(action) && !caseDetail.getIsOpen()) {
+			} else if (INTERNAL_ACTION_OPEN_CASE_PARAMETER_VALUE.equals(action) && !caseDetail.getIsOpen()) {
 				didUpdateCase = dbInterface.updateCaseIsOpen(id, true);
 				dbInterface.insertIntoCaseNote(id, "opened case", username);//keep notes of the closing / opening
-			}
+			} else if (INTERNAL_ACTION_ADD_SUSPECT_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
+				final String personIdRaw = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID);
+				int personId = Integer.parseInt(personIdRaw);
+				dbInterface.addSuspectToCase(id, personId);
+				
+			} //TODO: add convict
 		}
 		
 		if (didUpdateCase) {
@@ -160,15 +188,15 @@ public final class CaseServlet extends HttpServlet {
 		session.setAttribute("caseDetail", caseDetail);
 		
 		//set the CaseDetail (the header) wanted by the user
-		session.setAttribute("caseTable", getCaseTableForId(id));
+		session.setAttribute(CASE_DETAIL_TABLE_ATTRIBUTE, getCaseTableForId(id));
 		//set the Categories for the case
-		session.setAttribute("categoryTable", getCategoriesTableForCase(id));
+		session.setAttribute(CATEGORY_TABLE_ATTRIBUTE, getCategoriesTableForCase(id));
 		//list the case notes				
-		session.setAttribute("commentTable", getCaseNotesTableForCase(id));
+		session.setAttribute(CASE_NOTE_TABLE_ATTRIBUTE, getCaseNotesTableForCase(id));
 		//list the suspects
-		session.setAttribute("suspectsTable", getSuspectsTableForCase(id));
+		session.setAttribute(SUSPECT_TABLE_ATTRIBUTE, getSuspectsTableForCase(id));
 		//list the convicts
-		session.setAttribute("convictsTable", getConvictsTableForCase(id));
+		session.setAttribute(CONVICT_TABLE_ATTRIBUTE, getConvictsTableForCase(id));
 	}
 	
 	/**
@@ -176,7 +204,7 @@ public final class CaseServlet extends HttpServlet {
 	 */
 	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		
-		final String idString = request.getParameter("caseId");
+		final String idString = request.getParameter(CASE_ID_PARAMETER);
 		
 		boolean invalidId = false;
 		int id = 0;

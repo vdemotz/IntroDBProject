@@ -136,4 +136,20 @@ public interface CaseDatastoreInterface {
 	 * 		   otherwise null
 	 */
 	CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, java.sql.Timestamp date, String description, String authorUsername);
+	
+	/**
+	 * @param caseId
+	 * @param personId
+	 * @return true if successful, false otherwise
+	 */
+	boolean addSuspectToCase(int caseId, int personId);
+	
+	/**
+	 * 
+	 * @param caseId
+	 * @param personId
+	 * @param convictionId
+	 * @return true if successful, false otherwise
+	 */
+	boolean addConvictToCase(int caseId, int personId, int convictionId);
 }
