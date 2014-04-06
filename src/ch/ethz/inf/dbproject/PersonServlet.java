@@ -43,7 +43,7 @@ public final class PersonServlet extends HttpServlet {
 		Person person = this.dbInterface.getPersonForId(Id);
 		
 		if (person == null) {
-			System.err.println("Returned person null, id = "+Id);
+			System.err.println("Returned person null, caseId = "+Id);
 		}
 		table.addObject(person);
 		
@@ -60,7 +60,7 @@ public final class PersonServlet extends HttpServlet {
 		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 		
 		table.addBeanColumn("Cases", "title");
-		table.addLinkColumn("", "View Case", "Case?id=", "id");
+		table.addLinkColumn("", "View Case", "Case?caseId=", "id");
 		List<CaseDetail> casesSuspected = this.dbInterface.getCasesForWhichPersonIsConvicted(Id);
 		table.addObjects(casesSuspected);
 		return table;
@@ -76,7 +76,7 @@ public final class PersonServlet extends HttpServlet {
 		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 		
 		table.addBeanColumn("Cases", "title");
-		table.addLinkColumn("", "View Case", "Case?id=", "id");
+		table.addLinkColumn("", "View Case", "Case?caseId=", "id");
 		List<CaseDetail> casesSuspected = this.dbInterface.getCasesForWhichPersonIsSuspected(Id);
 		table.addObjects(casesSuspected);
 		return table;
