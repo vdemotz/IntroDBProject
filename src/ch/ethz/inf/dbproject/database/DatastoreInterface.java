@@ -198,7 +198,6 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, Timestamp date, String description, String authorUsername) {
 		return caseDatastore.insertIntoCaseDetail(title, city, zipCode, street, date, description, authorUsername);
 	}
-<<<<<<< HEAD
 
 	@Override
 	public boolean addSuspectToCase(int caseId, int personId) {
@@ -210,8 +209,4 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 		return caseDatastore.addConvictToCase(caseId, personId, convictionId);
 	}
 
-
-	
-=======
->>>>>>> b42f844e737920e39cd29270d1244c10e7117c34
 }
