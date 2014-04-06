@@ -235,19 +235,21 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	
 	@Override
 	public PersonNote addPersonNote(int personId, String text, String authorUsername) {
-		try{
-			int personNoteId = getMaxPersonNoteIdForPersonId(personId);
-			Timestamp t = new Timestamp(new java.util.Date().getTime());
-			addPersonNoteStatement.setInt(1, personId);
-			addPersonNoteStatement.setInt(2, personNoteId);
-			addPersonNoteStatement.setString(3, text);
-			addPersonNoteStatement.setTimestamp(4, t);
-			addPersonNoteStatement.setString(5, authorUsername);
-			addPersonNoteStatement.execute();
-			return new PersonNote(personId, personNoteId, text, t, authorUsername);
-		} catch (final SQLException ex){
-			ex.printStackTrace();
-			return null;
+		synchronized (this.getClass()){
+			try{
+				int personNoteId = getMaxPersonNoteIdForPersonId(personId);
+				Timestamp t = new Timestamp(new java.util.Date().getTime());
+				addPersonNoteStatement.setInt(1, personId);
+				addPersonNoteStatement.setInt(2, personNoteId);
+				addPersonNoteStatement.setString(3, text);
+				addPersonNoteStatement.setTimestamp(4, t);
+				addPersonNoteStatement.setString(5, authorUsername);
+				addPersonNoteStatement.execute();
+				return new PersonNote(personId, personNoteId, text, t, authorUsername);
+			} catch (final SQLException ex){
+				ex.printStackTrace();
+				return null;
+			}
 		}
 	}
 	
@@ -265,21 +267,23 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	
 	@Override
 	public Person addPerson(String firstName, String lastName, String date){
-		try{
-			int id = this.getMaxPersonId();
-			addPersonStatement.setInt(1, id);
-			addPersonStatement.setString(2, firstName);
-			addPersonStatement.setString(3, lastName);
-			addPersonStatement.setString(4, date);
-			addPersonStatement.execute();
-			try { return new Person(id, firstName, lastName, date);
-			} catch (ParseException e) {
-				e.printStackTrace();
+		synchronized (this.getClass()){
+			try{
+				int id = this.getMaxPersonId();
+				addPersonStatement.setInt(1, id);
+				addPersonStatement.setString(2, firstName);
+				addPersonStatement.setString(3, lastName);
+				addPersonStatement.setString(4, date);
+				addPersonStatement.execute();
+				try { return new Person(id, firstName, lastName, date);
+				} catch (ParseException e) {
+					e.printStackTrace();
+					return null;
+				}
+			} catch (final SQLException ex){
+				ex.printStackTrace();
 				return null;
 			}
-		} catch (final SQLException ex){
-			ex.printStackTrace();
-			return null;
 		}
 	}
 	

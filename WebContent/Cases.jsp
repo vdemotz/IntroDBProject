@@ -3,6 +3,8 @@
 
 <h2>Cases</h2>
 
+Create <a href="CaseCreation">new case</a>.
+
 <%= session.getAttribute("cases") %>
 
 <%@ include file="Footer.jsp" %>
