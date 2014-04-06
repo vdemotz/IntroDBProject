@@ -162,8 +162,10 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		try {
 			setCaseId(caseForIdStatement, id);
 			caseForIdStatement.execute();
-			caseForIdStatement.getResultSet().next();
-			return new CaseDetail(caseForIdStatement.getResultSet());
+			if (caseForIdStatement.getResultSet().next()) {
+				return new CaseDetail(caseForIdStatement.getResultSet());
+			}
+			return null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

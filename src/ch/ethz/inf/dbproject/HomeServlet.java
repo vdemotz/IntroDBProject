@@ -25,7 +25,8 @@ public final class HomeServlet extends HttpServlet {
 	public final static String SESSION_USER_DETAILS = "userDetails";
 	public final static String SESSION_USER_CASES = "casesByUser";
 	public final static String SESSION_WRONG_PASSWORD = "wrongUserPassword";
-		
+	public final static String SESSION_ERROR_MESSAGE = "error";
+	
     /**
      * @see HttpServlet#HttpServlet()
      */

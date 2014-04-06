@@ -15,6 +15,7 @@ import ch.ethz.inf.dbproject.database.DatastoreInterface;
 import ch.ethz.inf.dbproject.model.*;
 import ch.ethz.inf.dbproject.util.UserManagement;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
+import ch.ethz.inf.dbproject.HomeServlet;
 
 /**
  * Servlet implementation class of Case Details Page
@@ -45,7 +46,6 @@ public final class CaseServlet extends HttpServlet {
 
 	public static final String INTERNAL_ACTION_ADD_CONVICT_PARAMETER_VALUE = "addConv";
 	public static final String INTERNAL_ACTION_ADD_SUSPECT_PARAMETER_VALUE = "addSusp";
-	
 	
 	
 	/**
@@ -134,10 +134,8 @@ public final class CaseServlet extends HttpServlet {
 	
 	private void handleInvalidRequest(final HttpServletRequest request) throws ServletException, IOException
 	{
-		System.err.println("invalid case id");
-		
+		request.getSession().setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, "Invalid Case ID");
 	}
-
 
 	private CaseDetail handleActionsForRequest(final HttpServletRequest request, final CaseDetail caseDetail)
 	{
@@ -181,6 +179,7 @@ public final class CaseServlet extends HttpServlet {
 	private void handleValidRequest(final HttpServletRequest request, CaseDetail caseDetail)
 	{	
 		final HttpSession session = request.getSession(true);
+		session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, null);
 		
 		//perform actions, if any and get the new case detail
 		caseDetail = handleActionsForRequest(request, caseDetail);
