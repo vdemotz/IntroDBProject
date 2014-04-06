@@ -1,7 +1,6 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.util.List;
-import java.sql.Date;
 import ch.ethz.inf.dbproject.model.*;
 
 public interface PersonDatastoreInterface {

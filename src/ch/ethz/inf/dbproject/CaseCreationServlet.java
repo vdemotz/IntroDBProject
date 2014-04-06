@@ -2,10 +2,7 @@ package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
-import ch.ethz.inf.dbproject.model.CaseDetail;
-import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.User;
 import ch.ethz.inf.dbproject.util.UserManagement;
 
@@ -54,6 +49,8 @@ public final class CaseCreationServlet extends HttpServlet {
 
 		final String action = request.getParameter("action");
 		if (action != null && action.trim().equals("creation") 	&& loggedUser != null) {
+			//create a new case with the description given by the user. The date is set to today
+			//the case is by default open
 
 			final String title = request.getParameter("title");
 			final String city = request.getParameter("city");
@@ -64,6 +61,8 @@ public final class CaseCreationServlet extends HttpServlet {
 			Date date = new Date();
 			Timestamp timestamp = new Timestamp(date.getTime());
 			dbInterface.insertIntoCaseDetail(title, city, zipCode, street, timestamp, description, authorUsername);
+			
+			//TODO display 'case created', goto Cases.jsp
 		}
 
 		this.getServletContext().getRequestDispatcher("/CaseCreation.jsp").forward(request, response);

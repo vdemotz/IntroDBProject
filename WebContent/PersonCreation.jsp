@@ -44,7 +44,6 @@ Please <a href="Home">login</a> or create an <a href="UserCreation">account</a> 
 		        <td><select id="type" name="typeOfPerson">
 		          <option value="convicted">Convicted</option>
 		          <option value="suspected">Suspected</option>
-		          <option value="none">None</option>
 		        </select></td>
 		</tr>
 		<tr>

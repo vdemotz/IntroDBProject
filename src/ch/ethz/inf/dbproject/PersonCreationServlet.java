@@ -59,6 +59,7 @@ public final class PersonCreationServlet extends HttpServlet {
 		final String action = request.getParameter("action");
 		if (action != null && action.trim().equals("creation") 	&& loggedUser != null) {
 
+			//get all entries the user entered
 			final String caseId = request.getParameter("caseId");
 			final String lastName = request.getParameter("lastName");
 			final String firstName = request.getParameter("firstName");
@@ -75,21 +76,36 @@ public final class PersonCreationServlet extends HttpServlet {
 			}
 			
 			if (!errorInForm){
+				//if mandatory entries are filled, create a new person
 				Person person = dbInterface.addPerson(firstName, lastName, birthdate);
 				if (!caseId.isEmpty()){
 					int ci = Integer.parseInt(caseId);
 					CaseDetail aCase = dbInterface.getCaseForId(ci);
 					if (aCase.getIsOpen()){
-						dbInterface.setPersonSuspected(ci, person.getPersonId());
+						//if user entered a valid, opened case, set the person as convicted / suspected person
+						if (typeOfPerson.equals("convicted")){
+							//TODO set person as convicted
+							if (this.isValidDate(dateCrime)){
+								dbInterface.setPersonSuspected(ci, person.getPersonId());
+							}
+						} else {
+							//set person as suspected
+							dbInterface.setPersonSuspected(ci, person.getPersonId());
+						}
 					}
 				}
-				
 			}
 		}
 
+		//proceed the page
 		this.getServletContext().getRequestDispatcher("/PersonCreation.jsp").forward(request, response);
 	}
 	
+	/**
+	 * test if the date is of the format yyyy-mm-dd
+	 * @param date a date to test
+	 * @return true if the date has format yyyy-mm-dd, else false
+	 */
 	private boolean isValidDate(String date){
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	    Date testDate = null;
