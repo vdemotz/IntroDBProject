@@ -96,7 +96,7 @@ public final class CasesServlet extends HttpServlet {
 		}
 		
 		if (cases != null) {
-			table.addObjects(cases.subList(0, Math.min(cases.size()-1, maximalNumberOfCases)));
+			table.addObjects(cases.subList(0, Math.min(cases.size(), maximalNumberOfCases)));
 		}
 
 		// Finally, proceed to the Projects.jsp page which will render the Projects

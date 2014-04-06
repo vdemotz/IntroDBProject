@@ -1,0 +1,4 @@
+Issues:
+
+PersonDatastore: no synchronized needed
+Persons of intrest: duplicate Entries

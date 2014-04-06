@@ -327,7 +327,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		try {
 			ResultSet rs = nextCaseDetailIdStatement.executeQuery();
 			if (!rs.first()){ return 0; }
-			return (rs.getInt("max(personId)")+1);
+			return (rs.getInt("max(caseId)")+1);
 		} catch (SQLException ex){
 			ex.printStackTrace();
 			return -1;
@@ -378,6 +378,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		synchronized (this.getClass()){
 			try {
 				int caseId = getNextCaseDetailId();
+				if (caseId == -1) return null;
 				insertIntoCaseDetailStatement.setInt(1, caseId);
 				insertIntoCaseDetailStatement.setString(2, title);
 				insertIntoCaseDetailStatement.setString(3, street);
