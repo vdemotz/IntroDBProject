@@ -6,7 +6,6 @@
 
 <%
 final User user = (User) session.getAttribute(UserManagement.SESSION_USER);
-final String error = (String) session.getAttribute(PersonCreationServlet.PERSON_CREATION_WRONG_FORM);
 %>
 
 <% 
@@ -17,13 +16,8 @@ Please <a href="Home">login</a> or create an <a href="UserCreation">account</a> 
 
 <%
 } else {
-	if ( error != null) {
 %>
-	Sorry, error in form. Please enter valid last name, first name and birthdate.
-	<% session.setAttribute(PersonCreationServlet.PERSON_CREATION_WRONG_FORM, null);
-	} else { %>
-	Thank you. The person has been created.
-	<% } %>
+<%= session.getAttribute(PersonCreationServlet.PERSON_CREATION_MESSAGE) %>
 
 	<form action="PersonCreation" method="get">
 	<input type="hidden" name="action" value="creation" />

@@ -28,7 +28,7 @@ public final class PersonCreationServlet extends HttpServlet {
 	public final static String SESSION_FORM_CI = "caseIdEmpty";
 	public final static String SESSION_FORM_LN = "lastNameEmpty";
 	public final static String SESSION_FORM_FN = "firstNameEmpty";
-	public final static String PERSON_CREATION_WRONG_FORM = "personCreationWrongForm";
+	public final static String PERSON_CREATION_MESSAGE = "personCreationMessage";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -49,12 +49,10 @@ public final class PersonCreationServlet extends HttpServlet {
 
 		if (loggedUser == null) {
 			// Not logged in!
-			session.setAttribute(SESSION_USER_LOGGED_IN, false);
 			session.setAttribute(SESSION_FORM_LN, false);
 			session.setAttribute(SESSION_FORM_FN, false);
 		} else {
-			// Logged in
-			session.setAttribute(SESSION_USER_LOGGED_IN, true);
+			session.setAttribute(PERSON_CREATION_MESSAGE, "");
 		}
 
 		final String action = request.getParameter("action");
@@ -87,8 +85,12 @@ public final class PersonCreationServlet extends HttpServlet {
 							dbInterface.setPersonSuspected(ci, person.getPersonId());
 						}
 					}
+					session.setAttribute(PERSON_CREATION_MESSAGE, "The person has been created with :\n" +
+							"first name : "+firstName+
+							"last name : "+lastName);
 				} else {
-					session.setAttribute(PERSON_CREATION_WRONG_FORM, "Error in one of entry");
+					session.setAttribute(PERSON_CREATION_MESSAGE, "Error in one of entry, please enter" +
+							"valid first name, last name and birthdate");
 				}
 			} catch (final Exception ex){
 				ex.printStackTrace();
