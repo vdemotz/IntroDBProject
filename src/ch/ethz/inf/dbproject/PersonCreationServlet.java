@@ -28,6 +28,7 @@ public final class PersonCreationServlet extends HttpServlet {
 	public final static String SESSION_FORM_CI = "caseIdEmpty";
 	public final static String SESSION_FORM_LN = "lastNameEmpty";
 	public final static String SESSION_FORM_FN = "firstNameEmpty";
+	public final static String PERSON_CREATION_WRONG_FORM = "personCreationWrongForm";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -64,8 +65,6 @@ public final class PersonCreationServlet extends HttpServlet {
 			final String lastName = request.getParameter("lastName");
 			final String firstName = request.getParameter("firstName");
 			final String birthdate = request.getParameter("birthdate");
-			final String typeOfPerson = request.getParameter("typeOfPerson");
-			final String dateCrime = request.getParameter("dateCrime");
 			boolean errorInForm = false;
 			
 			try{
@@ -88,6 +87,8 @@ public final class PersonCreationServlet extends HttpServlet {
 							dbInterface.setPersonSuspected(ci, person.getPersonId());
 						}
 					}
+				} else {
+					session.setAttribute(PERSON_CREATION_WRONG_FORM, "Error in one of entry");
 				}
 			} catch (final Exception ex){
 				ex.printStackTrace();

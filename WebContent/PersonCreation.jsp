@@ -1,4 +1,4 @@
-<%@page import="ch.ethz.inf.dbproject.UserCreationServlet"%>
+<%@page import="ch.ethz.inf.dbproject.PersonCreationServlet"%>
 <%@page import="ch.ethz.inf.dbproject.util.UserManagement"%>
 <%@page import="ch.ethz.inf.dbproject.model.User"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -6,6 +6,7 @@
 
 <%
 final User user = (User) session.getAttribute(UserManagement.SESSION_USER);
+final String error = (String) session.getAttribute(PersonCreationServlet.PERSON_CREATION_WRONG_FORM);
 %>
 
 <% 
@@ -16,7 +17,13 @@ Please <a href="Home">login</a> or create an <a href="UserCreation">account</a> 
 
 <%
 } else {
+	if ( error != null) {
 %>
+	Sorry, error in form. Please enter valid last name, first name and birthdate.
+	<% session.setAttribute(PersonCreationServlet.PERSON_CREATION_WRONG_FORM, null);
+	} else { %>
+	Thank you. The person has been created.
+	<% } %>
 
 	<form action="PersonCreation" method="get">
 	<input type="hidden" name="action" value="creation" />
