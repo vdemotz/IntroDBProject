@@ -2,12 +2,11 @@
 Issues:
 -----
 
-PersonDatastore: no synchronized needed
-Persons of intrest: duplicate Entries
-CaseDetail is probably not in 3rd Normal Form - the street and zipcode probably functionally determine the city
-String literals, constants
-Search by name Semantics (null values)
-How to display null values, where to handle it (in BeanTableHelper?)
+Persons of intrest: duplicate Entries (ok)
+CaseDetail is probably not in 3rd Normal Form - the street and zipcode probably functionally determine the city (ok)
+String literals, constants (kinda ok)
+Search by name Semantics (null values) (ok)
+How to display null values, where to handle it (in BeanTableHelper?) (ok)
 
 -----
 Todo:
@@ -15,14 +14,15 @@ Todo:
 
 Must have:
 
-Add Convicts
-Add Conviction
-Testing, Testcases, Error Handling
-Reduce use of string literals
-Consistent naming scheme for static constants
-Fix search by name semantics
-Nicely display null values
-    -composite fields (location, name) need special care
+Add Convicts L
+Add Conviction L
+Add Categories to Cases V?
+Testing, Testcases, Error Handling  (V/L)
+Reduce use of string literals (V/L)
+Consistent naming scheme for static constants (ok)
+Fix search by name semantics (V:ok)
+Nicely display null values (L:ok)
+    -composite fields (location - ok , name - todo) need special care (V,L)
 
 Nice to have:
 
