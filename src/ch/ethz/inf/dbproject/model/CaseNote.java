@@ -49,7 +49,7 @@ public final class CaseNote extends ModelObject{
 	
 	//returns a string in an format customary to display dates and time
 	public String getDateTimeFormated() {
-		if (date == null) return "";
+		if (date == null) return null;
 		return DateFormat.getDateTimeInstance().format(date);
 	}
 

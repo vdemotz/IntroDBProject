@@ -82,22 +82,35 @@ public final class CaseDetail extends ModelObject {
 		return date;
 	}
 	
-	//returns a string in an format customary to display dates and time
+	//returns a string in an format customary to display dates and time, or null if the timestamp used to create the instance was null
 	public String getDateTimeFormated() {
-		if (date == null) return "";
+		if (date == null) return null;
 		return DateFormat.getDateTimeInstance().format(date);
 	}
 	
-	//returns a string in an format customary to display dates
+	//returns a string in an format customary to display dates, or null if the timestamp used to create the instance was null
 	public String getDateFormated() {
-		if (date == null) return "";
+		if (date == null) return null;
 		return DateFormat.getDateInstance().format(date);
 	}
 	
 	public String getLocation() {
-		return (this.getZipCode()+" "+this.getCity()+", "+this.getStreet());//TODO: nicely handle null
+		String result = "";
+		if (getZipCode() != null) {
+			result = result+getZipCode();
+		}
+		if (getCity() != null) {
+			if (getZipCode() != null) result = result + " ";
+			result = result + getCity();
+		}
+		
+		if (getStreet() != null) {
+			if (getCity() != null || getZipCode() != null) result = result + ", ";
+			result = result + getStreet();
+		}
+		if (result == "") return null;
+		return result;
 	}
-	
 	
 	
 }

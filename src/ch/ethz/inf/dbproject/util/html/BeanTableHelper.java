@@ -50,10 +50,13 @@ public final class BeanTableHelper<T> extends HtmlHelperIface {
 		@Override
 		public String getString(final T t) {
 
-			String value = "";
+			String value = "unknown";
 
 			try {
-				value = "" + this.getMethod.invoke(t);
+				Object result = this.getMethod.invoke(t);
+				if (result != null) {
+					value = "" + result;
+				}
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
