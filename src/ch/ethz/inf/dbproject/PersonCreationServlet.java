@@ -23,8 +23,6 @@ public final class PersonCreationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 
-	public final static String SESSION_USER_LOGGED_IN = "userLoggedIn";
-	public final static String SESSION_USER_DETAILS = "userDetails";
 	public final static String SESSION_FORM_CI = "caseIdEmpty";
 	public final static String SESSION_FORM_LN = "lastNameEmpty";
 	public final static String SESSION_FORM_FN = "firstNameEmpty";

@@ -29,14 +29,14 @@ public final class CaseServlet extends HttpServlet {
 	
 	public static final String BASE_ADDRESS = "Case";
 	
-	public static final String CASE_DETAIL_TABLE_ATTRIBUTE = "CASEdetT";
-	public static final String CATEGORY_TABLE_ATTRIBUTE = "CASEcatT";
-	public static final String SUSPECT_TABLE_ATTRIBUTE = "CASEsusT";
-	public static final String CONVICT_TABLE_ATTRIBUTE = "CASEconT";
-	public static final String CASE_NOTE_TABLE_ATTRIBUTE = "CASEnoteT";
+	public static final String SESSION_CASE_DETAIL_TABLE = "CASEdetT";
+	public static final String SESSION_CASE_TABLE = "CASEcatT";
+	public static final String SESSION_SUSPECT_TABLE = "CASEsusT";
+	public static final String SESSION_CONVICT_TABLE = "CASEconT";
+	public static final String SESSION_CASE_NOTE_TABLE = "CASEnoteT";
 	
-	public static final String CASE_ID_PARAMETER = "caseId";
-	public static final String USERNAME_PARAMETER = "username";
+	public static final String EXTERNAL_CASE_ID_PARAMETER = "caseId";
+	public static final String EXTERNAL_USERNAME_PARAMETER = "username";
 	
 	public static final String INTERNAL_COMMENT_PARAMETER ="comment";
 	public static final String INTERNAL_ACTION_PARAMETER = "action";
@@ -143,7 +143,7 @@ public final class CaseServlet extends HttpServlet {
 		final int id = caseDetail.getCaseId();
 		
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
-		final String username = request.getParameter(USERNAME_PARAMETER);
+		final String username = request.getParameter(EXTERNAL_USERNAME_PARAMETER);
 		
 		boolean didUpdateCase = false;
 		
@@ -187,23 +187,23 @@ public final class CaseServlet extends HttpServlet {
 		session.setAttribute("caseDetail", caseDetail);
 		
 		//set the CaseDetail (the header) wanted by the user
-		session.setAttribute(CASE_DETAIL_TABLE_ATTRIBUTE, getCaseTableForId(id));
+		session.setAttribute(SESSION_CASE_DETAIL_TABLE, getCaseTableForId(id));
 		//set the Categories for the case
-		session.setAttribute(CATEGORY_TABLE_ATTRIBUTE, getCategoriesTableForCase(id));
+		session.setAttribute(SESSION_CASE_TABLE, getCategoriesTableForCase(id));
 		//list the case notes				
-		session.setAttribute(CASE_NOTE_TABLE_ATTRIBUTE, getCaseNotesTableForCase(id));
+		session.setAttribute(SESSION_CASE_NOTE_TABLE, getCaseNotesTableForCase(id));
 		//list the suspects
-		session.setAttribute(SUSPECT_TABLE_ATTRIBUTE, getSuspectsTableForCase(id));
+		session.setAttribute(SESSION_SUSPECT_TABLE, getSuspectsTableForCase(id));
 		//list the convicts
-		session.setAttribute(CONVICT_TABLE_ATTRIBUTE, getConvictsTableForCase(id));
+		session.setAttribute(SESSION_CONVICT_TABLE, getConvictsTableForCase(id));
 	}
 	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		
-		final String idString = request.getParameter(CASE_ID_PARAMETER);
+		request.getSession().removeAttribute(HomeServlet.SESSION_ERROR_MESSAGE);
+		final String idString = request.getParameter(EXTERNAL_CASE_ID_PARAMETER);
 		
 		boolean invalidId = false;
 		int id = 0;

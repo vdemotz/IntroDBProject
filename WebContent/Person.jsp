@@ -3,7 +3,9 @@
 <%@page import="ch.ethz.inf.dbproject.HomeServlet"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="Header.jsp" %>
-<% final User user = (User) session.getAttribute(UserManagement.SESSION_USER); %>
+<%
+	final User user = (User) session.getAttribute(UserManagement.SHARED_SESSION_USER);
+%>
 
 <h2>Person Details</h2>
 

@@ -6,7 +6,7 @@
 
 <h2>Persons of Interest</h2>
 <%
-final User user = (User) session.getAttribute(UserManagement.SESSION_USER);
+	final User user = (User) session.getAttribute(UserManagement.SHARED_SESSION_USER);
 if (user != null) {
 %>
 	Do you want to add a person ? Feel free to do it <a href="PersonCreation">here</a>.

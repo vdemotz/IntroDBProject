@@ -19,9 +19,6 @@ public final class CaseCreationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 
-	public final static String SESSION_USER_LOGGED_IN = "userLoggedIn";
-	public final static String SESSION_USER_DETAILS = "userDetails";
-
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -38,14 +35,6 @@ public final class CaseCreationServlet extends HttpServlet {
 
 		final HttpSession session = request.getSession(true);
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
-
-		if (loggedUser == null) {
-			// Not logged in!
-			session.setAttribute(SESSION_USER_LOGGED_IN, false);
-		} else {
-			// Logged in
-			session.setAttribute(SESSION_USER_LOGGED_IN, true);
-		}
 
 		final String action = request.getParameter("action");
 		if (action != null && action.trim().equals("creation") 	&& loggedUser != null) {

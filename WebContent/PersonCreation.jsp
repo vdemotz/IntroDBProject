@@ -5,7 +5,8 @@
 <%@ include file="Header.jsp" %>
 
 <%
-final User user = (User) session.getAttribute(UserManagement.SESSION_USER);
+final User user = (User) session.getAttribute(UserManagement.SHARED_SESSION_USER);
+final String error = (String) session.getAttribute(PersonCreationServlet.PERSON_CREATION_WRONG_FORM);
 %>
 
 <% 
