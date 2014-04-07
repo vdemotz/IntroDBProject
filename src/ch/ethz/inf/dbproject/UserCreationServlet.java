@@ -17,7 +17,6 @@ public final class UserCreationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 
-	public final static String SESSION_USER_LOGGED_IN = "userLoggedIn";
 	public final static String SESSION_USER_DETAILS = "userDetails";
 	public final static String SESSION_FORM_UN = "usernameEmpty";
 	public final static String SESSION_FORM_LN = "lastNameEmpty";
@@ -44,15 +43,11 @@ public final class UserCreationServlet extends HttpServlet {
 
 		if (loggedUser == null) {
 			// Not logged in!
-			session.setAttribute(SESSION_USER_LOGGED_IN, false);
 			session.setAttribute(SESSION_FORM_UN, false);
 			session.setAttribute(SESSION_FORM_LN, false);
 			session.setAttribute(SESSION_FORM_FN, false);
 			session.setAttribute(SESSION_FORM_EP, false);
 			session.setAttribute(SESSION_FORM_PNE, false);
-		} else {
-			// Logged in
-			session.setAttribute(SESSION_USER_LOGGED_IN, true);
 		}
 
 		final String action = request.getParameter("action");

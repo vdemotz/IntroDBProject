@@ -21,9 +21,8 @@ public final class HomeServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
-	public final static String SESSION_USER_LOGGED_IN = "userLoggedIn";
-	public final static String SESSION_USER_DETAILS = "userDetails";
 	
+	public final static String SESSION_USER_DETAILS = "userDetails";
 	public final static String SESSION_USER_CASES = "casesByUser";
 	public final static String SESSION_WRONG_PASSWORD = "wrongUserPassword";
 	public final static String SESSION_ERROR_MESSAGE = "error";
@@ -82,11 +81,9 @@ public final class HomeServlet extends HttpServlet {
 
 		if (loggedUser == null) {
 			// Not logged in!
-			session.setAttribute(SESSION_USER_LOGGED_IN, false);
 			session.setAttribute(SESSION_WRONG_PASSWORD, false);
 		} else {
 			// Logged in
-			session.setAttribute(SESSION_USER_LOGGED_IN, true);
 			session.setAttribute(SESSION_USER_DETAILS, tableUserDetails(loggedUser));
 			session.setAttribute(SESSION_USER_CASES, tableCasesUserModified(loggedUser.getUsername()));
 		}
@@ -101,7 +98,7 @@ public final class HomeServlet extends HttpServlet {
 			if (user != null) {
 				//if the database return an user, it means the user is registered
 				//then, set session attributes to display all details of the user
-				session.setAttribute(UserManagement.SESSION_USER, user);
+				session.setAttribute(UserManagement.SHARED_SESSION_USER, user);
 				session.setAttribute(SESSION_USER_DETAILS, tableUserDetails(user));
 				session.setAttribute(SESSION_USER_CASES, tableCasesUserModified(user.getUsername()));
 			} else {
@@ -111,8 +108,7 @@ public final class HomeServlet extends HttpServlet {
 			
 		} else if( action != null && action.trim().equals("logout")){
 			//if user want to logout, retrieve user from session
-			session.setAttribute(SESSION_USER_LOGGED_IN, false);
-			session.setAttribute(UserManagement.SESSION_USER, null);
+			session.setAttribute(UserManagement.SHARED_SESSION_USER, null);
 		}
 
 		// Finally, proceed to the Home.jsp page which will render the profile
