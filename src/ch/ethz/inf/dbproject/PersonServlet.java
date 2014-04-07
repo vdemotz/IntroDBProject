@@ -124,26 +124,27 @@ public final class PersonServlet extends HttpServlet {
 		
 		try {
 			//try to display the person asked
-			
 			final Integer id = Integer.parseInt(idString);
-				
-			//set the caseId
-			session.setAttribute("personId", id);
-			//set the PersonDetail (the header) wanted by the user
-			session.setAttribute("personDetailsTable", tablePersonDetail(id));
-			//set the Cases where the person is convicted
-			session.setAttribute("casesPersonConvicted", tableConvicted(id));
-			//set the Cases where the person is suspected
-			session.setAttribute("casesPersonSuspected", tableSuspected(id));
-			//set the Person Notes
-			session.setAttribute("personNotesTable", tablePersonNotes(id));
-				
-				
-								
+			
+			
+			if (this.dbInterface.getPersonForId(id) == null){
+				session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, "Person doesn't exist");
+			} else {
+				//set the caseId
+				session.setAttribute("personId", id);
+				//set the PersonDetail (the header) wanted by the user
+				session.setAttribute("personDetailsTable", tablePersonDetail(id));
+				//set the Cases where the person is convicted
+				session.setAttribute("casesPersonConvicted", tableConvicted(id));
+				//set the Cases where the person is suspected
+				session.setAttribute("casesPersonSuspected", tableSuspected(id));
+				//set the Person Notes
+				session.setAttribute("personNotesTable", tablePersonNotes(id));
+				//if we reaches this point, we are able to display the PersonDetails	
+				session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, null);
+			}				
 		} catch (final Exception ex) {
-			System.err.println("not able to display the person wanted");
-			ex.printStackTrace();
-			this.getServletContext().getRequestDispatcher("/PersonsOfInterest.jsp").forward(request, response);
+			session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, "Invalid Person id or Person is unreachable");
 		}
 		//proceed and display the page
 		this.getServletContext().getRequestDispatcher("/Person.jsp").forward(request, response);

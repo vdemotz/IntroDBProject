@@ -68,32 +68,29 @@ public final class PersonCreationServlet extends HttpServlet {
 			final String dateCrime = request.getParameter("dateCrime");
 			boolean errorInForm = false;
 			
-			//check if all entries are valid
-			if (lastName.isEmpty() || firstName.isEmpty()){
-				errorInForm = true;
-			} else if (!this.isValidDate(birthdate)){
-				errorInForm = true;
-			}
-			
-			if (!errorInForm){
-				//if mandatory entries are filled, create a new person
-				Person person = dbInterface.addPerson(firstName, lastName, birthdate);
-				if (!caseId.isEmpty()){
-					int ci = Integer.parseInt(caseId);
-					CaseDetail aCase = dbInterface.getCaseForId(ci);
-					if (aCase.getIsOpen()){
-						//if user entered a valid, opened case, set the person as convicted / suspected person
-						if (typeOfPerson.equals("convicted")){
-							//TODO set person as convicted
-							if (this.isValidDate(dateCrime)){
-								dbInterface.setPersonSuspected(ci, person.getPersonId());
-							}
-						} else {
-							//set person as suspected
+			try{
+				//check if all entries are valid
+				if (lastName.isEmpty() || firstName.isEmpty()){
+					errorInForm = true;
+				} else if (!this.isValidDate(birthdate)){
+					errorInForm = true;
+				}
+				
+				if (!errorInForm){
+					//if mandatory entries are filled, create a new person
+					Person person = dbInterface.addPerson(firstName, lastName, birthdate);
+					if (!caseId.isEmpty()){
+						//if optional (caseId) entry is filled, get the case
+						int ci = Integer.parseInt(caseId);
+						CaseDetail aCase = dbInterface.getCaseForId(ci);
+						if (aCase != null && aCase.getIsOpen()){
+							//if user entered a valid, opened case, set the person as suspected person for this case
 							dbInterface.setPersonSuspected(ci, person.getPersonId());
 						}
 					}
 				}
+			} catch (final Exception ex){
+				ex.printStackTrace();
 			}
 		}
 

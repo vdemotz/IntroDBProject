@@ -65,6 +65,21 @@ public interface PersonDatastoreInterface {
 	 */
 	List<Person> getAllSuspectedPersons();
 	
+	/**
+	 * @return a list of all persons
+	 */
+	List<Person> getAllPersons();
+
+	/**
+	 * @return a list of all persons for a specific last name
+	 */
+	List<Person> getPersonsForLastName(String lastName);
+	
+	/**
+	 * @return a list of all persons for a specific first name
+	 */
+	List<Person> getPersonsForFirstName(String firstName);
+	
 	////
 	//MODIFY
 	////
@@ -96,7 +111,5 @@ public interface PersonDatastoreInterface {
 	 * @param personId the person id of the person
 	 * @return true parameters are valid and updated was made in database
 	 */
-	boolean setPersonSuspected(int caseId, int personId);
-	
-	
+	boolean setPersonSuspected(int caseId, int personId);	
 }

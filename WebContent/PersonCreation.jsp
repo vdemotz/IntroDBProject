@@ -34,21 +34,10 @@ Please <a href="Home">login</a> or create an <a href="UserCreation">account</a> 
 			<td><input type="text" name="birthdate" value=""></td>
 		</tr>
 		
-		<td>Optional :</td>
+		<td>Optional (if you want to directly set person as suspected):</td>
 		<tr>
 			<th>Case Id</th>
 			<td><input type="text" maxlength="10" name="caseId" value=""/></td>
-		</tr>
-		<tr>
-		        <th>Convicted / Suspected :</th>
-		        <td><select id="type" name="typeOfPerson">
-		          <option value="convicted">Convicted</option>
-		          <option value="suspected">Suspected</option>
-		        </select></td>
-		</tr>
-		<tr>
-			<th>Date of crime (yyyy-mm-dd)</th>
-			<td><input type="text" maxlength="10" name="dateCrime" value=""/></td>
 		</tr>
 		<tr>
 			<th colspan="2">

@@ -36,6 +36,8 @@ public final class SearchServlet extends HttpServlet {
 		//get the type of the search and parameter
 		final String filter = request.getParameter("filter");
 		final String description = request.getParameter("description");
+		final String lastName = request.getParameter("lastName");
+		final String firstName = request.getParameter("firstName");
 		
 		if (filter != null) {
 			if(filter.equals("namePerson") || filter.equals("convictionType") || filter.equals("convictionDate")) {
@@ -50,9 +52,15 @@ public final class SearchServlet extends HttpServlet {
 				
 				//depending on the filter, get and set right table
 				if (filter.equals("namePerson")) {
-					final String lastName = request.getParameter("lastName");
-					final String firstName = request.getParameter("firstName");
-					table.addObjects(this.dbInterface.getPersonsForName(firstName+"%", lastName+"%"));
+					if (lastName.isEmpty() && firstName.isEmpty()){
+						table.addObjects(this.dbInterface.getAllPersons());
+					} else if (lastName.isEmpty()){
+						table.addObjects(this.dbInterface.getPersonsForFirstName(firstName));
+					} else if (firstName.isEmpty()){
+						table.addObjects(this.dbInterface.getPersonsForLastName(lastName));
+					} else {
+						table.addObjects(this.dbInterface.getPersonsForName(firstName, lastName));
+					}
 				} else if (filter.equals("convictionType")) {	
 					table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
 				} else if (filter.equals("convictionDate")) {	

@@ -76,11 +76,6 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public List<Person> getPersonsForName(String firstName, String lastName) {
-		return personDatastore.getPersonsForName(firstName, lastName);
-	}
-	
-	@Override
 	public List<Person> getPersonsForConvictionType(String categoryName) {
 		return personDatastore.getPersonsForConvictionType(categoryName);
 	}
@@ -109,6 +104,27 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public boolean setPersonSuspected(int caseId, int personId) {
 		return personDatastore.setPersonSuspected(caseId, personId);
 	}
+	
+	@Override
+	public List<Person> getAllPersons() {
+		return personDatastore.getAllPersons();
+	}
+	
+	@Override
+	public List<Person> getPersonsForLastName(String lastName) {
+		return personDatastore.getPersonsForLastName(lastName);
+	}
+
+	@Override
+	public List<Person> getPersonsForFirstName(String firstName) {
+		return personDatastore.getPersonsForFirstName(firstName);
+	}
+	
+	@Override
+	public List<Person> getPersonsForName(String firstName, String lastName) {
+		return personDatastore.getPersonsForName(firstName, lastName);
+	}
+
 	
 	////
 	//CASE
@@ -208,5 +224,4 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public boolean addConvictToCase(int caseId, int personId, int convictionId) {
 		return caseDatastore.addConvictToCase(caseId, personId, convictionId);
 	}
-
 }

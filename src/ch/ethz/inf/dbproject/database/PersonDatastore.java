@@ -29,21 +29,27 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	//get person note for particular person
 	private String getPersonNotesForPersonString = "select * from PersonNote where personId = ?";
 	//get persons for a particular first name or last name
-	private String getPersonsForNameString = "select * from Person where firstName like ? and lastName like ? or firstName is null or lastName is null";
+	private String getPersonsForNameString = "select * from Person where firstName like ? and lastName like ?";
+	//persons for particular first name
+	private String getPersonsForFirstNameString = "select * from Person where firstName like ?";
+	//persons for particular first name
+	private String getPersonsForLastNameString = "select * from Person where lastName like ?";
 	//persons for particular conviction type
 	private String getPersonsForConvictionTypeString = "select p.* from Convicted convicted, Person p, ConvictionType convictionType "+
 			"where convicted.personId = p.personId and convicted.convictionId = convictionType.convictionId and "+
-			"convictionType.categoryName = ?";
+			"convictionType.categoryName = ? order by lastName, firstName";
 	//persons for particular date
 	private String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Convicted convicted, Person person "+
 			"where conviction.startDate like ? and conviction.convictionId = convicted.convictionId and "+
-			"convicted.personId = person.personId";
+			"convicted.personId = person.personId order by lastName, firstName";
 	//particular person for an Id
 	private String getPersonForIdString = "select * from Person where personId =?";
 	//all convicted persons
-	private String getAllConvictedPersonsString = "select p.* from Person p, Convicted c where p.personId = c.personId";
+	private String getAllConvictedPersonsString = "select distinct p.* from Person p, Convicted c where p.personId = c.personId";
 	//all suspected persons
-	private String getAllSuspectedPersonsString = "select p.* from Person p, Suspected s where p.personId = s.personId";
+	private String getAllSuspectedPersonsString = "select distinct p.* from Person p, Suspected s where p.personId = s.personId";
+	//all persons
+	private String getAllPersonsString = "select * from Person order by lastName desc, firstName desc";
 	
 	//add a personNote
 	private String addPersonNoteString = "insert into PersonNote(PersonId, PersonNoteId, text, date, authorUsername) values(?, ?, ?, ?, ?)";
@@ -57,6 +63,7 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	
 	//set a person as suspected
 	private String setPersonSuspectedString = "insert into Suspected(personId, caseId) values(?, ?)";
+	
 	////
 	//Prepared Statements
 	////
@@ -74,6 +81,9 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	private PreparedStatement addPersonStatement;
 	private PreparedStatement getMaxPersonIdStatement;
 	private PreparedStatement setPersonSuspectedStatement;
+	private PreparedStatement getAllPersonsStatement;
+	private PreparedStatement getPersonsForLastNameStatement;
+	private PreparedStatement getPersonsForFirstNameStatement;
 
 	////
 	//Constructor
@@ -102,6 +112,9 @@ public class PersonDatastore implements PersonDatastoreInterface {
 		addPersonStatement = sqlConnection.prepareStatement(addPersonString);
 		getMaxPersonIdStatement = sqlConnection.prepareStatement(getMaxPersonIdString);
 		setPersonSuspectedStatement = sqlConnection.prepareStatement(setPersonSuspectedString);
+		getAllPersonsStatement = sqlConnection.prepareStatement(getAllPersonsString);
+		getPersonsForFirstNameStatement = sqlConnection.prepareStatement(getPersonsForFirstNameString);
+		getPersonsForLastNameStatement = sqlConnection.prepareStatement(getPersonsForLastNameString);
 	}
 
 	/**
@@ -169,13 +182,35 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	@Override
 	public List<Person> getPersonsForName(String firstName, String lastName) {
 		try{
-			getPersonsForNameStatement.setString(1, firstName);
-			getPersonsForNameStatement.setString(2, lastName);
+			getPersonsForNameStatement.setString(1, firstName+"%");
+			getPersonsForNameStatement.setString(2, lastName+"%");
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
 		return getResults(Person.class, getPersonsForNameStatement);
+	}
+	
+	@Override
+	public List<Person> getPersonsForLastName(String lastName) {
+		try{
+			getPersonsForLastNameStatement.setString(1, lastName+"%");
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return null;
+		}
+		return getResults(Person.class, getPersonsForLastNameStatement);
+	}
+	
+	@Override
+	public List<Person> getPersonsForFirstName(String firstName) {
+		try{
+			getPersonsForFirstNameStatement.setString(1, firstName+"%");
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return null;
+		}
+		return getResults(Person.class, getPersonsForFirstNameStatement);
 	}
 
 	@Override
@@ -208,6 +243,11 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	@Override
 	public List<Person> getAllSuspectedPersons() {
 		return getResults(Person.class, getAllSuspectedPersonsStatement);
+	}
+	
+	@Override
+	public List<Person> getAllPersons() {
+		return getResults(Person.class, getAllPersonsStatement);
 	}
 	
 	////
