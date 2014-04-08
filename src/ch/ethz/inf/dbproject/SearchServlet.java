@@ -20,6 +20,8 @@ public final class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	
+	public static String SEARCH_RESULTS = "searchResults";
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -33,74 +35,98 @@ public final class SearchServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		final HttpSession session = request.getSession(true);
-		//get the type of the search and parameter
+		//get the type of the search
 		final String filter = request.getParameter("filter");
-		final String description = request.getParameter("description");
-		final String lastName = request.getParameter("lastName");
-		final String firstName = request.getParameter("firstName");
-		
+
 		if (filter != null) {
-			if(filter.equals("namePerson") || filter.equals("convictionType") || filter.equals("convictionDate")) {
-				//if the return type is a person, create a person table
-				final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
-						"contentTable", Person.class);
-				
-				table.addBeanColumn("Person ID", "personId");
-				table.addBeanColumn("Last Name", "lastName");
-				table.addBeanColumn("First Name", "firstName");
-				table.addLinkColumn("", "View Person", "Person?id=", "id");
-				
-				//depending on the filter, get and set right table
-				if (filter.equals("namePerson")) {
-					if (lastName.isEmpty() && firstName.isEmpty()){
-						table.addObjects(this.dbInterface.getAllPersons());
-					} else if (lastName.isEmpty()){
-						table.addObjects(this.dbInterface.getPersonsForFirstName(firstName));
-					} else if (firstName.isEmpty()){
-						table.addObjects(this.dbInterface.getPersonsForLastName(lastName));
-					} else {
-						table.addObjects(this.dbInterface.getPersonsForName(firstName, lastName));
-					}
-				} else if (filter.equals("convictionType")) {	
-					table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
-				} else if (filter.equals("convictionDate")) {	
-					table.addObjects(this.dbInterface.getPersonsForConvictionDate(description));
-				}
-				session.setAttribute("results", table);
-
-			} else if(filter.equals("category") || filter.equals("caseDate")){
-				//if the return type is a case, create a case table without description
-				final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
-						"contentTable", CaseDetail.class);
-
-				table.addBeanColumn("Case ID", "caseId");
-				table.addBeanColumn("Title", "title");
-				table.addBeanColumn("Location", "location");
-				table.addBeanColumn("Open", "isOpen");
-				table.addBeanColumn("Date", "dateTimeFormated");
-				//table.addBeanColumn("Description", "description");
-				table.addBeanColumn("Author Name", "authorName");
-				table.addLinkColumn("", "View Case", "Case?caseId=", "id");
-				
-				//depending on the filter, get and set right table
-				if (filter.equals("category")) {
-					table.addObjects(this.dbInterface.getCasesForCategory(description));
-				} else if (filter.equals("caseDate")) {
-					table.addObjects(this.dbInterface.getCasesForDateLike(description));
-				}
-				
-				session.setAttribute("results", table);
-				
-			} else {
-				System.err.println("Error :: Code should not be reachable. Filter equals to :"+filter);
-				session.setAttribute("results", "Wrong filter. How did you get that one?");
+			//if the user entered something, search the database
+			try{
+				session.setAttribute(SEARCH_RESULTS, this.getResults(filter, request));
+			} catch ( final Exception ex ){
+				session.setAttribute(SEARCH_RESULTS, "System failed to search, sorry");
 			}	
 		} else {
 			//if user didn't already asked something
-			session.setAttribute("results", "No result to display");
+			session.setAttribute(SEARCH_RESULTS, "No result to display");
 		}
-
 		// Finally, proceed to the Search.jsp page which will render the search results
         this.getServletContext().getRequestDispatcher("/Search.jsp").forward(request, response);	        
 	}
+	
+    /**
+     * provide the result of the search in database, regarding the filter
+     * @return a table (either CaseDetail or Person) if filter is valid, else String
+     */
+    private Object getResults(String filter, HttpServletRequest request) throws Exception{
+    	
+    	if(filter.equals("namePerson") || filter.equals("convictionType") || filter.equals("convictionDate")) {
+			//if the return type is a person, return a person table
+    		return this.tablePersons(filter, request);
+		} else if(filter.equals("category") || filter.equals("caseDate")){
+			//if the return type is a case, return a case table without description
+			return this.tableCases(filter, request);
+		} else {
+			return "Wrong filter. How did you get that one?";
+		}
+    }
+    
+    /**
+     * provide a table of persons
+     * @param request a specific request with a valid description, lastName and firstName fields
+     * @return a table of Person
+     */
+    private BeanTableHelper<Person> tablePersons(String filter, HttpServletRequest request) throws Exception{
+    	
+    	final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
+				"contentTable", Person.class);
+		
+		table.addBeanColumn("Person ID", "personId");
+		table.addBeanColumn("Last Name", "lastName");
+		table.addBeanColumn("First Name", "firstName");
+		table.addLinkColumn("", "View Person", "Person?id=", "id");
+		final String lastName = request.getParameter("lastName");
+		final String firstName = request.getParameter("firstName");
+		final String description = request.getParameter("description");
+		
+		//depending on the filter, get and set right table
+		if (filter.equals("namePerson")) {
+
+			table.addObjects(this.dbInterface.getPersonsForName(firstName, lastName));
+		} else if (filter.equals("convictionType")) {	
+			table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
+		} else if (filter.equals("convictionDate")) {	
+			table.addObjects(this.dbInterface.getPersonsForConvictionDate(description));
+		}
+		return table;
+    }
+    
+    /**
+     * provide a table of CaseDetail for a specific request
+     * @param request a request with valid description field.
+     * @return table of CaseDetail
+     */
+    private BeanTableHelper<CaseDetail> tableCases(String filter, HttpServletRequest request) throws Exception{
+    	
+		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
+				"contentTable", CaseDetail.class);
+
+		final String description = request.getParameter("description");
+		
+		table.addBeanColumn("Case ID", "caseId");
+		table.addBeanColumn("Title", "title");
+		table.addBeanColumn("Location", "location");
+		table.addBeanColumn("Open", "isOpen");
+		table.addBeanColumn("Date", "dateTimeFormated");
+		//table.addBeanColumn("Description", "description");
+		table.addBeanColumn("Author Name", "authorName");
+		table.addLinkColumn("", "View Case", "Case?caseId=", "id");
+		
+		//depending on the filter, get and set right table
+		if (filter.equals("category")) {
+			table.addObjects(this.dbInterface.getCasesForCategory(description));
+		} else if (filter.equals("caseDate")) {
+			table.addObjects(this.dbInterface.getCasesForDateLike(description));
+		}
+		return table;
+    }
 }

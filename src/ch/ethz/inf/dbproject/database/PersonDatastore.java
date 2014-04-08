@@ -182,13 +182,23 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	@Override
 	public List<Person> getPersonsForName(String firstName, String lastName) {
 		try{
-			getPersonsForNameStatement.setString(1, firstName+"%");
-			getPersonsForNameStatement.setString(2, lastName+"%");
+			
+			if (lastName.isEmpty() && firstName.isEmpty()){
+				return this.getAllPersons();
+			} else if (lastName.isEmpty()){
+				return this.getPersonsForFirstName(firstName);
+			} else if (firstName.isEmpty()){
+				return this.getPersonsForLastName(lastName);
+			} else {
+				getPersonsForNameStatement.setString(1, firstName+"%");
+				getPersonsForNameStatement.setString(2, lastName+"%");
+				return getResults(Person.class, getPersonsForNameStatement);
+			}
+			
 		} catch (final SQLException ex){
 			ex.printStackTrace();
 			return null;
 		}
-		return getResults(Person.class, getPersonsForNameStatement);
 	}
 	
 	@Override
