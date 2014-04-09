@@ -59,7 +59,7 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 			<select multiple name = "categories">
 				<% List<Category> catList = (List<Category>) session.getAttribute(CaseServlet.SESSION_CASE_CATEGORIES); 
 				for(int i = 0; i < catList.size(); i++) { %>
-  				<option value=<%=catList.get(i).getName()%>><%=catList.get(i).getName() %></option>
+  				<option value='<%=catList.get(i).getName()%>'><%=catList.get(i).getName() %></option>
   				<%} %>
 			</select>
 			<input type="hidden" name=<%=CaseServlet.EXTERNAL_CASE_ID_PARAMETER%> value = <%=request.getParameter(CaseServlet.EXTERNAL_CASE_ID_PARAMETER)%> >
