@@ -45,10 +45,10 @@ public final class StatisticsServlet extends HttpServlet {
 		if (action != null && action.equals("categoryCreation")){
 			try{
 				if(this.dbInterface.insertIntoCategory(description)){
-					ret = "You category has been added";
+					ret = "Your category has been added";
 				}
 				else{
-					ret = "Sorry, you category already exists.";
+					ret = "Sorry, this category already exists.";
 				}
 			} catch(Exception ex) {
 				ex.printStackTrace();
