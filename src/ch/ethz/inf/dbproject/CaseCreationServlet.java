@@ -71,15 +71,6 @@ public final class CaseCreationServlet extends HttpServlet {
 				final String dateString = request.getParameter("date");
 				//get the list of categories the case belongs
 				final String[] categories = request.getParameterValues("categories");
-				ArrayList<String> catNames = new ArrayList<String>();
-				if (categories != null){
-					for (int i = 0; i < categories.length; i++){
-						final String cattmp = categories[i];
-						if (cattmp != null){
-							catNames.add(cattmp);
-						}
-					}
-				}
 				//date and username
 				String authorUsername = loggedUser.getUsername();
 				Date date = this.isValidDate(dateString);
@@ -98,8 +89,10 @@ public final class CaseCreationServlet extends HttpServlet {
 					//if caseDetail is null, then there's a failure in the procedure
 					request.setAttribute(CASECREATION_MESSAGE, "Please verifiy your entries. Is there anything missing?");
 				} else {
-					for (int i = 0; i < catNames.size(); i++){
-						dbInterface.insertIntoCategoryForCase(catNames.get(i), caseDetail.getCaseId());
+					if (categories != null){
+						for (int i = 0; i < categories.length; i++){
+						dbInterface.insertIntoCategoryForCase(categories[i], caseDetail.getCaseId());
+						}
 					}
 					request.setAttribute(CASECREATION_MESSAGE, "Your case has been added.");
 				}

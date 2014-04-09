@@ -182,7 +182,8 @@ public final class CaseServlet extends HttpServlet {
 				dbInterface.addSuspectToCase(id, personId);
 				
 			} else if (INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES.equals(action) && caseDetail.getIsOpen()) {
-				//TODO : manage categories
+				final String[] categories = request.getParameterValues("categories");
+				
 			} //TODO: add convict
 		}
 		
