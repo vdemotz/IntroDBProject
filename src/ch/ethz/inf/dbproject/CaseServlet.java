@@ -183,7 +183,22 @@ public final class CaseServlet extends HttpServlet {
 				
 			} else if (INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES.equals(action) && caseDetail.getIsOpen()) {
 				final String[] categories = request.getParameterValues("categories");
-				
+				List<Category> listCatOfCase = this.dbInterface.getCategoriesForCase(id);
+				List<String> listCatNameOfCase = new ArrayList<String>();
+				if (listCatOfCase != null){
+					for (int i = 0; i < listCatOfCase.size(); i++){
+						listCatNameOfCase.add(listCatOfCase.get(i).getName());
+					}
+				}
+				if (categories != null){
+					for (int i = 0; i < categories.length; i++){
+						if (listCatNameOfCase.contains(categories[i])){
+							this.dbInterface.deleteCategoryForCaseIdAndCategory(id, categories[i]);
+						} else {
+							this.dbInterface.insertIntoCategoryForCase(categories[i], id);
+						}
+					}
+				}
 			} //TODO: add convict
 		}
 		

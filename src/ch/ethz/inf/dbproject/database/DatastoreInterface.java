@@ -248,6 +248,11 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 		return caseDatastore.getAllCategories();
 	}
 	
+	@Override
+	public boolean deleteCategoryForCaseIdAndCategory(int caseId, String categoryName) {
+		return caseDatastore.deleteCategoryForCaseIdAndCategory(caseId, categoryName);
+	}
+	
 	/////
 	//CONVICTION
 	/////
@@ -266,5 +271,4 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public Conviction getConvictionForId(int convictionId) {
 		return convictionDatastore.getConvictionForId(convictionId);
 	}
-
 }

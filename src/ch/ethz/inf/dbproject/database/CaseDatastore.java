@@ -81,6 +81,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String getCategoryForNameQuery = "select * from Category where name = ?";
 	//template get all categories
 	String getAllCategoriesQuery = "select * from Category";
+	//template remove a categoryForCase for a specific case and category
+	String deleteCategoryForCaseIdAndCategoryQuery = "delete from CategoryForCase where caseId = ? and categoryName = ?";
 
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -106,6 +108,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement insertIntoCategoryStatement;
 	PreparedStatement getCategoryForNameStatement;
 	PreparedStatement getAllCategoriesStatement;
+	PreparedStatement deleteCategoryForCaseIdAndCategoryStatement;
 
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -142,6 +145,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		insertIntoCategoryStatement = sqlConnection.prepareStatement(insertIntoCategoryQuery);
 		getCategoryForNameStatement = sqlConnection.prepareStatement(getCategoryForNameQuery);
 		getAllCategoriesStatement = sqlConnection.prepareStatement(getAllCategoriesQuery);
+		deleteCategoryForCaseIdAndCategoryStatement = sqlConnection.prepareStatement(deleteCategoryForCaseIdAndCategoryQuery);
 	}
 	
 	////
@@ -479,6 +483,18 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	public boolean addConvictToCase(int caseId, int personId, int convictionId) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public boolean deleteCategoryForCaseIdAndCategory(int caseId, String categoryName) {
+		try {
+			deleteCategoryForCaseIdAndCategoryStatement.setInt(1, caseId);
+			deleteCategoryForCaseIdAndCategoryStatement.setString(2, categoryName);
+			deleteCategoryForCaseIdAndCategoryStatement.execute();
+			return true;
+		} catch (SQLException e) {
+			return false;
+		}
 	}
 
 }

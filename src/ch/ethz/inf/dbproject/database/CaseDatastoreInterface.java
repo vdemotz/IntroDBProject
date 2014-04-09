@@ -180,4 +180,12 @@ public interface CaseDatastoreInterface {
 	 * @return all categories in the database
 	 */
 	List<Category> getAllCategories();
+
+	/**
+	 * delete the entry corresponding to the category for a specific case
+	 * @param caseId the case to update
+	 * @param categoryName the category to delete from the case
+	 * @return true if succeeded, else false
+	 */
+	boolean deleteCategoryForCaseIdAndCategory(int caseId, String categoryName);
 }
