@@ -29,6 +29,11 @@ if (user == null) {
 		<br><br>
 		
 	<%	session.setAttribute(ConvictionCreationServlet.SESSION_ERROR_MESSAGE, null);
+	} else if (session.getAttribute(ConvictionCreationServlet.SESSION_MESSAGE) != null) {
+	%>
+		<%=session.getAttribute(ConvictionCreationServlet.SESSION_MESSAGE) %>
+		<br><br>
+	<%	session.setAttribute(ConvictionCreationServlet.SESSION_MESSAGE, null);
 	}
 	%>
 	

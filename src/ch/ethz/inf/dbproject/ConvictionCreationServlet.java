@@ -35,9 +35,15 @@ public class ConvictionCreationServlet extends HttpServlet {
 	public static final String INTERNAL_CASE_ID_PARAMETER = "caseId";
 	
 	public static final String SESSION_ERROR_MESSAGE = "error";
-	public static final String SESSION_ERROR_MESSAGE_DATE_INVALID_FORMAT = "Invalid or incomplete dates";
-	public static final String SESSION_ERROR_MESSAGE_DATE_WRONG_ORDER = "The start date must be before the end date";
-	public static final String SESSION_ERROR_MESSAGE_INVALID_ID_FORMAT = "Invalid Case or Person Id Format";
+	public static final String SESSION_ERROR_MESSAGE_DATE_INVALID_FORMAT = "Invalid or incomplete dates.";
+	public static final String SESSION_ERROR_MESSAGE_DATE_WRONG_ORDER = "The start date must be before the end date.";
+	public static final String SESSION_ERROR_MESSAGE_INVALID_ID_FORMAT = "Invalid case or person id Format.";
+	public static final String SESSION_ERROR_MESSAGE_INVALID_PERSON_ID_FORMAT = "Invalid person id Format.";
+	public static final String SESSION_ERROR_MESSAGE_INVALID_ID_VALUE = "There is no case with such an id.";
+	public static final String SESSION_ERROR_MESSAGE_PROCESSING_ERROR = "An internal error occurred. Please try again later.";
+	
+	public static final String SESSION_MESSAGE = "msg";
+	public static final String SESSION_MESSAGE_CREATED = "Conviction successfully created";
 	
 	public static final String SESSION_SELECTED_PERSON = "CCSelP";
 	
@@ -66,52 +72,78 @@ public class ConvictionCreationServlet extends HttpServlet {
 	}
 	
 	
+	private void handleActionCreate(final HttpServletRequest request, final HttpServletResponse response)
+	{
+		final HttpSession session = request.getSession(true);
+		
+		String personId = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
+		String caseId = request.getParameter(INTERNAL_CASE_ID_PARAMETER);
+		String startDate = request.getParameter(INTERNAL_START_DATE_PARAMETER);
+		String endDate = request.getParameter(INTERNAL_END_DATE_PARAMETER);
+		
+		try {
+			java.util.Date startDateParsed = dateFormatter.parse(startDate);
+			java.util.Date endDateParsed = dateFormatter.parse(endDate);
+			if (startDateParsed.after(endDateParsed)) {
+				session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_WRONG_ORDER);
+				return;
+			}
+			int personIdParsed = Integer.parseInt(personId);
+			Integer caseIdParsed = null;
+			if (caseId != null && caseId.length() > 0) {//caseId is optional
+				caseIdParsed = Integer.parseInt(caseId);
+			}
+			if (caseIdParsed == null || dbInterface.getCaseForId(caseIdParsed) != null) {
+				Conviction conviction = dbInterface.insertIntoConviction(startDateParsed, endDateParsed);
+				boolean success = conviction != null;
+				if (success && caseIdParsed != null) {
+					success = dbInterface.insertIntoConvicted(personIdParsed, caseIdParsed, conviction.getConvictionId());
+				}
+				if (success) {
+					session.setAttribute(SESSION_MESSAGE, SESSION_MESSAGE_CREATED);
+				} else {
+					session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_PROCESSING_ERROR);
+				}
+			} else {
+				session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_INVALID_ID_VALUE);
+			}
+			
+		} catch (ParseException e) {
+			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_INVALID_FORMAT);
+		} catch (NumberFormatException e) {
+			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_INVALID_ID_FORMAT);
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_PROCESSING_ERROR);
+		}
+	}
+	
+	private void handleActionSelectPerson(final HttpServletRequest request, final HttpServletResponse response)
+	{
+		final HttpSession session = request.getSession(true);
+		
+		String personString = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
+		try {
+			int personId = Integer.parseInt(personString);
+			session.setAttribute(SESSION_SELECTED_PERSON, getPersonDetail(personId));
+		} catch (Exception e) {
+			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_INVALID_PERSON_ID_FORMAT);
+			session.setAttribute(SESSION_SELECTED_PERSON, null);
+		}
+	}
+	
 	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-		final HttpSession session = request.getSession(true);
-		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
+		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(request.getSession());
 
 		final String action = request.getParameter(INTERNAL_ACTION_PARAMETER);
 		
 		if (loggedUser != null) {
 			if (INTERNAL_ACTION_CREATE_PARAMETER_VALUE.equals(action)) {//The user has already selected a person and dates: create the conviction and add to DB
-				String personId = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
-				String caseId = request.getParameter(INTERNAL_CASE_ID_PARAMETER);
-				String startDate = request.getParameter(INTERNAL_START_DATE_PARAMETER);
-				String endDate = request.getParameter(INTERNAL_END_DATE_PARAMETER);
-				
-				try {
-					java.util.Date startDateParsed = dateFormatter.parse(startDate);
-					java.util.Date endDateParsed = dateFormatter.parse(endDate);
-					if (startDateParsed.after(endDateParsed)) throw new Exception();
-					int personIdParsed = Integer.parseInt(personId);
-					Integer caseIdParsed = null;
-					if (caseId != null && caseId.length() > 0) {//caseId is optional
-						caseIdParsed = Integer.parseInt(caseId);
-					}
-					
-					Conviction conviction = dbInterface.insertIntoConviction(startDateParsed, endDateParsed);
-					dbInterface.insertIntoConvicted(personIdParsed, caseIdParsed, conviction.getConvictionId());
-					
-				} catch (ParseException e) {
-					session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_INVALID_FORMAT);
-					
-					//e.printStackTrace();
-				} catch (NumberFormatException e) {
-					session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_INVALID_ID_FORMAT);
-				} catch (Exception e) {
-					session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_WRONG_ORDER);
-				}
-				
+				handleActionCreate(request, response);
 				
 			} else if (INTERNAL_ACTION_SELECT_PERSON_PARAMETER_VALUE.equals(action)){//The user has selected just the person. Construct the object displaying the person details
-				String personString = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
-				try {
-					int personId = Integer.parseInt(personString);
-					session.setAttribute(SESSION_SELECTED_PERSON, getPersonDetail(personId));
-				} catch (Exception e) {
-					session.setAttribute(SESSION_SELECTED_PERSON, null);
-				}
+				handleActionSelectPerson(request, response);
 			}
 		}
 
