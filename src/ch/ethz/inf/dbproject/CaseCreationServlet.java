@@ -17,10 +17,8 @@ import javax.servlet.http.HttpSession;
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.Category;
-import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.model.User;
 import ch.ethz.inf.dbproject.util.UserManagement;
-import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
 @WebServlet(description = "Page where user can create new cases", urlPatterns = { "/CaseCreation" })
 public final class CaseCreationServlet extends HttpServlet {
@@ -104,15 +102,6 @@ public final class CaseCreationServlet extends HttpServlet {
 		}
 
 		this.getServletContext().getRequestDispatcher("/CaseCreation.jsp").forward(request, response);
-	}
-	
-	private BeanTableHelper<CategorySummary> getCategoryNamesTable()
-	{
-		BeanTableHelper<CategorySummary> table = new BeanTableHelper<CategorySummary>("categorySummary", "contentTable", CategorySummary.class);
-		table.addObjects(dbInterface.getCategorySummary());		
-		table.addLinkColumn("Category", "View Cases", "Cases?category=", "categoryName");
-
-		return table;
 	}
 	
 	/**

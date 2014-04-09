@@ -8,10 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
 
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
-import ch.ethz.inf.dbproject.model.Category;
 import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
@@ -19,6 +17,7 @@ import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 @WebServlet(description = "Displays Statistics", urlPatterns = { "/Statistics" })
 public final class StatisticsServlet extends HttpServlet {
 
+	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	
 	public static final String SESSION_CATEGORY_SUMMARY_TABLE = "categorySummary";

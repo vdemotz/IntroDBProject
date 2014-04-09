@@ -1,7 +1,6 @@
 package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,12 +13,13 @@ import javax.servlet.http.HttpSession;
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
 import ch.ethz.inf.dbproject.model.*;
 
-import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
 @WebServlet(description = "Selects an existing person or a new person and returns its id", urlPatterns = { "/PersonSelection" })
 public final class PersonSelectionServlet extends HttpServlet {
 
+	private static final long serialVersionUID = 1L;
+	
 	public static final String EXTERNAL_TITLE_PARAMETER = "PStitle";
 	public static final String EXTERNAL_RETURN_ADDRESS_PARAMETER = "PSreturn";
 	public static final String EXTERNAL_RESULT_PERSON_ID_PARAMETER = "PSpid";

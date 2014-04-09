@@ -16,13 +16,13 @@ Must have:
 
 Add Convicts L
 Add Conviction L
-Add Categories to Cases V?
+Add Categories to Cases V:ok
 Testing, Testcases, Error Handling  (V/L)
 Reduce use of string literals (V/L)
 Consistent naming scheme for static constants (ok)
 Fix search by name semantics (V:ok)
 Nicely display null values (L:ok)
-    -composite fields (location - ok , name - todo) need special care (V,L)
+    -composite fields (location - ok , name - ok) need special care (V,L)
 
 Nice to have:
 
