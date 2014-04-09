@@ -10,10 +10,12 @@
 if (user != null) {
 	// There is a user logged in! Display a greeting!
 %>
-	Welcome back <%=user.getFirstName()%>
+	Welcome back <%=user.getFirstName()%>!
 	
 	<%= session.getAttribute(HomeServlet.SESSION_USER_DETAILS) %>
 	
+	You can <a href="CaseCreation">create a new case</a> or <a href="PersonCreation">add a new person</a>.
+	<br><br>
 	The cases you modified / created :
 	
 	
@@ -25,7 +27,7 @@ if (user != null) {
 		<input type="submit" value="Logout" title="Logout" />
 	</div>
 </form>
-	
+
 <%
 } else {
 	// No user logged in.%>
