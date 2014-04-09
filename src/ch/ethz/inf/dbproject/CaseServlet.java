@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 
@@ -34,6 +35,7 @@ public final class CaseServlet extends HttpServlet {
 	public static final String SESSION_SUSPECT_TABLE = "CASEsusT";
 	public static final String SESSION_CONVICT_TABLE = "CASEconT";
 	public static final String SESSION_CASE_NOTE_TABLE = "CASEnoteT";
+	public static final String SESSION_CASE_CATEGORIES = "CASEchangeCategory";
 	
 	public static final String EXTERNAL_CASE_ID_PARAMETER = "caseId";
 	public static final String EXTERNAL_USERNAME_PARAMETER = "username";
@@ -46,6 +48,8 @@ public final class CaseServlet extends HttpServlet {
 
 	public static final String INTERNAL_ACTION_ADD_CONVICT_PARAMETER_VALUE = "addConv";
 	public static final String INTERNAL_ACTION_ADD_SUSPECT_PARAMETER_VALUE = "addSusp";
+	
+	public static final String INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES = "changeCategories";
 	
 	
 	/**
@@ -132,6 +136,15 @@ public final class CaseServlet extends HttpServlet {
 		return table;
 	}
 	
+	private List<Category> getCategoriesForCase(int id){
+		List<Category> catList = dbInterface.getAllCategories();
+		if (catList == null){
+			catList = new ArrayList<Category>();
+			catList.add(new Category("Other"));
+		}
+		return catList;
+	}
+	
 	private void handleInvalidRequest(final HttpServletRequest request) throws ServletException, IOException
 	{
 		request.getSession().setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, "Invalid Case ID");
@@ -151,6 +164,7 @@ public final class CaseServlet extends HttpServlet {
 			
 			final String action = request.getParameter(INTERNAL_ACTION_PARAMETER);
 			
+			
 			if (INTERNAL_ACTION_ADD_NOTE_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {//cannot add comments to closed cases
 				final String comment = request.getParameter(INTERNAL_COMMENT_PARAMETER);
 				CaseNote cn = dbInterface.insertIntoCaseNote(id, comment, username);
@@ -167,6 +181,8 @@ public final class CaseServlet extends HttpServlet {
 				int personId = Integer.parseInt(personIdRaw);
 				dbInterface.addSuspectToCase(id, personId);
 				
+			} else if (INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES.equals(action) && caseDetail.getIsOpen()) {
+				//TODO : manage categories
 			} //TODO: add convict
 		}
 		
@@ -196,6 +212,8 @@ public final class CaseServlet extends HttpServlet {
 		session.setAttribute(SESSION_SUSPECT_TABLE, getSuspectsTableForCase(id));
 		//list the convicts
 		session.setAttribute(SESSION_CONVICT_TABLE, getConvictsTableForCase(id));
+		//list the categories
+		session.setAttribute(SESSION_CASE_CATEGORIES, getCategoriesForCase(id));
 	}
 	
 	/**

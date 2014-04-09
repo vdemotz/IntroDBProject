@@ -3,6 +3,8 @@
 <%@page import="ch.ethz.inf.dbproject.CaseServlet"%>
 <%@page import="ch.ethz.inf.dbproject.HomeServlet"%>
 <%@page import="ch.ethz.inf.dbproject.PersonSelectionServlet"%>
+<%@page import ="ch.ethz.inf.dbproject.model.Category"%>
+<%@page import ="java.util.List"%>
 <%@page import="ch.ethz.inf.dbproject.util.UserManagement"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="Header.jsp" %>
@@ -47,6 +49,28 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 	
 	<%=session.getAttribute(CaseServlet.SESSION_CASE_TABLE)%>
 	
+	<%
+	if (user != null && caseDetail.getIsOpen()) {
+	//User is logged in. He can manage categories for the case
+	%>	
+		<form action=<%=CaseServlet.BASE_ADDRESS%> method="get">
+		
+			Category (select categories you want to change)<br>
+			<select multiple name = "categories">
+				<% List<Category> catList = (List<Category>) session.getAttribute(CaseServlet.SESSION_CASE_CATEGORIES); 
+				for(int i = 0; i < catList.size(); i++) { %>
+  				<option value=<%=catList.get(i).getName()%>><%=catList.get(i).getName() %></option>
+  				<%} %>
+			</select>
+			<input type="hidden" name=<%=CaseServlet.EXTERNAL_CASE_ID_PARAMETER%> value = <%=request.getParameter(CaseServlet.EXTERNAL_CASE_ID_PARAMETER)%> >
+			<input type="hidden" name = "action" value=<%=CaseServlet.INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES%>>
+			<input type="hidden" name=<%=CaseServlet.EXTERNAL_USERNAME_PARAMETER%> value= <%=user.getUsername()%> />
+			<input type="submit" value="Change categories" />
+		</form>
+	<%
+	}
+	%>
+	
 	<%=session.getAttribute(CaseServlet.SESSION_SUSPECT_TABLE)%>
 	
 	<%
@@ -76,7 +100,7 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 	
 	<%
 	if (user != null && caseDetail.getIsOpen()) {
-	//User is logged in. He can add suspects
+	//User is logged in. He can add convicts
 	%>
 		<form action=<%=PersonSelectionServlet.BASE_ADDRESS%> method="get">
 			<input type="hidden" name=<%=PersonSelectionServlet.EXTERNAL_TITLE_PARAMETER%> value = "Add Convicts to Case">
@@ -106,7 +130,9 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 		</form>
 	<%
 	}
-	%> 
+	%>
+	
+	<br><br>
 	
 	<%=session.getAttribute(CaseServlet.SESSION_CASE_NOTE_TABLE)%>
 
