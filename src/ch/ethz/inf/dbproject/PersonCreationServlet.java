@@ -23,9 +23,9 @@ public final class PersonCreationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 
-	public final static String SESSION_FORM_CI = "caseIdEmpty";
-	public final static String SESSION_FORM_LN = "lastNameEmpty";
-	public final static String SESSION_FORM_FN = "firstNameEmpty";
+	public final static String PERSON_FORM_CI = "personCaseIdEmpty";
+	public final static String PERSON_FORM_LN = "personLastNameEmpty";
+	public final static String PERSON_FORM_FN = "personFirstNameEmpty";
 	public final static String PERSON_CREATION_MESSAGE = "personCreationMessage";
 
 	/**
@@ -47,8 +47,8 @@ public final class PersonCreationServlet extends HttpServlet {
 
 		if (loggedUser == null) {
 			// Not logged in!
-			session.setAttribute(SESSION_FORM_LN, false);
-			session.setAttribute(SESSION_FORM_FN, false);
+			session.setAttribute(PERSON_FORM_LN, false);
+			session.setAttribute(PERSON_FORM_FN, false);
 		} else {
 			session.setAttribute(PERSON_CREATION_MESSAGE, "");
 		}

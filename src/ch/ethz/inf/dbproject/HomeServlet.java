@@ -22,10 +22,13 @@ public final class HomeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	
+	//attributes specific to Session
 	public final static String SESSION_USER_DETAILS = "userDetails";
 	public final static String SESSION_USER_CASES = "casesByUser";
-	public final static String SESSION_WRONG_PASSWORD = "wrongUserPassword";
 	public final static String SESSION_ERROR_MESSAGE = "error";
+	
+	//attributes specific to HomeServlet
+	public final static String HOME_WRONG_PASSWORD = "HomeWrongUserPassword";
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -81,7 +84,7 @@ public final class HomeServlet extends HttpServlet {
 
 		if (loggedUser == null) {
 			// Not logged in!
-			session.setAttribute(SESSION_WRONG_PASSWORD, false);
+			session.setAttribute(HOME_WRONG_PASSWORD, false);
 		} else {
 			// Logged in
 			session.setAttribute(SESSION_USER_DETAILS, tableUserDetails(loggedUser));
@@ -103,7 +106,7 @@ public final class HomeServlet extends HttpServlet {
 				session.setAttribute(SESSION_USER_CASES, tableCasesUserModified(user.getUsername()));
 			} else {
 				//if the database return null, then set session to display 'wrong password'
-				session.setAttribute(SESSION_WRONG_PASSWORD, true);
+				session.setAttribute(HOME_WRONG_PASSWORD, true);
 			}
 			
 		} else if( action != null && action.trim().equals("logout")){

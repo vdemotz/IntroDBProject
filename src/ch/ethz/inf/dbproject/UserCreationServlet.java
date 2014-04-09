@@ -17,12 +17,11 @@ public final class UserCreationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 
-	public final static String SESSION_USER_DETAILS = "userDetails";
-	public final static String SESSION_FORM_UN = "usernameEmpty";
-	public final static String SESSION_FORM_LN = "lastNameEmpty";
-	public final static String SESSION_FORM_FN = "firstNameEmpty";
-	public final static String SESSION_FORM_EP = "passwordEmpty";
-	public final static String SESSION_FORM_PNE = "notSamePassword";
+	public final static String USERCREATION_FORM_UN = "userCreaUsernameEmpty";
+	public final static String USERCREATION_FORM_LN = "userCreaLastNameEmpty";
+	public final static String USERCREATION_FORM_FN = "userCreafirstNameEmpty";
+	public final static String USERCREATION_FORM_EP = "userCreaPasswordEmpty";
+	public final static String USERCREATION_FORM_PNE = "userCreaNotSamePassword";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -43,11 +42,11 @@ public final class UserCreationServlet extends HttpServlet {
 
 		if (loggedUser == null) {
 			// Not logged in!
-			session.setAttribute(SESSION_FORM_UN, false);
-			session.setAttribute(SESSION_FORM_LN, false);
-			session.setAttribute(SESSION_FORM_FN, false);
-			session.setAttribute(SESSION_FORM_EP, false);
-			session.setAttribute(SESSION_FORM_PNE, false);
+			session.setAttribute(USERCREATION_FORM_UN, false);
+			session.setAttribute(USERCREATION_FORM_LN, false);
+			session.setAttribute(USERCREATION_FORM_FN, false);
+			session.setAttribute(USERCREATION_FORM_EP, false);
+			session.setAttribute(USERCREATION_FORM_PNE, false);
 		}
 
 		final String action = request.getParameter("action");
@@ -64,39 +63,39 @@ public final class UserCreationServlet extends HttpServlet {
 			
 			//check if all entries are non empty and both passwords are equivalents
 			if(username.isEmpty()){
-				session.setAttribute(SESSION_FORM_UN, true);
+				session.setAttribute(USERCREATION_FORM_UN, true);
 				errorInForm = true;
 			}
 			else{
-				session.setAttribute(SESSION_FORM_UN, false);
+				session.setAttribute(USERCREATION_FORM_UN, false);
 			}
 			if(lastName.isEmpty()){
-				session.setAttribute(SESSION_FORM_LN, true);
+				session.setAttribute(USERCREATION_FORM_LN, true);
 				errorInForm = true;
 			}
 			else{
-				session.setAttribute(SESSION_FORM_LN, false);
+				session.setAttribute(USERCREATION_FORM_LN, false);
 			}
 			if(firstName.isEmpty()){
-				session.setAttribute(SESSION_FORM_FN, true);
+				session.setAttribute(USERCREATION_FORM_FN, true);
 				errorInForm = true;
 			}
 			else{
-				session.setAttribute(SESSION_FORM_FN, false);
+				session.setAttribute(USERCREATION_FORM_FN, false);
 			}
 			if(password1.isEmpty()){
-				session.setAttribute(SESSION_FORM_EP, true);
+				session.setAttribute(USERCREATION_FORM_EP, true);
 				errorInForm = true;
 			}
 			else{
-				session.setAttribute(SESSION_FORM_EP, false);
+				session.setAttribute(USERCREATION_FORM_EP, false);
 			}
 			if(!password1.equals(password2)){
-				session.setAttribute(SESSION_FORM_PNE, true);
+				session.setAttribute(USERCREATION_FORM_PNE, true);
 				errorInForm = true;
 			}
 			else{
-				session.setAttribute(SESSION_FORM_PNE, false);
+				session.setAttribute(USERCREATION_FORM_PNE, false);
 			}
 			
 			//if all is correct and user name available, create user

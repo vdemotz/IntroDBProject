@@ -73,6 +73,12 @@ public class CaseDatastore implements CaseDatastoreInterface {
 							"values(?, ?, ?, ?, ? ,? ,? ,? ,?)";
 	//template get the next id for the case detail
 	String nextCaseDetailIdQuery = "select max(caseId) from CaseDetail";
+	//template add a new category for a case
+	String insertIntoCategoryForCaseQuery = "insert into CategoryForCase(caseId, categoryName) values(?, ?)";
+	//template add a new category
+	String insertIntoCategoryQuery = "insert into Category(name) values(?)";
+	//template get a category for a name
+	String getCategoryForNameQuery = "select * from Category where name = ?";
 
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -94,6 +100,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement addConvictStatement;
 	PreparedStatement insertIntoCaseDetailStatement;
 	PreparedStatement nextCaseDetailIdStatement;
+	PreparedStatement insertIntoCategoryForCaseStatement;
+	PreparedStatement insertIntoCategoryStatement;
+	PreparedStatement getCategoryForNameStatement;
 
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -126,6 +135,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		addConvictStatement = sqlConnection.prepareStatement(addConvictQuery);
 		insertIntoCaseDetailStatement = sqlConnection.prepareStatement(insertIntoCaseDetailQuery);
 		nextCaseDetailIdStatement = sqlConnection.prepareStatement(nextCaseDetailIdQuery);
+		insertIntoCategoryForCaseStatement = sqlConnection.prepareStatement(insertIntoCategoryForCaseQuery);
+		insertIntoCategoryStatement = sqlConnection.prepareStatement(insertIntoCategoryQuery);
+		getCategoryForNameStatement = sqlConnection.prepareStatement(getCategoryForNameQuery);
 	}
 	
 	////
@@ -270,6 +282,26 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		return getResults(Category.class, categoriesForCaseStatement);
 	}
 	
+	/////
+	//Result of type Category
+	/////
+	
+	@Override
+	public Category getCategoryForName(String name) {
+		try {
+			getCategoryForNameStatement.setString(1, name);
+			ResultSet rs = getCategoryForNameStatement.executeQuery();
+			if (rs.first()){
+				return new Category(rs);
+			} else {
+				return null;
+			}
+		} catch (SQLException e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	////
 	//Result of type List<CategorySummary>
 	////
@@ -337,6 +369,29 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	////
 	//MODIFY
 	////
+	
+	@Override
+	public boolean insertIntoCategory(String name){
+		try {
+			insertIntoCategoryStatement.setString(1, name);
+			insertIntoCategoryStatement.execute();
+			return true;
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean insertIntoCategoryForCase(String name, int caseId){
+		try {
+			insertIntoCategoryStatement.setString(2, name);
+			insertIntoCategoryStatement.setInt(1, caseId);
+			insertIntoCategoryStatement.execute();
+			return true;
+		} catch (SQLException e) {
+			return false;
+		}
+	}
 	
 	@Override
 	public CaseNote insertIntoCaseNote(int caseId, String text, String authorUsername) {

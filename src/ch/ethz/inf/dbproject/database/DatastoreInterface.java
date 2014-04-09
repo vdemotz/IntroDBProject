@@ -224,4 +224,19 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public boolean addConvictToCase(int caseId, int personId, int convictionId) {
 		return caseDatastore.addConvictToCase(caseId, personId, convictionId);
 	}
+	
+	@Override
+	public boolean insertIntoCategory(String name) {
+		return caseDatastore.insertIntoCategory(name);
+	}
+
+	@Override
+	public boolean insertIntoCategoryForCase(String name, int caseId) {
+		return caseDatastore.insertIntoCategoryForCase(name, caseId);
+	}
+
+	@Override
+	public Category getCategoryForName(String name) {
+		return caseDatastore.getCategoryForName(name);
+	}
 }

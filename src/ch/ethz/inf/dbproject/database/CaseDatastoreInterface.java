@@ -152,4 +152,26 @@ public interface CaseDatastoreInterface {
 	 * @return true if successful, false otherwise
 	 */
 	boolean addConvictToCase(int caseId, int personId, int convictionId);
+	
+	/**
+	 * insert into table 'Category' a new entry
+	 * @param name the name of the new category
+	 * @return true if no problem, else false
+	 */
+	boolean insertIntoCategory(String name);
+
+	/**
+	 * insert into table 'CategoryForCase' a new entry
+	 * @param name the name of the category
+	 * @param caseId the id of the case
+	 * @return true if no problem, else false
+	 */
+	boolean insertIntoCategoryForCase(String name, int caseId);
+
+	/**
+	 * return a Category for a specific name if its exists
+	 * @param name the name of the category
+	 * @return Category of that name, null if doesn't exists
+	 */
+	Category getCategoryForName(String name);
 }
