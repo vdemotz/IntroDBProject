@@ -239,4 +239,9 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public Category getCategoryForName(String name) {
 		return caseDatastore.getCategoryForName(name);
 	}
+
+	@Override
+	public List<Category> getAllCategories() {
+		return caseDatastore.getAllCategories();
+	}
 }

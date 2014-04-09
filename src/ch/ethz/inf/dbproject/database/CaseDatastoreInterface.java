@@ -174,4 +174,10 @@ public interface CaseDatastoreInterface {
 	 * @return Category of that name, null if doesn't exists
 	 */
 	Category getCategoryForName(String name);
+
+	/**
+	 * return a list of all categories
+	 * @return all categories in the database
+	 */
+	List<Category> getAllCategories();
 }

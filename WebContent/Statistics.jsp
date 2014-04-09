@@ -8,4 +8,15 @@
 
 <%= session.getAttribute(StatisticsServlet.SESSION_CATEGORY_SUMMARY_TABLE) %>
 
+<%= session.getAttribute(StatisticsServlet.STATISTICS_ADD_CATEGORY) %>
+
+<form method="get" action="Statistics">
+<div>
+	<input type="hidden" name="action" value="categoryCreation" />
+	Add a new Category:
+	<input type="text" name="description" />
+	<input type="submit" value="Creation" title="Add new category" />
+</div>
+</form>
+
 <%@ include file="Footer.jsp" %>

@@ -79,6 +79,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String insertIntoCategoryQuery = "insert into Category(name) values(?)";
 	//template get a category for a name
 	String getCategoryForNameQuery = "select * from Category where name = ?";
+	//template get all categories
+	String getAllCategoriesQuery = "select * from Category";
 
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -103,6 +105,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement insertIntoCategoryForCaseStatement;
 	PreparedStatement insertIntoCategoryStatement;
 	PreparedStatement getCategoryForNameStatement;
+	PreparedStatement getAllCategoriesStatement;
 
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
@@ -138,6 +141,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		insertIntoCategoryForCaseStatement = sqlConnection.prepareStatement(insertIntoCategoryForCaseQuery);
 		insertIntoCategoryStatement = sqlConnection.prepareStatement(insertIntoCategoryQuery);
 		getCategoryForNameStatement = sqlConnection.prepareStatement(getCategoryForNameQuery);
+		getAllCategoriesStatement = sqlConnection.prepareStatement(getAllCategoriesQuery);
 	}
 	
 	////
@@ -282,6 +286,11 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		return getResults(Category.class, categoriesForCaseStatement);
 	}
 	
+	@Override
+	public List<Category> getAllCategories() {
+		return getResults(Category.class, getAllCategoriesStatement);
+	}
+	
 	/////
 	//Result of type Category
 	/////
@@ -384,11 +393,12 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	@Override
 	public boolean insertIntoCategoryForCase(String name, int caseId){
 		try {
-			insertIntoCategoryStatement.setString(2, name);
-			insertIntoCategoryStatement.setInt(1, caseId);
-			insertIntoCategoryStatement.execute();
+			insertIntoCategoryForCaseStatement.setInt(1, caseId);
+			insertIntoCategoryForCaseStatement.setString(2, name);
+			insertIntoCategoryForCaseStatement.execute();
 			return true;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

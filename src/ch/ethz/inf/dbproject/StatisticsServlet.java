@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import javax.websocket.Session;
 
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
+import ch.ethz.inf.dbproject.model.Category;
 import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
@@ -21,6 +22,7 @@ public final class StatisticsServlet extends HttpServlet {
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	
 	public static final String SESSION_CATEGORY_SUMMARY_TABLE = "categorySummary";
+	public static final String STATISTICS_ADD_CATEGORY = "statisticsAddCategory";
 	
 	private BeanTableHelper<CategorySummary> getCategorySummaryTable()
 	{
@@ -34,11 +36,37 @@ public final class StatisticsServlet extends HttpServlet {
 		return table;
 	}
 	
+	private String addNewCategory(HttpServletRequest request){
+		
+		final String action = request.getParameter("action");
+		final String description = request.getParameter("description");
+		String ret;
+		
+		if (action != null && action.equals("categoryCreation")){
+			try{
+				if(this.dbInterface.insertIntoCategory(description)){
+					ret = "You category has been added";
+				}
+				else{
+					ret = "Sorry, you category already exists.";
+				}
+			} catch(Exception ex) {
+				ex.printStackTrace();
+				ret = "Sorry, failed to add your category. Please contact us and we will do our best"+
+				"to fix the problem.";
+			}
+		} else {
+			ret = "";
+		}
+		return ret;
+	}
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		final HttpSession session = request.getSession(true);
 		
 		session.setAttribute(SESSION_CATEGORY_SUMMARY_TABLE, getCategorySummaryTable());
+		session.setAttribute(STATISTICS_ADD_CATEGORY, this.addNewCategory(request));
 		
 		this.getServletContext().getRequestDispatcher("/Statistics.jsp").forward(request, response);
 	}
