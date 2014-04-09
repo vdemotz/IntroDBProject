@@ -65,7 +65,15 @@ public class Person extends ModelObject{
 	}
 	
 	public String getName() {
-		return getFirstName() + " " + getLastName();
+		String retFirstName = getFirstName();
+		String retLastName = getLastName();
+		if (retFirstName == null){
+			retFirstName = "(?)";
+		}
+		if (retLastName == null){
+			retLastName = "(?)";
+		}
+		return retFirstName + " " + retLastName;
 	}
 	
 }

@@ -92,7 +92,6 @@ public final class CaseCreationServlet extends HttpServlet {
 					if (categories != null){
 						System.err.println("Categories not null");
 						for (int i = 0; i < categories.length; i++){
-							System.err.println("LENGHT"+categories[i]);
 							dbInterface.insertIntoCategoryForCase(categories[i], caseDetail.getCaseId());
 						}
 					}

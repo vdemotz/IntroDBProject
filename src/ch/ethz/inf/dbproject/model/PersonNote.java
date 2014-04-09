@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.SQLException;
+import java.text.DateFormat;
 
 public final class PersonNote extends ModelObject {
 	
@@ -54,5 +55,11 @@ public final class PersonNote extends ModelObject {
 
 	public String getAuthorUsername() {
 		return authorUsername;
+	}
+	
+	//returns a string in an format customary to display dates and time, or null if the timestamp used to create the instance was null
+	public String getDateTimeFormated() {
+		if (date == null) return null;
+		return DateFormat.getDateTimeInstance().format(date);
 	}
 }

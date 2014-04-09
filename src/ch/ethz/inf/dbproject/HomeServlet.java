@@ -64,7 +64,7 @@ public final class HomeServlet extends HttpServlet {
 		casesUserModified.addBeanColumn("Title", "title");
 		casesUserModified.addBeanColumn("Location", "location");
 		casesUserModified.addBeanColumn("Open", "isOpen");
-		casesUserModified.addBeanColumn("Date", "date");
+		casesUserModified.addBeanColumn("Date", "dateTimeFormated");
 		casesUserModified.addBeanColumn("Author Name", "authorName");
 			
 		casesUserModified.addLinkColumn("", "View Case", "Case?caseId=", "id");

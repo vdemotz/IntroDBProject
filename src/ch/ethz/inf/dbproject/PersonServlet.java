@@ -92,7 +92,7 @@ public final class PersonServlet extends HttpServlet {
 		BeanTableHelper<PersonNote> table = new BeanTableHelper<PersonNote>("personNotes", "contentTable", PersonNote.class);
 		
 		table.addBeanColumn("Author", "authorUsername");
-		table.addBeanColumn("Date", "date");
+		table.addBeanColumn("Date", "dateTimeFormated");
 		table.addBeanColumn("Comment", "text");
 
 		List<PersonNote> personNotes = this.dbInterface.getPersonNotesForPerson(Id);
