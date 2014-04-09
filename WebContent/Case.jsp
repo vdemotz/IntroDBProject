@@ -49,19 +49,13 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 	
 	<%=session.getAttribute(CaseServlet.SESSION_SUSPECT_TABLE)%>
 	
-	<%
-	String returnAddressFromSelectPerson = "";
-	if (user != null && caseDetail.getIsOpen()) {
-		returnAddressFromSelectPerson =  CaseServlet.BASE_ADDRESS + "?" + CaseServlet.EXTERNAL_CASE_ID_PARAMETER + "=" + request.getParameter(CaseServlet.EXTERNAL_CASE_ID_PARAMETER) +
-							   "&" + CaseServlet.EXTERNAL_USERNAME_PARAMETER + "=" + user.getUsername();
-	}
-	%>
-											
 	
 	<%
 	if (user != null && caseDetail.getIsOpen()) {
 		//User is logged in. She can add Suspects
-	%>
+		String returnAddressFromSelectPerson =  CaseServlet.BASE_ADDRESS + "?" + CaseServlet.EXTERNAL_CASE_ID_PARAMETER + "=" + request.getParameter(CaseServlet.EXTERNAL_CASE_ID_PARAMETER) +
+							   "&" + CaseServlet.EXTERNAL_USERNAME_PARAMETER + "=" + user.getUsername();
+		%>
 		<form action=<%=PersonSelectionServlet.BASE_ADDRESS%> method="get">
 			<input type="hidden" name=<%=PersonSelectionServlet.EXTERNAL_TITLE_PARAMETER%> value = "Add Suspect to Case">
 			<input type="hidden" name=<%=PersonSelectionServlet.EXTERNAL_RETURN_ADDRESS_PARAMETER%> value = <%=returnAddressFromSelectPerson + 
@@ -73,20 +67,6 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 	%> 
 	
 	<%=session.getAttribute(CaseServlet.SESSION_CONVICT_TABLE)%>
-	
-	<%
-	if (user != null && caseDetail.getIsOpen()) {
-	//User is logged in. He can add suspects
-	%>
-		<form action=<%=PersonSelectionServlet.BASE_ADDRESS%> method="get">
-			<input type="hidden" name=<%=PersonSelectionServlet.EXTERNAL_TITLE_PARAMETER%> value = "Add Convicts to Case">
-			<input type="hidden" name=<%=PersonSelectionServlet.EXTERNAL_RETURN_ADDRESS_PARAMETER%> value = <%=returnAddressFromSelectPerson + 
-						"&" + CaseServlet.INTERNAL_ACTION_PARAMETER + "=" + CaseServlet.INTERNAL_ACTION_ADD_CONVICT_PARAMETER_VALUE%>>
-			<input type="submit" value="Add Convict" />
-		</form>
-	<%
-		}
-	%> 
 	
 	<br><br>
 	

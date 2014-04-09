@@ -12,7 +12,7 @@
 if (user == null) {
 %>
 	
-Please <a href="Home">login</a> or create an <a href="UserCreation">account</a> first.
+<%@ include file="PleaseLogin.jsp" %>
 
 <%
 } else {
