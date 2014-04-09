@@ -242,6 +242,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public Category getCategoryForName(String name) {
 		return caseDatastore.getCategoryForName(name);
 	}
+<<<<<<< HEAD
 	
 	/////
 	//CONVICTION
@@ -262,4 +263,11 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 		return convictionDatastore.getConvictionForId(convictionId);
 	}
 
+=======
+
+	@Override
+	public List<Category> getAllCategories() {
+		return caseDatastore.getAllCategories();
+	}
+>>>>>>> 325a2dd278fcd0dd6337d73c55b949f03ff88690
 }
