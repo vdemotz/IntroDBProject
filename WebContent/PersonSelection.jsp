@@ -24,9 +24,10 @@
 if (session.getAttribute(PersonSelectionServlet.INTERNAL_SEARCH_RESULT_TABLE) != null) {
 %>
 
-<%=session.getAttribute(PersonSelectionServlet.INTERNAL_SEARCH_RESULT_TABLE) %>
+	<%=session.getAttribute(PersonSelectionServlet.INTERNAL_SEARCH_RESULT_TABLE) %>
 
 <%
+	session.setAttribute(PersonSelectionServlet.INTERNAL_SEARCH_RESULT_TABLE, null);
 }
 %>
 
