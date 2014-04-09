@@ -1,6 +1,8 @@
 package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +22,7 @@ public final class PersonSelectionServlet extends HttpServlet {
 
 	public static final String EXTERNAL_TITLE_PARAMETER = "PStitle";
 	public static final String EXTERNAL_RETURN_ADDRESS_PARAMETER = "PSreturn";
-	public static final String EXTERNAL_RESULT_PERSON_ID = "PSpid";
+	public static final String EXTERNAL_RESULT_PERSON_ID_PARAMETER = "PSpid";
 	
 	public static final String BASE_ADDRESS = "PersonSelection";
 	public static final String INTERNAL_SEARCH_ACTION = "search";
@@ -43,15 +45,25 @@ public final class PersonSelectionServlet extends HttpServlet {
 			resultTable.addBeanColumn("Id", "personId");
 			resultTable.addBeanColumn("First Name", "firstName");
 			resultTable.addBeanColumn("Last Name", "lastName");
-			resultTable.addLinkColumn("", "Select", request.getParameter(EXTERNAL_RETURN_ADDRESS_PARAMETER) + "&" + EXTERNAL_RESULT_PERSON_ID + "=", "personId");
+			resultTable.addLinkColumn("", "Select", request.getParameter(EXTERNAL_RETURN_ADDRESS_PARAMETER) + "&" + EXTERNAL_RESULT_PERSON_ID_PARAMETER + "=", "personId");
 			
 			String idString = request.getParameter(INTERNAL_SEARCH_PERSON_ID);
 			try {
 				int id = Integer.parseInt(idString);//try to search by id
 				Person result = dbInterface.getPersonForId(id);
-				resultTable.addObject(result);
+				if (result == null) {
+					resultTable = null; 
+				} else {
+					resultTable.addObject(result);
+				}
 			} catch (Exception ex) {//search by name 
-				resultTable.addObjects(dbInterface.getPersonsForName(request.getParameter(INTERNAL_SEARCH_FIRSTNAME), request.getParameter(INTERNAL_SEARCH_LASTNAME)));
+				List<Person> result = dbInterface.getPersonsForName(request.getParameter(INTERNAL_SEARCH_FIRSTNAME),  request.getParameter(INTERNAL_SEARCH_LASTNAME));
+				
+				if (result == null) {
+					resultTable = null;
+				} else {
+					resultTable.addObjects(result);
+				}
 			}
 			
 			session.setAttribute(INTERNAL_SEARCH_RESULT_TABLE, resultTable);

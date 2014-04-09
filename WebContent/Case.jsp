@@ -73,19 +73,13 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 	
 	<%=session.getAttribute(CaseServlet.SESSION_SUSPECT_TABLE)%>
 	
-	<%
-	String returnAddressFromSelectPerson = "";
-	if (user != null && caseDetail.getIsOpen()) {
-		returnAddressFromSelectPerson =  CaseServlet.BASE_ADDRESS + "?" + CaseServlet.EXTERNAL_CASE_ID_PARAMETER + "=" + request.getParameter(CaseServlet.EXTERNAL_CASE_ID_PARAMETER) +
-							   "&" + CaseServlet.EXTERNAL_USERNAME_PARAMETER + "=" + user.getUsername();
-	}
-	%>
-											
 	
 	<%
 	if (user != null && caseDetail.getIsOpen()) {
 		//User is logged in. She can add Suspects
-	%>
+		String returnAddressFromSelectPerson =  CaseServlet.BASE_ADDRESS + "?" + CaseServlet.EXTERNAL_CASE_ID_PARAMETER + "=" + request.getParameter(CaseServlet.EXTERNAL_CASE_ID_PARAMETER) +
+							   "&" + CaseServlet.EXTERNAL_USERNAME_PARAMETER + "=" + user.getUsername();
+		%>
 		<form action=<%=PersonSelectionServlet.BASE_ADDRESS%> method="get">
 			<input type="hidden" name=<%=PersonSelectionServlet.EXTERNAL_TITLE_PARAMETER%> value = "Add Suspect to Case">
 			<input type="hidden" name=<%=PersonSelectionServlet.EXTERNAL_RETURN_ADDRESS_PARAMETER%> value = <%=returnAddressFromSelectPerson + 

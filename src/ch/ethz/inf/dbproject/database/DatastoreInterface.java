@@ -1,11 +1,13 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;
 import ch.ethz.inf.dbproject.model.CategorySummary;
+import ch.ethz.inf.dbproject.model.Conviction;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 import ch.ethz.inf.dbproject.model.User;
@@ -15,11 +17,12 @@ import ch.ethz.inf.dbproject.model.User;
  * and the database.
  */
 
-public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface {
+public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface, ConvictionDatastoreInterface {
 
 	private CaseDatastoreInterface caseDatastore = new CaseDatastore();
 	private PersonDatastoreInterface personDatastore = new PersonDatastore();
 	private UserDatastoreInterface userDatastore = new UserDatastore();
+	private ConvictionDatastoreInterface convictionDatastore = new ConvictionDatastore();
 	
 	////
 	//USER
@@ -239,9 +242,29 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public Category getCategoryForName(String name) {
 		return caseDatastore.getCategoryForName(name);
 	}
-
+	
 	@Override
 	public List<Category> getAllCategories() {
 		return caseDatastore.getAllCategories();
 	}
+	
+	/////
+	//CONVICTION
+	/////
+
+	@Override
+	public Conviction insertIntoConviction(Date startDate, Date endDate) {
+		return convictionDatastore.insertIntoConviction(startDate, endDate);
+	}
+
+	@Override
+	public boolean insertIntoConvicted(int personId, Integer caseId, int convictionId) {
+		return convictionDatastore.insertIntoConvicted(personId, caseId, convictionId);
+	}
+
+	@Override
+	public Conviction getConvictionForId(int convictionId) {
+		return convictionDatastore.getConvictionForId(convictionId);
+	}
+
 }

@@ -177,7 +177,7 @@ public final class CaseServlet extends HttpServlet {
 				didUpdateCase = dbInterface.updateCaseIsOpen(id, true);
 				dbInterface.insertIntoCaseNote(id, "opened case", username);//keep notes of the closing / opening
 			} else if (INTERNAL_ACTION_ADD_SUSPECT_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
-				final String personIdRaw = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID);
+				final String personIdRaw = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
 				int personId = Integer.parseInt(personIdRaw);
 				dbInterface.addSuspectToCase(id, personId);
 				

@@ -68,7 +68,7 @@ create table CategoryForCase
 
 
 create table Conviction
-   ( convictionId integer primary key auto_increment,
+   ( convictionId integer primary key,
      startDate date,
      endDate date
    );
@@ -96,7 +96,7 @@ create table Convicted
    ( personId integer,
      caseId integer,
      convictionId integer,
-     primary key (personId, caseId, convictionId),
+     primary key (convictionId),
      foreign key (personId) references Person(personId) on delete cascade,
      foreign key (caseId) references CaseDetail(caseId) on delete cascade,
      foreign key (convictionId) references Conviction(convictionId) on delete cascade
