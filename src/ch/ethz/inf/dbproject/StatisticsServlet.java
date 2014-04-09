@@ -15,10 +15,12 @@ import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
 
-@WebServlet(description = "Displays Groups of Cases", urlPatterns = { "/CasesSummary" })
-public class CasesSummaryServlet extends HttpServlet {
+@WebServlet(description = "Displays Statistics", urlPatterns = { "/Statistics" })
+public final class StatisticsServlet extends HttpServlet {
 
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
+	
+	public static final String SESSION_CATEGORY_SUMMARY_TABLE = "categorySummary";
 	
 	private BeanTableHelper<CategorySummary> getCategorySummaryTable()
 	{
@@ -36,9 +38,9 @@ public class CasesSummaryServlet extends HttpServlet {
 		
 		final HttpSession session = request.getSession(true);
 		
-		session.setAttribute("casesSummary", getCategorySummaryTable());
+		session.setAttribute(SESSION_CATEGORY_SUMMARY_TABLE, getCategorySummaryTable());
 		
-		this.getServletContext().getRequestDispatcher("/CasesSummary.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/Statistics.jsp").forward(request, response);
 	}
 	
 }
