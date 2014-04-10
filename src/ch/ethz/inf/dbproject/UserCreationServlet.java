@@ -1,6 +1,8 @@
 package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,11 +19,7 @@ public final class UserCreationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 
-	public final static String USERCREATION_FORM_UN = "userCreaUsernameEmpty";
-	public final static String USERCREATION_FORM_LN = "userCreaLastNameEmpty";
-	public final static String USERCREATION_FORM_FN = "userCreafirstNameEmpty";
-	public final static String USERCREATION_FORM_EP = "userCreaPasswordEmpty";
-	public final static String USERCREATION_FORM_PNE = "userCreaNotSamePassword";
+	public final static String USERCREATION_FORM_MESSAGE = "userCreationMessage";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -38,69 +36,47 @@ public final class UserCreationServlet extends HttpServlet {
 			IOException {
 
 		final HttpSession session = request.getSession(true);
+		session.setAttribute(USERCREATION_FORM_MESSAGE, "");
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
-
-		if (loggedUser == null) {
-			// Not logged in!
-			session.setAttribute(USERCREATION_FORM_UN, false);
-			session.setAttribute(USERCREATION_FORM_LN, false);
-			session.setAttribute(USERCREATION_FORM_FN, false);
-			session.setAttribute(USERCREATION_FORM_EP, false);
-			session.setAttribute(USERCREATION_FORM_PNE, false);
-		}
 
 		final String action = request.getParameter("action");
 		if (action != null && action.trim().equals("creation") 	&& loggedUser == null) {
 
-			//get the entries of the new user
-			final String username = request.getParameter("username");
-			final String password1 = request.getParameter("password1");
-			final String password2 = request.getParameter("password2");
-			final String lastName = request.getParameter("lastName");
-			final String firstName = request.getParameter("firstName");
-			boolean errorInForm = false;
-			
-			
-			//check if all entries are non empty and both passwords are equivalents
-			if(username.isEmpty()){
-				session.setAttribute(USERCREATION_FORM_UN, true);
-				errorInForm = true;
-			}
-			else{
-				session.setAttribute(USERCREATION_FORM_UN, false);
-			}
-			if(lastName.isEmpty()){
-				session.setAttribute(USERCREATION_FORM_LN, true);
-				errorInForm = true;
-			}
-			else{
-				session.setAttribute(USERCREATION_FORM_LN, false);
-			}
-			if(firstName.isEmpty()){
-				session.setAttribute(USERCREATION_FORM_FN, true);
-				errorInForm = true;
-			}
-			else{
-				session.setAttribute(USERCREATION_FORM_FN, false);
-			}
-			if(password1.isEmpty()){
-				session.setAttribute(USERCREATION_FORM_EP, true);
-				errorInForm = true;
-			}
-			else{
-				session.setAttribute(USERCREATION_FORM_EP, false);
-			}
-			if(!password1.equals(password2)){
-				session.setAttribute(USERCREATION_FORM_PNE, true);
-				errorInForm = true;
-			}
-			else{
-				session.setAttribute(USERCREATION_FORM_PNE, false);
-			}
-			
-			//if all is correct and user name available, create user
-			if(!errorInForm && !this.dbInterface.isUsernameAvailable(username)){
-				this.dbInterface.addUser(username, password1, lastName, firstName);
+			try {
+				//get the entries of the new user
+				final String username = request.getParameter("username");
+				final String password1 = request.getParameter("password1");
+				final String password2 = request.getParameter("password2");
+				final String lastName = request.getParameter("lastName");
+				final String firstName = request.getParameter("firstName");
+				boolean errorInForm = false;
+				
+				
+				//check if all entries are non empty and both passwords are equivalents
+				if(username.isEmpty()){
+					session.setAttribute(USERCREATION_FORM_MESSAGE, "Please enter an username");
+					errorInForm = true;
+				} else if (this.dbInterface.isUsernameAvailable(username)) {
+					session.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, username already in use");
+					errorInForm = true;
+				}
+				if(password1.isEmpty()){
+					session.setAttribute(USERCREATION_FORM_MESSAGE, "Please enter a password");
+					errorInForm = true;
+				}
+				if(!password1.equals(password2)){
+					session.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, both passwords aren't the same");
+					errorInForm = true;
+				}
+				
+				//if all is correct and user name available, create user
+				if(!errorInForm){
+					this.dbInterface.addUser(username, password1, lastName, firstName);
+					session.setAttribute(USERCREATION_FORM_MESSAGE, "Your account has been created");
+				}
+			} catch (Exception e){
+				session.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, something went wrong. Web manager has been informed!");
+				e.printStackTrace();
 			}
 		}
 		//proceed and display the user creation page

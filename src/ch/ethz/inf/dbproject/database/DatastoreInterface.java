@@ -3,6 +3,9 @@ package ch.ethz.inf.dbproject.database;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+
+import com.sun.tools.javac.util.Pair;
+
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;
@@ -10,6 +13,7 @@ import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.model.Conviction;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
+import ch.ethz.inf.dbproject.model.StatsNode;
 import ch.ethz.inf.dbproject.model.User;
 
 /**
@@ -17,12 +21,13 @@ import ch.ethz.inf.dbproject.model.User;
  * and the database.
  */
 
-public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface, ConvictionDatastoreInterface {
+public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface, ConvictionDatastoreInterface, StatisticsDatastoreInterface {
 
 	private CaseDatastoreInterface caseDatastore = new CaseDatastore();
 	private PersonDatastoreInterface personDatastore = new PersonDatastore();
 	private UserDatastoreInterface userDatastore = new UserDatastore();
 	private ConvictionDatastoreInterface convictionDatastore = new ConvictionDatastore();
+	private StatisticsDatastoreInterface statisticsDatastore = new StatisticsDatastore();
 	
 	////
 	//USER
@@ -260,5 +265,39 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	@Override
 	public Conviction insertIntoConviction(int personId, Integer caseId, Date startDate, Date endDate) {
 		return convictionDatastore.insertIntoConviction(personId, caseId, startDate, endDate);
+	}
+	
+	////
+	//STATISTICS
+	////
+
+	@Override
+	public List<StatsNode> casesPerCity() {
+		return statisticsDatastore.casesPerCity();
+	}
+
+	@Override
+	public List<StatsNode> casesPerMonth() {
+		return statisticsDatastore.casesPerMonth();
+	}
+
+	@Override
+	public List<StatsNode> convictionsPerMonth() {
+		return statisticsDatastore.convictionsPerMonth();
+	}
+
+	@Override
+	public List<StatsNode> convictionsPerCity() {
+		return statisticsDatastore.convictionsPerCity();
+	}
+
+	@Override
+	public List<StatsNode> convictionsPerCategory() {
+		return statisticsDatastore.convictionsPerCategory();
+	}
+
+	@Override
+	public List<StatsNode> numberNotesPerUser() {
+		return statisticsDatastore.numberNotesPerUser();
 	}
 }

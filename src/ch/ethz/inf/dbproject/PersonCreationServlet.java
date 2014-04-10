@@ -83,12 +83,12 @@ public final class PersonCreationServlet extends HttpServlet {
 							dbInterface.setPersonSuspected(ci, person.getPersonId());
 						}
 					}
-					session.setAttribute(PERSON_CREATION_MESSAGE, "The person has been created with :\n" +
+					session.setAttribute(PERSON_CREATION_MESSAGE, "The person has been created with : " +
 							"first name : "+firstName+
-							"last name : "+lastName);
+							" and last name : "+lastName);
 				} else {
 					session.setAttribute(PERSON_CREATION_MESSAGE, "Error in one of entry, please enter" +
-							"valid first name, last name and birthdate");
+							" valid first name, last name and birthdate");
 				}
 			} catch (final Exception ex){
 				ex.printStackTrace();
