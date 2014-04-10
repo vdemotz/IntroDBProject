@@ -94,12 +94,8 @@ public class ConvictionCreationServlet extends HttpServlet {
 				caseIdParsed = Integer.parseInt(caseId);
 			}
 			if (caseIdParsed == null || dbInterface.getCaseForId(caseIdParsed) != null) {
-				Conviction conviction = dbInterface.insertIntoConviction(startDateParsed, endDateParsed);
-				boolean success = conviction != null;
-				if (success && caseIdParsed != null) {
-					success = dbInterface.insertIntoConvicted(personIdParsed, caseIdParsed, conviction.getConvictionId());
-				}
-				if (success) {
+				Conviction conviction = dbInterface.insertIntoConviction(personIdParsed, caseIdParsed, startDateParsed, endDateParsed);
+				if (conviction != null) {
 					session.setAttribute(SESSION_MESSAGE, SESSION_MESSAGE_CREATED);
 				} else {
 					session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_PROCESSING_ERROR);

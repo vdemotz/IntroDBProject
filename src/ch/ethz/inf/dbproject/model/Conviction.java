@@ -12,7 +12,9 @@ public final class Conviction extends ModelObject {
 	private int convictionId;
 	private java.sql.Date startDate;
 	private java.sql.Date endDate;
-
+	private int personId;
+	private int caseId;
+	
 	////
 	// CONSTRUCTORS
 	////

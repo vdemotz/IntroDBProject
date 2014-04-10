@@ -17,13 +17,11 @@ public class ConvictionDatastore implements ConvictionDatastoreInterface {
 
 	private Connection sqlConnection;
 
-	private final String insertIntoConvictionQuery = "insert into Conviction values (?, ?, ?)";
-	private final String insertIntoConvictedQuery = "insert into Convicted values (?, ?, ?)";
+	private final String insertIntoConvictionQuery = "insert into Conviction values (?, ?, ?, ?, ?)";
 	private final String nextConvictionIdQuery = "select coalesce (max(convictionId)+1, 1) from Conviction";
 	private final String getConvictionForIdQuery = "select * from Conviction where convictionId=?";
 	
 	private PreparedStatement insertIntoConvictionStatement;
-	private PreparedStatement insertIntoConvictedStatement;
 	private PreparedStatement nextConvictionIdStatement;
 	private PreparedStatement getConvictionForIdStatement;
 	
@@ -38,7 +36,6 @@ public class ConvictionDatastore implements ConvictionDatastoreInterface {
 	
 	private void prepareStatements() throws SQLException
 	{
-		insertIntoConvictedStatement = sqlConnection.prepareStatement(insertIntoConvictedQuery);
 		insertIntoConvictionStatement = sqlConnection.prepareStatement(insertIntoConvictionQuery);
 		nextConvictionIdStatement = sqlConnection.prepareStatement(nextConvictionIdQuery);
 		getConvictionForIdStatement = sqlConnection.prepareStatement(getConvictionForIdQuery);
@@ -68,15 +65,21 @@ public class ConvictionDatastore implements ConvictionDatastoreInterface {
 	
 
 	@Override
-	public Conviction insertIntoConviction(Date startDate, Date endDate) {
+	public Conviction insertIntoConviction(int personId, Integer caseId, Date startDate, Date endDate) {
 		synchronized(this.getClass()) {//prevent race on next conviction id
 			try {
 				//get and set next id
 				int id = getNextConvictionId();
 				insertIntoConvictionStatement.setInt(1, id);
-				//set dates
-				insertIntoConvictionStatement.setDate(2, new java.sql.Date(startDate.getTime()));
-				insertIntoConvictionStatement.setDate(3, new java.sql.Date(endDate.getTime()));
+				//set parameters
+				insertIntoConvictionStatement.setInt(2, personId);
+				if (caseId != null) {
+					insertIntoConvictionStatement.setInt(3, caseId);
+				} else {
+					insertIntoConvictionStatement.setNull(3, java.sql.Types.INTEGER);
+				}
+				insertIntoConvictionStatement.setDate(4, new java.sql.Date(startDate.getTime()));
+				insertIntoConvictionStatement.setDate(5, new java.sql.Date(endDate.getTime()));
 				//execute
 				insertIntoConvictionStatement.execute();
 				//if all went well, return result
@@ -87,19 +90,6 @@ public class ConvictionDatastore implements ConvictionDatastoreInterface {
 			}
 			return null;
 		}
-	}
-
-	@Override
-	public boolean insertIntoConvicted(int personId, Integer caseId, int convictionId) {
-		try {
-			insertIntoConvictedStatement.setInt(1, personId);
-			insertIntoConvictedStatement.setInt(2, caseId);
-			insertIntoConvictedStatement.setInt(3, convictionId);
-			insertIntoConvictedStatement.execute();
-			return insertIntoConvictedStatement.getUpdateCount() > 0;
-		} catch (SQLException e) {
-		}
-		return false;
 	}
 
 }

@@ -19,18 +19,12 @@ public interface ConvictionDatastoreInterface {
 	////
 	
 	/**
+	 * @param personId
+	 * @param caseId
 	 * @param startDate not null
 	 * @param endDate not null
 	 * @return A Conviction representing the newly inserted values if insertion was successful, otherwise null
 	 */
-	public Conviction insertIntoConviction(java.util.Date startDate, java.util.Date endDate);
-	
-	/**
-	 * @param conviction Id
-	 * @param personId
-	 * @param caseId
-	 * @return true if the insertion was successful, null otherwise
-	 */
-	public boolean insertIntoConvicted(int personId, Integer caseId, int convictionId);
+	public Conviction insertIntoConviction(int personId, Integer caseId, java.util.Date startDate, java.util.Date endDate);
 	
 }

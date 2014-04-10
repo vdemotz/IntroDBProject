@@ -41,12 +41,12 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String casesForDateLikeQuery = "select * from CaseDetail where date like ?";
 	//template: suspected persons for a specific case
 	String suspectsForCaseQuery = "select person.* " +
-								  "from Person person, Suspected suspected, CaseDetail caseDetail " +
-				                  "where caseDetail.caseId = ? and suspected.caseId = caseDetail.caseId and suspected.personId = person.personId";
+								  "from Person person, Suspected suspected " +
+				                  "where suspected.caseId = ? and suspected.personId = person.personId";
 	//template: convicted persons for a specific case
 	String convictsForCaseQuery = "select person.* " +
-								  "from Person person, Convicted convicted, CaseDetail caseDetail " +
-								  "where caseDetail.caseId = ? and convicted.caseId = caseDetail.caseId and convicted.personId = person.personId";
+								  "from Person person, Conviction conviction " +
+								  "where conviction.caseId = ? and conviction.personId = person.personId";
 	//template: all categories for a specific case
 	String categoriesForCaseQuery = "select Category.* " +
 									"from CaseDetail caseDetail, CategoryForCase categoryForCase, Category category " +
@@ -66,8 +66,6 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
 	//template add Suspec
 	String addSuspectQuery = "insert into Suspected values (?, ?)";
-	//template add Convicts
-	String addConvictQuery = "insert into Convicted values (?, ?, ?)";
 	//template add new case
 	String insertIntoCaseDetailQuery = "insert into CaseDetail (caseId, title, street, city, zipCode, isOpen, date, description, authorName) " +
 							"values(?, ?, ?, ?, ? ,? ,? ,? ,?)";
@@ -101,7 +99,6 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement insertIntoCaseNoteStatement;
 	PreparedStatement updateCaseIsOpenStatement;
 	PreparedStatement addSuspectStatement;
-	PreparedStatement addConvictStatement;
 	PreparedStatement insertIntoCaseDetailStatement;
 	PreparedStatement nextCaseDetailIdStatement;
 	PreparedStatement insertIntoCategoryForCaseStatement;
@@ -138,7 +135,6 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		insertIntoCaseNoteStatement = sqlConnection.prepareStatement(insertIntoCaseNoteQuery);
 		updateCaseIsOpenStatement = sqlConnection.prepareStatement(updateCaseIsOpenQuery);
 		addSuspectStatement =  sqlConnection.prepareStatement(addSuspectQuery);
-		addConvictStatement = sqlConnection.prepareStatement(addConvictQuery);
 		insertIntoCaseDetailStatement = sqlConnection.prepareStatement(insertIntoCaseDetailQuery);
 		nextCaseDetailIdStatement = sqlConnection.prepareStatement(nextCaseDetailIdQuery);
 		insertIntoCategoryForCaseStatement = sqlConnection.prepareStatement(insertIntoCategoryForCaseQuery);
@@ -477,12 +473,6 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	@Override
-	public boolean addConvictToCase(int caseId, int personId, int convictionId) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 	
 	@Override
