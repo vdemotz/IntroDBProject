@@ -72,22 +72,16 @@ public class ConvictionCreationServlet extends HttpServlet {
 	}
 	
 	
-	private void handleActionCreate(final HttpServletRequest request, final HttpServletResponse response)
-	{
+	private Conviction tryInsertIntoCase(final HttpServletRequest request, String personId, String caseId, String startDate, String endDate) throws ParseException {
 		final HttpSession session = request.getSession(true);
 		
-		String personId = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
-		String caseId = request.getParameter(INTERNAL_CASE_ID_PARAMETER);
-		String startDate = request.getParameter(INTERNAL_START_DATE_PARAMETER);
-		String endDate = request.getParameter(INTERNAL_END_DATE_PARAMETER);
+		Conviction result = null;
 		
-		try {
-			java.util.Date startDateParsed = dateFormatter.parse(startDate);
-			java.util.Date endDateParsed = dateFormatter.parse(endDate);
-			if (startDateParsed.after(endDateParsed)) {
-				session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_WRONG_ORDER);
-				return;
-			}
+		java.util.Date startDateParsed = dateFormatter.parse(startDate);
+		java.util.Date endDateParsed = dateFormatter.parse(endDate);
+		if (startDateParsed.after(endDateParsed)) {
+			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_WRONG_ORDER);
+		} else {
 			int personIdParsed = Integer.parseInt(personId);
 			Integer caseIdParsed = null;
 			if (caseId != null && caseId.length() > 0) {//caseId is optional
@@ -103,7 +97,22 @@ public class ConvictionCreationServlet extends HttpServlet {
 			} else {
 				session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_INVALID_ID_VALUE);
 			}
-			
+		}
+		
+		return result;
+	}
+	
+	private void handleActionCreate(final HttpServletRequest request, final HttpServletResponse response)
+	{
+		final HttpSession session = request.getSession(true);
+		
+		String personId = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
+		String caseId = request.getParameter(INTERNAL_CASE_ID_PARAMETER);
+		String startDate = request.getParameter(INTERNAL_START_DATE_PARAMETER);
+		String endDate = request.getParameter(INTERNAL_END_DATE_PARAMETER);
+		
+		try {
+			tryInsertIntoCase(request, personId, caseId, startDate, endDate);
 		} catch (ParseException e) {
 			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_INVALID_FORMAT);
 		} catch (NumberFormatException e) {
