@@ -14,6 +14,7 @@ Todo:
 
 Must have:
 
+User creation : clean stuff, error messages, error handling (V)
 Add Convicts L
 Add Conviction L
 Add Categories to Cases V:ok
