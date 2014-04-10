@@ -44,7 +44,7 @@ public class StatisticsDatastore implements StatisticsDatastoreInterface {
 	private final String numberNotesPerUserString = "select authorCase as authorUsername, countCase+countPerson as totalNotes from "+
 												"(select * from (select authorUsername as authorCase, count(*) as countCase from CaseNote "+
 												"group by authorUsername) as cn join (select authorUsername as authorPerson, count(*) as countPerson "+
-												"from PersonNote group by authorUsername) as pn on pn.authorPerson = cn.authorCase) as notes";
+												"from PersonNote group by authorUsername) as pn on pn.authorPerson = cn.authorCase) as notes order by totalNotes desc";
 	
 	////
 	//Prepared Statement

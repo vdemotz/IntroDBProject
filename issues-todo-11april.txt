@@ -16,9 +16,23 @@ Issues 11 April
 
 *Advanced stats queries. Ideas:
 ->users that have recently commented on cases a user created or recently commented
+(TODO (V) -> Have to think about it)
+
 ->recent comments by other users on cases that have been recently commented or created by a user
-->number of modifications per hour of the day
-->Most active categories per user (number of cases a user modified per category)
+(TODO (V) -> Similar as the first one)
+
+->number of modifications per hour of the day 
+(I don't know how to handle that!)
+
+->Most active categories per user (number of cases a user modified per category) 
+(Neither : how to know which user, for example, changed a categoryForCase?)
+
 ->List of Cases per Category modified by a User
-->most active users
-->most active users for a particular category
+(Same issue.)
+
+->most active users 
+(~ only 'order by' in users stats -> good idea, done)
+
+
+->most active users for a particular category 
+(TODO (V) -> Have to think about it)
