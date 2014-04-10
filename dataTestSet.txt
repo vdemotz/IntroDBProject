@@ -118,13 +118,10 @@ insert into CategoryForCase
     values(5, 'Murder');
 
 insert into Conviction
-    values(1, '2005-10-10', null);
+    values(1, 4, 5, '2005-10-10', null);
 
 insert into ConvictionType
     values(1, 'Murder');
-
-insert into Convicted (personId, caseId, convictionId)
-    values(4, 5, 1);
 
 
 
