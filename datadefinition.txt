@@ -67,22 +67,6 @@ create table CategoryForCase
    );
 
 
-create table Conviction
-   ( convictionId integer primary key,
-     startDate date,
-     endDate date
-   );
-
-
-create table ConvictionType
-   ( convictionId integer,
-     categoryName varchar(40),
-     primary key (convictionId, categoryName),
-     foreign key (convictionId) references Conviction(convictionId) on delete cascade,
-     foreign key (categoryName) references Category(name) on update cascade on delete cascade
-   );
-
-
 create table Suspected
    ( personId integer,
      caseId integer,
@@ -92,12 +76,21 @@ create table Suspected
    );
 
 
-create table Convicted
-   ( personId integer,
+create table Conviction
+   ( convictionId integer primary key auto_increment,
+     personId integer not null,
      caseId integer,
-     convictionId integer,
-     primary key (convictionId),
-     foreign key (personId) references Person(personId) on delete cascade,
+     startDate date,
+     endDate date,
      foreign key (caseId) references CaseDetail(caseId) on delete cascade,
-     foreign key (convictionId) references Conviction(convictionId) on delete cascade
+     foreign key (personId) references Person(personId)
+   );
+
+
+create table ConvictionType
+   ( convictionId integer,
+     categoryName varchar(40),
+     primary key (convictionId, categoryName),
+     foreign key (convictionId) references Conviction(convictionId) on delete cascade,
+     foreign key (categoryName) references Category(name) on update cascade on delete cascade
    );

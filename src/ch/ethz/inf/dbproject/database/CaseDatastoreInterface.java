@@ -145,15 +145,6 @@ public interface CaseDatastoreInterface {
 	boolean addSuspectToCase(int caseId, int personId);
 	
 	/**
-	 * 
-	 * @param caseId
-	 * @param personId
-	 * @param convictionId
-	 * @return true if successful, false otherwise
-	 */
-	boolean addConvictToCase(int caseId, int personId, int convictionId);
-	
-	/**
 	 * insert into table 'Category' a new entry
 	 * @param name the name of the new category
 	 * @return true if no problem, else false

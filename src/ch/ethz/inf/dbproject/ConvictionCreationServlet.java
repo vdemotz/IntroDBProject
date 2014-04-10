@@ -72,6 +72,36 @@ public class ConvictionCreationServlet extends HttpServlet {
 	}
 	
 	
+	private Conviction tryInsertIntoCase(final HttpServletRequest request, String personId, String caseId, String startDate, String endDate) throws ParseException {
+		final HttpSession session = request.getSession(true);
+		
+		Conviction result = null;
+		
+		java.util.Date startDateParsed = dateFormatter.parse(startDate);
+		java.util.Date endDateParsed = dateFormatter.parse(endDate);
+		if (startDateParsed.after(endDateParsed)) {
+			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_WRONG_ORDER);
+		} else {
+			int personIdParsed = Integer.parseInt(personId);
+			Integer caseIdParsed = null;
+			if (caseId != null && caseId.length() > 0) {//caseId is optional
+				caseIdParsed = Integer.parseInt(caseId);
+			}
+			if (caseIdParsed == null || dbInterface.getCaseForId(caseIdParsed) != null) {
+				Conviction conviction = dbInterface.insertIntoConviction(personIdParsed, caseIdParsed, startDateParsed, endDateParsed);
+				if (conviction != null) {
+					session.setAttribute(SESSION_MESSAGE, SESSION_MESSAGE_CREATED);
+				} else {
+					session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_PROCESSING_ERROR);
+				}
+			} else {
+				session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_INVALID_ID_VALUE);
+			}
+		}
+		
+		return result;
+	}
+	
 	private void handleActionCreate(final HttpServletRequest request, final HttpServletResponse response)
 	{
 		final HttpSession session = request.getSession(true);
@@ -82,32 +112,7 @@ public class ConvictionCreationServlet extends HttpServlet {
 		String endDate = request.getParameter(INTERNAL_END_DATE_PARAMETER);
 		
 		try {
-			java.util.Date startDateParsed = dateFormatter.parse(startDate);
-			java.util.Date endDateParsed = dateFormatter.parse(endDate);
-			if (startDateParsed.after(endDateParsed)) {
-				session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_WRONG_ORDER);
-				return;
-			}
-			int personIdParsed = Integer.parseInt(personId);
-			Integer caseIdParsed = null;
-			if (caseId != null && caseId.length() > 0) {//caseId is optional
-				caseIdParsed = Integer.parseInt(caseId);
-			}
-			if (caseIdParsed == null || dbInterface.getCaseForId(caseIdParsed) != null) {
-				Conviction conviction = dbInterface.insertIntoConviction(startDateParsed, endDateParsed);
-				boolean success = conviction != null;
-				if (success && caseIdParsed != null) {
-					success = dbInterface.insertIntoConvicted(personIdParsed, caseIdParsed, conviction.getConvictionId());
-				}
-				if (success) {
-					session.setAttribute(SESSION_MESSAGE, SESSION_MESSAGE_CREATED);
-				} else {
-					session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_PROCESSING_ERROR);
-				}
-			} else {
-				session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_INVALID_ID_VALUE);
-			}
-			
+			tryInsertIntoCase(request, personId, caseId, startDate, endDate);
 		} catch (ParseException e) {
 			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_INVALID_FORMAT);
 		} catch (NumberFormatException e) {

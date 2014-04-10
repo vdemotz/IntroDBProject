@@ -222,11 +222,6 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public boolean addSuspectToCase(int caseId, int personId) {
 		return caseDatastore.addSuspectToCase(caseId, personId);
 	}
-
-	@Override
-	public boolean addConvictToCase(int caseId, int personId, int convictionId) {
-		return caseDatastore.addConvictToCase(caseId, personId, convictionId);
-	}
 	
 	@Override
 	public boolean insertIntoCategory(String name) {
@@ -258,17 +253,12 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	/////
 
 	@Override
-	public Conviction insertIntoConviction(Date startDate, Date endDate) {
-		return convictionDatastore.insertIntoConviction(startDate, endDate);
-	}
-
-	@Override
-	public boolean insertIntoConvicted(int personId, Integer caseId, int convictionId) {
-		return convictionDatastore.insertIntoConvicted(personId, caseId, convictionId);
-	}
-
-	@Override
 	public Conviction getConvictionForId(int convictionId) {
 		return convictionDatastore.getConvictionForId(convictionId);
+	}
+
+	@Override
+	public Conviction insertIntoConviction(int personId, Integer caseId, Date startDate, Date endDate) {
+		return convictionDatastore.insertIntoConviction(personId, caseId, startDate, endDate);
 	}
 }

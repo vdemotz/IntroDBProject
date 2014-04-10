@@ -1,0 +1,13 @@
+Todo:
+
+* Types of Conviction
+* 
+
+Issues 11 April
+
+*CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named
+
+*CaseDetail: Check null/empty title.
+
+
+*where to put Category creation
