@@ -1,7 +1,9 @@
 Todo:
 
 * Types of Conviction
-* 
+* More test data
+* New ER
+* Functional dependencies (maybe)
 
 Issues 11 April
 
@@ -11,3 +13,5 @@ Issues 11 April
 
 
 *where to put Category creation
+
+*Advanced stats queries
