@@ -20,3 +20,5 @@ Issues 11 April
 ->number of modifications per hour of the day
 ->Most active categories per user (number of cases a user modified per category)
 ->List of Cases per Category modified by a User
+->most active users
+->most active users for a particular category
