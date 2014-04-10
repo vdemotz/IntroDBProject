@@ -90,7 +90,6 @@ public final class SearchServlet extends HttpServlet {
 		
 		//depending on the filter, get and set right table
 		if (filter.equals("namePerson")) {
-
 			table.addObjects(this.dbInterface.getPersonsForName(firstName, lastName));
 		} else if (filter.equals("convictionType")) {	
 			table.addObjects(this.dbInterface.getPersonsForConvictionType(description));

@@ -7,12 +7,12 @@ Todo:
 
 Issues 11 April
 
-*CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named
+*CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named (renaming : done. change, to discussion : if you have better solution to cast String -> timestamp (with check of the format) , I agree!)
 
-*CaseDetail: Check null/empty title.
+*CaseDetail: Check null/empty title. (done)
 
 
-*where to put Category creation
+*where to put Category creation (Vincent's opinion : don't move. We don't have other overview of categories in other place)
 
 *Advanced stats queries. Ideas:
 ->users that have recently commented on cases a user created or recently commented

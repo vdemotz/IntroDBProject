@@ -60,6 +60,7 @@ public final class CaseCreationServlet extends HttpServlet {
 			//create a new case with the description given by the user. The date is set to today
 			//the case is by default open
 			try{
+				CaseDetail caseDetail = null;
 				//get all parameters
 				final String title = request.getParameter("title");
 				final String city = request.getParameter("city");
@@ -71,7 +72,7 @@ public final class CaseCreationServlet extends HttpServlet {
 				final String[] categories = request.getParameterValues("categories");
 				//date and username
 				String authorUsername = loggedUser.getUsername();
-				Date date = this.isValidDate(dateString);
+				Date date = this.getValidDate(dateString);
 				Timestamp timestamp;
 				if (date != null){
 					 timestamp = new Timestamp(date.getTime());
@@ -79,10 +80,10 @@ public final class CaseCreationServlet extends HttpServlet {
 					timestamp = new Timestamp(new Date().getTime());
 				}
 				
-				
-				//try to create the case
-				CaseDetail caseDetail = dbInterface.insertIntoCaseDetail(title, city, zipCode, street, timestamp, description, authorUsername);
-				
+				if (title != null && !title.isEmpty()){
+					//try to create the case
+					caseDetail = dbInterface.insertIntoCaseDetail(title, city, zipCode, street, timestamp, description, authorUsername);
+				} 
 				if (caseDetail == null){
 					//if caseDetail is null, then there's a failure in the procedure
 					request.setAttribute(CASECREATION_MESSAGE, "Please verifiy your entries. Is there anything missing?");
@@ -110,7 +111,7 @@ public final class CaseCreationServlet extends HttpServlet {
 	 * @return true if the date has format yyyy-mm-dd, else false
 	 */
 	@SuppressWarnings("deprecation")
-	private Date isValidDate(String date){
+	private Date getValidDate(String date){
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	    Date testDate = null;
 
