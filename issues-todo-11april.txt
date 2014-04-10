@@ -14,4 +14,9 @@ Issues 11 April
 
 *where to put Category creation
 
-*Advanced stats queries
+*Advanced stats queries. Ideas:
+->users that have recently commented on cases a user created or recently commented
+->recent comments by other users on cases that have been recently commented or created by a user
+->number of modifications per hour of the day
+->Most active categories per user (number of cases a user modified per category)
+->List of Cases per Category modified by a User
