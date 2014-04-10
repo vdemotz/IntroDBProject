@@ -21,7 +21,7 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	// String for Prepared Statement
 	////
 	//particular cases for convicted person
-	private String getCasesForWhichPersonIsConvictedString = "select cd.* from CaseDetail cd, Convicted c "+
+	private String getCasesForWhichPersonIsConvictedString = "select cd.* from CaseDetail cd, Conviction c "+
 			"where c.personId = ? and cd.caseId = c.caseId";
 	//particular cases for suspected person
 	private String getCasesForWhichPersonIsSuspectedString = "select cd.* from CaseDetail cd, Suspected s "+
@@ -35,17 +35,17 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	//persons for particular first name
 	private String getPersonsForLastNameString = "select * from Person where lastName like ?";
 	//persons for particular conviction type
-	private String getPersonsForConvictionTypeString = "select p.* from Convicted convicted, Person p, ConvictionType convictionType "+
-			"where convicted.personId = p.personId and convicted.convictionId = convictionType.convictionId and "+
+	private String getPersonsForConvictionTypeString = "select p.* from Conviction conviction, Person p, ConvictionType convictionType "+
+			"where conviction.personId = p.personId and conviction.convictionId = convictionType.convictionId and "+
 			"convictionType.categoryName = ? order by lastName, firstName";
 	//persons for particular date
-	private String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Convicted convicted, Person person "+
-			"where conviction.startDate like ? and conviction.convictionId = convicted.convictionId and "+
-			"convicted.personId = person.personId order by lastName, firstName";
+	private String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Person person "+
+			"where conviction.startDate like ? and "+
+			"conviction.personId = person.personId order by lastName, firstName";
 	//particular person for an Id
 	private String getPersonForIdString = "select * from Person where personId =?";
 	//all convicted persons
-	private String getAllConvictedPersonsString = "select distinct p.* from Person p, Convicted c where p.personId = c.personId";
+	private String getAllConvictedPersonsString = "select distinct p.* from Person p, Conviction c where p.personId = c.personId";
 	//all suspected persons
 	private String getAllSuspectedPersonsString = "select distinct p.* from Person p, Suspected s where p.personId = s.personId";
 	//all persons
