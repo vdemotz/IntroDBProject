@@ -1,38 +1,42 @@
 Todo:
 
-* Types of Conviction
-* More test data
-* New ER
-* Functional dependencies (maybe)
+* Types of Conviction : remove table conviction type (L)
+* More test data (Moday V/L)
+* New ER (Monday)
+* Functional dependencies (Monday)
+* Design Overview (V)
+* Add conviction: link directly to select person from navbar (L)
+* Remove Suspect: (L)
 
-Issues 11 April
+*CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named (renaming : done. TODO : (V) )
 
-*CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named (renaming : done. change, to discussion : if you have better solution to cast String -> timestamp (with check of the format) , I agree!)
+*Methods begin with verbs (V)
 
-*CaseDetail: Check null/empty title. (done)
+*Categories in Home Page (V) with category creation
 
+*StatsNode constructor (V)
 
-*where to put Category creation (Vincent's opinion : don't move. We don't have other overview of categories in other place)
+*Creations : when empty, set to null (V)
 
-*Advanced stats queries. Ideas:
-->users that have recently commented on cases a user created or recently commented
-(TODO (V) -> Have to think about it)
+*add note at any changes (L)
 
+*search in ranges
+
+*search by birthdate
+
+*Advanced stats queries. Implement in StatsDatstore, show meta info on home page
+(L)
 ->recent comments by other users on cases that have been recently commented or created by a user
-(TODO (V) -> Similar as the first one)
+(TODO -> Similar as the first one) : Home Page
 
-->number of modifications per hour of the day 
-(I don't know how to handle that!)
+(L)
+->number of modifications per hour per user of the day 
+(Cool!) : Home page
 
+(V)
 ->Most active categories per user (number of cases a user modified per category) 
-(Neither : how to know which user, for example, changed a categoryForCase?)
+(can also do) : Home Page
 
-->List of Cases per Category modified by a User
-(Same issue.)
-
+(V)
 ->most active users 
-(~ only 'order by' in users stats -> good idea, done)
-
-
-->most active users for a particular category 
-(TODO (V) -> Have to think about it)
+: move from Stats -> Home Page

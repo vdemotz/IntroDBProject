@@ -83,9 +83,10 @@ public class UserDatastore implements UserDatastoreInterface {
 	@Override
 	public User getUserForUsernameAndPassword(String username, String password) {
 		try{
-
+			System.err.println(username + " "+password);
 			getUserForUsernameAndPasswordStatement.setString(1, username);
 			getUserForUsernameAndPasswordStatement.setString(2, password);
+			System.err.println(getUserForUsernameAndPasswordStatement.toString());
 			ResultSet rs = getUserForUsernameAndPasswordStatement.executeQuery();
 			if (!rs.first()){return null;}
 			return new User(rs);
