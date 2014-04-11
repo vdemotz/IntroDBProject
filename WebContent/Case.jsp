@@ -90,6 +90,8 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 		}
 	%> 
 	
+	<%=session.getAttribute(CaseServlet.SESSION_CONVICT_TABLE)%>
+	
 	<br><br>
 	
 	<%
