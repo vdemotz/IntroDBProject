@@ -80,6 +80,29 @@ public interface PersonDatastoreInterface {
 	 */
 	List<Person> getPersonsForFirstName(String firstName);
 	
+	/**
+	 * provide a search in DB for a range of dates of birthdate
+	 * @param startDate a valid String which represents a date yyyy-mm-dd
+	 * @param endDate a valid String which represents a date yyyy-mm-dd
+	 * @return a list of persons who have birthdate between start and end date
+	 */
+	List<Person> getPersonsForBirthdates(String startDate, String endDate);	
+	
+	/**
+	 * provide a search in DB for a birthdate
+	 * @param date a valid String which represents a date yyyy-mm-dd
+	 * @return a list of persons who have birthdate at date
+	 */
+	List<Person> getPersonsForBirthdate(String date);	
+	
+	/**
+	 * provide a search in DB for a range of dates of conviction
+	 * @param startDate a valid String which represents a date yyyy-mm-dd
+	 * @param endDate a valid String which represents a date yyyy-mm-dd
+	 * @return a list of persons who have been convicted between start and end date
+	 */
+	List<Person> getPersonsForConvictionDates(String startDate, String endDate);
+	
 	////
 	//MODIFY
 	////
@@ -111,5 +134,5 @@ public interface PersonDatastoreInterface {
 	 * @param personId the person id of the person
 	 * @return true parameters are valid and updated was made in database
 	 */
-	boolean setPersonSuspected(int caseId, int personId);	
+	boolean setPersonSuspected(int caseId, int personId);
 }

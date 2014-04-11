@@ -4,6 +4,14 @@
 
 <hr/>
 
+<br>Note about the search :
+<br>
+<br>The date format is : yyyy-mm-dd
+<br>You can search between ranges if you enter a valid date in the second field.
+<br>If you don't enter anything in the second field, you can enter a prefix of the date (like yyyy-mm or yyyy)
+
+<hr/>
+
 <h3>Search Persons :</h3>
 
 <form method="get" action="Search">
@@ -29,9 +37,19 @@
 <div>
 	<input type="hidden" name="filter" value="convictionDate" />
 	Search By Date of Conviction:
-	<input type="text" name="description" />
+	<input type="text" name="startDate" />
+	<input type="text" name="endDate" />
 	<input type="submit" value="Search" title="Search by date of conviciton" />
-	<br>The input format is yyyy-mm-dd or any prefix thereof, like yyyy-mm or yyyy-mm-d.
+</div>
+</form>
+
+<form method="get" action="Search">
+<div>
+	<input type="hidden" name="filter" value="birthdate" />
+	Search By Birthdate
+	<input type="text" name="startdate" />
+	<input type="text" name="enddate" />
+	<input type="submit" value="Search" title="Search by birthdate" />
 </div>
 </form>
 
@@ -52,9 +70,9 @@
 <div>
 	<input type="hidden" name="filter" value="caseDate" />
 	Search By Date of Case:
-	<input type="text" name="description" />
+	<input type="text" name="startDate" />
+	<input type="text" name="endDate" />
 	<input type="submit" value="Search" title="Search by date of Case" />
-	<br>The input format is yyyy-mm-dd or any prefix thereof, like yyyy-mm or yyyy-mm-d.
 </div>
 </form>
 

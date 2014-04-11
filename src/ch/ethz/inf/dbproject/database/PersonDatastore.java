@@ -38,10 +38,18 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	private String getPersonsForConvictionTypeString = "select p.* from Conviction conviction, Person p, ConvictionType convictionType "+
 			"where conviction.personId = p.personId and conviction.convictionId = convictionType.convictionId and "+
 			"convictionType.categoryName = ? order by lastName, firstName";
-	//persons for particular date
+	//persons for particular date of conviction
 	private String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Person person "+
 			"where conviction.startDate like ? and "+
 			"conviction.personId = person.personId order by lastName, firstName";
+	//persons for particular dates range of conviction
+	private String getPersonsForConvictionDatesString = "select person.* from Conviction conviction, Person person "+
+			"where conviction.startDate between ? and ? and "+
+			"conviction.personId = person.personId order by lastName, firstName";
+	//person for particular birthdates range
+	private String getPersonsForBirthdatesString = "select * from person where birthdate between ? and ?";
+	//person for particular birthdate range
+	private String getPersonsForBirthdateString = "select * from person where birthdate like ?";
 	//particular person for an Id
 	private String getPersonForIdString = "select * from Person where personId =?";
 	//all convicted persons
@@ -84,6 +92,9 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	private PreparedStatement getAllPersonsStatement;
 	private PreparedStatement getPersonsForLastNameStatement;
 	private PreparedStatement getPersonsForFirstNameStatement;
+	private PreparedStatement getPersonsForConvictionDatesStatement;
+	private PreparedStatement getPersonsForBirthdateStatement;
+	private PreparedStatement getPersonsForBirthdatesStatement;
 
 	////
 	//Constructor
@@ -115,6 +126,9 @@ public class PersonDatastore implements PersonDatastoreInterface {
 		getAllPersonsStatement = sqlConnection.prepareStatement(getAllPersonsString);
 		getPersonsForFirstNameStatement = sqlConnection.prepareStatement(getPersonsForFirstNameString);
 		getPersonsForLastNameStatement = sqlConnection.prepareStatement(getPersonsForLastNameString);
+		getPersonsForConvictionDatesStatement = sqlConnection.prepareStatement(getPersonsForConvictionDatesString);
+		getPersonsForBirthdateStatement = sqlConnection.prepareStatement(getPersonsForBirthdateString);
+		getPersonsForBirthdateStatement = sqlConnection.prepareStatement(getPersonsForBirthdatesString);
 	}
 
 	/**
@@ -178,6 +192,41 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	////
 	//Return type List<Person>
 	////
+	
+	@Override
+	public List<Person> getPersonsForBirthdates(String startDate, String endDate){
+		try{
+			getPersonsForBirthdateStatement.setString(1, startDate);
+			getPersonsForBirthdateStatement.setString(2, endDate);
+		} catch (Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+		return getResults(Person.class, getPersonsForBirthdateStatement);
+	}
+	
+	@Override
+	public List<Person> getPersonsForBirthdate(String date){
+		try{
+			getPersonsForBirthdateStatement.setString(1, date);
+		} catch (Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+		return getResults(Person.class, getPersonsForBirthdateStatement);
+	}
+	
+	@Override
+	public List<Person> getPersonsForConvictionDates(String startDate, String endDate){
+		try{
+			getPersonsForConvictionDatesStatement.setString(1, startDate);
+			getPersonsForConvictionDatesStatement.setString(2, endDate);
+		} catch (Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+		return getResults(Person.class, getPersonsForConvictionDatesStatement);
+	}
 
 	@Override
 	public List<Person> getPersonsForName(String firstName, String lastName) {

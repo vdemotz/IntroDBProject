@@ -1,12 +1,19 @@
 package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.sun.tools.javac.util.Pair;
+
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
 import ch.ethz.inf.dbproject.model.*;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
@@ -21,6 +28,7 @@ public final class SearchServlet extends HttpServlet {
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	
 	public static String SEARCH_RESULTS = "searchResults";
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -75,7 +83,7 @@ public final class SearchServlet extends HttpServlet {
      * @param request a specific request with a valid description, lastName and firstName fields
      * @return a table of Person
      */
-    private BeanTableHelper<Person> getTablePersons(String filter, HttpServletRequest request) throws Exception{
+    private Object getTablePersons(String filter, HttpServletRequest request) throws Exception{
     	
     	final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
 				"contentTable", Person.class);
@@ -87,14 +95,29 @@ public final class SearchServlet extends HttpServlet {
 		final String lastName = request.getParameter("lastName");
 		final String firstName = request.getParameter("firstName");
 		final String description = request.getParameter("description");
+		final Pair<String, String> date = this.getValidDate(request.getParameter("startDate"), request.getParameter("endDate"));
 		
 		//depending on the filter, get and set right table
 		if (filter.equals("namePerson")) {
 			table.addObjects(this.dbInterface.getPersonsForName(firstName, lastName));
 		} else if (filter.equals("convictionType")) {	
 			table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
-		} else if (filter.equals("convictionDate")) {	
-			table.addObjects(this.dbInterface.getPersonsForConvictionDate(description));
+		} else if (filter.equals("convictionDate")) {
+			if (date.snd != null){
+				table.addObjects(this.dbInterface.getPersonsForConvictionDates(date.fst, date.snd));
+			} else if (date.fst != null){
+				table.addObjects(this.dbInterface.getPersonsForConvictionDate(date.fst+"%"));
+			} else {
+				return "Sorry, not valid dates. Please make sur that you entered the date on the form : yyyy-mm-dd and the second date is after first one";
+			}
+		} else if (filter.equals("birthdate")) {	
+			if (date.snd != null){
+				table.addObjects(this.dbInterface.getPersonsForBirthdates(date.fst, date.snd));
+			} else if (date.fst != null){
+				table.addObjects(this.dbInterface.getPersonsForBirthdate(date.fst+"%"));
+			} else {
+				return "Sorry, not valid dates. Please make sur that you entered the date on the form : yyyy-mm-dd and the second date is after first one";
+			}
 		}
 		return table;
     }
@@ -104,12 +127,14 @@ public final class SearchServlet extends HttpServlet {
      * @param request a request with valid description field.
      * @return table of CaseDetail
      */
-    private BeanTableHelper<CaseDetail> getTableCases(String filter, HttpServletRequest request) throws Exception{
+    private Object getTableCases(String filter, HttpServletRequest request) throws Exception{
     	
 		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
 				"contentTable", CaseDetail.class);
 
 		final String description = request.getParameter("description");
+		final Pair<String, String> date = this.getValidDate(request.getParameter("startDate"), request.getParameter("endDate"));
+
 		
 		table.addBeanColumn("Case ID", "caseId");
 		table.addBeanColumn("Title", "title");
@@ -124,8 +149,47 @@ public final class SearchServlet extends HttpServlet {
 		if (filter.equals("category")) {
 			table.addObjects(this.dbInterface.getCasesForCategory(description));
 		} else if (filter.equals("caseDate")) {
-			table.addObjects(this.dbInterface.getCasesForDateLike(description));
+			if (date.snd != null){
+				table.addObjects(this.dbInterface.getCasesForDates(date.fst, date.snd));
+			} else if (date.fst != null){
+				table.addObjects(this.dbInterface.getCasesForDateLike(date.fst+"%"));
+			} else {
+				return "Sorry, not valid dates. Please make sur that you entered the date on the form : yyyy-mm-dd and the second date is after first one";
+			}
 		}
 		return table;
     }
+    
+	/**
+	 * this method provide a Pair<String, String> useful to search in DB with different case:
+	 * case 1 : startDate empty, return Pair<null, null>
+	 * case 2 : startDate empty, return Pair<startDate, null>
+	 * case 3 : neither are empty, return Pair<startDate, endDate> if these are valid dates, else Pair<null, null>
+	 */
+	private Pair<String, String> getValidDate(String startDate, String endDate){
+		String sd;
+		String ed;
+		if (startDate == null || endDate == null) {
+			return null;
+		}
+		if (startDate.isEmpty()){
+			ed = null; sd = null;
+		} else if (endDate.isEmpty()){
+			ed = null;
+			sd = startDate;
+		} else {
+			try {
+				java.util.Date startDateParsed = sdf.parse(startDate);
+				java.util.Date endDateParsed = sdf.parse(endDate);
+				if (startDateParsed.after(endDateParsed)) {
+					return new Pair<String, String>(null, null);
+				}
+				sd = new Timestamp(startDateParsed.getTime()).toString().substring(0,10);
+				ed = new Timestamp(endDateParsed.getTime()).toString().substring(0,10);
+			} catch (Exception ex){
+				sd = null; ed = null;
+			}
+		}
+		return new Pair<String, String>(sd, ed);
+	}
 }

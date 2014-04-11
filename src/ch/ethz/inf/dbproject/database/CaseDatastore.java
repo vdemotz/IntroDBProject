@@ -39,6 +39,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String casesForDateQuery = "select * from CaseDetail where Date(date) = ?";
 	//template: cases for an approximate date
 	String casesForDateLikeQuery = "select * from CaseDetail where date like ?";
+	//template: cases for a date in rage
+	String casesForDatesQuery = "select * from CaseDetail where date between ? and ?";
 	//template: suspected persons for a specific case
 	String suspectsForCaseQuery = "select person.* " +
 								  "from Person person, Suspected suspected " +
@@ -95,6 +97,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement categoriesForCaseStatement;
 	PreparedStatement categorySummaryStatement;
 	PreparedStatement casesForDateLikeStatement;
+	PreparedStatement casesForDatesStatement;
 	PreparedStatement nextCaseNoteIdForCaseStatement;
 	PreparedStatement insertIntoCaseNoteStatement;
 	PreparedStatement updateCaseIsOpenStatement;
@@ -131,6 +134,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		categoriesForCaseStatement = sqlConnection.prepareStatement(categoriesForCaseQuery);
 		categorySummaryStatement = sqlConnection.prepareStatement(categorySummaryQuery);
 		casesForDateLikeStatement = sqlConnection.prepareStatement(casesForDateLikeQuery);
+		casesForDatesStatement = sqlConnection.prepareStatement(casesForDatesQuery);
 		nextCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(nextCaseNoteIdForCaseQuery);
 		insertIntoCaseNoteStatement = sqlConnection.prepareStatement(insertIntoCaseNoteQuery);
 		updateCaseIsOpenStatement = sqlConnection.prepareStatement(updateCaseIsOpenQuery);
@@ -248,6 +252,18 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			return null;
 		}
 		return getResults(CaseDetail.class, casesForDateLikeStatement);
+	}
+	
+	@Override
+	public List<CaseDetail> getCasesForDates(String startDate, String endDate) {
+		try {
+			casesForDatesStatement.setString(1, startDate);
+			casesForDatesStatement.setString(2, endDate);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return getResults(CaseDetail.class, casesForDatesStatement);
 	}
 	
 	////

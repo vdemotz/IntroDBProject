@@ -133,6 +133,20 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 		return personDatastore.getPersonsForName(firstName, lastName);
 	}
 
+	@Override
+	public List<Person> getPersonsForBirthdates(String startDate, String endDate) {
+		return personDatastore.getPersonsForBirthdates(startDate, endDate);
+	}
+
+	@Override
+	public List<Person> getPersonsForBirthdate(String date) {
+		return personDatastore.getPersonsForBirthdate(date);
+	}
+
+	@Override
+	public List<Person> getPersonsForConvictionDates(String startDate, String endDate) {
+		return personDatastore.getPersonsForConvictionDates(startDate, endDate);
+	}
 	
 	////
 	//CASE
@@ -251,6 +265,11 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	@Override
 	public boolean deleteCategoryForCaseIdAndCategory(int caseId, String categoryName) {
 		return caseDatastore.deleteCategoryForCaseIdAndCategory(caseId, categoryName);
+	}
+	
+	@Override
+	public List<CaseDetail> getCasesForDates(String startDate, String endDate) {
+		return caseDatastore.getCasesForDates(startDate, endDate);
 	}
 	
 	/////

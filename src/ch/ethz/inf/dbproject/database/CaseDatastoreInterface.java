@@ -76,6 +76,14 @@ public interface CaseDatastoreInterface {
 	List<CaseDetail> getCasesForDateLike(String date);
 	
 	/**
+	 * @param startDate a string whose format is exactly yyyy-mm-dd
+	 * @param endDate a string whose format is exactly yyyy-mm-dd
+	 * @return a list of cases for incidents that occurred between the given
+	 * dates
+	 */
+	List<CaseDetail> getCasesForDates(String startDate, String endDate);
+	
+	/**
 	 * @param caseId
 	 * @return a list of persons if the caseId is valid,
 	 * 		   otherwise null
