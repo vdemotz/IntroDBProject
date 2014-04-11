@@ -66,7 +66,7 @@ public interface CaseDatastoreInterface {
 	 * @param date
 	 * @return a list of cases for incidents that occurred on the given date
 	 */
-	List<CaseDetail> getCasesForDate(java.sql.Date date);
+	List<CaseDetail> getCasesForDate(java.util.Date date);
 	
 	/**
 	 * @param date a string whose format is a prefix of yyyy-mm-dd
@@ -76,12 +76,12 @@ public interface CaseDatastoreInterface {
 	List<CaseDetail> getCasesForDateLike(String date);
 	
 	/**
-	 * @param startDate a string whose format is exactly yyyy-mm-dd
-	 * @param endDate a string whose format is exactly yyyy-mm-dd
+	 * @param startDate
+	 * @param endDat
 	 * @return a list of cases for incidents that occurred between the given
 	 * dates
 	 */
-	List<CaseDetail> getCasesForDates(String startDate, String endDate);
+	List<CaseDetail> getCasesForDates(java.util.Date startDate, java.util.Date endDate);
 	
 	/**
 	 * @param caseId
@@ -143,7 +143,7 @@ public interface CaseDatastoreInterface {
 	 * @return if the parameters are valid and insertion succeeds, an object representing the new CaseDetail
 	 * 		   otherwise null
 	 */
-	CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, java.sql.Timestamp date, String description, String authorUsername);
+	CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, java.util.Date date, String description, String authorUsername);
 	
 	/**
 	 * @param caseId

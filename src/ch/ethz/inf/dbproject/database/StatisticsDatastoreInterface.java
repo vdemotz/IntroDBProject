@@ -2,8 +2,6 @@ package ch.ethz.inf.dbproject.database;
 
 import java.util.List;
 
-import com.sun.tools.javac.util.Pair;
-
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;

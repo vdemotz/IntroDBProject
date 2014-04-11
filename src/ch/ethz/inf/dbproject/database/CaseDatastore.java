@@ -233,9 +233,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	}
 	
 	@Override
-	public List<CaseDetail> getCasesForDate(java.sql.Date date) {
+	public List<CaseDetail> getCasesForDate(java.util.Date date) {
 		try {
-			casesForDateStatement.setDate(1, date);
+			casesForDateStatement.setDate(1, new java.sql.Date(date.getTime()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -255,10 +255,10 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	}
 	
 	@Override
-	public List<CaseDetail> getCasesForDates(String startDate, String endDate) {
+	public List<CaseDetail> getCasesForDates(java.util.Date startDate, java.util.Date endDate) {
 		try {
-			casesForDatesStatement.setString(1, startDate);
-			casesForDatesStatement.setString(2, endDate);
+			casesForDatesStatement.setTimestamp(1, new Timestamp(startDate.getTime()));
+			casesForDatesStatement.setTimestamp(2, new Timestamp(startDate.getTime()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -455,22 +455,23 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	}
 
 	@Override
-	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, Timestamp date, String description, String authorUsername) {
+	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, java.util.Date date, String description, String authorUsername) {
 		synchronized (this.getClass()){
 			try {
 				int caseId = getNextCaseDetailId();
 				if (caseId == -1) return null;
+				Timestamp timestamp = new Timestamp(date.getTime());
 				insertIntoCaseDetailStatement.setInt(1, caseId);
 				insertIntoCaseDetailStatement.setString(2, title);
 				insertIntoCaseDetailStatement.setString(3, street);
 				insertIntoCaseDetailStatement.setString(4, city);
 				insertIntoCaseDetailStatement.setString(5, zipCode);
 				insertIntoCaseDetailStatement.setBoolean(6, true);
-				insertIntoCaseDetailStatement.setString(7, date.toString());
+				insertIntoCaseDetailStatement.setTimestamp(7, timestamp);
 				insertIntoCaseDetailStatement.setString(8, description);
 				insertIntoCaseDetailStatement.setString(9, authorUsername);
 				insertIntoCaseDetailStatement.execute();
-				return new CaseDetail(caseId, title, city, street, zipCode, true, date, description, authorUsername);
+				return new CaseDetail(caseId, title, city, street, zipCode, true, timestamp, description, authorUsername);
 			} catch (SQLException ex){
 				ex.printStackTrace();
 				return null;

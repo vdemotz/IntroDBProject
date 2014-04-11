@@ -82,11 +82,11 @@ public interface PersonDatastoreInterface {
 	
 	/**
 	 * provide a search in DB for a range of dates of birthdate
-	 * @param startDate a valid String which represents a date yyyy-mm-dd
-	 * @param endDate a valid String which represents a date yyyy-mm-dd
+	 * @param startDate
+	 * @param endDate
 	 * @return a list of persons who have birthdate between start and end date
 	 */
-	List<Person> getPersonsForBirthdates(String startDate, String endDate);	
+	List<Person> getPersonsForBirthdates(java.util.Date startDate, java.util.Date endDate);	
 	
 	/**
 	 * provide a search in DB for a birthdate
@@ -97,11 +97,11 @@ public interface PersonDatastoreInterface {
 	
 	/**
 	 * provide a search in DB for a range of dates of conviction
-	 * @param startDate a valid String which represents a date yyyy-mm-dd
-	 * @param endDate a valid String which represents a date yyyy-mm-dd
+	 * @param startDate
+	 * @param endDate
 	 * @return a list of persons who have been convicted between start and end date
 	 */
-	List<Person> getPersonsForConvictionDates(String startDate, String endDate);
+	List<Person> getPersonsForConvictionDates(java.util.Date startDate, java.util.Date endDate);
 	
 	////
 	//MODIFY

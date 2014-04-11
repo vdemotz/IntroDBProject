@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.sql.*;
+import java.util.Date;
 import java.util.List;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -35,9 +36,12 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	//persons for particular first name
 	private String getPersonsForLastNameString = "select * from Person where lastName like ?";
 	//persons for particular conviction type
-	private String getPersonsForConvictionTypeString = "select p.* from Conviction conviction, Person p, ConvictionType convictionType "+
-			"where conviction.personId = p.personId and conviction.convictionId = convictionType.convictionId and "+
-			"convictionType.categoryName = ? order by lastName, firstName";
+	private String getPersonsForConvictionTypeString = "select person.* " +
+													   "from Conviction conviction, Person person, CategoryForCase categoryForCase "+
+													   "where conviction.personId = person.personId "+
+													   "and conviction.caseId = categoryForCase.caseId " +
+													   "and categoryForCase.categoryName = ? " +
+													   "order by lastName, firstName";
 	//persons for particular date of conviction
 	private String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Person person "+
 			"where conviction.startDate like ? and "+
@@ -47,7 +51,7 @@ public class PersonDatastore implements PersonDatastoreInterface {
 			"where conviction.startDate between ? and ? and "+
 			"conviction.personId = person.personId order by lastName, firstName";
 	//person for particular birthdates range
-	private String getPersonsForBirthdatesString = "select * from person where birthdate between ? and ?";
+	private String getPersonsForBirthdatesLikeString = "select * from person where birthdate between ? and ?";
 	//person for particular birthdate range
 	private String getPersonsForBirthdateString = "select * from person where birthdate like ?";
 	//particular person for an Id
@@ -93,7 +97,7 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	private PreparedStatement getPersonsForLastNameStatement;
 	private PreparedStatement getPersonsForFirstNameStatement;
 	private PreparedStatement getPersonsForConvictionDatesStatement;
-	private PreparedStatement getPersonsForBirthdateStatement;
+	private PreparedStatement getPersonsForBirthdateLikeStatement;
 	private PreparedStatement getPersonsForBirthdatesStatement;
 
 	////
@@ -127,8 +131,8 @@ public class PersonDatastore implements PersonDatastoreInterface {
 		getPersonsForFirstNameStatement = sqlConnection.prepareStatement(getPersonsForFirstNameString);
 		getPersonsForLastNameStatement = sqlConnection.prepareStatement(getPersonsForLastNameString);
 		getPersonsForConvictionDatesStatement = sqlConnection.prepareStatement(getPersonsForConvictionDatesString);
-		getPersonsForBirthdateStatement = sqlConnection.prepareStatement(getPersonsForBirthdateString);
-		getPersonsForBirthdateStatement = sqlConnection.prepareStatement(getPersonsForBirthdatesString);
+		getPersonsForBirthdateLikeStatement = sqlConnection.prepareStatement(getPersonsForBirthdateString);
+		getPersonsForBirthdatesStatement = sqlConnection.prepareStatement(getPersonsForBirthdatesLikeString);
 	}
 
 	/**
@@ -194,33 +198,33 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	////
 	
 	@Override
-	public List<Person> getPersonsForBirthdates(String startDate, String endDate){
+	public List<Person> getPersonsForBirthdates(java.util.Date startDate, java.util.Date endDate){
 		try{
-			getPersonsForBirthdateStatement.setString(1, startDate);
-			getPersonsForBirthdateStatement.setString(2, endDate);
+			getPersonsForBirthdateLikeStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+			getPersonsForBirthdateLikeStatement.setDate(2, new java.sql.Date(endDate.getTime()));
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
 		}
-		return getResults(Person.class, getPersonsForBirthdateStatement);
+		return getResults(Person.class, getPersonsForBirthdateLikeStatement);
 	}
 	
 	@Override
 	public List<Person> getPersonsForBirthdate(String date){
 		try{
-			getPersonsForBirthdateStatement.setString(1, date);
+			getPersonsForBirthdateLikeStatement.setString(1, date);
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
 		}
-		return getResults(Person.class, getPersonsForBirthdateStatement);
+		return getResults(Person.class, getPersonsForBirthdateLikeStatement);
 	}
 	
 	@Override
-	public List<Person> getPersonsForConvictionDates(String startDate, String endDate){
+	public List<Person> getPersonsForConvictionDates(java.util.Date startDate, java.util.Date endDate){
 		try{
-			getPersonsForConvictionDatesStatement.setString(1, startDate);
-			getPersonsForConvictionDatesStatement.setString(2, endDate);
+			getPersonsForConvictionDatesStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+			getPersonsForConvictionDatesStatement.setDate(2, new java.sql.Date(endDate.getTime()));
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
@@ -407,4 +411,5 @@ public class PersonDatastore implements PersonDatastoreInterface {
 			return -1;
 		}
 	}
+
 }

@@ -86,11 +86,3 @@ create table Conviction
      foreign key (personId) references Person(personId)
    );
 
-
-create table ConvictionType
-   ( convictionId integer,
-     categoryName varchar(40),
-     primary key (convictionId, categoryName),
-     foreign key (convictionId) references Conviction(convictionId) on delete cascade,
-     foreign key (categoryName) references Category(name) on update cascade on delete cascade
-   );

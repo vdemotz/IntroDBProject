@@ -107,7 +107,6 @@ public final class CaseCreationServlet extends HttpServlet {
 	 * @param date a date to test
 	 * @return true if the date has format yyyy-mm-dd, else false
 	 */
-	@SuppressWarnings("deprecation")
 	private Timestamp getValidDate(String date){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try{

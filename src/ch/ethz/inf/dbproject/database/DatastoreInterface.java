@@ -4,8 +4,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import com.sun.tools.javac.util.Pair;
-
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;
@@ -134,7 +132,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 
 	@Override
-	public List<Person> getPersonsForBirthdates(String startDate, String endDate) {
+	public List<Person> getPersonsForBirthdates(java.util.Date startDate, java.util.Date endDate) {
 		return personDatastore.getPersonsForBirthdates(startDate, endDate);
 	}
 
@@ -144,7 +142,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 
 	@Override
-	public List<Person> getPersonsForConvictionDates(String startDate, String endDate) {
+	public List<Person> getPersonsForConvictionDates(java.util.Date startDate, java.util.Date endDate) {
 		return personDatastore.getPersonsForConvictionDates(startDate, endDate);
 	}
 	
@@ -173,7 +171,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public List<CaseDetail> getCasesForDate(java.sql.Date date) {
+	public List<CaseDetail> getCasesForDate(java.util.Date date) {
 		return caseDatastore.getCasesForDate(date);
 	}
 	
@@ -233,7 +231,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 
 	@Override
-	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, Timestamp date, String description, String authorUsername) {
+	public CaseDetail insertIntoCaseDetail(String title, String city, String zipCode, String street, java.util.Date date, String description, String authorUsername) {
 		return caseDatastore.insertIntoCaseDetail(title, city, zipCode, street, date, description, authorUsername);
 	}
 
@@ -268,7 +266,7 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
-	public List<CaseDetail> getCasesForDates(String startDate, String endDate) {
+	public List<CaseDetail> getCasesForDates(Date startDate, Date endDate) {
 		return caseDatastore.getCasesForDates(startDate, endDate);
 	}
 	
