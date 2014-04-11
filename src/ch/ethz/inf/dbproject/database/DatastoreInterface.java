@@ -272,32 +272,37 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	////
 
 	@Override
-	public List<StatsNode> casesPerCity() {
-		return statisticsDatastore.casesPerCity();
+	public List<StatsNode> getCasesPerCity() {
+		return statisticsDatastore.getCasesPerCity();
 	}
 
 	@Override
-	public List<StatsNode> casesPerMonth() {
-		return statisticsDatastore.casesPerMonth();
+	public List<StatsNode> getCasesPerMonth() {
+		return statisticsDatastore.getCasesPerMonth();
 	}
 
 	@Override
-	public List<StatsNode> convictionsPerMonth() {
-		return statisticsDatastore.convictionsPerMonth();
+	public List<StatsNode> getConvictionsPerMonth() {
+		return statisticsDatastore.getConvictionsPerMonth();
 	}
 
 	@Override
-	public List<StatsNode> convictionsPerCity() {
-		return statisticsDatastore.convictionsPerCity();
+	public List<StatsNode> getConvictionsPerCity() {
+		return statisticsDatastore.getConvictionsPerCity();
 	}
 
 	@Override
-	public List<StatsNode> convictionsPerCategory() {
-		return statisticsDatastore.convictionsPerCategory();
+	public List<StatsNode> getConvictionsPerCategory() {
+		return statisticsDatastore.getConvictionsPerCategory();
 	}
 
 	@Override
-	public List<StatsNode> numberNotesPerUser() {
-		return statisticsDatastore.numberNotesPerUser();
+	public List<StatsNode> getNumberNotesPerUser() {
+		return statisticsDatastore.getNumberNotesPerUser();
+	}
+
+	@Override
+	public List<StatsNode> getMostActiveCategoriesForUser(String username) {
+		return statisticsDatastore.getMostActiveCategoriesForUser(username);
 	}
 }

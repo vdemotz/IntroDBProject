@@ -61,10 +61,10 @@ public final class SearchServlet extends HttpServlet {
     	
     	if(filter.equals("namePerson") || filter.equals("convictionType") || filter.equals("convictionDate")) {
 			//if the return type is a person, return a person table
-    		return this.tablePersons(filter, request);
+    		return this.getTablePersons(filter, request);
 		} else if(filter.equals("category") || filter.equals("caseDate")){
 			//if the return type is a case, return a case table without description
-			return this.tableCases(filter, request);
+			return this.getTableCases(filter, request);
 		} else {
 			return "Wrong filter. How did you get that one?";
 		}
@@ -75,7 +75,7 @@ public final class SearchServlet extends HttpServlet {
      * @param request a specific request with a valid description, lastName and firstName fields
      * @return a table of Person
      */
-    private BeanTableHelper<Person> tablePersons(String filter, HttpServletRequest request) throws Exception{
+    private BeanTableHelper<Person> getTablePersons(String filter, HttpServletRequest request) throws Exception{
     	
     	final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
 				"contentTable", Person.class);
@@ -104,7 +104,7 @@ public final class SearchServlet extends HttpServlet {
      * @param request a request with valid description field.
      * @return table of CaseDetail
      */
-    private BeanTableHelper<CaseDetail> tableCases(String filter, HttpServletRequest request) throws Exception{
+    private BeanTableHelper<CaseDetail> getTableCases(String filter, HttpServletRequest request) throws Exception{
     	
 		final BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases",
 				"contentTable", CaseDetail.class);

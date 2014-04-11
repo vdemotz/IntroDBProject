@@ -8,15 +8,17 @@ Todo:
 * Add conviction: link directly to select person from navbar (L)
 * Remove Suspect: (L)
 
-*CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named (renaming : done. TODO : (V) )
+*CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named ( done )
 
-*Methods begin with verbs (V)
+*send email to assistant for the link of github (done)
 
-*Categories in Home Page (V) with category creation
+*Methods begin with verbs (done)
 
-*StatsNode constructor (V)
+*Categories in Home Page (done) with category creation
 
-*Creations : when empty, set to null (V)
+*StatsNode constructor (Done : but not with super() -> because the implementation of ModelObject(ResultSet rs) relies on the columns to have the same names as in DB and it's not the case for StatsNodes.)
+
+*Creations : when empty, set to null (done)
 
 *add note at any changes (L)
 
@@ -31,12 +33,10 @@ Todo:
 
 (L)
 ->number of modifications per hour per user of the day 
-(Cool!) : Home page
 
-(V)
+(done)
 ->Most active categories per user (number of cases a user modified per category) 
-(can also do) : Home Page
 
-(V)
+(done)
 ->most active users 
 : move from Stats -> Home Page

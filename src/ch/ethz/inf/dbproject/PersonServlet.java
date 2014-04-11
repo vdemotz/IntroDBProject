@@ -33,7 +33,7 @@ public final class PersonServlet extends HttpServlet {
 	 * @param Id the id of the person
 	 * @return a table of person details
 	 */
-	protected BeanTableHelper<Person> tablePersonDetail(int Id)
+	protected BeanTableHelper<Person> getTablePersonDetail(int Id)
 	{
 		BeanTableHelper<Person> table = new BeanTableHelper<Person>("person", "contentTable", Person.class);
 		
@@ -55,7 +55,7 @@ public final class PersonServlet extends HttpServlet {
 	 * @param Id the id of the person
 	 * @return a table of cases
 	 */
-	protected BeanTableHelper<CaseDetail> tableConvicted(int Id)
+	protected BeanTableHelper<CaseDetail> getTableConvicted(int Id)
 	{
 		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 		
@@ -71,7 +71,7 @@ public final class PersonServlet extends HttpServlet {
 	 * @param Id the id of the person
 	 * @return a table of cases
 	 */
-	protected BeanTableHelper<CaseDetail> tableSuspected(int Id)
+	protected BeanTableHelper<CaseDetail> getTableSuspected(int Id)
 	{
 		BeanTableHelper<CaseDetail> table = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
 		
@@ -87,7 +87,7 @@ public final class PersonServlet extends HttpServlet {
 	 * @param Id the id of the person
 	 * @return a table of notes on a person
 	 */
-	protected BeanTableHelper<PersonNote> tablePersonNotes(int Id)
+	protected BeanTableHelper<PersonNote> getTablePersonNotes(int Id)
 	{
 		BeanTableHelper<PersonNote> table = new BeanTableHelper<PersonNote>("personNotes", "contentTable", PersonNote.class);
 		
@@ -133,13 +133,13 @@ public final class PersonServlet extends HttpServlet {
 				//set the caseId
 				session.setAttribute("personId", id);
 				//set the PersonDetail (the header) wanted by the user
-				session.setAttribute("personDetailsTable", tablePersonDetail(id));
+				session.setAttribute("personDetailsTable", getTablePersonDetail(id));
 				//set the Cases where the person is convicted
-				session.setAttribute("casesPersonConvicted", tableConvicted(id));
+				session.setAttribute("casesPersonConvicted", getTableConvicted(id));
 				//set the Cases where the person is suspected
-				session.setAttribute("casesPersonSuspected", tableSuspected(id));
+				session.setAttribute("casesPersonSuspected", getTableSuspected(id));
 				//set the Person Notes
-				session.setAttribute("personNotesTable", tablePersonNotes(id));
+				session.setAttribute("personNotesTable", getTablePersonNotes(id));
 				//if we reaches this point, we are able to display the PersonDetails	
 				session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, null);
 			}				

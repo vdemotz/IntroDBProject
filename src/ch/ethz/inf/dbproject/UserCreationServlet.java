@@ -71,7 +71,7 @@ public final class UserCreationServlet extends HttpServlet {
 				
 				//if all is correct and user name available, create user
 				if(!errorInForm){
-					this.dbInterface.addUser(username, password1, lastName, firstName);
+					this.dbInterface.addUser(username, password1, (lastName.isEmpty())?null:lastName, (firstName.isEmpty())?null:firstName);
 					session.setAttribute(USERCREATION_FORM_MESSAGE, "Your account has been created");
 				}
 			} catch (Exception e){

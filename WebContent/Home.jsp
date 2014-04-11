@@ -21,26 +21,23 @@ if (user != null) {
 	
 	<%= session.getAttribute(HomeServlet.SESSION_USER_CASES) %>
 	
-<form method="get" action="Home">
-	<div>
-		<input type="hidden" name="action" value="logout" />
-		<input type="submit" value="Logout" title="Logout" />
-	</div>
-</form>
+	<form method="get" action="Home">
+		<div>
+			<input type="hidden" name="action" value="logout" />
+			<input type="submit" value="Logout" title="Logout" />
+		</div>
+	</form>
 
 <%
 } else {
 	// No user logged in.%>
 	Welcome!
 	
+	<%= session.getAttribute(HomeServlet.HOME_MESSAGE) %>
 	
 	<form action="Home" method="get">
 	<input type="hidden" name="action" value="login" />
 	<table> 
-		<% if (((Boolean) session.getAttribute(HomeServlet.HOME_WRONG_PASSWORD))) {
-			//User provided wrong password. %>
-		Sorry, wrong password/username
-		<% } %>
 		<tr>
 			<th>Username</th>
 			<td><input type="text" name="username" value="" /></td>
@@ -58,9 +55,33 @@ if (user != null) {
 	</form>
 	
 	New User ? Create an <a href="UserCreation">account</a>.
+	
+	<br><br>
+	
+	The most active users : 
+	
+	<%= session.getAttribute(HomeServlet.HOME_MOST_ACTIVE_USER) %>
 <%
 }
 %>
+
+<%= session.getAttribute(HomeServlet.HOME_SUMMARY_CAT_TABLE) %>
+
+<%
+if (user != null) {%>
+	<%= session.getAttribute(HomeServlet.HOME_ADD_CATEGORY_MESSAGE) %>
+	
+	<form method="get" action="Home">
+	<div>
+		<input type="hidden" name="action" value="categoryCreation" />
+		Add a new Category:
+		<input type="text" name="description" />
+		<input type="submit" value="Creation" title="Add new category" />
+	</div>
+	</form>
+	
+	<%= session.getAttribute(HomeServlet.HOME_MOST_ACTIVE_CAT_FOR_USER) %>
+<% } %>
 
 <br /><br />
 See all available <a href="Cases">cases</a> and <a href="PersonsOfInterest">persons of interest</a>.

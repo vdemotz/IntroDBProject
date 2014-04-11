@@ -52,27 +52,23 @@ public final class StatisticsServlet extends HttpServlet {
 		} else if (filter.equals("casesCity")){
 			table.addBeanColumn(this.NA_CITY, "name");
 			table.addBeanColumn(this.NO_CASES, "value");
-			table.addObjects(dbInterface.casesPerCity());
+			table.addObjects(dbInterface.getCasesPerCity());
 		} else if (filter.equals("casesMonth")){
-			table.addBeanColumn(this.DATE, "name");
+			table.addBeanColumn(this.DATE, "month");
 			table.addBeanColumn(this.NO_CASES, "value");
-			table.addObjects(dbInterface.casesPerMonth());
+			table.addObjects(dbInterface.getCasesPerMonth());
 		} else if (filter.equals("convictionsCity")){
 			table.addBeanColumn(this.NA_CITY, "name");
 			table.addBeanColumn(this.NO_CONVICTIONS, "value");
-			table.addObjects(dbInterface.convictionsPerCity());
+			table.addObjects(dbInterface.getConvictionsPerCity());
 		} else if (filter.equals("convictionsMonth")){
-			table.addBeanColumn(this.NA_CITY, "name");
+			table.addBeanColumn(this.NA_CITY, "month");
 			table.addBeanColumn(this.NO_CONVICTIONS, "value");
-			table.addObjects(dbInterface.convictionsPerMonth());
+			table.addObjects(dbInterface.getConvictionsPerMonth());
 		} else if (filter.equals("convictionsCategory")){
 			table.addBeanColumn(this.NA_CATEGORY, "name");
 			table.addBeanColumn(this.NO_CONVICTIONS, "value");
-			table.addObjects(dbInterface.convictionsPerCategory());
-		}  else if (filter.equals("notesUser")){
-			table.addBeanColumn(this.NA_USER, "name");
-			table.addBeanColumn(this.NO_NOTES, "value");
-			table.addObjects(dbInterface.numberNotesPerUser());
+			table.addObjects(dbInterface.getConvictionsPerCategory());
 		} else {
 			return "Sorry, these stats are unavaible";
 		}

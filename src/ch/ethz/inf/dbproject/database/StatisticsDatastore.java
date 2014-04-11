@@ -4,18 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import com.sun.tools.javac.util.Pair;
-
-import ch.ethz.inf.dbproject.model.CaseDetail;
-import ch.ethz.inf.dbproject.model.CaseNote;
-import ch.ethz.inf.dbproject.model.Category;
-import ch.ethz.inf.dbproject.model.CategorySummary;
-import ch.ethz.inf.dbproject.model.ModelObject;
-import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.StatsNode;
 
 
@@ -45,6 +35,9 @@ public class StatisticsDatastore implements StatisticsDatastoreInterface {
 												"(select * from (select authorUsername as authorCase, count(*) as countCase from CaseNote "+
 												"group by authorUsername) as cn join (select authorUsername as authorPerson, count(*) as countPerson "+
 												"from PersonNote group by authorUsername) as pn on pn.authorPerson = cn.authorCase) as notes order by totalNotes desc";
+	//select three most active categories for an user
+	private final String mostActiveCategoriesForUserString = "select categoryName, count(*) as numb from CaseNote cn join CategoryForCase cfc on cn.caseId = cfc.caseId "+
+															"where cn.authorUsername = ? group by categoryName order by numb desc limit 3";
 	
 	////
 	//Prepared Statement
@@ -56,6 +49,7 @@ public class StatisticsDatastore implements StatisticsDatastoreInterface {
 	private PreparedStatement convictionsPerCityStatement;
 	private PreparedStatement convictionsPerCategoryStatement;
 	private PreparedStatement numberNotesPerUserStatement;
+	private PreparedStatement mostActiveCategoriesForUserStatement;
 	
 	
 	
@@ -76,6 +70,7 @@ public class StatisticsDatastore implements StatisticsDatastoreInterface {
 		this.convictionsPerCityStatement = sqlConnection.prepareStatement(this.convictionsPerCityString);
 		this.convictionsPerCategoryStatement = sqlConnection.prepareStatement(this.convictionsPerCategoryString);
 		this.numberNotesPerUserStatement = sqlConnection.prepareStatement(this.numberNotesPerUserString);
+		this.mostActiveCategoriesForUserStatement = sqlConnection.prepareStatement(this.mostActiveCategoriesForUserString);
 	}
 	
 	private List<StatsNode> getListFromResultSet(PreparedStatement stat){
@@ -92,27 +87,43 @@ public class StatisticsDatastore implements StatisticsDatastoreInterface {
 		}
 	}
 	
-	public List<StatsNode> casesPerCity(){
+	@Override
+	public List<StatsNode> getCasesPerCity(){
 		return this.getListFromResultSet(casesPerCityStatement);
 	}
-
-	public List<StatsNode> casesPerMonth(){
+	
+	@Override
+	public List<StatsNode> getCasesPerMonth(){
 		return this.getListFromResultSet(casesPerMonthStatement);
 	}
 	
-	public List<StatsNode> convictionsPerMonth(){
+	@Override
+	public List<StatsNode> getConvictionsPerMonth(){
 		return this.getListFromResultSet(convictionsPerMonthStatement);
 	}
 	
-	public List<StatsNode> convictionsPerCity(){
+	@Override
+	public List<StatsNode> getConvictionsPerCity(){
 		return this.getListFromResultSet(convictionsPerCityStatement);
 	}
 	
-	public List<StatsNode> convictionsPerCategory(){
+	@Override
+	public List<StatsNode> getConvictionsPerCategory(){
 		return this.getListFromResultSet(convictionsPerCategoryStatement);
 	}
 	
-	public List<StatsNode> numberNotesPerUser(){
+	@Override
+	public List<StatsNode> getNumberNotesPerUser(){
 		return this.getListFromResultSet(numberNotesPerUserStatement);
+	}
+	
+	@Override
+	public List<StatsNode> getMostActiveCategoriesForUser(String username){
+		try {
+			this.mostActiveCategoriesForUserStatement.setString(1, username);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return this.getListFromResultSet(mostActiveCategoriesForUserStatement);
 	}
 }

@@ -28,6 +28,8 @@ public final class CaseCreationServlet extends HttpServlet {
 	
 	public static final String CASECREATION_LIST_CAT = "caseCreationListCategories";
 	public static final String CASECREATION_MESSAGE = "caseCreationMessage";
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -72,17 +74,11 @@ public final class CaseCreationServlet extends HttpServlet {
 				final String[] categories = request.getParameterValues("categories");
 				//date and username
 				String authorUsername = loggedUser.getUsername();
-				Date date = this.getValidDate(dateString);
-				Timestamp timestamp;
-				if (date != null){
-					 timestamp = new Timestamp(date.getTime());
-				} else {
-					timestamp = new Timestamp(new Date().getTime());
-				}
+				Timestamp timestamp = this.getValidDate(dateString);
 				
 				if (title != null && !title.isEmpty()){
 					//try to create the case
-					caseDetail = dbInterface.insertIntoCaseDetail(title, city, zipCode, street, timestamp, description, authorUsername);
+					caseDetail = dbInterface.insertIntoCaseDetail(title, (city.isEmpty()) ? null :city, (zipCode.isEmpty()) ? null : zipCode, (street.isEmpty()) ? null : street, timestamp, description, authorUsername);
 				} 
 				if (caseDetail == null){
 					//if caseDetail is null, then there's a failure in the procedure
@@ -98,6 +94,7 @@ public final class CaseCreationServlet extends HttpServlet {
 				}
 
 			} catch (Exception ex){
+				request.setAttribute(CASECREATION_MESSAGE, "Sorry, failed to add your case");
 				ex.printStackTrace();
 			}
 		}
@@ -111,18 +108,13 @@ public final class CaseCreationServlet extends HttpServlet {
 	 * @return true if the date has format yyyy-mm-dd, else false
 	 */
 	@SuppressWarnings("deprecation")
-	private Date getValidDate(String date){
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	    Date testDate = null;
-
-	    try { testDate = sdf.parse(date); }
-	    catch (ParseException e) { return null; }
-	    
-	    if (!sdf.format(testDate).equals(date))
-	    { return null; }
-	    int year = Integer.parseInt(date.substring(0, 4));
-	    int month = Integer.parseInt(date.substring(5, 7));
-	    int day = Integer.parseInt(date.substring(8, 10));
-	    return new Date(year-1900, month, day);
+	private Timestamp getValidDate(String date){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		try{
+			java.util.Date DateParsed = sdf.parse(date);
+			return new Timestamp(DateParsed.getTime());
+		} catch (Exception ex){
+			return new Timestamp(new Date().getTime());
+		}
 	}
 }

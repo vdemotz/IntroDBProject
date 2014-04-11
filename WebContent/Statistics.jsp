@@ -9,17 +9,6 @@
 
 <%= session.getAttribute(StatisticsServlet.SESSION_CATEGORY_SUMMARY_TABLE) %>
 
-<%= session.getAttribute(StatisticsServlet.STATISTICS_ADD_CATEGORY) %>
-
-<form method="get" action="Statistics">
-<div>
-	<input type="hidden" name="action" value="categoryCreation" />
-	Add a new Category:
-	<input type="text" name="description" />
-	<input type="submit" value="Creation" title="Add new category" />
-</div>
-</form>
-
 <br><br>
 
 <h3> Available tables </h3>
@@ -61,14 +50,6 @@
 	<input type="hidden" name="filter" value="convictionsCategory" />
 	Convictions Per Category
 	<input type="submit" value="Convictions Per Category" title="Convictions Per Category" />
-</div>
-</form>
-
-<form method="get" action="Statistics">
-<div>
-	<input type="hidden" name="filter" value="notesUser" />
-	Notes Per User
-	<input type="submit" value="Notes Per User" title="Notes Per User" />
 </div>
 </form>
 

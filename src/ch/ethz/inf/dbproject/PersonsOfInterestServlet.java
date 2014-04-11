@@ -30,7 +30,7 @@ public final class PersonsOfInterestServlet extends HttpServlet {
 	 * @param filter either convicted or suspected
 	 * @return table of persons convicted or suspected
 	 */
-	protected BeanTableHelper<Person> tablePersons(String filter){
+	protected BeanTableHelper<Person> getTablePersons(String filter){
 		final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
 				"contentTable", Person.class);
 		table.addBeanColumn("Person ID", "personId");
@@ -58,7 +58,7 @@ public final class PersonsOfInterestServlet extends HttpServlet {
 		final String filter = request.getParameter("filter");
 		if (filter != null){
 			//set the attribute to the session if the filter is not null
-			session.setAttribute("resultsPersons", this.tablePersons(filter));
+			session.setAttribute("resultsPersons", this.getTablePersons(filter));
 		} else {
 			session.setAttribute("resultsPersons", "Press a filter");
 		}

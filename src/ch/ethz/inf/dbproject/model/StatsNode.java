@@ -8,8 +8,8 @@ import java.sql.SQLException;
  */
 public final class StatsNode extends ModelObject{
 
-	private final String name;
-	private final int value;
+	private String name;
+	private int value;
 	
 	////
 	//CONSTRUCTORS
@@ -20,13 +20,8 @@ public final class StatsNode extends ModelObject{
 		this.value = value;
 	}
 	
-	public StatsNode(final ResultSet rs) throws SQLException {
-		Object firstCol =  rs.getObject(1);
-		if (firstCol instanceof java.sql.Date || firstCol instanceof java.sql.Timestamp){
-			this.name = (firstCol.toString()).substring(0, 7);
-		} else {
-			this.name = firstCol.toString();
-		}
+	public StatsNode(ResultSet rs) throws SQLException {
+		this.name = rs.getString(1);
 		this.value = rs.getInt(2);
 	}
 
@@ -36,6 +31,10 @@ public final class StatsNode extends ModelObject{
 	
 	public String getName() {
 		return name;
+	}
+	
+	public String getMonth() {
+		return name.substring(0, 7);
 	}
 
 	public int getValue() {
