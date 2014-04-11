@@ -5,7 +5,7 @@ Todo:
 * New ER (Monday)
 * Functional dependencies (Monday)
 * Design Overview (V)
-* Add conviction: link directly to select person from navbar (L)
+* Add conviction: link directly to select person from navbar (done)
 * Remove Suspect: (L)
 
 *CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named ( done )

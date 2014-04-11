@@ -1,3 +1,5 @@
+<%@page import="ch.ethz.inf.dbproject.ConvictionCreationServlet"%>
+<%@page import="ch.ethz.inf.dbproject.PersonSelectionServlet"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -32,7 +34,10 @@
 					<div class="menuDiv2"><a href="Cases?filter=oldest">Oldest Unsolved</a></div>
 					<div class="menuDiv1"><a href ="Statistics">Statistics</a></div>
 					<div class="menuDiv1"><a href="Search">Search</a></div>
-					<div class="menuDiv1"><a href="ConvictionCreation">Add Conviction</a></div>
+					<div class="menuDiv1"><a href=<%= "PersonSelection?" + 
+							PersonSelectionServlet.EXTERNAL_TITLE_PARAMETER + "=Select+the+convict+for+the+conviction&" +
+							PersonSelectionServlet.EXTERNAL_RETURN_ADDRESS_PARAMETER + "=" + ConvictionCreationServlet.BASE_ADDRESS + "?" + ConvictionCreationServlet.INTERNAL_ACTION_PARAMETER + "=" + ConvictionCreationServlet.INTERNAL_ACTION_SELECT_PERSON_PARAMETER_VALUE
+													%>>Add Conviction</a></div>
 					<div class="menuDiv1"><a href="PersonsOfInterest">Persons of Interest</a></div>
 					<div class="menuDiv2"><a href="PersonCreation">Create new person</a></div>
 				</td>
