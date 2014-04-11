@@ -29,6 +29,8 @@ public final class CaseCreationServlet extends HttpServlet {
 	public static final String CASECREATION_LIST_CAT = "caseCreationListCategories";
 	public static final String CASECREATION_MESSAGE = "caseCreationMessage";
 	
+	private static final String UI_CASE_CREATION_MESSAGE = "Case created.";
+	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	/**
@@ -90,6 +92,7 @@ public final class CaseCreationServlet extends HttpServlet {
 							dbInterface.insertIntoCategoryForCase(categories[i], caseDetail.getCaseId());
 						}
 					}
+					addCreationNoteToCase(caseDetail, loggedUser);
 					request.setAttribute(CASECREATION_MESSAGE, "Your case has been added.");
 				}
 
@@ -100,6 +103,11 @@ public final class CaseCreationServlet extends HttpServlet {
 		}
 
 		this.getServletContext().getRequestDispatcher("/CaseCreation.jsp").forward(request, response);
+	}
+	
+	private void addCreationNoteToCase(CaseDetail caseDetail, User user)
+	{
+		dbInterface.insertIntoCaseNote(caseDetail.getCaseId(), UI_CASE_CREATION_MESSAGE, user.getUsername());
 	}
 	
 	/**

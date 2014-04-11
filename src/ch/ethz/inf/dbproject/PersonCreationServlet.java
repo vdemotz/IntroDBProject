@@ -28,6 +28,8 @@ public final class PersonCreationServlet extends HttpServlet {
 	public final static String PERSON_FORM_FN = "personFirstNameEmpty";
 	public final static String PERSON_CREATION_MESSAGE = "personCreationMessage";
 
+	private final static String UI_PERSON_CREATED = "Person added.";
+	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -74,21 +76,20 @@ public final class PersonCreationServlet extends HttpServlet {
 				if (!errorInForm){
 					//if mandatory entries are filled, create a new person
 					Person person = dbInterface.addPerson(firstName, lastName, birthdate);
-					if (!caseId.isEmpty()){
-						//if optional (caseId) entry is filled, get the case
-						int ci = Integer.parseInt(caseId);
-						CaseDetail aCase = dbInterface.getCaseForId(ci);
-						if (aCase != null && aCase.getIsOpen()){
-							//if user entered a valid, opened case, set the person as suspected person for this case
-							dbInterface.setPersonSuspected(ci, person.getPersonId());
+					if (person != null) {
+						if (!caseId.isEmpty()){
+							trySetPersonSuspectedOnCaseWithId(person, caseId);
 						}
+						addCreationNoteToPerson(person, loggedUser);
+						session.setAttribute(PERSON_CREATION_MESSAGE, "The person has been created with : " +
+								"first name : "+firstName+
+								" and last name : "+lastName);
+					} else {
+						//TODO
 					}
-					session.setAttribute(PERSON_CREATION_MESSAGE, "The person has been created with : " +
-							"first name : "+firstName+
-							" and last name : "+lastName);
 				} else {
-					session.setAttribute(PERSON_CREATION_MESSAGE, "Error in one of entry, please enter" +
-							" valid first name, last name and birthdate");
+					session.setAttribute(PERSON_CREATION_MESSAGE, "Error in one of the entries, please enter " +
+							"a valid first name, last name and birthdate");
 				}
 			} catch (final Exception ex){
 				ex.printStackTrace();
@@ -97,6 +98,22 @@ public final class PersonCreationServlet extends HttpServlet {
 
 		//proceed the page
 		this.getServletContext().getRequestDispatcher("/PersonCreation.jsp").forward(request, response);
+	}
+	
+	private void addCreationNoteToPerson(Person person, User user)
+	{
+		dbInterface.addPersonNote(person.getId(), UI_PERSON_CREATED, user.getUsername());
+	}
+	
+	private void trySetPersonSuspectedOnCaseWithId(Person person, String caseId) throws NumberFormatException
+	{
+		//if optional (caseId) entry is filled, get the case
+		int ci = Integer.parseInt(caseId);
+		CaseDetail aCase = dbInterface.getCaseForId(ci);
+		if (aCase != null && aCase.getIsOpen()){
+			//if user entered a valid, opened case, set the person as suspected person for this case
+			dbInterface.setPersonSuspected(ci, person.getPersonId());
+		}
 	}
 	
 	/**

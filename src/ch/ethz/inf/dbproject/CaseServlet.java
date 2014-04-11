@@ -20,7 +20,7 @@ import ch.ethz.inf.dbproject.HomeServlet;
 /**
  * Servlet implementation class of Case Details Page
  */
-@WebServlet(description = "Displays a specific case.", urlPatterns = { "/Case" })
+@WebServlet(description = "Displays a specific case.", urlPatterns = { "/"+CaseServlet.BASE_ADDRESS})
 public final class CaseServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -50,6 +50,9 @@ public final class CaseServlet extends HttpServlet {
 	
 	public static final String INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES = "changeCategories";
 	
+	//string shown to the user
+	private static final String UI_CASE_OPENED = "Opened case.";
+	private static final String UI_CASE_CLOSED = "Closed case.";
 	
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -169,12 +172,12 @@ public final class CaseServlet extends HttpServlet {
 				CaseNote cn = dbInterface.insertIntoCaseNote(id, comment, username);
 				
 			} else if (INTERNAL_ACTION_CLOSE_CASE_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
-				dbInterface.insertIntoCaseNote(id, "closed case", username);//keep notes of the closing / opening
+				dbInterface.insertIntoCaseNote(id, UI_CASE_CLOSED, username);//keep notes of the closing / opening
 				didUpdateCase = dbInterface.updateCaseIsOpen(id, false);
 				
 			} else if (INTERNAL_ACTION_OPEN_CASE_PARAMETER_VALUE.equals(action) && !caseDetail.getIsOpen()) {
 				didUpdateCase = dbInterface.updateCaseIsOpen(id, true);
-				dbInterface.insertIntoCaseNote(id, "opened case", username);//keep notes of the closing / opening
+				dbInterface.insertIntoCaseNote(id, UI_CASE_OPENED, username);//keep notes of the closing / opening
 			} else if (INTERNAL_ACTION_ADD_SUSPECT_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
 				final String personIdRaw = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
 				int personId = Integer.parseInt(personIdRaw);
