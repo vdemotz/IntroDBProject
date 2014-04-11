@@ -28,7 +28,7 @@ public final class PersonCreationServlet extends HttpServlet {
 	public final static String PERSON_FORM_FN = "personFirstNameEmpty";
 	public final static String PERSON_CREATION_MESSAGE = "personCreationMessage";
 
-	private final static String UI_PERSON_CREATED = "Person added.";
+	private final static String UI_PERSON_CREATED = "Person added";
 	
 	/**
 	 * @see HttpServlet#HttpServlet()

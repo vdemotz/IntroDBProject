@@ -29,7 +29,7 @@ public final class CaseCreationServlet extends HttpServlet {
 	public static final String CASECREATION_LIST_CAT = "caseCreationListCategories";
 	public static final String CASECREATION_MESSAGE = "caseCreationMessage";
 	
-	private static final String UI_CASE_CREATION_MESSAGE = "Case created.";
+	private static final String UI_CASE_CREATION_MESSAGE = "Case created";
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 

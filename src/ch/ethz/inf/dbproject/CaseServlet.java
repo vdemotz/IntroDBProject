@@ -51,8 +51,11 @@ public final class CaseServlet extends HttpServlet {
 	public static final String INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES = "changeCategories";
 	
 	//string shown to the user
-	private static final String UI_CASE_OPENED = "Opened case.";
-	private static final String UI_CASE_CLOSED = "Closed case.";
+	private static final String UI_CASE_OPENED = "Opened case";
+	private static final String UI_CASE_CLOSED = "Closed case";
+	private static final String UI_SUSPECT_ADDED = "Added suspect with id ";
+	private static final String UI_CATEGORY_ADDED = "Added category ";
+	private static final String UI_CATEGORY_DELETED = "Removed category ";
 	
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -91,7 +94,7 @@ public final class CaseServlet extends HttpServlet {
 		tableComment.addBeanColumn("Case Note ID", "caseNoteId");
 		tableComment.addBeanColumn("Comment", "text");
 		tableComment.addBeanColumn("Date", "dateTimeFormated");
-		tableComment.addBeanColumn("Opened by", "authorUsername");
+		tableComment.addBeanColumn("Author", "authorUsername");
 		
 		return tableComment;
 	}
@@ -172,16 +175,24 @@ public final class CaseServlet extends HttpServlet {
 				CaseNote cn = dbInterface.insertIntoCaseNote(id, comment, username);
 				
 			} else if (INTERNAL_ACTION_CLOSE_CASE_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
-				dbInterface.insertIntoCaseNote(id, UI_CASE_CLOSED, username);//keep notes of the closing / opening
-				didUpdateCase = dbInterface.updateCaseIsOpen(id, false);
+				boolean success = didUpdateCase = dbInterface.updateCaseIsOpen(id, false);
+				if (success) {
+					dbInterface.insertIntoCaseNote(id, UI_CASE_CLOSED, username);//keep notes of the closing / opening
+				}
 				
 			} else if (INTERNAL_ACTION_OPEN_CASE_PARAMETER_VALUE.equals(action) && !caseDetail.getIsOpen()) {
-				didUpdateCase = dbInterface.updateCaseIsOpen(id, true);
-				dbInterface.insertIntoCaseNote(id, UI_CASE_OPENED, username);//keep notes of the closing / opening
+				boolean success = didUpdateCase = dbInterface.updateCaseIsOpen(id, true);
+				if (success) {
+					dbInterface.insertIntoCaseNote(id, UI_CASE_OPENED, username);//keep notes of the closing / opening
+				}
+				
 			} else if (INTERNAL_ACTION_ADD_SUSPECT_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
 				final String personIdRaw = request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER);
 				int personId = Integer.parseInt(personIdRaw);
-				dbInterface.addSuspectToCase(id, personId);
+				boolean success = dbInterface.addSuspectToCase(id, personId);
+				if (success) {
+					dbInterface.insertIntoCaseNote(id, UI_SUSPECT_ADDED + personIdRaw, username);//keep notes on adding suspects
+				}
 				
 			} else if (INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES.equals(action) && caseDetail.getIsOpen()) {
 				final String[] categories = request.getParameterValues("categories");
@@ -195,13 +206,19 @@ public final class CaseServlet extends HttpServlet {
 				if (categories != null){
 					for (int i = 0; i < categories.length; i++){
 						if (listCatNameOfCase.contains(categories[i])){
-							this.dbInterface.deleteCategoryForCaseIdAndCategory(id, categories[i]);
+							boolean success = this.dbInterface.deleteCategoryForCaseIdAndCategory(id, categories[i]);
+							if (success) {
+								dbInterface.insertIntoCaseNote(id, UI_CATEGORY_DELETED + categories[i], username);
+							}
 						} else {
-							this.dbInterface.insertIntoCategoryForCase(categories[i], id);
+							boolean success = this.dbInterface.insertIntoCategoryForCase(categories[i], id);
+							if (success) {
+								dbInterface.insertIntoCaseNote(id, UI_CATEGORY_ADDED + categories[i], username);
+							}
 						}
 					}
 				}
-			} //TODO: add convict
+			}
 		}
 		
 		if (didUpdateCase) {

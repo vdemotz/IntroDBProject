@@ -20,7 +20,7 @@ Todo:
 
 *Creations : when empty, set to null (done)
 
-*add note at any changes (L)
+*add note at any changes (done)
 
 *search in ranges (done)
 

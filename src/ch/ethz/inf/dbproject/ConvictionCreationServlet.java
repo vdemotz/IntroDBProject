@@ -47,6 +47,8 @@ public class ConvictionCreationServlet extends HttpServlet {
 	
 	public static final String SESSION_SELECTED_PERSON = "CCSelP";
 	
+	private static final String UI_CONVICTED_PERSON = "Noted conviction of person with id ";
+	
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -72,7 +74,7 @@ public class ConvictionCreationServlet extends HttpServlet {
 	}
 	
 	
-	private Conviction tryInsertIntoCase(final HttpServletRequest request, String personId, String caseId, String startDate, String endDate) throws ParseException {
+	private Conviction tryInsertIntoConviction(final HttpServletRequest request, String personId, String caseId, String startDate, String endDate) throws ParseException {
 		final HttpSession session = request.getSession(true);
 		
 		Conviction result = null;
@@ -90,6 +92,7 @@ public class ConvictionCreationServlet extends HttpServlet {
 			if (caseIdParsed == null || dbInterface.getCaseForId(caseIdParsed) != null) {
 				Conviction conviction = dbInterface.insertIntoConviction(personIdParsed, caseIdParsed, startDateParsed, endDateParsed);
 				if (conviction != null) {
+					dbInterface.insertIntoCaseNote(caseIdParsed, UI_CONVICTED_PERSON + personId, UserManagement.getCurrentlyLoggedInUser(session).getUsername());
 					session.setAttribute(SESSION_MESSAGE, SESSION_MESSAGE_CREATED);
 				} else {
 					session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_PROCESSING_ERROR);
@@ -112,7 +115,7 @@ public class ConvictionCreationServlet extends HttpServlet {
 		String endDate = request.getParameter(INTERNAL_END_DATE_PARAMETER);
 		
 		try {
-			tryInsertIntoCase(request, personId, caseId, startDate, endDate);
+			tryInsertIntoConviction(request, personId, caseId, startDate, endDate);
 		} catch (ParseException e) {
 			session.setAttribute(SESSION_ERROR_MESSAGE, SESSION_ERROR_MESSAGE_DATE_INVALID_FORMAT);
 		} catch (NumberFormatException e) {
