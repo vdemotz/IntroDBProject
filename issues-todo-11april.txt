@@ -22,9 +22,9 @@ Todo:
 
 *add note at any changes (L)
 
-*search in ranges
+*search in ranges (done)
 
-*search by birthdate
+*search by birthdate (done)
 
 *Advanced stats queries. Implement in StatsDatstore, show meta info on home page
 (L)
