@@ -50,11 +50,11 @@ public class CaseDatastore implements CaseDatastoreInterface {
 								  "from Person person, Conviction conviction " +
 								  "where conviction.caseId = ? and conviction.personId = person.personId";
 	//template: all categories for a specific case
-	String categoriesForCaseQuery = "select Category.* " +
+	String categoriesForCaseQuery = "select distinct Category.* " +
 									"from CaseDetail caseDetail, CategoryForCase categoryForCase, Category category " +
 								    "where caseDetail.caseId = ? and categoryForCase.caseId = caseDetail.caseId and categoryForCase.categoryName = category.Name";
 	//template: category summary
-	String categorySummaryQuery = "select categoryName, count(*) as numberOfCases from CategoryForCase group by categoryName";
+	String categorySummaryQuery = "select categoryName, count(*) as numberOfCases from CategoryForCase group by categoryName order by numberOfCases desc";
 	//template: get the next id for the case note of a particular case
 	String nextCaseNoteIdForCaseQuery = "select coalesce (max(caseNoteId)+1, 1) from CaseNote where caseId=?";//if there is no caseNote yet, max returns null, coalesce selects the first non-null argument
 	//template add a new note

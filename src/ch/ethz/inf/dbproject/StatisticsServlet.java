@@ -24,13 +24,13 @@ public final class StatisticsServlet extends HttpServlet {
 	public static final String STATISTICS_ADD_CATEGORY = "statisticsAddCategory";
 	public static final String STATISTICS_STATS_TABLE = "statisticsStatsTable";
 	
-	private final String NO_CONVICTIONS = "Number of Convictions";
-	private final String NA_CITY = "Name of City";
-	private final String NO_CASES = "Number of Cases";
-	private final String DATE = "Date";
-	private final String NA_CATEGORY = "Name of Category";
-	private final String NA_USER = "Name of User";
-	private final String NO_NOTES = "Number of Notes";
+	private static final String NUMBER_OF_CONVICTIONS = "Number of Convictions";
+	private static final String NAME_OF_CITY = "Name of City";
+	private static final String NUMBER_OF_CASES = "Number of Cases";
+	private static final String DATE = "Date";
+	private static final String NAME_OF_CATEGORY = "Name of Category";
+	private static final String NAME_OF_USER = "Name of User";
+	private static final String NUMBER_OF_NOTES = "Number of Notes";
 	
 	private BeanTableHelper<CategorySummary> getCategorySummaryTable()
 	{
@@ -48,56 +48,31 @@ public final class StatisticsServlet extends HttpServlet {
 		BeanTableHelper<StatsNode> table = new BeanTableHelper<StatsNode>("statsSummary", "contentTable", StatsNode.class);
 		
 		if (filter == null){
-			return "Choose one statistics to display";
+			return "Please choose which statistics to display";
 		} else if (filter.equals("casesCity")){
-			table.addBeanColumn(this.NA_CITY, "name");
-			table.addBeanColumn(this.NO_CASES, "value");
+			table.addBeanColumn(NAME_OF_CITY, "name");
+			table.addBeanColumn(NUMBER_OF_CASES, "value");
 			table.addObjects(dbInterface.getCasesPerCity());
 		} else if (filter.equals("casesMonth")){
-			table.addBeanColumn(this.DATE, "month");
-			table.addBeanColumn(this.NO_CASES, "value");
+			table.addBeanColumn(DATE, "month");
+			table.addBeanColumn(NUMBER_OF_CASES, "value");
 			table.addObjects(dbInterface.getCasesPerMonth());
 		} else if (filter.equals("convictionsCity")){
-			table.addBeanColumn(this.NA_CITY, "name");
-			table.addBeanColumn(this.NO_CONVICTIONS, "value");
+			table.addBeanColumn(NAME_OF_CITY, "name");
+			table.addBeanColumn(NUMBER_OF_CONVICTIONS, "value");
 			table.addObjects(dbInterface.getConvictionsPerCity());
 		} else if (filter.equals("convictionsMonth")){
-			table.addBeanColumn(this.NA_CITY, "month");
-			table.addBeanColumn(this.NO_CONVICTIONS, "value");
+			table.addBeanColumn(NAME_OF_CITY, "month");
+			table.addBeanColumn(NUMBER_OF_CONVICTIONS, "value");
 			table.addObjects(dbInterface.getConvictionsPerMonth());
 		} else if (filter.equals("convictionsCategory")){
-			table.addBeanColumn(this.NA_CATEGORY, "name");
-			table.addBeanColumn(this.NO_CONVICTIONS, "value");
+			table.addBeanColumn(NAME_OF_CATEGORY, "name");
+			table.addBeanColumn(NUMBER_OF_CONVICTIONS, "value");
 			table.addObjects(dbInterface.getConvictionsPerCategory());
 		} else {
 			return "Sorry, these stats are unavaible";
 		}
 		return table;
-	}
-	
-	private String addNewCategory(HttpServletRequest request){
-		
-		final String action = request.getParameter("action");
-		final String description = request.getParameter("description");
-		String ret;
-		
-		if (action != null && action.equals("categoryCreation")){
-			try{
-				if(this.dbInterface.insertIntoCategory(description)){
-					ret = "Your category has been added";
-				}
-				else{
-					ret = "Sorry, this category already exists.";
-				}
-			} catch(Exception ex) {
-				ex.printStackTrace();
-				ret = "Sorry, failed to add your category. Please contact us and we will do our best"+
-				"to fix the problem.";
-			}
-		} else {
-			ret = "";
-		}
-		return ret;
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -106,7 +81,6 @@ public final class StatisticsServlet extends HttpServlet {
 		final String filter = request.getParameter("filter");
 		
 		session.setAttribute(SESSION_CATEGORY_SUMMARY_TABLE, getCategorySummaryTable());
-		session.setAttribute(STATISTICS_ADD_CATEGORY, this.addNewCategory(request));
 		try {
 			session.setAttribute(STATISTICS_STATS_TABLE, this.getStatsTable(filter));
 		} catch (Exception ex){
