@@ -1,5 +1,6 @@
 package ch.ethz.inf.dbproject.model;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
@@ -7,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelObject {
+public class ModelObject implements Serializable { 
 
 	public ModelObject()
 	{
