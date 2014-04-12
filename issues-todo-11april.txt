@@ -1,6 +1,6 @@
 Todo:
 
-* Types of Conviction : remove table conviction type (L)
+* Types of Conviction : remove table conviction type  : (done)
 * More test data (Moday V/L)
 * New ER (Monday)
 * Functional dependencies (Monday)

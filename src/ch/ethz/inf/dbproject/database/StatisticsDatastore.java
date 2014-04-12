@@ -29,7 +29,10 @@ public class StatisticsDatastore implements StatisticsDatastoreInterface {
 	//select convictions by city
 	private final String convictionsPerCityString = "select city, count(*) from CaseDetail as cd join Conviction as c on cd.caseId = c.caseId group by city";
 	//select convictions by category
-	private final String convictionsPerCategoryString = "select categoryName, count(*) from ConvictionType group by categoryName";
+	private final String convictionsPerCategoryString = "select categoryName, count(*) " +
+													    "from Conviction conviction, CategoryForCase categoryForCase " +
+													    "where conviction.caseId = categoryForCase.caseId " +
+													    "group by categoryName";
 	//select number of notes by user
 	private final String numberNotesPerUserString = "select authorCase as authorUsername, countCase+countPerson as totalNotes from "+
 												"(select * from (select authorUsername as authorCase, count(*) as countCase from CaseNote "+
