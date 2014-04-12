@@ -36,19 +36,26 @@ public final class CaseServlet extends HttpServlet {
 	public static final String SESSION_CASE_NOTE_TABLE = "CASEnoteT";
 	public static final String SESSION_CASE_CATEGORIES = "CASEchangeCategory";
 	
+	//Whenever the page is called, the case id parameter must be set
 	public static final String EXTERNAL_CASE_ID_PARAMETER = "caseId";
+	//Whenever a change should occur, the user that supposedly requested the change must be set
 	public static final String EXTERNAL_USERNAME_PARAMETER = "username";
 	
+	//Contains the content of a user case note comment to be committed
 	public static final String INTERNAL_COMMENT_PARAMETER ="comment";
+	
 	public static final String INTERNAL_ACTION_PARAMETER = "action";
 	public static final String INTERNAL_ACTION_ADD_NOTE_PARAMETER_VALUE = "addNote";
 	public static final String INTERNAL_ACTION_OPEN_CASE_PARAMETER_VALUE = "openCase";
 	public static final String INTERNAL_ACTION_CLOSE_CASE_PARAMETER_VALUE = "closeCase";
-
 	public static final String INTERNAL_ACTION_ADD_CONVICT_PARAMETER_VALUE = "addConv";
 	public static final String INTERNAL_ACTION_ADD_SUSPECT_PARAMETER_VALUE = "addSusp";
-	
+	public static final String INTERNAL_ACTION_DELETE_SUSPECT_PARAMETER_VALUE = "remSus";
 	public static final String INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES = "changeCategories";
+	
+	public static final String INTERNAL_GET_CATEGORIES_PARAMETER = "categories";
+	
+	public static final String INTERNAL_DELETE_SUSPECT_ID_PARAMETER = "susId";
 	
 	//string shown to the user
 	private static final String UI_CASE_OPENED = "Opened case";
@@ -56,6 +63,7 @@ public final class CaseServlet extends HttpServlet {
 	private static final String UI_SUSPECT_ADDED = "Added suspect with id ";
 	private static final String UI_CATEGORY_ADDED = "Added category ";
 	private static final String UI_CATEGORY_DELETED = "Removed category ";
+	private static final String UI_SUSPECT_DELETED = "Removed suspect with id ";
 	
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -87,10 +95,9 @@ public final class CaseServlet extends HttpServlet {
 	{
 		BeanTableHelper<CaseNote> tableComment = new BeanTableHelper<CaseNote>("comments", "contentTable", CaseNote.class);
 	
-		List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(caseId);//TODO: handle null, empty list
+		List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(caseId);
 		tableComment.addObjects(cases);
 		
-		//tableComment.addBeanColumn("Case ID", "caseId");
 		tableComment.addBeanColumn("Case Note ID", "caseNoteId");
 		tableComment.addBeanColumn("Comment", "text");
 		tableComment.addBeanColumn("Date", "dateTimeFormated");
@@ -99,7 +106,7 @@ public final class CaseServlet extends HttpServlet {
 		return tableComment;
 	}
 	
-	protected BeanTableHelper<Person> getSuspectsTableForCase(int caseId)
+	protected BeanTableHelper<Person> getSuspectsTableForCase(int caseId, User user)
 	{
 		BeanTableHelper<Person> suspectsTable = new BeanTableHelper<Person>("suspects", "contentTable", Person.class);
 		
@@ -109,6 +116,13 @@ public final class CaseServlet extends HttpServlet {
 		suspectsTable.addBeanColumn("Suspect Id", "personId");
 		suspectsTable.addBeanColumn("Name", "name");
 		suspectsTable.addLinkColumn("", "Person Details", "Person?id=", "personId");
+		if (user != null) {
+			suspectsTable.addLinkColumn("", "Remove Suspect", CaseServlet.BASE_ADDRESS + "?" +
+															  EXTERNAL_CASE_ID_PARAMETER + "=" + Integer.toString(caseId) + "&" +
+															  EXTERNAL_USERNAME_PARAMETER + "=" + user.getUsername() + "&" +
+															  INTERNAL_ACTION_PARAMETER + "=" + INTERNAL_ACTION_DELETE_SUSPECT_PARAMETER_VALUE + "&" +
+															  INTERNAL_DELETE_SUSPECT_ID_PARAMETER + "=", "personId");
+		}
 		
 		return suspectsTable;
 	}
@@ -155,12 +169,11 @@ public final class CaseServlet extends HttpServlet {
 		request.getSession().setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, "Invalid Case ID");
 	}
 
-	private CaseDetail handleActionsForRequest(final HttpServletRequest request, final CaseDetail caseDetail)
+	private CaseDetail handleActionsForRequest(final HttpServletRequest request, final CaseDetail caseDetail, User loggedUser)
 	{
 		final HttpSession session = request.getSession(true);
 		final int id = caseDetail.getCaseId();
 		
-		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
 		final String username = request.getParameter(EXTERNAL_USERNAME_PARAMETER);
 		
 		boolean didUpdateCase = false;
@@ -195,7 +208,7 @@ public final class CaseServlet extends HttpServlet {
 				}
 				
 			} else if (INTERNAL_ACTION_CHANGE_CATEGORIES_VALUES.equals(action) && caseDetail.getIsOpen()) {
-				final String[] categories = request.getParameterValues("categories");
+				final String[] categories = request.getParameterValues(INTERNAL_GET_CATEGORIES_PARAMETER);
 				List<Category> listCatOfCase = this.dbInterface.getCategoriesForCase(id);
 				List<String> listCatNameOfCase = new ArrayList<String>();
 				if (listCatOfCase != null){
@@ -218,6 +231,13 @@ public final class CaseServlet extends HttpServlet {
 						}
 					}
 				}
+				
+			} else if (INTERNAL_ACTION_DELETE_SUSPECT_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
+				String suspectIdRaw = request.getParameter(INTERNAL_DELETE_SUSPECT_ID_PARAMETER);
+				boolean success = tryDeleteSuspectWithIdFromCase(caseDetail, suspectIdRaw);
+				if (success) {
+					dbInterface.insertIntoCaseNote(id, UI_SUSPECT_DELETED + suspectIdRaw, username);
+				}
 			}
 		}
 		
@@ -227,13 +247,21 @@ public final class CaseServlet extends HttpServlet {
 		return caseDetail;
 	}
 	
+	private boolean tryDeleteSuspectWithIdFromCase(CaseDetail caseDetail, String suspectIdRaw)
+	{
+		int suspectId = Integer.parseInt(suspectIdRaw);
+		return dbInterface.deleteSuspectFromCase(suspectId, caseDetail.getId());
+	}
+	
 	private void handleValidRequest(final HttpServletRequest request, CaseDetail caseDetail)
 	{	
 		final HttpSession session = request.getSession(true);
 		session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, null);
+		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
 		
 		//perform actions, if any and get the new case detail
-		caseDetail = handleActionsForRequest(request, caseDetail);
+		caseDetail = handleActionsForRequest(request, caseDetail, loggedUser);
+		
 		final int id = caseDetail.getCaseId();
 		session.setAttribute("caseDetail", caseDetail);
 		
@@ -244,7 +272,7 @@ public final class CaseServlet extends HttpServlet {
 		//list the case notes				
 		session.setAttribute(SESSION_CASE_NOTE_TABLE, getCaseNotesTableForCase(id));
 		//list the suspects
-		session.setAttribute(SESSION_SUSPECT_TABLE, getSuspectsTableForCase(id));
+		session.setAttribute(SESSION_SUSPECT_TABLE, getSuspectsTableForCase(id, loggedUser));
 		//list the convicts
 		session.setAttribute(SESSION_CONVICT_TABLE, getConvictsTableForCase(id));
 		//list the categories

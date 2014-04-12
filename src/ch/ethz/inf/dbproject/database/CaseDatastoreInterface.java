@@ -148,9 +148,18 @@ public interface CaseDatastoreInterface {
 	/**
 	 * @param caseId
 	 * @param personId
-	 * @return true if successful, false otherwise
+	 * @return true if successful and the database was modified, false otherwise
 	 */
 	boolean addSuspectToCase(int caseId, int personId);
+	
+	/**
+	 * 
+	 * @param caseId
+	 * @param personId
+	 * @return true if successful and the database was modified, false otherwise
+	 */
+	boolean deleteSuspectFromCase(int caseId, int personId);
+	
 	
 	/**
 	 * insert into table 'Category' a new entry
@@ -166,7 +175,7 @@ public interface CaseDatastoreInterface {
 	 * @return true if no problem, else false
 	 */
 	boolean insertIntoCategoryForCase(String name, int caseId);
-
+	
 	/**
 	 * return a Category for a specific name if its exists
 	 * @param name the name of the category
@@ -184,7 +193,7 @@ public interface CaseDatastoreInterface {
 	 * delete the entry corresponding to the category for a specific case
 	 * @param caseId the case to update
 	 * @param categoryName the category to delete from the case
-	 * @return true if succeeded, else false
+	 * @return true if successful and the database was modified, false otherwise
 	 */
 	boolean deleteCategoryForCaseIdAndCategory(int caseId, String categoryName);
 }

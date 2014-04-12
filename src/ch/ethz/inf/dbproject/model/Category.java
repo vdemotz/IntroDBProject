@@ -1,5 +1,6 @@
 package ch.ethz.inf.dbproject.model;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

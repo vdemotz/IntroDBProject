@@ -83,7 +83,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	String getAllCategoriesQuery = "select * from Category";
 	//template remove a categoryForCase for a specific case and category
 	String deleteCategoryForCaseIdAndCategoryQuery = "delete from CategoryForCase where caseId = ? and categoryName = ?";
-
+	//template remove a suspect from a case
+	String deleteSuspectFromCaseQuery = "delete from Suspected where caseId=? and personId=?";
+	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
 	PreparedStatement openCasesStatement;
@@ -109,7 +111,8 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement getCategoryForNameStatement;
 	PreparedStatement getAllCategoriesStatement;
 	PreparedStatement deleteCategoryForCaseIdAndCategoryStatement;
-
+	PreparedStatement deleteSuspectFromCaseStatement;
+	
 	public CaseDatastore() {
 		this.sqlConnection = MySQLConnection.getInstance().getConnection();
 		try {
@@ -146,6 +149,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		getCategoryForNameStatement = sqlConnection.prepareStatement(getCategoryForNameQuery);
 		getAllCategoriesStatement = sqlConnection.prepareStatement(getAllCategoriesQuery);
 		deleteCategoryForCaseIdAndCategoryStatement = sqlConnection.prepareStatement(deleteCategoryForCaseIdAndCategoryQuery);
+		deleteSuspectFromCaseStatement = sqlConnection.prepareStatement(deleteSuspectFromCaseQuery);
 	}
 	
 	////
@@ -400,7 +404,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		try {
 			insertIntoCategoryStatement.setString(1, name);
 			insertIntoCategoryStatement.execute();
-			return true;
+			return insertIntoCategoryStatement.getUpdateCount() > 0;
 		} catch (SQLException e) {
 			return false;
 		}
@@ -412,7 +416,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			insertIntoCategoryForCaseStatement.setInt(1, caseId);
 			insertIntoCategoryForCaseStatement.setString(2, name);
 			insertIntoCategoryForCaseStatement.execute();
-			return true;
+			return insertIntoCategoryForCaseStatement.getUpdateCount() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -498,8 +502,22 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			deleteCategoryForCaseIdAndCategoryStatement.setInt(1, caseId);
 			deleteCategoryForCaseIdAndCategoryStatement.setString(2, categoryName);
 			deleteCategoryForCaseIdAndCategoryStatement.execute();
-			return true;
+			return deleteCategoryForCaseIdAndCategoryStatement.getUpdateCount() > 0;
 		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean deleteSuspectFromCase(int caseId, int personId) {
+		try {
+			deleteSuspectFromCaseStatement.setInt(1, personId);
+			deleteSuspectFromCaseStatement.setInt(2, caseId);
+			deleteSuspectFromCaseStatement.execute();
+			return deleteSuspectFromCaseStatement.getUpdateCount() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

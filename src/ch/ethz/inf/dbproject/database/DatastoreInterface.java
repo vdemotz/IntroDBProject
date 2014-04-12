@@ -241,6 +241,15 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	@Override
+	public boolean deleteSuspectFromCase(int caseId, int personId) {
+		return caseDatastore.deleteSuspectFromCase(caseId, personId);
+	}
+	
+	////
+	//CATEGORY
+	////
+	
+	@Override
 	public boolean insertIntoCategory(String name) {
 		return caseDatastore.insertIntoCategory(name);
 	}
@@ -322,4 +331,5 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	public List<StatsNode> getMostActiveCategoriesForUser(String username) {
 		return statisticsDatastore.getMostActiveCategoriesForUser(username);
 	}
+	
 }
