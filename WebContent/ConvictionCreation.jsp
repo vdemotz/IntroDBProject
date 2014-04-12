@@ -23,22 +23,22 @@ if (user == null) {
 %>
 	
 	<%
-	if (session.getAttribute(ConvictionCreationServlet.SESSION_ERROR_MESSAGE) != null) {
+	if (request.getAttribute(ConvictionCreationServlet.REQUEST_ERROR_MESSAGE) != null) {
 	%>
-		<%=session.getAttribute(ConvictionCreationServlet.SESSION_ERROR_MESSAGE) %>
+		<%=request.getAttribute(ConvictionCreationServlet.REQUEST_ERROR_MESSAGE) %>
 		<br><br>
 		
-	<%	session.setAttribute(ConvictionCreationServlet.SESSION_ERROR_MESSAGE, null);
-	} else if (session.getAttribute(ConvictionCreationServlet.SESSION_MESSAGE) != null) {
+	<%	request.setAttribute(ConvictionCreationServlet.REQUEST_ERROR_MESSAGE, null);
+	} else if (request.getAttribute(ConvictionCreationServlet.REQUEST_MESSAGE) != null) {
 	%>
-		<%=session.getAttribute(ConvictionCreationServlet.SESSION_MESSAGE) %>
+		<%=request.getAttribute(ConvictionCreationServlet.REQUEST_MESSAGE) %>
 		<br><br>
-	<%	session.setAttribute(ConvictionCreationServlet.SESSION_MESSAGE, null);
+	<%	request.setAttribute(ConvictionCreationServlet.REQUEST_MESSAGE, null);
 	}
 	%>
 	
 	<%
-	Object selectedPersonTable = session.getAttribute(ConvictionCreationServlet.SESSION_SELECTED_PERSON);
+	Object selectedPersonTable = request.getAttribute(ConvictionCreationServlet.REQUEST_SELECTED_PERSON);
 	if (selectedPersonTable == null || request.getParameter(PersonSelectionServlet.EXTERNAL_RESULT_PERSON_ID_PARAMETER) == null) {
 		//No person selected yet
 		String returnAddressFromSelectPerson =  ConvictionCreationServlet.BASE_ADDRESS + "?" + ConvictionCreationServlet.INTERNAL_ACTION_PARAMETER + "=" + ConvictionCreationServlet.INTERNAL_ACTION_SELECT_PERSON_PARAMETER_VALUE;

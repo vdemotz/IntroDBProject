@@ -29,12 +29,13 @@ public final class CaseServlet extends HttpServlet {
 	
 	public static final String BASE_ADDRESS = "Case";
 	
-	public static final String SESSION_CASE_DETAIL_TABLE = "CASEdetT";
-	public static final String SESSION_CASE_TABLE = "CASEcatT";
-	public static final String SESSION_SUSPECT_TABLE = "CASEsusT";
-	public static final String SESSION_CONVICT_TABLE = "CASEconT";
-	public static final String SESSION_CASE_NOTE_TABLE = "CASEnoteT";
-	public static final String SESSION_CASE_CATEGORIES = "CASEchangeCategory";
+	public static final String REQUEST_CASE_DETAIL_OBJECT = "caseDetail";
+	public static final String REQUEST_CASE_DETAIL_TABLE = "CASEdetT";
+	public static final String REQUEST_CATEGORIES_TABLE = "CASEcatT";
+	public static final String REQUEST_SUSPECT_TABLE = "CASEsusT";
+	public static final String REQUEST_CONVICT_TABLE = "CASEconT";
+	public static final String REQUEST_CASE_NOTE_TABLE = "CASEnoteT";
+	public static final String REQUEST_CASE_CATEGORIES = "CASEchangeCategory";
 	
 	//Whenever the page is called, the case id parameter must be set
 	public static final String EXTERNAL_CASE_ID_PARAMETER = "caseId";
@@ -149,9 +150,7 @@ public final class CaseServlet extends HttpServlet {
 		table.addObjects(list);
 		
 		table.addBeanColumn("Categories", "name");
-		
-		//table.setVertical(true);
-		
+
 		return table;
 	}
 	
@@ -166,7 +165,7 @@ public final class CaseServlet extends HttpServlet {
 	
 	private void handleInvalidRequest(final HttpServletRequest request) throws ServletException, IOException
 	{
-		request.getSession().setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, "Invalid Case ID");
+		request.setAttribute(HomeServlet.REQUEST_ERROR_MESSAGE, "Invalid Case ID");
 	}
 
 	private CaseDetail handleActionsForRequest(final HttpServletRequest request, final CaseDetail caseDetail, User loggedUser)
@@ -256,34 +255,33 @@ public final class CaseServlet extends HttpServlet {
 	private void handleValidRequest(final HttpServletRequest request, CaseDetail caseDetail)
 	{	
 		final HttpSession session = request.getSession(true);
-		session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, null);
+		request.setAttribute(HomeServlet.REQUEST_ERROR_MESSAGE, null);
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
 		
 		//perform actions, if any and get the new case detail
 		caseDetail = handleActionsForRequest(request, caseDetail, loggedUser);
 		
 		final int id = caseDetail.getCaseId();
-		session.setAttribute("caseDetail", caseDetail);
+		request.setAttribute(REQUEST_CASE_DETAIL_OBJECT, caseDetail);
 		
 		//set the CaseDetail (the header) wanted by the user
-		session.setAttribute(SESSION_CASE_DETAIL_TABLE, getCaseTableForId(id));
+		request.setAttribute(REQUEST_CASE_DETAIL_TABLE, getCaseTableForId(id));
 		//set the Categories for the case
-		session.setAttribute(SESSION_CASE_TABLE, getCategoriesTableForCase(id));
+		request.setAttribute(REQUEST_CATEGORIES_TABLE, getCategoriesTableForCase(id));
 		//list the case notes				
-		session.setAttribute(SESSION_CASE_NOTE_TABLE, getCaseNotesTableForCase(id));
+		request.setAttribute(REQUEST_CASE_NOTE_TABLE, getCaseNotesTableForCase(id));
 		//list the suspects
-		session.setAttribute(SESSION_SUSPECT_TABLE, getSuspectsTableForCase(id, loggedUser));
+		request.setAttribute(REQUEST_SUSPECT_TABLE, getSuspectsTableForCase(id, loggedUser));
 		//list the convicts
-		session.setAttribute(SESSION_CONVICT_TABLE, getConvictsTableForCase(id));
+		request.setAttribute(REQUEST_CONVICT_TABLE, getConvictsTableForCase(id));
 		//list the categories
-		session.setAttribute(SESSION_CASE_CATEGORIES, getCategoriesForCase(id));
+		request.setAttribute(REQUEST_CASE_CATEGORIES, getCategoriesForCase(id));
 	}
 	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		request.getSession().removeAttribute(HomeServlet.SESSION_ERROR_MESSAGE);
 		final String idString = request.getParameter(EXTERNAL_CASE_ID_PARAMETER);
 		
 		boolean invalidId = false;

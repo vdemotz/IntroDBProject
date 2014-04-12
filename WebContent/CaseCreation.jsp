@@ -37,7 +37,7 @@ if (user == null) {
 		<tr>
 			<th>Category</th>
 			<td><select multiple name = "categories">
-				<% List<Category> catSum = (List<Category>) session.getAttribute(CaseCreationServlet.CASECREATION_LIST_CAT); 
+				<% List<Category> catSum = (List<Category>) request.getAttribute(CaseCreationServlet.CASECREATION_LIST_CAT); 
 				for(int i = 0; i < catSum.size(); i++) { %>
   				<option value='<%=catSum.get(i).getName()%>'><%=catSum.get(i).getName() %></option>
   				<%} %>

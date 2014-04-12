@@ -61,8 +61,8 @@ public final class CasesServlet extends HttpServlet {
 				"Case?caseId=" 	/* This is the base url. The final url will be composed from the concatenation of this and the parameter below */, 
 				"caseId" 			/* For every case displayed, the ID will be retrieved and will be attached to the url base above */);
 
-		// Pass the table to the session. This will allow the respective jsp page to display the table.
-		session.setAttribute("cases", table);
+		// Pass the table to the request. This will allow the respective jsp page to display the table.
+		request.setAttribute("cases", table);
 
 		// The filter parameter defines what to show on the Projects page
 		final String filter = request.getParameter("filter");

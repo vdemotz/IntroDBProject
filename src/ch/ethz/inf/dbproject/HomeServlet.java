@@ -23,9 +23,9 @@ public final class HomeServlet extends HttpServlet {
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	
 	//attributes specific to Session
-	public final static String SESSION_USER_DETAILS = "userDetails";
-	public final static String SESSION_USER_CASES = "casesByUser";
-	public final static String SESSION_ERROR_MESSAGE = "error";
+	public final static String REQUEST_USER_DETAILS = "userDetails";
+	public final static String REQUEST_USER_CASES = "casesByUser";
+	public final static String REQUEST_ERROR_MESSAGE = "error";
 	
 	//attributes specific to HomeServlet
 	public final static String HOME_MESSAGE = "homeMessage";
@@ -51,8 +51,8 @@ public final class HomeServlet extends HttpServlet {
 		final String action = request.getParameter("action");
 		
 		//default messages
-		session.setAttribute(HOME_MESSAGE, "");
-		session.setAttribute(HOME_ADD_CATEGORY_MESSAGE, "");
+		request.setAttribute(HOME_MESSAGE, "");
+		request.setAttribute(HOME_ADD_CATEGORY_MESSAGE, "");
 		
 		//handle action if any
 		if (action != null){
@@ -63,7 +63,7 @@ public final class HomeServlet extends HttpServlet {
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
 		
 		//set categories
-		session.setAttribute(HOME_SUMMARY_CAT_TABLE, this.getCategorySummaryTable());
+		request.setAttribute(HOME_SUMMARY_CAT_TABLE, this.getCategorySummaryTable());
 		
 		//set other attributes depending on if the user is logged in or not
 		if (loggedUser == null) {
@@ -73,11 +73,11 @@ public final class HomeServlet extends HttpServlet {
 		} else {
 			// Logged in
 			//set the details of the user
-			session.setAttribute(SESSION_USER_DETAILS, getTableUserDetails(loggedUser));
+			request.setAttribute(REQUEST_USER_DETAILS, getTableUserDetails(loggedUser));
 			//set the table of cases modified by user
-			session.setAttribute(SESSION_USER_CASES, getTableCasesUserModified(loggedUser.getUsername()));
+			request.setAttribute(REQUEST_USER_CASES, getTableCasesUserModified(loggedUser.getUsername()));
 			//set table most active cases by user
-			session.setAttribute(HOME_MOST_ACTIVE_CAT_FOR_USER, this.getMostActiveCategoriesForUser(loggedUser.getUsername()));
+			request.setAttribute(HOME_MOST_ACTIVE_CAT_FOR_USER, this.getMostActiveCategoriesForUser(loggedUser.getUsername()));
 		}
 		
 		// Finally, proceed to the Home.jsp page which will render the profile
@@ -101,24 +101,24 @@ public final class HomeServlet extends HttpServlet {
 				
 				if (user != null) {
 					//if the database return an user, it means the user is registered
-					//then, set session attributes to display all details of the user
+					//then, set session attributes to remember the user between requests
 					session.setAttribute(UserManagement.SHARED_SESSION_USER, user);
 				} else {
-					//if the database return null, then set session to display 'wrong password'
-					session.setAttribute(HOME_MESSAGE, "Sorry, wrong password / username");
+					//if the database return null, then set request to display 'wrong password'
+					request.setAttribute(HOME_MESSAGE, "Sorry, wrong password / username");
 				}
 				
 			} else if(action.trim().equals("logout")){
-				//if user wants to logout, retrieve user from session
+				//if user wants to logout, remove user from session
 				session.setAttribute(UserManagement.SHARED_SESSION_USER, null);
 			} else if (action.trim().equals("categoryCreation") && UserManagement.getCurrentlyLoggedInUser(session) != null){
 				//if the user wants to add a category (and he's logged in!), add a category
-				session.setAttribute(HOME_ADD_CATEGORY_MESSAGE, this.addNewCategory(request));
+				request.setAttribute(HOME_ADD_CATEGORY_MESSAGE, this.addNewCategory(request));
 			} else {
-				session.setAttribute(HOME_MESSAGE, "Action not handled, sorry");
+				request.setAttribute(HOME_MESSAGE, "Action not handled, sorry");
 			}
 		} catch (Exception ex) {
-			session.setAttribute(HOME_MESSAGE, "Sorry, something went wrong. Administrators has been alerted");
+			request.setAttribute(HOME_MESSAGE, "Sorry, something went wrong. Administrators have been alerted");
 			ex.printStackTrace();
 		}
 	}

@@ -41,20 +41,19 @@ public final class SearchServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		final HttpSession session = request.getSession(true);
 		//get the type of the search
 		final String filter = request.getParameter("filter");
 
 		if (filter != null) {
 			//if the user entered something, search the database
 			try{
-				session.setAttribute(SEARCH_RESULTS, this.getResults(filter, request));
+				request.setAttribute(SEARCH_RESULTS, this.getResults(filter, request));
 			} catch ( final Exception ex ){
-				session.setAttribute(SEARCH_RESULTS, "System failed to search, sorry");
+				request.setAttribute(SEARCH_RESULTS, "System failed to search, sorry");
 			}	
 		} else {
 			//if user didn't already asked something
-			session.setAttribute(SEARCH_RESULTS, "No result to display");
+			request.setAttribute(SEARCH_RESULTS, "No result to display");
 		}
 		// Finally, proceed to the Search.jsp page which will render the search results
         this.getServletContext().getRequestDispatcher("/Search.jsp").forward(request, response);	        

@@ -46,7 +46,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 								  "from Person person, Suspected suspected " +
 				                  "where suspected.caseId = ? and suspected.personId = person.personId";
 	//template: convicted persons for a specific case
-	String convictsForCaseQuery = "select person.* " +
+	String convictsForCaseQuery = "select distinct person.* " +
 								  "from Person person, Conviction conviction " +
 								  "where conviction.caseId = ? and conviction.personId = person.personId";
 	//template: all categories for a specific case

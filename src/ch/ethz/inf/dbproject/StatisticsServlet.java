@@ -20,9 +20,8 @@ public final class StatisticsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final DatastoreInterface dbInterface = new DatastoreInterface();
 	
-	public static final String SESSION_CATEGORY_SUMMARY_TABLE = "categorySummary";
-	public static final String STATISTICS_ADD_CATEGORY = "statisticsAddCategory";
-	public static final String STATISTICS_STATS_TABLE = "statisticsStatsTable";
+	public static final String REQUEST_CATEGORY_SUMMARY_TABLE = "categorySummary";
+	public static final String REQUEST_STATISTICS_STATS_TABLE = "statisticsStatsTable";
 	
 	private static final String NUMBER_OF_CONVICTIONS = "Number of Convictions";
 	private static final String NAME_OF_CITY = "Name of City";
@@ -77,14 +76,13 @@ public final class StatisticsServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		final HttpSession session = request.getSession(true);
 		final String filter = request.getParameter("filter");
 		
-		session.setAttribute(SESSION_CATEGORY_SUMMARY_TABLE, getCategorySummaryTable());
+		request.setAttribute(REQUEST_CATEGORY_SUMMARY_TABLE, getCategorySummaryTable());
 		try {
-			session.setAttribute(STATISTICS_STATS_TABLE, this.getStatsTable(filter));
+			request.setAttribute(REQUEST_STATISTICS_STATS_TABLE, this.getStatsTable(filter));
 		} catch (Exception ex){
-			session.setAttribute(STATISTICS_STATS_TABLE, "A problem occured");
+			request.setAttribute(REQUEST_STATISTICS_STATS_TABLE, "A problem occured");
 		}
 		
 		this.getServletContext().getRequestDispatcher("/Statistics.jsp").forward(request, response);

@@ -57,7 +57,7 @@ public final class CaseCreationServlet extends HttpServlet {
 			catSum = new ArrayList<Category>();
 			catSum.add(new Category("Other"));
 		}
-		session.setAttribute(CASECREATION_LIST_CAT, catSum);
+		request.setAttribute(CASECREATION_LIST_CAT, catSum);
 		request.setAttribute(CASECREATION_MESSAGE, "");
 		
 		if (action != null && action.trim().equals("creation") 	&& loggedUser != null) {

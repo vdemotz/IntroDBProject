@@ -7,6 +7,8 @@ Todo:
 * Design Overview (V)
 * Add conviction: link directly to select person from navbar (done)
 * Remove Suspect: (done)
+* Add a way to see the start and end date of a conviction at least somewhere. Either in the caseDetail, at convicted people, or at an own conviction page)
+* order person notes desc date
 
 *CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named ( done )
 

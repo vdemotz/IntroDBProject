@@ -36,7 +36,7 @@ public final class UserCreationServlet extends HttpServlet {
 			IOException {
 
 		final HttpSession session = request.getSession(true);
-		session.setAttribute(USERCREATION_FORM_MESSAGE, "");
+		request.setAttribute(USERCREATION_FORM_MESSAGE, "");
 		final User loggedUser = UserManagement.getCurrentlyLoggedInUser(session);
 
 		final String action = request.getParameter("action");
@@ -54,28 +54,28 @@ public final class UserCreationServlet extends HttpServlet {
 				
 				//check if all entries are non empty and both passwords are equivalents
 				if(username.isEmpty()){
-					session.setAttribute(USERCREATION_FORM_MESSAGE, "Please enter an username");
+					request.setAttribute(USERCREATION_FORM_MESSAGE, "Please enter an username");
 					errorInForm = true;
 				} else if (this.dbInterface.isUsernameAvailable(username)) {
-					session.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, username already in use");
+					request.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, username already in use");
 					errorInForm = true;
 				}
 				if(password1.isEmpty()){
-					session.setAttribute(USERCREATION_FORM_MESSAGE, "Please enter a password");
+					request.setAttribute(USERCREATION_FORM_MESSAGE, "Please enter a password");
 					errorInForm = true;
 				}
 				if(!password1.equals(password2)){
-					session.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, both passwords aren't the same");
+					request.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, both passwords aren't the same");
 					errorInForm = true;
 				}
 				
 				//if all is correct and user name available, create user
 				if(!errorInForm){
 					this.dbInterface.addUser(username, password1, (lastName.isEmpty())?null:lastName, (firstName.isEmpty())?null:firstName);
-					session.setAttribute(USERCREATION_FORM_MESSAGE, "Your account has been created");
+					request.setAttribute(USERCREATION_FORM_MESSAGE, "Your account has been created");
 				}
 			} catch (Exception e){
-				session.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, something went wrong. Web manager has been informed!");
+				request.setAttribute(USERCREATION_FORM_MESSAGE, "Sorry, something went wrong. Web manager has been informed!");
 				e.printStackTrace();
 			}
 		}

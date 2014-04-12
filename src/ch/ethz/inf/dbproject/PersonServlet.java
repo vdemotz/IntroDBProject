@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
 import ch.ethz.inf.dbproject.model.*;
+import ch.ethz.inf.dbproject.util.UserManagement;
 import ch.ethz.inf.dbproject.util.html.BeanTableHelper;
 
 /**
@@ -112,13 +113,13 @@ public final class PersonServlet extends HttpServlet {
 		final String userId = request.getParameter("user_id");
 		final String comment = request.getParameter("comment");
 		final String idString = request.getParameter("id");
+		User user = UserManagement.getCurrentlyLoggedInUser(session);
 		
-		if (action != null){
+		if (action != null && user != null && user.getUsername().equals(userId)){
 			//if the user wants to add a personNote, add it to DB
 			PersonNote pn = dbInterface.addPersonNote(Integer.parseInt(idString), comment, userId);
 			if (pn == null){
-				//it the query return null, it means the person note failed to be added
-				System.err.println("Failed to add PersonNote");
+				throw new ServletException();
 			}
 		}
 		
@@ -128,23 +129,23 @@ public final class PersonServlet extends HttpServlet {
 			
 			
 			if (this.dbInterface.getPersonForId(id) == null){
-				session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, "Person doesn't exist");
+				request.setAttribute(HomeServlet.REQUEST_ERROR_MESSAGE, "Invalid person id");
 			} else {
 				//set the caseId
-				session.setAttribute("personId", id);
+				request.setAttribute("personId", id);
 				//set the PersonDetail (the header) wanted by the user
-				session.setAttribute("personDetailsTable", getTablePersonDetail(id));
+				request.setAttribute("personDetailsTable", getTablePersonDetail(id));
 				//set the Cases where the person is convicted
-				session.setAttribute("casesPersonConvicted", getTableConvicted(id));
+				request.setAttribute("casesPersonConvicted", getTableConvicted(id));
 				//set the Cases where the person is suspected
-				session.setAttribute("casesPersonSuspected", getTableSuspected(id));
+				request.setAttribute("casesPersonSuspected", getTableSuspected(id));
 				//set the Person Notes
-				session.setAttribute("personNotesTable", getTablePersonNotes(id));
+				request.setAttribute("personNotesTable", getTablePersonNotes(id));
 				//if we reaches this point, we are able to display the PersonDetails	
-				session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, null);
+				request.setAttribute(HomeServlet.REQUEST_ERROR_MESSAGE, null);
 			}				
 		} catch (final Exception ex) {
-			session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, "Invalid Person id or Person is unreachable");
+			request.setAttribute(HomeServlet.REQUEST_ERROR_MESSAGE, "Invalid person id format or person is unreachable");
 		}
 		//proceed and display the page
 		this.getServletContext().getRequestDispatcher("/Person.jsp").forward(request, response);

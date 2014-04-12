@@ -10,14 +10,10 @@
 <h2>Person Details</h2>
 
 <%
-if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
+if (request.getAttribute(HomeServlet.REQUEST_ERROR_MESSAGE) == null) {
 %>
 
-	<%=session.getAttribute("personDetailsTable")%>
-	
-	<%
-		// TODO close or reopen the case
-	%>
+	<%=request.getAttribute("personDetailsTable")%>
 	
 	<%
 	if (user != null) {
@@ -39,13 +35,13 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 	%>
 	
 	Cases for which the person is convicted :
-	<%=session.getAttribute("casesPersonConvicted") %>
+	<%=request.getAttribute("casesPersonConvicted") %>
 	
 	Cases for which the person is suspected :
-	<%=session.getAttribute("casesPersonSuspected") %>
+	<%=request.getAttribute("casesPersonSuspected") %>
 	
 	Person Notes
-	<%=session.getAttribute("personNotesTable") %>
+	<%=request.getAttribute("personNotesTable") %>
 
 <%
 } else {

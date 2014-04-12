@@ -12,14 +12,13 @@ if (user != null) {
 %>
 	Welcome back <%=user.getFirstName()%>!
 	
-	<%= session.getAttribute(HomeServlet.SESSION_USER_DETAILS) %>
+	<%= request.getAttribute(HomeServlet.REQUEST_USER_DETAILS) %>
 	
 	You can <a href="CaseCreation">create a new case</a> or <a href="PersonCreation">add a new person</a>.
 	<br><br>
 	The cases you modified / created :
 	
-	
-	<%= session.getAttribute(HomeServlet.SESSION_USER_CASES) %>
+	<%= request.getAttribute(HomeServlet.REQUEST_USER_CASES) %>
 	
 	<form method="get" action="Home">
 		<div>
@@ -33,7 +32,7 @@ if (user != null) {
 	// No user logged in.%>
 	Welcome!
 	
-	<%= session.getAttribute(HomeServlet.HOME_MESSAGE) %>
+	<%= request.getAttribute(HomeServlet.HOME_MESSAGE) %>
 	
 	<form action="Home" method="get">
 	<input type="hidden" name="action" value="login" />
@@ -60,16 +59,16 @@ if (user != null) {
 	
 	The most active users : 
 	
-	<%= session.getAttribute(HomeServlet.HOME_MOST_ACTIVE_USER) %>
+	<%= request.getAttribute(HomeServlet.HOME_MOST_ACTIVE_USER) %>
 <%
 }
 %>
 
-<%= session.getAttribute(HomeServlet.HOME_SUMMARY_CAT_TABLE) %>
+<%= request.getAttribute(HomeServlet.HOME_SUMMARY_CAT_TABLE) %>
 
 <%
 if (user != null) {%>
-	<%= session.getAttribute(HomeServlet.HOME_ADD_CATEGORY_MESSAGE) %>
+	<%= request.getAttribute(HomeServlet.HOME_ADD_CATEGORY_MESSAGE) %>
 	
 	<form method="get" action="Home">
 	<div>
@@ -80,7 +79,7 @@ if (user != null) {%>
 	</div>
 	</form>
 	
-	<%= session.getAttribute(HomeServlet.HOME_MOST_ACTIVE_CAT_FOR_USER) %>
+	<%= request.getAttribute(HomeServlet.HOME_MOST_ACTIVE_CAT_FOR_USER) %>
 <% } %>
 
 <br /><br />

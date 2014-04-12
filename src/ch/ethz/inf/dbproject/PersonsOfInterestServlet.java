@@ -53,14 +53,13 @@ public final class PersonsOfInterestServlet extends HttpServlet {
 			final HttpServletResponse response) throws ServletException,
 			IOException {
 		
-		final HttpSession session = request.getSession(true);
 		//get if the user want suspected or convicted persons
 		final String filter = request.getParameter("filter");
 		if (filter != null){
 			//set the attribute to the session if the filter is not null
-			session.setAttribute("resultsPersons", this.getTablePersons(filter));
+			request.setAttribute("resultsPersons", this.getTablePersons(filter));
 		} else {
-			session.setAttribute("resultsPersons", "Press a filter");
+			request.setAttribute("resultsPersons", "Press a filter");
 		}
 		//proceed and display the page
 		this.getServletContext().getRequestDispatcher("/PersonsOfInterest.jsp").forward(request, response);

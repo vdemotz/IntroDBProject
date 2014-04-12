@@ -11,17 +11,17 @@
 <%
 	final User user = (User) session.getAttribute(UserManagement.SHARED_SESSION_USER);
 %>
-<% final CaseDetail caseDetail = (CaseDetail) session.getAttribute("caseDetail"); %>
+<% final CaseDetail caseDetail = (CaseDetail) request.getAttribute(CaseServlet.REQUEST_CASE_DETAIL_OBJECT); %>
 
 
 <h2>Case Details</h2>
 
 
 <%
-if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
+if (session.getAttribute(HomeServlet.REQUEST_ERROR_MESSAGE) == null) {
 %>
 
-	<%=session.getAttribute(CaseServlet.SESSION_CASE_DETAIL_TABLE)%>
+	<%=request.getAttribute(CaseServlet.REQUEST_CASE_DETAIL_TABLE)%>
 	
 	<%
 	if (user != null) {
@@ -47,7 +47,7 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 		}
 	%> 
 	
-	<%=session.getAttribute(CaseServlet.SESSION_CASE_TABLE)%>
+	<%=request.getAttribute(CaseServlet.REQUEST_CATEGORIES_TABLE)%>
 	
 	<%
 	if (user != null && caseDetail.getIsOpen()) {
@@ -57,7 +57,7 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 		
 			Category (select categories you want to change)<br>
 			<select multiple name = "categories">
-				<% List<Category> catList = (List<Category>) session.getAttribute(CaseServlet.SESSION_CASE_CATEGORIES); 
+				<% List<Category> catList = (List<Category>) request.getAttribute(CaseServlet.REQUEST_CASE_CATEGORIES); 
 				for(int i = 0; i < catList.size(); i++) { %>
   				<option value='<%=catList.get(i).getName()%>'><%=catList.get(i).getName() %></option>
   				<%} %>
@@ -71,7 +71,7 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 	}
 	%>
 	
-	<%=session.getAttribute(CaseServlet.SESSION_SUSPECT_TABLE)%>
+	<%=request.getAttribute(CaseServlet.REQUEST_SUSPECT_TABLE)%>
 	
 	
 	<%
@@ -90,7 +90,7 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 		}
 	%> 
 	
-	<%=session.getAttribute(CaseServlet.SESSION_CONVICT_TABLE)%>
+	<%=request.getAttribute(CaseServlet.REQUEST_CONVICT_TABLE)%>
 	
 	<br><br>
 	
@@ -114,7 +114,7 @@ if (session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE) == null) {
 	
 	<br><br>
 	
-	<%=session.getAttribute(CaseServlet.SESSION_CASE_NOTE_TABLE)%>
+	<%=request.getAttribute(CaseServlet.REQUEST_CASE_NOTE_TABLE)%>
 
 <%
 } else {

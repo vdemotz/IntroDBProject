@@ -6,7 +6,7 @@
 
 <br>Note about the search :
 <br>
-<br>The date format is : yyyy-mm-dd
+<br>The date format is : yyyy-mm-dd or yyyy-mm-dd hh:mm:ss
 <br>You can search between ranges if you enter a valid date in the second field.
 <br>If you don't enter anything in the second field, you can enter a prefix of the date (like yyyy-mm or yyyy)
 
@@ -77,7 +77,7 @@
 </form>
 
 <hr/>
-<%= session.getAttribute(SearchServlet.SEARCH_RESULTS) %>
+<%= request.getAttribute(SearchServlet.SEARCH_RESULTS) %>
 
 <hr/>
 

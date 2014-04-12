@@ -18,7 +18,7 @@ But, you're already logged in mister <%= user.getLastName() %>
 } else {
 %>
 
-	<%=session.getAttribute(UserCreationServlet.USERCREATION_FORM_MESSAGE)%>
+	<%=request.getAttribute(UserCreationServlet.USERCREATION_FORM_MESSAGE)%>
 	<form action="UserCreation" method="get">
 	<input type="hidden" name="action" value="creation" />
 	<table>

@@ -7,7 +7,7 @@
 
 <h3> Cases By Category</h3>
 
-<%= session.getAttribute(StatisticsServlet.SESSION_CATEGORY_SUMMARY_TABLE) %>
+<%= request.getAttribute(StatisticsServlet.REQUEST_CATEGORY_SUMMARY_TABLE) %>
 
 <br><br>
 
@@ -55,6 +55,6 @@
 
 <br>
 
-<%= session.getAttribute(StatisticsServlet.STATISTICS_STATS_TABLE) %>
+<%= request.getAttribute(StatisticsServlet.REQUEST_STATISTICS_STATS_TABLE) %>
 
 <%@ include file="Footer.jsp" %>

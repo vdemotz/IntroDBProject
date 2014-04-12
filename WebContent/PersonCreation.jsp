@@ -6,7 +6,7 @@
 
 <%
 final User user = (User) session.getAttribute(UserManagement.SHARED_SESSION_USER);
-final String error = (String) session.getAttribute(PersonCreationServlet.PERSON_CREATION_MESSAGE);
+final String error = (String) request.getAttribute(PersonCreationServlet.PERSON_CREATION_MESSAGE);
 %>
 
 <% 
@@ -18,7 +18,7 @@ if (user == null) {
 <%
 } else {
 %>
-<%= session.getAttribute(PersonCreationServlet.PERSON_CREATION_MESSAGE) %>
+<%= request.getAttribute(PersonCreationServlet.PERSON_CREATION_MESSAGE) %>
 
 	<form action="PersonCreation" method="get">
 	<input type="hidden" name="action" value="creation" />

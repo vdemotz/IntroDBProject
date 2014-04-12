@@ -5,9 +5,8 @@
 <tr>
 <td>
 <h3>
-<%= session.getAttribute(HomeServlet.SESSION_ERROR_MESSAGE)%>
+<%= request.getAttribute(HomeServlet.REQUEST_ERROR_MESSAGE)%>
 </h3>
 </td>
 </tr>
 </table>
-<%session.setAttribute(HomeServlet.SESSION_ERROR_MESSAGE, null);%>

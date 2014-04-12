@@ -5,6 +5,6 @@
 
 Create <a href="CaseCreation">new case</a>.
 
-<%= session.getAttribute("cases") %>
+<%= request.getAttribute("cases") %>
 
 <%@ include file="Footer.jsp" %>

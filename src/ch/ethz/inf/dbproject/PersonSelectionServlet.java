@@ -35,7 +35,6 @@ public final class PersonSelectionServlet extends HttpServlet {
 	
 	protected final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		
-		final HttpSession session = request.getSession(true);
 		final String action = request.getParameter("action");
 		
 		if (INTERNAL_SEARCH_ACTION.equals(action)) {
@@ -66,7 +65,7 @@ public final class PersonSelectionServlet extends HttpServlet {
 				}
 			}
 			
-			session.setAttribute(INTERNAL_SEARCH_RESULT_TABLE, resultTable);
+			request.setAttribute(INTERNAL_SEARCH_RESULT_TABLE, resultTable);
 			
 			
 		}

@@ -5,12 +5,7 @@
 <%@ include file="Header.jsp" %>
 
 <h2>Persons of Interest</h2>
-<%
-	final User user = (User) session.getAttribute(UserManagement.SHARED_SESSION_USER);
-if (user != null) {
-%>
-	Do you want to add a person ? Feel free to do it <a href="PersonCreation">here</a>.
-<% } %>
+
 <form method="get" action="PersonsOfInterest">
 <div>
 	<input type="hidden" name="filter" value="suspected" />
@@ -25,7 +20,7 @@ if (user != null) {
 </form>
 
 	
-<%= session.getAttribute("resultsPersons") %>
+<%= request.getAttribute("resultsPersons") %>
 
 
 <%@ include file="Footer.jsp" %>

@@ -49,10 +49,10 @@ public final class PersonCreationServlet extends HttpServlet {
 
 		if (loggedUser == null) {
 			// Not logged in!
-			session.setAttribute(PERSON_FORM_LN, false);
-			session.setAttribute(PERSON_FORM_FN, false);
+			request.setAttribute(PERSON_FORM_LN, false);
+			request.setAttribute(PERSON_FORM_FN, false);
 		} else {
-			session.setAttribute(PERSON_CREATION_MESSAGE, "");
+			request.setAttribute(PERSON_CREATION_MESSAGE, "");
 		}
 
 		final String action = request.getParameter("action");
@@ -81,14 +81,14 @@ public final class PersonCreationServlet extends HttpServlet {
 							trySetPersonSuspectedOnCaseWithId(person, caseId);
 						}
 						addCreationNoteToPerson(person, loggedUser);
-						session.setAttribute(PERSON_CREATION_MESSAGE, "The person has been created with : " +
+						request.setAttribute(PERSON_CREATION_MESSAGE, "The person has been created with : " +
 								"first name : "+firstName+
 								" and last name : "+lastName);
 					} else {
 						//TODO
 					}
 				} else {
-					session.setAttribute(PERSON_CREATION_MESSAGE, "Error in one of the entries, please enter " +
+					request.setAttribute(PERSON_CREATION_MESSAGE, "Error in one of the entries, please enter " +
 							"a valid first name, last name and birthdate");
 				}
 			} catch (final Exception ex){
