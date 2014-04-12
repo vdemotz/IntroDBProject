@@ -99,7 +99,7 @@ public final class CaseServlet extends HttpServlet {
 		List<CaseNote> cases = this.dbInterface.getCaseNotesForCase(caseId);
 		tableComment.addObjects(cases);
 		
-		tableComment.addBeanColumn("Case Note ID", "caseNoteId");
+		//tableComment.addBeanColumn("Case Note ID", "caseNoteId");
 		tableComment.addBeanColumn("Comment", "text");
 		tableComment.addBeanColumn("Date", "dateTimeFormated");
 		tableComment.addBeanColumn("Author", "authorUsername");

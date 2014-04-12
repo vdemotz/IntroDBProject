@@ -23,7 +23,7 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 	private static final String getCasesForWhichPersonIsSuspectedString = "select cd.* from CaseDetail cd, Suspected s "+
 			"where s.personId = ? and cd.caseId = s.caseId";
 	//get person note for particular person
-	private static final String getPersonNotesForPersonString = "select * from PersonNote where personId = ?";
+	private static final String getPersonNotesForPersonString = "select * from PersonNote where personId = ? order by date desc";
 	//get persons for a particular first name or last name
 	private static final String getPersonsForNameString = "select * from Person where firstName like ? and lastName like ?";
 	//persons for particular first name
