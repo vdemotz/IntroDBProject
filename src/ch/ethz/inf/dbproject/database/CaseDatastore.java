@@ -18,74 +18,58 @@ import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 
 
-public class CaseDatastore implements CaseDatastoreInterface {
-
-	private Connection sqlConnection;
+public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 
 	//template: particular case
-	String caseForIdQuery = "select * from CaseDetail where caseId = ?";
+	private static final String caseForIdQuery = "select * from CaseDetail where caseId = ?";
 	//template: all cases
-	String allCasesQuery = "select * from CaseDetail";
+	private static final String allCasesQuery = "select * from CaseDetail";
 	//template: all open or closed cases
-	String openCasesQuery = "select * from CaseDetail where isOpen = ? order by date desc";
+	private static final String openCasesQuery = "select * from CaseDetail where isOpen = ? order by date desc";
 	//template: all notes for a specific case
-	String caseNotesForCaseQuery = "select * from CaseNote where caseId = ? order by caseNoteId desc";
+	private static final String caseNotesForCaseQuery = "select * from CaseNote where caseId = ? order by caseNoteId desc";
 	//template: all recent cases
-	String recentCasesQuery = "select * from CaseDetail order by date desc";
+	private static final String recentCasesQuery = "select * from CaseDetail order by date desc";
 	//template: oldest unresolved cases
-	String oldestUnresolvedCasesQuery = "select * from CaseDetail where isOpen = true order by date asc";
+	private static final String oldestUnresolvedCasesQuery = "select * from CaseDetail where isOpen = true order by date asc";
 	//template: cases for a specific category
-	String casesForCategoryQuery = "select CaseDetail.* from CaseDetail caseDetail, CategoryForCase categoryForCase where categoryName = ? and caseDetail.caseId = categoryForCase.caseId";
+	private static final String casesForCategoryQuery = "select CaseDetail.* from CaseDetail caseDetail, CategoryForCase categoryForCase where categoryName = ? and caseDetail.caseId = categoryForCase.caseId";
 	//template: cases for a specific date
-	String casesForDateQuery = "select * from CaseDetail where Date(date) = ?";
+	private static final String casesForDateQuery = "select * from CaseDetail where Date(date) = ?";
 	//template: cases for an approximate date
-	String casesForDateLikeQuery = "select * from CaseDetail where date like ?";
+	private static final String casesForDateLikeQuery = "select * from CaseDetail where date like ?";
 	//template: cases for a date in rage
-	String casesForDatesQuery = "select * from CaseDetail where date between ? and ?";
+	private static final String casesForDatesQuery = "select * from CaseDetail where date between ? and ?";
 	//template: suspected persons for a specific case
-	String suspectsForCaseQuery = "select person.* " +
+	private static final String suspectsForCaseQuery = "select person.* " +
 								  "from Person person, Suspected suspected " +
 				                  "where suspected.caseId = ? and suspected.personId = person.personId";
 	//template: convicted persons for a specific case
-	String convictsForCaseQuery = "select *" +
+	private static final String convictsForCaseQuery = "select *" +
 								  "from Person person, Conviction conviction " +
 								  "where conviction.caseId = ? and conviction.personId = person.personId";
-	//template: all categories for a specific case
-	String categoriesForCaseQuery = "select distinct Category.* " +
-									"from CaseDetail caseDetail, CategoryForCase categoryForCase, Category category " +
-								    "where caseDetail.caseId = ? and categoryForCase.caseId = caseDetail.caseId and categoryForCase.categoryName = category.Name";
 	//template: category summary
-	String categorySummaryQuery = "select categoryName, count(*) as numberOfCases from CategoryForCase group by categoryName order by numberOfCases desc";
+	private static final String categorySummaryQuery = "select categoryName, count(*) as numberOfCases from CategoryForCase group by categoryName order by numberOfCases desc";
 	//template: get the next id for the case note of a particular case
-	String nextCaseNoteIdForCaseQuery = "select coalesce (max(caseNoteId)+1, 1) from CaseNote where caseId=?";//if there is no caseNote yet, max returns null, coalesce selects the first non-null argument
+	private static final String nextCaseNoteIdForCaseQuery = "select coalesce (max(caseNoteId)+1, 1) from CaseNote where caseId=?";//if there is no caseNote yet, max returns null, coalesce selects the first non-null argument
 	//template add a new note
-	String insertIntoCaseNoteQuery = "insert into CaseNote " +
+	private static final String insertIntoCaseNoteQuery = "insert into CaseNote " +
 								"values (?, " +//caseId
 								"?, " +//caseNoteId
 								"?, " +//text
 								"?, " +//date
 								"?)";//authorUsername
 	//template set case is open
-	String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
+	private static final String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
 	//template add Suspec
-	String addSuspectQuery = "insert into Suspected values (?, ?)";
+	private static final String addSuspectQuery = "insert into Suspected values (?, ?)";
 	//template add new case
-	String insertIntoCaseDetailQuery = "insert into CaseDetail (caseId, title, street, city, zipCode, isOpen, date, description, authorName) " +
+	private static final String insertIntoCaseDetailQuery = "insert into CaseDetail (caseId, title, street, city, zipCode, isOpen, date, description, authorName) " +
 							"values(?, ?, ?, ?, ? ,? ,? ,? ,?)";
 	//template get the next id for the case detail
-	String nextCaseDetailIdQuery = "select max(caseId) from CaseDetail";
-	//template add a new category for a case
-	String insertIntoCategoryForCaseQuery = "insert into CategoryForCase(caseId, categoryName) values(?, ?)";
-	//template add a new category
-	String insertIntoCategoryQuery = "insert into Category(name) values(?)";
-	//template get a category for a name
-	String getCategoryForNameQuery = "select * from Category where name = ?";
-	//template get all categories
-	String getAllCategoriesQuery = "select * from Category";
-	//template remove a categoryForCase for a specific case and category
-	String deleteCategoryForCaseIdAndCategoryQuery = "delete from CategoryForCase where caseId = ? and categoryName = ?";
+	private static final String nextCaseDetailIdQuery = "select max(caseId) from CaseDetail";
 	//template remove a suspect from a case
-	String deleteSuspectFromCaseQuery = "delete from Suspected where caseId=? and personId=?";
+	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where caseId=? and personId=?";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -97,7 +81,6 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement casesForDateStatement;
 	PreparedStatement suspectsForCaseStatement;
 	PreparedStatement convictsForCaseStatement;
-	PreparedStatement categoriesForCaseStatement;
 	PreparedStatement categorySummaryStatement;
 	PreparedStatement casesForDateLikeStatement;
 	PreparedStatement casesForDatesStatement;
@@ -107,23 +90,10 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	PreparedStatement addSuspectStatement;
 	PreparedStatement insertIntoCaseDetailStatement;
 	PreparedStatement nextCaseDetailIdStatement;
-	PreparedStatement insertIntoCategoryForCaseStatement;
-	PreparedStatement insertIntoCategoryStatement;
-	PreparedStatement getCategoryForNameStatement;
-	PreparedStatement getAllCategoriesStatement;
-	PreparedStatement deleteCategoryForCaseIdAndCategoryStatement;
 	PreparedStatement deleteSuspectFromCaseStatement;
 	
-	public CaseDatastore() {
-		this.sqlConnection = MySQLConnection.getInstance().getConnection();
-		try {
-			prepareStatements();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void prepareStatements() throws SQLException
+	@Override
+	protected void prepareStatements() throws SQLException
 	{
 		caseForIdStatement = sqlConnection.prepareStatement(caseForIdQuery);
 		allCasesStatement = sqlConnection.prepareStatement(allCasesQuery);
@@ -135,43 +105,18 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		casesForDateStatement = sqlConnection.prepareStatement(casesForDateQuery);
 		suspectsForCaseStatement = sqlConnection.prepareStatement(suspectsForCaseQuery);
 		convictsForCaseStatement = sqlConnection.prepareStatement(convictsForCaseQuery);
-		categoriesForCaseStatement = sqlConnection.prepareStatement(categoriesForCaseQuery);
 		categorySummaryStatement = sqlConnection.prepareStatement(categorySummaryQuery);
 		casesForDateLikeStatement = sqlConnection.prepareStatement(casesForDateLikeQuery);
 		casesForDatesStatement = sqlConnection.prepareStatement(casesForDatesQuery);
+		
 		nextCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(nextCaseNoteIdForCaseQuery);
+		nextCaseDetailIdStatement = sqlConnection.prepareStatement(nextCaseDetailIdQuery);
+		
 		insertIntoCaseNoteStatement = sqlConnection.prepareStatement(insertIntoCaseNoteQuery);
 		updateCaseIsOpenStatement = sqlConnection.prepareStatement(updateCaseIsOpenQuery);
 		addSuspectStatement =  sqlConnection.prepareStatement(addSuspectQuery);
 		insertIntoCaseDetailStatement = sqlConnection.prepareStatement(insertIntoCaseDetailQuery);
-		nextCaseDetailIdStatement = sqlConnection.prepareStatement(nextCaseDetailIdQuery);
-		insertIntoCategoryForCaseStatement = sqlConnection.prepareStatement(insertIntoCategoryForCaseQuery);
-		insertIntoCategoryStatement = sqlConnection.prepareStatement(insertIntoCategoryQuery);
-		getCategoryForNameStatement = sqlConnection.prepareStatement(getCategoryForNameQuery);
-		getAllCategoriesStatement = sqlConnection.prepareStatement(getAllCategoriesQuery);
-		deleteCategoryForCaseIdAndCategoryStatement = sqlConnection.prepareStatement(deleteCategoryForCaseIdAndCategoryQuery);
 		deleteSuspectFromCaseStatement = sqlConnection.prepareStatement(deleteSuspectFromCaseQuery);
-	}
-	
-	////
-	//GENERIC STATEMENT EXECUTION
-	////
-	
-	/**
-	 * Executes a statement, and tries to instantiate a list of ModelObjects of the specified modelClass using the resultSet from the statement
-	 * If the execution of the statement or instantiation raises an SQLException, null is returned.
-	 * @param statement the configured statement to execute and get the results of
-	 * @return a list of modelObjects representing the result of the execution of the statement
-	 */
-	private <T extends ModelObject> List<T> getResults(Class<T> modelClass, PreparedStatement statement)
-	{
-		 try {
-			statement.execute();
-			return ModelObject.getAllModelObjectsWithClassFromResultSet(modelClass, statement.getResultSet());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	/////
@@ -296,41 +241,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 		setCaseId(convictsForCaseStatement, caseId);
 		return getResults(ConvictionJoinPerson.class, convictsForCaseStatement);
 	}
-	
-	/////
-	//Result of type List<Category>
-	/////
-	
-	@Override
-	public List<Category> getCategoriesForCase(int caseId) {
-		setCaseId(categoriesForCaseStatement, caseId);
-		return getResults(Category.class, categoriesForCaseStatement);
-	}
-	
-	@Override
-	public List<Category> getAllCategories() {
-		return getResults(Category.class, getAllCategoriesStatement);
-	}
-	
-	/////
-	//Result of type Category
-	/////
-	
-	@Override
-	public Category getCategoryForName(String name) {
-		try {
-			getCategoryForNameStatement.setString(1, name);
-			ResultSet rs = getCategoryForNameStatement.executeQuery();
-			if (rs.first()){
-				return new Category(rs);
-			} else {
-				return null;
-			}
-		} catch (SQLException e){
-			e.printStackTrace();
-			return null;
-		}
-	}
+
 	
 	////
 	//Result of type List<CategorySummary>
@@ -399,31 +310,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	////
 	//MODIFY
 	////
-	
-	@Override
-	public boolean insertIntoCategory(String name){
-		try {
-			insertIntoCategoryStatement.setString(1, name);
-			insertIntoCategoryStatement.execute();
-			return insertIntoCategoryStatement.getUpdateCount() > 0;
-		} catch (SQLException e) {
-			return false;
-		}
-	}
-	
-	@Override
-	public boolean insertIntoCategoryForCase(String name, int caseId){
-		try {
-			insertIntoCategoryForCaseStatement.setInt(1, caseId);
-			insertIntoCategoryForCaseStatement.setString(2, name);
-			insertIntoCategoryForCaseStatement.execute();
-			return insertIntoCategoryForCaseStatement.getUpdateCount() > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
+
 	@Override
 	public CaseNote insertIntoCaseNote(int caseId, String text, String authorUsername) {
 		synchronized (this.getClass()) {//TODO: it would be nice if this could be nested into the insert query (then no lock would be necessary here)
@@ -496,19 +383,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 			return false;
 		}
 	}
-	
-	@Override
-	public boolean deleteCategoryForCaseIdAndCategory(int caseId, String categoryName) {
-		try {
-			deleteCategoryForCaseIdAndCategoryStatement.setInt(1, caseId);
-			deleteCategoryForCaseIdAndCategoryStatement.setString(2, categoryName);
-			deleteCategoryForCaseIdAndCategoryStatement.execute();
-			return deleteCategoryForCaseIdAndCategoryStatement.getUpdateCount() > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
+
 
 	@Override
 	public boolean deleteSuspectFromCase(int caseId, int personId) {

@@ -20,13 +20,14 @@ import ch.ethz.inf.dbproject.model.User;
  * and the database.
  */
 
-public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface, ConvictionDatastoreInterface, StatisticsDatastoreInterface {
+public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface, ConvictionDatastoreInterface, StatisticsDatastoreInterface, CategoryDatastoreInterface {
 
 	private CaseDatastoreInterface caseDatastore = new CaseDatastore();
 	private PersonDatastoreInterface personDatastore = new PersonDatastore();
 	private UserDatastoreInterface userDatastore = new UserDatastore();
 	private ConvictionDatastoreInterface convictionDatastore = new ConvictionDatastore();
 	private StatisticsDatastoreInterface statisticsDatastore = new StatisticsDatastore();
+	private CategoryDatastoreInterface categoryDatastore = new CategoryDatastore();
 	
 	////
 	//USER
@@ -212,11 +213,6 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 
 	@Override
-	public List<Category> getCategoriesForCase(int caseId) {
-		return caseDatastore.getCategoriesForCase(caseId);
-	}
-
-	@Override
 	public List<CategorySummary> getCategorySummary() {
 		return caseDatastore.getCategorySummary();
 	}
@@ -246,38 +242,43 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 		return caseDatastore.deleteSuspectFromCase(caseId, personId);
 	}
 	
+	@Override
+	public List<CaseDetail> getCasesForDates(Date startDate, Date endDate) {
+		return caseDatastore.getCasesForDates(startDate, endDate);
+	}
+	
 	////
 	//CATEGORY
 	////
 	
 	@Override
+	public List<Category> getCategoriesForCase(int caseId) {
+		return categoryDatastore.getCategoriesForCase(caseId);
+	}
+	
+	@Override
 	public boolean insertIntoCategory(String name) {
-		return caseDatastore.insertIntoCategory(name);
+		return categoryDatastore.insertIntoCategory(name);
 	}
 
 	@Override
 	public boolean insertIntoCategoryForCase(String name, int caseId) {
-		return caseDatastore.insertIntoCategoryForCase(name, caseId);
+		return categoryDatastore.insertIntoCategoryForCase(name, caseId);
 	}
 
 	@Override
 	public Category getCategoryForName(String name) {
-		return caseDatastore.getCategoryForName(name);
+		return categoryDatastore.getCategoryForName(name);
 	}
 	
 	@Override
 	public List<Category> getAllCategories() {
-		return caseDatastore.getAllCategories();
+		return categoryDatastore.getAllCategories();
 	}
 	
 	@Override
 	public boolean deleteCategoryForCaseIdAndCategory(int caseId, String categoryName) {
-		return caseDatastore.deleteCategoryForCaseIdAndCategory(caseId, categoryName);
-	}
-	
-	@Override
-	public List<CaseDetail> getCasesForDates(Date startDate, Date endDate) {
-		return caseDatastore.getCasesForDates(startDate, endDate);
+		return categoryDatastore.deleteCategoryForCaseIdAndCategory(caseId, categoryName);
 	}
 	
 	/////

@@ -13,35 +13,27 @@ import java.util.List;
 
 import ch.ethz.inf.dbproject.model.Conviction;
 
-public class ConvictionDatastore implements ConvictionDatastoreInterface {
+public class ConvictionDatastore extends Datastore implements ConvictionDatastoreInterface {
 
-	private Connection sqlConnection;
-
-	private final String insertIntoConvictionQuery = "insert into Conviction values (?, ?, ?, ?, ?)";
-	private final String nextConvictionIdQuery = "select coalesce (max(convictionId)+1, 1) from Conviction";
-	private final String getConvictionForIdQuery = "select * from Conviction where convictionId=?";
+	private static final String insertIntoConvictionQuery = "insert into Conviction values (?, ?, ?, ?, ?)";
+	private static final String nextConvictionIdQuery = "select coalesce (max(convictionId)+1, 1) from Conviction";
+	private static final String getConvictionForIdQuery = "select * from Conviction where convictionId=?";
 	
 	private PreparedStatement insertIntoConvictionStatement;
 	private PreparedStatement nextConvictionIdStatement;
 	private PreparedStatement getConvictionForIdStatement;
 	
-	public ConvictionDatastore() {
-		this.sqlConnection = MySQLConnection.getInstance().getConnection();
-		try {
-			prepareStatements();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void prepareStatements() throws SQLException
+	@Override
+	protected void prepareStatements() throws SQLException
 	{
 		insertIntoConvictionStatement = sqlConnection.prepareStatement(insertIntoConvictionQuery);
 		nextConvictionIdStatement = sqlConnection.prepareStatement(nextConvictionIdQuery);
 		getConvictionForIdStatement = sqlConnection.prepareStatement(getConvictionForIdQuery);
 	}
 	
-	
+	////
+	//QUERY
+	////
 	
 	public Conviction getConvictionForId(int convictionId)
 	{
@@ -56,14 +48,6 @@ public class ConvictionDatastore implements ConvictionDatastoreInterface {
 		return null;
 	}
 	
-	private int getNextConvictionId() throws SQLException
-	{
-		nextConvictionIdStatement.execute();
-		nextConvictionIdStatement.getResultSet().next();
-		return nextConvictionIdStatement.getResultSet().getInt(1);
-	}
-	
-
 	@Override
 	public Conviction insertIntoConviction(int personId, Integer caseId, Date startDate, Date endDate) {
 		synchronized(this.getClass()) {//prevent race on next conviction id
@@ -90,6 +74,17 @@ public class ConvictionDatastore implements ConvictionDatastoreInterface {
 			}
 			return null;
 		}
+	}
+	
+	////
+	//HELPERS
+	////
+	
+	private int getNextConvictionId() throws SQLException
+	{
+		nextConvictionIdStatement.execute();
+		nextConvictionIdStatement.getResultSet().next();
+		return nextConvictionIdStatement.getResultSet().getInt(1);
 	}
 
 }

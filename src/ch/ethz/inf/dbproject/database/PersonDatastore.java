@@ -11,70 +11,65 @@ import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 
-public class PersonDatastore implements PersonDatastoreInterface {
+public class PersonDatastore extends Datastore implements PersonDatastoreInterface {
 
-	////
-	//Connection
-	////
-	private Connection sqlConnection;
-	
 	////
 	// String for Prepared Statement
 	////
 	//particular cases for convicted person
-	private String getCasesForWhichPersonIsConvictedString = "select cd.* from CaseDetail cd, Conviction c "+
+	private static final String getCasesForWhichPersonIsConvictedString = "select cd.* from CaseDetail cd, Conviction c "+
 			"where c.personId = ? and cd.caseId = c.caseId";
 	//particular cases for suspected person
-	private String getCasesForWhichPersonIsSuspectedString = "select cd.* from CaseDetail cd, Suspected s "+
+	private static final String getCasesForWhichPersonIsSuspectedString = "select cd.* from CaseDetail cd, Suspected s "+
 			"where s.personId = ? and cd.caseId = s.caseId";
 	//get person note for particular person
-	private String getPersonNotesForPersonString = "select * from PersonNote where personId = ?";
+	private static final String getPersonNotesForPersonString = "select * from PersonNote where personId = ?";
 	//get persons for a particular first name or last name
-	private String getPersonsForNameString = "select * from Person where firstName like ? and lastName like ?";
+	private static final String getPersonsForNameString = "select * from Person where firstName like ? and lastName like ?";
 	//persons for particular first name
-	private String getPersonsForFirstNameString = "select * from Person where firstName like ?";
+	private static final String getPersonsForFirstNameString = "select * from Person where firstName like ?";
 	//persons for particular first name
-	private String getPersonsForLastNameString = "select * from Person where lastName like ?";
+	private static final String getPersonsForLastNameString = "select * from Person where lastName like ?";
 	//persons for particular conviction type
-	private String getPersonsForConvictionTypeString = "select person.* " +
+	private static final String getPersonsForConvictionTypeString = "select person.* " +
 													   "from Conviction conviction, Person person, CategoryForCase categoryForCase "+
 													   "where conviction.personId = person.personId "+
 													   "and conviction.caseId = categoryForCase.caseId " +
 													   "and categoryForCase.categoryName = ? " +
 													   "order by lastName, firstName";
 	//persons for particular date of conviction
-	private String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Person person "+
+	private static final String getPersonsForConvictionDateString = "select person.* from Conviction conviction, Person person "+
 			"where conviction.startDate like ? and "+
 			"conviction.personId = person.personId order by lastName, firstName";
 	//persons for particular dates range of conviction
-	private String getPersonsForConvictionDatesString = "select person.* from Conviction conviction, Person person "+
+	private static final String getPersonsForConvictionDatesString = "select person.* from Conviction conviction, Person person "+
 			"where conviction.startDate between ? and ? and "+
 			"conviction.personId = person.personId order by lastName, firstName";
 	//person for particular birthdates range
-	private String getPersonsForBirthdatesLikeString = "select * from person where birthdate between ? and ?";
+	private static final String getPersonsForBirthdatesLikeString = "select * from person where birthdate between ? and ?";
 	//person for particular birthdate range
-	private String getPersonsForBirthdateString = "select * from person where birthdate like ?";
+	private static final String getPersonsForBirthdateString = "select * from person where birthdate like ?";
 	//particular person for an Id
-	private String getPersonForIdString = "select * from Person where personId =?";
+	private static final String getPersonForIdString = "select * from Person where personId =?";
 	//all convicted persons
-	private String getAllConvictedPersonsString = "select distinct p.* from Person p, Conviction c where p.personId = c.personId";
+	private static final String getAllConvictedPersonsString = "select distinct p.* from Person p, Conviction c where p.personId = c.personId";
 	//all suspected persons
-	private String getAllSuspectedPersonsString = "select distinct p.* from Person p, Suspected s where p.personId = s.personId";
+	private static final String getAllSuspectedPersonsString = "select distinct p.* from Person p, Suspected s where p.personId = s.personId";
 	//all persons
-	private String getAllPersonsString = "select * from Person order by lastName desc, firstName desc";
+	private static final String getAllPersonsString = "select * from Person order by lastName desc, firstName desc";
 	
 	//add a personNote
-	private String addPersonNoteString = "insert into PersonNote(PersonId, PersonNoteId, text, date, authorUsername) values(?, ?, ?, ?, ?)";
+	private static final String addPersonNoteString = "insert into PersonNote(PersonId, PersonNoteId, text, date, authorUsername) values(?, ?, ?, ?, ?)";
 	//get the max Id for person notes for a particular person
-	private String getMaxPersonNoteIdForPersonIdString = "select max(personNoteId) from PersonNote where personId = ?";
+	private static final String getMaxPersonNoteIdForPersonIdString = "select max(personNoteId) from PersonNote where personId = ?";
 	
 	//add a person
-	private String addPersonString = "insert into Person(personId, firstName, lastName, birthdate) values(?, ?, ?, ?)";
+	private static final String addPersonString = "insert into Person(personId, firstName, lastName, birthdate) values(?, ?, ?, ?)";
 	//get the max Id for person
-	private String getMaxPersonIdString = "select max(PersonId) from Person";
+	private static final String getMaxPersonIdString = "select max(PersonId) from Person";
 	
 	//set a person as suspected
-	private String setPersonSuspectedString = "insert into Suspected(personId, caseId) values(?, ?)";
+	private static final String setPersonSuspectedString = "insert into Suspected(personId, caseId) values(?, ?)";
 	
 	////
 	//Prepared Statements
@@ -103,16 +98,9 @@ public class PersonDatastore implements PersonDatastoreInterface {
 	////
 	//Constructor
 	////
-	public PersonDatastore() {
-		this.sqlConnection = MySQLConnection.getInstance().getConnection();
-		try {
-			prepareStatements();
-		} catch (SQLException e){
-			e.printStackTrace();
-		}
-	}
 
-	private void prepareStatements() throws SQLException {
+	@Override
+	protected void prepareStatements() throws SQLException {
 		getCasesForWhichPersonIsConvictedStatement = sqlConnection.prepareStatement(getCasesForWhichPersonIsConvictedString);
 		getCasesForWhichPersonIsSuspectedStatement = sqlConnection.prepareStatement(getCasesForWhichPersonIsSuspectedString);
 		getPersonNotesForPersonStatement = sqlConnection.prepareStatement(getPersonNotesForPersonString);
@@ -133,23 +121,6 @@ public class PersonDatastore implements PersonDatastoreInterface {
 		getPersonsForConvictionDatesStatement = sqlConnection.prepareStatement(getPersonsForConvictionDatesString);
 		getPersonsForBirthdateLikeStatement = sqlConnection.prepareStatement(getPersonsForBirthdateString);
 		getPersonsForBirthdatesStatement = sqlConnection.prepareStatement(getPersonsForBirthdatesLikeString);
-	}
-
-	/**
-	 * Executes a statement, and tries to instantiate a list of ModelObjects of the specified modelClass using the resultSet from the statement
-	 * If the execution of the statement or instantiation raises an SQLException, null is returned.
-	 * @param statement the configured statement to execute and get the results of
-	 * @return a list of modelObjects representing the result of the execution of the statement
-	 */
-	private <T extends ModelObject> List<T> getResults(Class<T> modelClass, PreparedStatement statement)
-	{
-		 try {
-			statement.execute();
-			return ModelObject.getAllModelObjectsWithClassFromResultSet(modelClass, statement.getResultSet());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	////

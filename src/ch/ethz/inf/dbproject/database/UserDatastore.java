@@ -7,34 +7,30 @@ import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.User;
 
-public class UserDatastore implements UserDatastoreInterface {
+public class UserDatastore extends Datastore implements UserDatastoreInterface {
 
-	////
-	//Connection
-	////
-	private Connection sqlConnection;
-		
 	////
 	// String for Prepared Statement
 	////
+	
 	//particular user for an username and a password
-	private String getUserForUsernameAndPasswordString = "select * from User where username = ? and password = ?";
+	private static final String getUserForUsernameAndPasswordString = "select * from User where username = ? and password = ?";
 	//cases for a particular user
-	/*private String getCurrentCasesForUserString = "(select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername like ? and caseNote.caseId = caseDetail.caseId) "+
+	/*private static final String getCurrentCasesForUserString = "(select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername like ? and caseNote.caseId = caseDetail.caseId) "+
 	"union "+
 	"(select caseDetail2.* from CaseDetail caseDetail2 where authorName like ?) order by date desc";*/
-	private String getCurrentCasesForUserString = "select caseId, title, street, city, zipCode, isOpen, date, description, authorName from ((select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername = ? and caseNote.caseId = caseDetail.caseId) "+
+	private static final String getCurrentCasesForUserString = "select caseId, title, street, city, zipCode, isOpen, date, description, authorName from ((select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername = ? and caseNote.caseId = caseDetail.caseId) "+
 			"union "+
 			"(select CaseDetail.* from CaseDetail caseDetail where caseDetail.authorName = ?))as P order by date desc";
 	//add User
-	private String addUserString = "insert into User(username, firstName, lastName, password) values(?, ?, ?, ?)";
+	private static final String addUserString = "insert into User(username, firstName, lastName, password) values(?, ?, ?, ?)";
 	//check if username is available
-	private String isUsernameAvailableString = "select * from User where username = ?";
-	
+	private static final String isUsernameAvailableString = "select * from User where username = ?";
 	
 	////
 	//Prepared Statements
 	////
+	
 	private PreparedStatement getUserForUsernameAndPasswordStatement;
 	private PreparedStatement getCurrentCasesForUserStatement;
 	private PreparedStatement addUserStatement;
@@ -43,38 +39,13 @@ public class UserDatastore implements UserDatastoreInterface {
 	////
 	//Constructor
 	////
-	public UserDatastore() {
-			this.sqlConnection = MySQLConnection.getInstance().getConnection();
-			try {
-				prepareStatements();
-			} catch (SQLException e){
-				e.printStackTrace();
-			}
-			
-	}
 	
-	private void prepareStatements() throws SQLException {
+	@Override
+	protected void prepareStatements() throws SQLException {
 		getUserForUsernameAndPasswordStatement = sqlConnection.prepareStatement(getUserForUsernameAndPasswordString);
 		getCurrentCasesForUserStatement = sqlConnection.prepareStatement(getCurrentCasesForUserString);
 		addUserStatement = sqlConnection.prepareStatement(addUserString);
 		isUsernameAvailableStatement = sqlConnection.prepareStatement(isUsernameAvailableString);
-	}
-	
-	/**
-	 * Executes a statement, and tries to instantiate a list of ModelObjects of the specified modelClass using the resultSet from the statement
-	 * If the execution of the statement or instantiation raises an SQLException, null is returned.
-	 * @param statement the configured statement to execute and get the results of
-	 * @return a list of modelObjects representing the result of the execution of the statement
-	 */
-	private <T extends ModelObject> List<T> getResults(Class<T> modelClass, PreparedStatement statement)
-	{
-		 try {
-			statement.execute();
-			return ModelObject.getAllModelObjectsWithClassFromResultSet(modelClass, statement.getResultSet());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	////
