@@ -13,6 +13,7 @@ import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;
 import ch.ethz.inf.dbproject.model.CategorySummary;
+import ch.ethz.inf.dbproject.model.ConvictionJoinPerson;
 import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 
@@ -46,7 +47,7 @@ public class CaseDatastore implements CaseDatastoreInterface {
 								  "from Person person, Suspected suspected " +
 				                  "where suspected.caseId = ? and suspected.personId = person.personId";
 	//template: convicted persons for a specific case
-	String convictsForCaseQuery = "select distinct person.* " +
+	String convictsForCaseQuery = "select *" +
 								  "from Person person, Conviction conviction " +
 								  "where conviction.caseId = ? and conviction.personId = person.personId";
 	//template: all categories for a specific case
@@ -291,9 +292,9 @@ public class CaseDatastore implements CaseDatastoreInterface {
 	}
 
 	@Override
-	public List<Person> getConvictsForCase(int caseId) {
+	public List<ConvictionJoinPerson> getConvictsForCase(int caseId) {
 		setCaseId(convictsForCaseStatement, caseId);
-		return getResults(Person.class, convictsForCaseStatement);
+		return getResults(ConvictionJoinPerson.class, convictsForCaseStatement);
 	}
 	
 	/////

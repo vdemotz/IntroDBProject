@@ -47,10 +47,17 @@ public final class Conviction extends ModelObject {
 		if (endDate == null) return null;
 		return DateFormat.getDateInstance().format(endDate);
 	}
-
 	
 	public java.sql.Date getEndDate() {
 		return endDate;
+	}
+	
+	public int getPersonId() {
+		return personId;
+	}
+	
+	public int getCaseId() {
+		return caseId;
 	}
 	
 }

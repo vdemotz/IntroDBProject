@@ -128,16 +128,18 @@ public final class CaseServlet extends HttpServlet {
 		return suspectsTable;
 	}
 	
-	protected BeanTableHelper<Person> getConvictsTableForCase(int caseId)
+	protected BeanTableHelper<ConvictionJoinPerson> getConvictsTableForCase(int caseId)
 	{
-		BeanTableHelper<Person> table = new BeanTableHelper<Person>("convicts", "contentTable", Person.class);
+		BeanTableHelper<ConvictionJoinPerson> table = new BeanTableHelper<ConvictionJoinPerson>("convicts", "contentTable", ConvictionJoinPerson.class);
 		
-		List<Person> convicts = this.dbInterface.getConvictsForCase(caseId);
+		List<ConvictionJoinPerson> convicts = this.dbInterface.getConvictsForCase(caseId);
 		table.addObjects(convicts);
 		
 		table.addBeanColumn("Convict Id", "personId");
 		table.addBeanColumn("Name", "name");
 		table.addLinkColumn("", "Person Details", "Person?id=", "personId");
+		table.addBeanColumn("Start Date", "startDateFormatted");
+		table.addBeanColumn("End Date", "endDateFormatted");
 		
 		return table;
 	}
