@@ -12,5 +12,6 @@ To discuss during the discussion:
 	b.) Genericity of creation of objects
 	c.) Code design schema : on paper
 	d.) Dynamic categories
+	e.) PreparedStatements
 
 3.) DEMO (see DemoSteps.txt)
