@@ -1,0 +1,44 @@
+==========
+Demo steps
+==========
+
+1.) Search DB:
+	-Search by name : Han
+	-Search by Date of Case : 2002
+	-Search by Date of Case : 2001-11-11 and 2005-03-03
+
+2.) See cases, persons
+
+3.) Create an user
+	username : NewUser
+	firstName : New
+	lastName : User
+	password : test
+
+4.) Create a category : Robbery
+
+5.) Create a case
+	title: miss diana jeweleries
+	location : Letzistrasse 75 Zurich 8050
+	category : robbery
+	description : Oh, that's awful
+	date : defaut (blank)
+
+6.) Create a person
+	last name : anderson
+	first name : diana
+	birthdate : 1980-10-10
+	caseID : blank
+
+7.) Add suspects
+	Moriarty and diana
+
+8.) Add convictions : moriarty
+
+9.) delete suspect : diana
+
+10.) close case, show notes
+
+11.) stats 
+
+It takes about 4 mn 40 s!

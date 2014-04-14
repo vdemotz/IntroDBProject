@@ -47,8 +47,8 @@
 <div>
 	<input type="hidden" name="filter" value="birthdate" />
 	Search By Birthdate
-	<input type="text" name="startdate" />
-	<input type="text" name="enddate" />
+	<input type="text" name="startDate" />
+	<input type="text" name="endDate" />
 	<input type="submit" value="Search" title="Search by birthdate" />
 </div>
 </form>

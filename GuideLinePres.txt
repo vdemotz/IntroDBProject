@@ -1,0 +1,16 @@
+To discuss during the discussion:
+
+1.) DATABASE
+	
+	a.) ER-Diagram. Old vs new one, CategoryForCase, Conviction
+	b.) Rel-Schema
+	c.) Func. Dep. 4NF (ZipCode, Street, City, ...)
+
+2.) CODE
+
+	a.) Interface with 6 differents Datastore
+	b.) Genericity of creation of objects
+	c.) Code design schema : on paper
+	d.) Dynamic categories
+
+3.) DEMO (see DemoSteps.txt)

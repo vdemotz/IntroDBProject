@@ -18,7 +18,7 @@
 
 
 <%
-if (session.getAttribute(HomeServlet.REQUEST_ERROR_MESSAGE) == null) {
+if (request.getAttribute(HomeServlet.REQUEST_ERROR_MESSAGE) == null) {
 %>
 
 	<%=request.getAttribute(CaseServlet.REQUEST_CASE_DETAIL_TABLE)%>

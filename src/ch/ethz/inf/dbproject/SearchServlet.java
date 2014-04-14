@@ -82,7 +82,6 @@ public final class SearchServlet extends HttpServlet {
      * @return a table of Person
      */
     private Object getTablePersons(String filter, HttpServletRequest request) throws Exception{
-    	
     	final BeanTableHelper<Person> table = new BeanTableHelper<Person>("persons",
 				"contentTable", Person.class);
 		
@@ -94,8 +93,8 @@ public final class SearchServlet extends HttpServlet {
 		final String firstName = request.getParameter("firstName");
 		final String description = request.getParameter("description");
 		
-		final String startDateRaw = request.getParameter("startDate")+"";
-		final String endDateRaw = request.getParameter("endDate")+"";
+		final String startDateRaw = request.getParameter("startDate");
+		final String endDateRaw = request.getParameter("endDate");
 		final Pair<Date, Date> date = tryGetDateRange(startDateRaw, endDateRaw);
 
 		//depending on the filter, get and set right table
@@ -104,6 +103,7 @@ public final class SearchServlet extends HttpServlet {
 		} else if (filter.equals("convictionType")) {	
 			table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
 		} else if (filter.equals("convictionDate")) {
+			System.err.println("I'm here! (convictionDate)");
 			if (date != null){
 				table.addObjects(this.dbInterface.getPersonsForConvictionDates(date.first, date.second));
 			} else if (!startDateRaw.isEmpty() && endDateRaw.isEmpty()){
@@ -111,13 +111,15 @@ public final class SearchServlet extends HttpServlet {
 			} else {
 				return "Sorry, not valid dates. Please make sur that you entered the date on the form : yyyy-mm-dd and the second date is after first one";
 			}
-		} else if (filter.equals("birthdate")) {	
+		} else if (filter.equals("birthdate")) {
 			if (date != null){
 				table.addObjects(this.dbInterface.getPersonsForBirthdates(date.first, date.second));
-			} else {
+			} else if (!startDateRaw.isEmpty() && endDateRaw.isEmpty()){
 				table.addObjects(this.dbInterface.getPersonsForBirthdate(startDateRaw));
+			} else {
+				return "Sorry, not valid dates. Please make sur that you entered the date on the form : yyyy-mm-dd and the second date is after first one";
 			}
-		}
+		} 
 		return table;
     }
     
@@ -132,8 +134,8 @@ public final class SearchServlet extends HttpServlet {
 				"contentTable", CaseDetail.class);
 
 		final String description = request.getParameter("description");
-		final String startDateRaw = request.getParameter("startDate")+"";
-		final String endDateRaw = request.getParameter("endDate")+"";
+		final String startDateRaw = request.getParameter("startDate");
+		final String endDateRaw = request.getParameter("endDate");
 		final Pair<Date, Date> date = tryGetDateRange(startDateRaw, endDateRaw);
 
 		table.addBeanColumn("Case ID", "caseId");

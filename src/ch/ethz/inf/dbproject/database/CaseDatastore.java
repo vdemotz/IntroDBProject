@@ -207,8 +207,8 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	@Override
 	public List<CaseDetail> getCasesForDates(java.util.Date startDate, java.util.Date endDate) {
 		try {
-			casesForDatesStatement.setTimestamp(1, new Timestamp(startDate.getTime()));
-			casesForDatesStatement.setTimestamp(2, new Timestamp(startDate.getTime()));
+			casesForDatesStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+			casesForDatesStatement.setDate(2, new java.sql.Date(endDate.getTime()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

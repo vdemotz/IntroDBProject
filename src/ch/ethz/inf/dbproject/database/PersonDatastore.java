@@ -177,13 +177,13 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 			ex.printStackTrace();
 			return null;
 		}
-		return getResults(Person.class, getPersonsForBirthdateLikeStatement);
+		return getResults(Person.class, getPersonsForBirthdatesStatement);
 	}
 	
 	@Override
 	public List<Person> getPersonsForBirthdate(String date){
 		try{
-			getPersonsForBirthdateLikeStatement.setString(1, date);
+			getPersonsForBirthdateLikeStatement.setString(1, date+"%");
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
