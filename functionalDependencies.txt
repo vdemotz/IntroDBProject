@@ -1,0 +1,32 @@
+Functional Dependencies
+
+We write down a cononical basis for the functional dependencies:
+
+User:
+username -> firstName, lastName, password
+
+CaseDetail:
+caseId -> title, street, city, zipCode, isOpen, date, description, authorUsername
+
+CaseNote:
+caseId, caseNoteId -> text, date, authorUsername
+
+Person:
+personId -> text, date, authorUsername
+
+PersonNote:
+personId, personNoteId -> text, date, authorUsername
+
+Category:
+(no nontrivial dependencies)
+
+CategoryForCase:
+(no nontrivial dependencies)
+
+Suspected:
+(no nontrivial dependencies)
+
+Conviction:
+convictionId -> personId, caseId, startDate, endDate
+
+It is apparent from the above description that for each nontrivial dependency a->b the left side a is a superkey of the relation. Hence the model is in BCNF.
