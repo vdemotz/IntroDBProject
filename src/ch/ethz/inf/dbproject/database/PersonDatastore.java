@@ -171,8 +171,8 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 	@Override
 	public List<Person> getPersonsForBirthdates(java.util.Date startDate, java.util.Date endDate){
 		try{
-			getPersonsForBirthdateLikeStatement.setDate(1, new java.sql.Date(startDate.getTime()));
-			getPersonsForBirthdateLikeStatement.setDate(2, new java.sql.Date(endDate.getTime()));
+			getPersonsForBirthdatesStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+			getPersonsForBirthdatesStatement.setDate(2, new java.sql.Date(endDate.getTime()));
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
