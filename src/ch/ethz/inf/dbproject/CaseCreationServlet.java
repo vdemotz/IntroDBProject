@@ -87,7 +87,6 @@ public final class CaseCreationServlet extends HttpServlet {
 					request.setAttribute(CASECREATION_MESSAGE, "Please verifiy your entries. Is there anything missing?");
 				} else {
 					if (categories != null){
-						System.err.println("Categories not null");
 						for (int i = 0; i < categories.length; i++){
 							dbInterface.insertIntoCategoryForCase(categories[i], caseDetail.getCaseId());
 						}

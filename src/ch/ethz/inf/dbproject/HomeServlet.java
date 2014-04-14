@@ -69,7 +69,7 @@ public final class HomeServlet extends HttpServlet {
 		if (loggedUser == null) {
 			// Not logged in!
 			//set the most active users
-			session.setAttribute(HOME_MOST_ACTIVE_USER, this.getMostActiveUser());
+			request.setAttribute(HOME_MOST_ACTIVE_USER, this.getMostActiveUser());
 		} else {
 			// Logged in
 			//set the details of the user

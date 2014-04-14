@@ -20,7 +20,7 @@ public class StatisticsDatastore extends Datastore implements StatisticsDatastor
 	//select cases by month
 	private static final String casesPerMonthString = "select date, count(*) from CaseDetail GROUP BY MONTH(date)";
 	//select convictions by month
-	private static final String convictionsPerMonthString = "select startDate, count(*) from Conviction group by month(startDate)";
+	private static final String convictionsPerMonthString = "select startDate, count(*) from Conviction group by month(startDate) order by startDate asc";
 	//select convictions by city
 	private static final String convictionsPerCityString = "select city, count(*) from CaseDetail as cd join Conviction as c on cd.caseId = c.caseId group by city";
 	//select convictions by category
@@ -29,10 +29,11 @@ public class StatisticsDatastore extends Datastore implements StatisticsDatastor
 													    "where conviction.caseId = categoryForCase.caseId " +
 													    "group by categoryName";
 	//select number of notes by user
-	private static final String numberNotesPerUserString = "select authorCase as authorUsername, countCase+countPerson as totalNotes from "+
-												"(select * from (select authorUsername as authorCase, count(*) as countCase from CaseNote "+
-												"group by authorUsername) as cn join (select authorUsername as authorPerson, count(*) as countPerson "+
-												"from PersonNote group by authorUsername) as pn on pn.authorPerson = cn.authorCase) as notes order by totalNotes desc";
+	private static final String numberNotesPerUserString = "select notes.authorUsername, sum(notes.Count) as numbN from "+
+														"(select authorUsername, count(*) as count from CaseNote group by authorUsername "+
+														"UNION ALL "+
+														"select authorUsername, count(*) as count from PersonNote group by authorUsername) as notes "+
+														"group by authorUsername order by numbN desc limit 3;";
 	//select three most active categories for an user
 	private static final String mostActiveCategoriesForUserString = "select categoryName, count(*) as numb from CaseNote cn join CategoryForCase cfc on cn.caseId = cfc.caseId "+
 															"where cn.authorUsername = ? group by categoryName order by numb desc limit 3";

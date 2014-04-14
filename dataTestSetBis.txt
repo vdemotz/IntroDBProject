@@ -1,0 +1,270 @@
+insert into User
+	values('poirot', 'Hercule', 'Poirot', 'poire');
+
+insert into User
+	values('commissaire', 'Monsieur', 'Commissaire', 'useless');
+
+insert into User(username, lastName, password)
+	values('dexter', 'Dexter', 'kill');
+
+insert into User(username, password)
+	values('visitor', 'backFromFuture');
+
+insert into User
+	values('geo', 'Geo', 'Trouvetou', 'findFind');
+
+insert into User
+	values('agatha', 'Agatha', 'Christie', 'awesomeWriter');
+
+insert into User
+	values('robert', 'Dever', 'Robert', 'young');
+
+
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
+	values (30, 'The alphabet murderer', 'Paris', false, '2002-01-12-17-00', 'A murderer killing in alphabet order', 'poirot');
+
+insert into Person (personId, firstName, lastName)
+	values(30, 'Amanda Beatrice', 'Cross');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(30, 0, 'Very nice old woman', 'poirot');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(30, 1, 'She is used to use weapons. Why?', 'poirot');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(30, 2, 'Her husband was a professional driver in the army', 'poirot');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(30, 3, 'Nothing to do with the alphabet murdrer. Just a joke of naming.', 'poirot');
+
+insert into Person (personId, firstName, lastName)
+	values(31, 'Alexander Bonaparte', 'Cross');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(31, 0, 'Son of Amanda Beatrice Cross', 'poirot');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(31, 1, 'Very smart person. Need careful attention', 'poirot');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(31, 2, 'He was named regarding Alexander the great and Napoleon Bonaparte', 'poirot');
+	
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(31, 3, 'Trained as a specialist of information in army.', 'poirot');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(31, 4, 'Why does he need to travel so often?', 'poirot');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(31, 5, 'Found some weapons in his room. It's him the murderer!', 'poirot');
+
+insert into Conviction(convictionId, personId, caseId, startDate, endDate)
+	values(30, 31, 30, '2002-01-25', '2017-01-25');	
+
+insert into Person (personId, firstName, lastName)
+	values(32, 'Jim', 'Esperanza');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(32, 0, 'Seems to be friend with Alexander Bonaparte...', 'poirot');
+
+insert into Suspected(personId, caseId)
+	values(32, 30);
+
+insert into Person(personId, firstName, lastName)
+	values(33, 'Alphonse', 'Bertrand', '1960-04-01');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(33, 0, 'Is he a joke?', 'poirot');
+
+insert into Person(personId, firstName, lastName, birthdate)
+	values(34, 'Tommy', 'Martinez', '1972-12-12');
+
+insert into Suspected(personId, caseId)
+	values(34, 30);
+
+insert into Person(personId, firstName, lastName, birthdate)
+	values(35, 'Tom', 'Tom', '1932-06-23');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(35, 0, 'Nice old man. But... I don't like him!', 'poirot');
+	
+insert into Suspected(personId, caseId)
+	values(35, 30);
+
+insert into Person(personId, firstName, lastName)
+	values(36, 'Armin Beatrice', 'Cleat');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(36, 0, 'The wife and helper of Alexander to kill people.', 'poirot');
+
+insert into Conviction(convictionId, personId, caseId, startDate, endDate)
+	values(31, 36, 30, '2002-01-25', '2017-01-25');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+	values(30, 0, 'First death found in his office. Death : strangulation.', 'poirot');
+
+insert into CaseNote (caseId, caseNoteId, text, authorUsername)
+	values(30, 1, 'Second death found in her bedroom. Death : knive.', 'poirot');
+
+insert into CategoryForCase
+    values(30, 'Mass Murder');
+
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
+	values(31, 'The butcher of Manhattan', 'New York', true, '2010-01-03', 'A lot of people found dead in a lake near New York', 'dexter');
+
+insert into Person (personId, firstName, lastName)
+	values(37, 'Henry', 'Smith');
+
+insert into Suspected(personId, caseId)
+	values(37, 31);
+
+insert into Person(personId, firstName, lastName)
+	values(38, 'George', 'Hugh');
+
+insert into Suspected
+	values(38, 31);
+
+insert into Person(personId, firstName, lastName)
+	values(39, 'Carl', 'Brund');
+
+insert into Suspected(personId, caseId)
+	values(39, 31);
+
+insert into Person(personId, firstName, lastName)
+	values(40, 'Denvenport', 'Pearl');
+
+insert into Suspected(personId, caseId)
+	values(40, 31);
+
+insert into CategoryForCase
+    values(30, 'Mass Murder');
+
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
+	values(32, 'A Strange man', 'Neo Versailles', true, '2014-02-20', 'A strange man who says comming from future', 'visitor');
+
+insert into Person (personId, firstName)
+	values(41, 'Raph');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(41, 0, 'His hair is really... Strange.', 'visitor');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(41, 1, 'He has a girlfriend, has no professional activity and doesn t do any kind of sport.', 'visitor');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(41, 2, 'He seems to be quite boring.', 'visitor');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(41, 3, 'Maybe he can help me.', 'visitor');
+
+insert into Suspected(personId, caseId)
+	values(41, 31);
+
+insert into Person(personId, firstName, lastName)
+	values(42, 'Michel', 'DuRond');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(42, 0, 'I have already seen him before', 'visitor');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(42, 1, 'He has strange activities in his bedroom between 19.30 and 20.00', 'visitor');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(42, 2, 'Okay, mister solved, he is playing with plastic ducks.', 'visitor');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(42, 3, 'And he is playing in Kaamelott, that s why I know him from somewhere.', 'visitor');
+
+insert into Suspected(personId, caseId)
+	values(42, 31);
+
+insert into Person(personId, firstName)
+	values(43, 'Judith');
+
+insert into PersonNote (personId, personNoteId, text, authorUsername)
+	values(43, 0, 'Redhead, vicious, like guns. Dangerous person.' 'visitor');
+
+insert into Suspected(personId, caseId)
+	values(43, 31);
+
+insert into Person(personId, firstName)
+	values(44, 'Mateo');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(44, 0, 'Always follows Judith.', 'visitor');
+
+insert into Suspected(personId, caseId)
+	values(44, 31);
+
+insert into CategoryForCase
+	values(31, 'Manslaughter');
+
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
+	values(32, 'Genial invention turned to nightmare', 'New York', false, '1999-10-11', 'A inventor find a solution to go on the moon very easily and... Send people without any precaution on it.' , 'geo');
+
+insert into Person(personId, firstName, lastName)
+	values(45, 'Donald', 'Greek');
+
+insert into Suspected(personId, caseId)
+	values(45, 32);
+
+insert into Person(personId, firstName, lastName)
+	values(46, 'Picsou', 'Dush');
+
+insert into Suspected(personId, caseId)
+	values(46, 32);
+
+insert into Person(personId, firstName, lastName)
+	values(47, 'Sarah', 'Lombardi');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(47, 0, 'Sister of Mario Lombardi', 'geo');
+
+insert into Suspected(personId, caseId)
+	values(47, 32);
+
+insert into Person(personId, firstName, lastName)
+	values(48, 'Mario', 'Lombardi');
+
+insert into PersonNote(personId, personNoteId, text, authorUsername)
+	values(48, 0, 'Brother of Sarah Lombardi', 'geo');
+
+insert into Suspected(personId, caseId)
+	values(48, 32);
+
+insert into CaseDetail (caseId, title, city, isOpen, date, description, authorName)
+	values (33, 'The crime of L Orient Express', 'Moscow', false, '2003-02-14-17-00', 'A crime on a train', 'poirot');
+
+insert into Person(personId, firstName, lastName)
+	values(6, 'Albert', 'Jean');
+
+insert into Conviction(convictionId, personId, caseId, startDate, endDate)
+	values(3, 6, 33, '2003-05-25', '2012-01-25');
+
+insert into Person(personId, firstName, lastName)
+	values(7, 'Benjamin', 'Mulhberg');
+
+insert into Conviction(convictionId, personId, caseId, startDate, endDate)
+	values(4, 7, 33, '2004-09-17', '2013-02-12');
+
+insert into Person(personId, firstName, lastName)
+	values(8, 'Stephane', 'Descraques');
+
+insert into Conviction(convictionId, personId, caseId, startDate, endDate)
+	values(5, 8, 33, '2002-01-25', '2011-11-15');
+
+insert into Person(personId, firstName, lastName)
+	values(9, 'Rupert', 'Gefter');
+
+insert into Conviction(convictionId, personId, caseId, startDate, endDate)
+	values(6, 9, 33, '2002-03-23', '2013-03-23');
+
+insert into Person(personId, firstName, lastName)
+	values(10, 'Guido', 'Romajii');
+
+insert into Conviction(convictionId, personId, caseId, startDate, endDate)
+	values(7, 10, 33, '2007-08-15', '2007-08-16');
+
+insert into CategoryForCase(caseId, categoryName)
+	values(33, 'Murder');
