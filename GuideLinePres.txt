@@ -1,4 +1,4 @@
-To discuss during the discussion:
+To discuss during the presentation:
 
 1.) DATABASE
 	
@@ -8,7 +8,7 @@ To discuss during the discussion:
 
 2.) CODE
 
-	a.) Interface with 6 differents Datastore
+	a.) Interface with differents Datastore
 	b.) Genericity of creation of objects
 	c.) Code design schema : on paper
 	d.) Dynamic categories

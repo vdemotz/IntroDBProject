@@ -24,6 +24,8 @@ Demo steps
 	description : Oh, that's awful
 	date : defaut (blank)
 
+5.b) Change category
+
 6.) Create a person
 	last name : anderson
 	first name : diana

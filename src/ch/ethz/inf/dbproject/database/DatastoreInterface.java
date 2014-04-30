@@ -1,9 +1,7 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.Category;
