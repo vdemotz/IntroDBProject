@@ -8,10 +8,10 @@ import java.sql.SQLException;
  */
 public final class User extends ModelObject{
 
-	private final String username;
-	private final String firstName;
-	private final String lastName;
-	private final String password;
+	private String username;
+	private String firstName;
+	private String lastName;
+	private String password;
 	
 	////
 	//CONSTRUCTORS
@@ -25,10 +25,7 @@ public final class User extends ModelObject{
 	}
 	
 	public User(final ResultSet rs) throws SQLException {
-		this.username = rs.getString("username");
-		this.firstName = rs.getString("firstName");
-		this.lastName = rs.getString("lastName");
-		this.password = rs.getString("password");
+		super(rs);
 	}
 	
 	////

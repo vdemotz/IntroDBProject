@@ -10,6 +10,7 @@ import ch.ethz.inf.dbproject.model.ModelObject;
 public class Datastore {
 
 	protected Connection sqlConnection =  MySQLConnection.getInstance().getConnection();
+	// TODO Change this line to point to the homemade DB. (New instance of ch.ethz.inf.dbproject.sqlRevisited.Connection)
 
 	public Datastore() {
 		try {

@@ -7,11 +7,11 @@ import java.text.DateFormat;
 
 public final class PersonNote extends ModelObject {
 	
-	private final int personId;
-	private final int personNoteId;
-	private final String text;
-	private final Timestamp date;
-	private final String authorUsername;
+	private int personId;
+	private int personNoteId;
+	private String text;
+	private Timestamp date;
+	private String authorUsername;
 	
 	////
 	// CONSTRUCTORS
@@ -26,11 +26,7 @@ public final class PersonNote extends ModelObject {
 	}
 
 	public PersonNote(final ResultSet rs) throws SQLException {
-		this.personId = rs.getInt("personId");
-		this.personNoteId = rs.getInt("personNoteId");
-		this.text = rs.getString("text");
-		this.date = rs.getTimestamp("date");
-		this.authorUsername = rs.getString("authorUsername");
+		super(rs);
 	}
 	
 	////

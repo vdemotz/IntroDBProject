@@ -8,10 +8,10 @@ import java.text.SimpleDateFormat;
 
 public class Person extends ModelObject{
 
-	final int personId;
-	final String firstName;
-	final String lastName;
-	final java.util.Date birthdate;
+	private int personId;
+	private String firstName;
+	private String lastName;
+	private java.util.Date birthdate;
 	
 	////
 	//CONSTRUCTORS
@@ -34,10 +34,7 @@ public class Person extends ModelObject{
 	}
 
 	public Person(final ResultSet rs) throws SQLException {
-		this.personId = rs.getInt("personId");
-		this.firstName = rs.getString("firstName");
-		this.lastName = rs.getString("lastName");
-		this.birthdate = rs.getDate("birthdate");
+		super(rs);
 	}
 	
 	////
