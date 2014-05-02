@@ -1,0 +1,509 @@
+========
+ARCHIVES
+========
+
+1.) First presentation
+2.) Old TODO lists
+
+******************************** 1 first presentation ********************************
+
+=======================
+Guide Line Presentation
+=======================
+
+To discuss during the presentation:
+
+1.) DATABASE
+	
+	a.) ER-Diagram. Old vs new one, CategoryForCase, Conviction
+	b.) Rel-Schema
+	c.) Func. Dep. 4NF (ZipCode, Street, City, ...)
+
+2.) CODE
+
+	a.) Interface with differents Datastore
+	b.) Genericity of creation of objects
+	c.) Code design schema : on paper
+	d.) Dynamic categories
+	e.) PreparedStatements
+
+3.) DEMO (see DemoSteps.txt)
+
+
+=======================
+Functional Dependencies
+=======================
+
+We write down a cononical basis for the functional dependencies:
+
+User:
+username -> firstName, lastName, password
+
+CaseDetail:
+caseId -> title, street, city, zipCode, isOpen, date, description, authorUsername
+
+CaseNote:
+caseId, caseNoteId -> text, date, authorUsername
+
+Person:
+personId -> text, date, authorUsername
+
+PersonNote:
+personId, personNoteId -> text, date, authorUsername
+
+Category:
+(no nontrivial dependencies)
+
+CategoryForCase:
+(no nontrivial dependencies)
+
+Suspected:
+(no nontrivial dependencies)
+
+Conviction:
+convictionId -> personId, caseId, startDate, endDate
+
+It is apparent from the above description that for each nontrivial dependency a->b the left side a is a superkey of the relation. Hence the model is in BCNF.
+
+=========
+relations
+=========
+
+Merged:
+
+	CaseDetail (caseID : INT not null, title : VARCHAR (40), location : VARCHAR (40), isOpen : BOOLEAN not null, date : DATETIME, description : TEXT, authorName : VARCHAR(40))
+	CaseNote (caseNoteID : INT not null, caseID : INT not null, text : TEXT, date : DATETIME, authorName : VARCHAR(40))
+	Category (name : VARCHAR(40) not null)
+	Person (firstName : VARCHAR (40), lastName : VARCHAR (40), birthDate : DATE, personID : INT not null)
+	User (username : VARCHAR (40) not null, firstName : VARCHAR (40), lastName : VARCHAR (40), password : VARCHAR (40) not null)
+	Conviction (convictionID : INT not null, date : DATE, endDate : DATE)
+	PersonNote (personNoteID : INT not null, personID : INT not null, text : TEXT, date : DATETIME, authorName : VARCHAR (40))
+	CategoryForCase (caseID : INT not null, categoryName : VARCHAR (40) not null)
+	Suspected (caseID : INT not null, personID : INT not null
+	Convicted (personID : INT not null, caseID : INT not null, convictionID : INT not null)
+	ConvictionType (categoryName : VARCHAR (40) not null, convictionID : INT not null)
+
+==========
+Demo steps
+==========
+
+1.) Search DB:
+	-Search by name : Han
+	-Search by Date of Case : 2002
+	-Search by Date of Case : 2001-11-11 and 2005-03-03
+
+2.) See cases, persons
+
+3.) Create an user
+	username : NewUser
+	firstName : New
+	lastName : User
+	password : test
+
+4.) Create a category : Robbery
+
+5.) Create a case
+	title: miss diana jeweleries
+	location : Letzistrasse 75 Zurich 8050
+	category : robbery
+	description : Oh, that's awful
+	date : defaut (blank)
+
+5.b) Change category
+
+6.) Create a person
+	last name : anderson
+	first name : diana
+	birthdate : 1980-10-10
+	caseID : blank
+
+7.) Add suspects
+	Moriarty and diana
+
+8.) Add convictions : moriarty
+
+9.) delete suspect : diana
+
+10.) close case, show notes
+
+11.) stats 
+
+It takes about 4 mn 40 s!
+
+===================
+Data Query Template
+===================
+------
+--CASES
+------
+
+
+--all cases
+select *
+from CaseDetail;
+
+
+--oldest unresolved cases
+select *
+from CaseDetail
+where isOpen = true
+order by date desc;
+
+
+--template: all notes for a specific case
+select caseNote.*
+from CaseNote caseNote
+where caseNote.caseId = ?;
+
+
+--template: list of supsects for a specific case
+select person.*
+from Person person, Suspected suspected, CaseDetail caseDetail
+where caseDetail.caseId = ? and
+      suspected.caseId = caseDetail.caseId and
+      suspected.personId = person.personId;
+
+
+--template: list of convicted people for a specific case (probably empty for open cases)
+select person.*
+from Person person, Convicted convicted, CaseDetail caseDetail
+where caseDetail.caseId = ? and
+      convicted.caseId = caseDetail.caseId and
+      convicted.personId = person.personId;
+
+
+--template: all categories for a specific case
+select categoryForCase.categoryName
+from CaseDetail caseDetail, CategoryForCase categoryForCase
+where caseDetail.caseId = ? and
+      categoryForCase.caseId = caseDetail.caseId and
+
+
+------
+--PEOPLE
+------
+
+
+--all people that are supsected or convicted
+select person.*
+from Person person, Suspected suspected, Convicted conviction
+where person.personId = suspected.personId or person.personid = conviction.personId;
+
+
+--template: person with a specific name
+select person.*
+from Person
+where firstName like ? or lastName like ?;
+
+
+--template: person convicted at a specific date
+select person.*
+from Conviction conviction, Convicted convicted, Person person
+where conviction.startDate = ? and
+      conviction.convictionId = convicted.convictionId and
+      convicted.personId = person.personId;
+
+
+--template: person convicted for a specific crime
+select person.*
+from Category category, Conviction conviction, Convicted convicted, ConvitionType convictionType, Person person
+where category.name = ? and
+      convictionType.categoryName = category.name and
+      convictionType.convictionId = conviction.convictionId and
+      convicted.convictionId = conviction.convictionId and
+      convicted.personId = person.personId;
+
+
+--template: all notes for a specific person
+select personNote.*
+from PersonNote personNote
+where personNote.personId = ?;
+
+
+--all convictions for a specific person
+select convictionType.categoryName, conviction.startDate, conviction.endDate
+from Conviction conviction, Convicted convicted, ConvictionType convictionType
+where conviction.convictionId = convicted.convictionId and
+      convictionType.convictionId = conviction.convictionId and
+      convicted.personId = ?
+
+
+--all cases in which a person is suspected of
+--TODO
+
+
+******************************** 1 old todo lists ********************************
+
+============
+TODO-11APRIL
+============
+
+Todo:
+
+* Types of Conviction : remove table conviction type  : (done)
+* More test data (Moday V/L)
+* New ER (Monday)
+* Functional dependencies (Monday)
+* Design Overview (V)
+* Add conviction: link directly to select person from navbar (done)
+* Remove Suspect: (done)
+* Add a way to see the start and end date of a conviction at least somewhere. Either in the caseDetail, at convicted people, or at an own conviction page)
+* order person notes desc date (done)
+
+*CaseCreationServlet: isValidDate: seems rather unnecessarily complicated, and in any case badly named ( done )
+
+*send email to assistant for the link of github (done)
+
+*Methods begin with verbs (done)
+
+*Categories in Home Page (done) with category creation
+
+*StatsNode constructor (Done : but not with super() -> because the implementation of ModelObject(ResultSet rs) relies on the columns to have the same names as in DB and it's not the case for StatsNodes.)
+
+*Creations : when empty, set to null (done)
+
+*add note at any changes (done)
+
+*search in ranges (done)
+
+*search by birthdate (done)
+
+*Advanced stats queries. Implement in StatsDatstore, show meta info on home page
+(L)
+->recent comments by other users on cases that have been recently commented or created by a user
+(TODO -> Similar as the first one) : Home Page
+
+(L)
+->number of modifications per hour per user of the day 
+
+(done)
+->Most active categories per user (number of cases a user modified per category) 
+
+(done)
+->most active users 
+: move from Stats -> Home Page
+
+
+===========
+TODO-7APRIL
+===========
+
+
+------
+Issues:
+-----
+
+Persons of intrest: duplicate Entries (ok)
+CaseDetail is probably not in 3rd Normal Form - the street and zipcode probably functionally determine the city (ok)
+String literals, constants (kinda ok)
+Search by name Semantics (null values) (ok)
+How to display null values, where to handle it (in BeanTableHelper?) (ok)
+
+-----
+Todo:
+-----
+
+Must have:
+
+User creation : clean stuff, error messages, error handling (V)
+Add Convicts L
+Add Conviction L
+Add Categories to Cases V:ok
+Testing, Testcases, Error Handling  (V/L)
+Reduce use of string literals (V/L)
+Consistent naming scheme for static constants (ok)
+Fix search by name semantics (V:ok)
+Nicely display null values (L:ok)
+    -composite fields (location - ok , name - ok) need special care (V,L)
+
+Nice to have:
+
+Link columns with dynamic link names
+We could show some Properties (eg. high normal form) for our schema
+Other aggregate view of Cases, maybe Persons
+    - could show off some advanced grouping queries
+
+
+
+
+===========
+TODO 1APRIL
+===========
+
+Retranscription of discussion on monday 24.02
+
+>>Links on the left (part of header? … Never mind)
+
+Home (merge with user profile)
+All cases
+	Open
+	Closed
+	Recent
+	Oldest Unsolved
+Cases categories
+Persons of interest
+Search
+User Creation
+
+>>Queries
+
+=================
+Queries for cases
+=================
+
+all queries needed for search page (see below)
+by category (categories need to be defined)
+case details
+all cases
+all comments on specific case
+all convicted / suspected people on specific case
+
+==================
+Queries for people
+==================
+
+all queries needed for search page (see below)
+person details
+all cases for which the person is convicted / suspected
+all comment on specific person
+
+=================
+Queries for users
+=================
+
+cases modified by user
+user details
+check username is in relation with password
+does username already in DB
+
+>>Contents of pages
+
+===================
+User Profile - Home
+===================
+
+-------------
+not logged in
+-------------
+
+login form 
+-username
+-password
+
+create user link 
+-link to User Creation
+
+
+---------
+logged in
+---------
+
+user info 
+-last name
+-first name
+-username
+
+cases created, commented on, ordered by last modification
+-title
+-caseId
+-location
+-isOpen
+-date
+-authorName
+-link to case details
+
+
+=============
+User Creation
+=============
+
+creation user form 
+-username
+-firstname
+-lastname
+-password
+-password
+
+======
+Search
+======
+
+search by first name
+-> return 'person of interest'
+
+search by last name
+-> return 'person of interest'
+
+search by conviction type
+-> return 'person of interest'
+
+search by conviction date (end/start?)
+-> return 'person of interest'
+
+search by category
+-> return 'CaseDetail'
+
+search by date
+-> return 'CaseDetail'
+
+================
+Cases categories
+================
+
+list of links to categories
+
+================
+Display one case
+================
+
+description of case
+-caseId
+-title
+-date
+-isOpen
+-authorName
+-location (different fields)
+-description
+
+convicted person related
+-first name
+-last name
+-link to person
+
+suspected person related
+-first name
+-last name
+-link to person
+
+comments
+-date
+-authorUsername
+-text
+
+===================
+Persons of interest
+===================
+
+description of person
+-first name
+-last name
+-birth date
+
+
+convicted for
+-start date
+-end date
+-caseId
+-link to case
+-isOpen
+
+suspected for
+-caseId
+-link to case
+-title
+-isOpen
+
+comments on person
+-date
+-authorName
+-text
