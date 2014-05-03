@@ -1,0 +1,56 @@
+SQLCompiler Design Document
+
+    SQLLexer: Lexicographical analysis.
+        Takes a String and returns a List of Tokens <Substring, TokenClass>
+        This makes the Parsers job much easier
+
+        implementation:
+            use regular expressions to define lexical structure
+            use util.regex package to find matches
+            the main task is specifying the regular expressions and implementing the right choice from a set of matches
+
+        work estimate:
+            1-3 h specification of language
+            2-4 h implementation
+    
+    SQLParser: Parsing.
+        Takes a List of Tokens and returns an AbstractSyntaxTree
+
+        implementation:
+            use context free grammars
+            think of maybe putting into some normal form. (Exploit equivalence to push down automata?)
+            the main step is creating a parse tree (derivation tree) from the token stream
+            use either top down parsing (simple, but limited) :: basically just try to construct a mathching parse tree and backtrack if we get stuck
+            or bottom up parsing (more involved)
+            from a parse tree, we get the abstract syntax tree by leaving out unnecessary symbols only introduces for capturing structure now represented in the tree structure
+            i think ASTs should be immutable
+
+        questions:
+            the AST must keep track of the variable arguments.
+            this can be done by keeping pointers to certain locations.
+            alternatively, an argument may be represented by storing the index of the argument in the corresponding AST node. (i think this is nicer, as it is more self contained)
+
+        work estimate:
+            2-6 h grammar specification, normalization
+            1-3 h planning of implementation
+            4-12 h implementation of parsing
+
+    SQLRewrite: Perform common refactoring operations.
+        Most importantly combine cross products and selections into joins,
+        But also selection push down.
+        works on the AST, returns an AST, so in some sense optional
+
+        questions:
+            it is not clear yet how much semantics (types) and knowledge of the DB (schema) this class needs to have
+
+    SQLCodeGenerator: Create runnable representation.
+        Creates a tree of SQLOperators that work like iterators
+        This involves choosing appropriate physical operators for each logical operator
+        questions: 
+            are the arguments substituted before instanciating?
+            -> YES: the arguments could be passed as arguments to the constructor. If we store index of an argument in its AST node, we can easily replace it during code generation.
+            -> No: Operators should be resuable between calls with different arguments. Instead provide a way to set the arguments on an operator tree.
+                   this is both more efficient and conceptually compelling. It is unnecessary to generate code for an operation simply because its argument changes.
+            --->the only problem with this is that arguments should not be changed while executing an operation.
+            ---->this can be solved by having the operators rewind whenever arguments are set. this gives a reasonable semantic.
+
