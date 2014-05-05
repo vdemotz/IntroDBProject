@@ -26,6 +26,10 @@ public class SQLLexer {
 			for (SQLTokenClass tokenClass : SQLToken.SQLTokenClass.values()) {
 				String match = matcher.group(tokenClass.name());
 				if (match != null && tokenClass != SQLToken.SQLTokenClass.WHITESPACE) {
+					//"rewrite renaming of tables to always use explicit 'as'
+					if (tokenStream.size() > 0 && tokenClass == SQLToken.SQLTokenClass.UNQUALIFIEDID && tokenStream.get(tokenStream.size()-1).tokenClass == SQLToken.SQLTokenClass.UNQUALIFIEDID) {
+						tokenStream.add(new SQLToken(SQLToken.SQLTokenClass.AS, "as"));
+					}
 					tokenStream.add(new SQLToken(tokenClass, match));
 					break;
 				}
