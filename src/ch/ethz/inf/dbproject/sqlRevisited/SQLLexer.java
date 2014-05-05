@@ -30,6 +30,9 @@ public class SQLLexer {
 					if (tokenStream.size() > 0 && tokenClass == SQLToken.SQLTokenClass.UNQUALIFIEDID && tokenStream.get(tokenStream.size()-1).tokenClass == SQLToken.SQLTokenClass.UNQUALIFIEDID) {
 						tokenStream.add(new SQLToken(SQLToken.SQLTokenClass.AS, "as"));
 					}
+					if (tokenClass != SQLToken.SQLTokenClass.LITERAL) {//SQL is case insensitive
+						match = match.toLowerCase();
+					}
 					tokenStream.add(new SQLToken(tokenClass, match));
 					break;
 				}

@@ -23,9 +23,9 @@ public class SQLToken {
 		//BOOLEAN_UNARY_CONNECTIVE ("\\bnot\\b"),
 		//data
 		BOOL ("\\b(true|false)\\b"),
-		AGGREGATE ("\\b(count|max)\\([*a-zA-Z]+\\)"),
-		QUALIFIEDID ("\\b[a-zA-Z]+\\.(\\*|[a-zA-Z]+\\b)"),
-		UNQUALIFIEDID ("\\b[a-zA-Z]+\\b"),
+		AGGREGATE ("\\b(count|max)\\([*a-z]+\\)"),
+		QUALIFIEDID ("\\b[a-z]+\\.(\\*|[a-z]+\\b)"),
+		UNQUALIFIEDID ("\\b[a-z]+\\b"),
 		LITERAL ("(\\d+\\b|'(.*)')"),
 		ARGUMENT ("\\?"),
 		STAR ("\\*"),
@@ -55,11 +55,11 @@ public class SQLToken {
 	}
 	
 	public static String getPattern() {
-		String result = "";
+		String result = "(?i)";
 		for (SQLTokenClass tokenClass : SQLToken.SQLTokenClass.values()) {
-			result += String.format("|(?<%s>%s)", tokenClass.name(), tokenClass.pattern);
+			result += String.format("(?<%s>%s)|", tokenClass.name(), tokenClass.pattern);
 		}
-		return result.substring(1);
+		return result.substring(0, result.length()-1);
 	}
 	
 	public String toString() {

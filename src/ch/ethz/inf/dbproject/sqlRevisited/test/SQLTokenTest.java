@@ -25,7 +25,7 @@ public class SQLTokenTest {
 		    "from Conviction conviction, CategoryForCase categoryForCase " +
 		    "where conviction.caseId = categoryForCase.caseId " +
 		    "group by categoryName";
-	private static final String literalTest = "select * from CaseDetail where caseId=3 and authorUsername='holmes' and isOpen = true";
+	private static final String literalTest = "select * FROM CaseDetail WHERE caseId=3 ANd authorUsername='Holmes42_3' and isOpen = true";
 	
 	@Test
 	public void test() {
