@@ -15,6 +15,7 @@ public class SQLLexer {
 	 * Create a stream of tokens from a given SQL statement
 	 * @param statement the SQL to analyze
 	 * @return the stream of tokens, including error but without whitespace tokens
+	 * 		   if an error occurred, the last element of the result will be an error token
 	 */
 	public ArrayList<SQLToken> tokenize(String statement) {
 		ArrayList<SQLToken> tokenStream = new ArrayList<SQLToken>();

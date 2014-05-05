@@ -22,10 +22,11 @@ public class SQLToken {
 		//BOOLEAN_BINARY_CONNECTIVE ("\\b(and|or)\\b"),
 		//BOOLEAN_UNARY_CONNECTIVE ("\\bnot\\b"),
 		//data
-		QUALIFIEDID ("\\b[a-zA-Z]+\\.(\\*|[a-zA-Z]+\\b)"),//unsure about .
+		BOOL ("\\b(true|false)\\b"),
+		AGGREGATE ("\\b(count|max)\\([*a-zA-Z]+\\)"),
+		QUALIFIEDID ("\\b[a-zA-Z]+\\.(\\*|[a-zA-Z]+\\b)"),
 		UNQUALIFIEDID ("\\b[a-zA-Z]+\\b"),
-		LITERAL ("\\b(\\d+|'(.*)')\\b"),
-		AGGREGATE ("\\b(count|max)\\([a-zA-Z]+\\)\\b"),
+		LITERAL ("(\\d+\\b|'(.*)')"),
 		ARGUMENT ("\\?"),
 		STAR ("\\*"),
 		//compare
@@ -62,6 +63,6 @@ public class SQLToken {
 	}
 	
 	public String toString() {
-		return "( " + tokenClass.name() + ", '" + content.toString() + "')";
+		return "(" + tokenClass.name() + ", '" + content.toString() + "')";
 	}
 }
