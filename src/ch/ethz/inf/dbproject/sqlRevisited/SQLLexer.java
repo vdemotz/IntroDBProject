@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.ArrayList;
+import java.util.regex.*;
 
 public class SQLLexer {
 
@@ -22,6 +23,5 @@ public class SQLLexer {
     //    use regular expressions to define lexical structure
     //    use util.regex package to find matches
 	/////
-	
 	
 }
