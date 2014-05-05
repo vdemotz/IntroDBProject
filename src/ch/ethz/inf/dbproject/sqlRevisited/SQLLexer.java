@@ -3,6 +3,8 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 import java.util.ArrayList;
 import java.util.regex.*;
 
+import ch.ethz.inf.dbproject.sqlRevisited.SQLToken.SQLTokenClass;
+
 public class SQLLexer {
 
 	/////
@@ -12,16 +14,33 @@ public class SQLLexer {
 	/**
 	 * Create a stream of tokens from a given SQL statement
 	 * @param statement the SQL to analyze
-	 * @return the stream of tokens, including error and whitespace tokens
+	 * @return the stream of tokens, including error but without whitespace tokens
 	 */
-	public ArrayList<SQLToken> getTokenStream(String statement) {
-		return null;
+	public ArrayList<SQLToken> tokenize(String statement) {
+		ArrayList<SQLToken> tokenStream = new ArrayList<SQLToken>();
+		
+		Matcher matcher = pattern.matcher(statement);
+		
+		while (matcher.find()) {
+			for (SQLTokenClass tokenClass : SQLToken.SQLTokenClass.values()) {
+				String match = matcher.group(tokenClass.name());
+				if (match != null && tokenClass != SQLToken.SQLTokenClass.WHITESPACE) {
+					tokenStream.add(new SQLToken(tokenClass, match));
+					break;
+				}
+			}
+		}
+		
+		return tokenStream;
 	}
 	
 	//////
     //Implementation:
     //    use regular expressions to define lexical structure
     //    use util.regex package to find matches
+	//    inspired by http://www.giocc.com/writing-a-lexer-in-java-1-7-using-regex-named-capturing-groups.html
 	/////
 	
+	//Note: Pattern is thread safe so sharing it is fine
+	private static final Pattern pattern = Pattern.compile(SQLToken.getPattern());;
 }
