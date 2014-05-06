@@ -1,0 +1,79 @@
+simplefied core SQL grammar:
+terminals are in ALLCAPS
+nonterminals in CamelCase
+statement is the start symbol
+"" denotes the empty word
+
+statement = insertStatement
+            | selectStatement
+
+insertStatement = insertInto insertBody
+
+insertBody = UID VALUES OPENPAREN listOfValues CLOSEPAREN |
+             UID OPENPAREN listOfUIds CLOSEPAREN VALUES OPENPAREN listOfValues CLOSEPAREN
+
+value = ARG |
+        LITERAL |
+        BOOL
+listOfValues = value | value COMMA listOfValues
+
+listOfUIds = UID | UID COMMA listOfUIds
+
+selectStatement = selectStatementInner optionalOrderByClause
+
+optionalOrderByClause = ORDERBY concreteListOfAttributes optionalOrderDirection |
+                        ""
+
+concreteAttribute = UID |
+                    QID
+
+concreteListOfAttributes = concreteAttribute |
+                           concreteAttribute COMMA concreteListOfAttributes
+
+
+optionalOrderDirection = ORDERDIRECTION |
+                         ""
+
+selectStatementInner = SELECT optionalDistinct selectBody |
+                       unionList
+
+optionalDistinct = DISTINCT |
+                   ""
+
+unionList = subSelectStatement |
+            subSelectStatement UNION unionList
+
+subSelectStatement = OPENPAREN selectStatement CLOSEPAREN
+
+selectBody = selectionList FROM fromList optionalWhereClause optionalGroupClause
+
+selectionList = selectable |
+                selectable COMMA selectionList
+
+selectable = STAR |
+             QID |
+             UID |
+             QSTARID
+
+fromId = UID renamable |
+         subSelectStatement AS UID
+
+renamable = AS UID |
+            ""
+
+fromList = fromId |
+           fromId fromList
+
+optionalWhereClause = WHERE predicate |
+                      ""
+predicate = comparable COMPARATOR comparable |
+            predicate AND predicate
+
+comparable = QID |
+             UID |
+             ARG |
+             LITERAL |
+             BOOL
+
+optionalGroupClause = GROUPBY listOfUIds |
+                      ""

@@ -20,9 +20,9 @@ SQLCompiler Design Document
             use context free grammars
             think of maybe putting into some normal form. (Exploit equivalence to push down automata?)
             the main step is creating a parse tree (derivation tree) from the token stream
-            use either top down parsing (simple, but limited) :: basically just try to construct a mathching parse tree and backtrack if we get stuck
+            use either top down parsing (simple) :: basically just try to construct a mathching parse tree and backtrack if we get stuck
             or bottom up parsing (more involved)
-            from a parse tree, we get the abstract syntax tree by leaving out unnecessary symbols only introduces for capturing structure now represented in the tree structure
+            from a parse tree, we get the abstract syntax tree by leaving out unnecessary symbols only introduced for capturing structure now represented in the tree structure
             i think ASTs should be immutable
 
         questions:

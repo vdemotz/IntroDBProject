@@ -19,13 +19,14 @@ public class SQLToken {
 		AS ("\\bas\\b"),
 		AND ("\\band\\b"),
 		ORDERDIRECTION ("\\b(desc|asc)\\b"),
-		//BOOLEAN_BINARY_CONNECTIVE ("\\b(and|or)\\b"),
-		//BOOLEAN_UNARY_CONNECTIVE ("\\bnot\\b"),
+		//BINARYCONNECTIVE ("\\b(and|or)\\b"),
+		//UNARYCONNECTIVE ("\\bnot\\b"),
 		//data
 		BOOL ("\\b(true|false)\\b"),
 		AGGREGATE ("\\b(count|max)\\([*a-z]+\\)"),
-		QUALIFIEDID ("\\b[a-z]+\\.(\\*|[a-z]+\\b)"),
-		UNQUALIFIEDID ("\\b[a-z]+\\b"),
+		QID ("\\b[a-z]+\\.([a-z]+\\b)"),
+		QSTARID ("\\b[a-z]+\\.\\*"),
+		UID ("\\b[a-z]+\\b"),
 		LITERAL ("(\\d+\\b|'(.*)')"),
 		ARGUMENT ("\\?"),
 		STAR ("\\*"),
@@ -36,7 +37,8 @@ public class SQLToken {
 		OPENPAREN ("\\("),
 		CLOSEPAREN ("\\)"),
 		WHITESPACE ("\\s+"),
-		//if none other match, error (go into "panic mode")
+		//if there's no other match, go into "panic mode"
+		//ERROR (".+\\)"),//try to recover
 		ERROR (".+");
 		
 		public final String pattern;

@@ -18,7 +18,7 @@ public class SQLTokenTest {
 	private static final String categoriesForCaseQuery = "select distinct Category.* " +
 			"from CaseDetail caseDetail, CategoryForCase categoryForCase, Category category " +
 		    "where caseDetail.caseId = ? and categoryForCase.caseId = caseDetail.caseId and categoryForCase.categoryName = category.Name";
-	private static final String getMaxPersonNoteIdForPersonIdString = "select max(personNoteId) from PersonNote where personId = ?";
+	private static final String getMaxPersonNoteIdForPersonIdString = "select max(personNoteId323FFe) from PersonNote where personId = ?";//test error
 	private static final String getPersonNotesForPersonString = "select * from PersonNote where personId= ? order by date desc";
 	private static final String updateCaseIsOpenQuery = "update CaseDetail set isOpen =? where caseId=?";
 	private static final String convictionsPerCategoryString = "select categoryName, count(*) " +
@@ -26,11 +26,11 @@ public class SQLTokenTest {
 		    "where conviction.caseId = categoryForCase.caseId " +
 		    "group by categoryName";
 	private static final String literalTest = "select * FROM CaseDetail WHERE caseId=3 ANd authorUsername='Holmes42_3' and isOpen = true";
-	
+
 	@Test
 	public void test() {
 		SQLLexer lex = new SQLLexer();
-
+		
 		System.out.println(lex.tokenize(casesForCategoryQuery));
 		System.out.println(lex.tokenize(getPersonsForConvictionTypeString));
 		System.out.println(lex.tokenize(addPersonNoteString));
