@@ -7,7 +7,7 @@ statement is the start symbol
 statement = insertStatement
             | selectStatement
 
-insertStatement = insertInto insertBody
+insertStatement = INSERTINTO insertBody
 
 insertBody = UID VALUES OPENPAREN listOfValues CLOSEPAREN |
              UID OPENPAREN listOfUIds CLOSEPAREN VALUES OPENPAREN listOfValues CLOSEPAREN
@@ -15,6 +15,7 @@ insertBody = UID VALUES OPENPAREN listOfValues CLOSEPAREN |
 value = ARG |
         LITERAL |
         BOOL
+
 listOfValues = value | value COMMA listOfValues
 
 listOfUIds = UID | UID COMMA listOfUIds
