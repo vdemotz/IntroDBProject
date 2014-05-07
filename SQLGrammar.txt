@@ -12,10 +12,10 @@ statement = insertStatement |
 ///INSERT
 /////
 
-insertStatement = INSERTINTO insertBody
+insertStatement = INSERTINTO UID insertBody
 
-insertBody = UID VALUES OPENPAREN listOfValues CLOSEPAREN |
-             UID OPENPAREN listOfUIds CLOSEPAREN VALUES OPENPAREN listOfValues CLOSEPAREN
+insertBody = VALUES OPENPAREN listOfValues CLOSEPAREN |
+             OPENPAREN listOfUIds CLOSEPAREN VALUES OPENPAREN listOfValues CLOSEPAREN
 
 value = ARG |
         LITERAL |
@@ -90,6 +90,13 @@ optionalConjunctFromList = COMMA fromList |
 optionalWhereClause = WHERE predicate |
                       ""
 
+optionalGroupClause = GROUPBY listOfUIds |
+                      ""
+
+/////
+//PREDICATES
+////
+
 predicate = comparable compareOperator comparable optionalConjuctPredicate
 
 optionalConjunctPredicate = AND predicate |
@@ -103,9 +110,6 @@ comparable = QID |
              ARG |
              LITERAL |
              BOOL
-
-optionalGroupClause = GROUPBY listOfUIds |
-                      ""
 
 ////
 //UPDATE
