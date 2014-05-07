@@ -21,11 +21,15 @@ value = ARG |
         LITERAL |
         BOOL
 
-listOfValues = value |
-               value COMMA listOfValues
+listOfValues = value optionalConjunctListOfValues
 
-listOfUIds = UID |
-             UID COMMA listOfUIds
+optionalConjunctListOfValues = COMMA listOfValues |
+                               ""
+
+listOfUIds = UID optionalConjunctListOfUIds
+
+optionalConjunctListOfUIds = COMMA listOfUIds |
+                             ""
 
 //////
 ///SELECT
@@ -39,8 +43,10 @@ optionalOrderByClause = ORDERBY concreteListOfAttributes optionalOrderDirection 
 concreteAttribute = UID |
                     QID
 
-concreteListOfAttributes = concreteAttribute |
-                           concreteAttribute COMMA concreteListOfAttributes
+concreteListOfAttributes = concreteAttribute optionalConjunctConcreteListOfAttributes
+
+optionalConjunctConcreteListOfAttributes = COMMA concreteListOfAttributes |
+                                           ""
 
 optionalOrderDirection = ORDERDIRECTION |
                          ""
@@ -51,15 +57,19 @@ selectStatementInner = SELECT optionalDistinct selectBody |
 optionalDistinct = DISTINCT |
                    ""
 
-unionList = subSelectStatement |
-            subSelectStatement UNION unionList
+unionList = subSelectStatement optionalConjunctUnionList
+
+optionalConjunctUnionList = UNION unionList |
+                            ""
 
 subSelectStatement = OPENPAREN selectStatement CLOSEPAREN
 
 selectBody = selectionList FROM fromList optionalWhereClause optionalGroupClause
 
-selectionList = selectable |
-                selectable COMMA selectionList
+selectionList = selectable optionalConjunctSelectionList
+
+optionalConjunctSelectionList = COMMA selectionList |
+                                ""
 
 selectable = STAR |
              QID |
@@ -72,8 +82,10 @@ fromId = UID renamable |
 renamable = AS UID |
             ""
 
-fromList = fromId |
-           fromId COMMA fromList
+fromList = fromId optionalConjunctFromList
+
+optionalConjunctFromList = COMMA fromList |
+                           ""
 
 optionalWhereClause = WHERE predicate |
                       ""
