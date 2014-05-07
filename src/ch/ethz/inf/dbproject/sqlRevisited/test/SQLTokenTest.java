@@ -26,7 +26,13 @@ public class SQLTokenTest {
 		    "where conviction.caseId = categoryForCase.caseId " +
 		    "group by categoryName";
 	private static final String literalTest = "select * FROM CaseDetail WHERE caseId=3 ANd authorUsername='Holmes42_3' and isOpen = true";
-
+	private static final String insertIntoCaseNoteQuery = "insert into CaseNote " +
+			"values (?, " +//caseId
+			"?, " +//caseNoteId
+			"?, " +//text
+			"?, " +//date
+			"?)";//authorUsername
+	
 	@Test
 	public void test() {
 		SQLLexer lex = new SQLLexer();
@@ -41,6 +47,7 @@ public class SQLTokenTest {
 		System.out.println(lex.tokenize(updateCaseIsOpenQuery));
 		System.out.println(lex.tokenize(convictionsPerCategoryString));
 		System.out.println(lex.tokenize(literalTest));
+		System.out.println(lex.tokenize(insertIntoCaseNoteQuery));
 	}
 
 }
