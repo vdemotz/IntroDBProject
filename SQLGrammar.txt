@@ -4,18 +4,20 @@ nonterminals in CamelCase
 statement is the start symbol
 "" denotes the empty word
 
-statement = insertStatement |
+statement = INSERTINTO insertStatement |
             selectStatement |
-            updateStatement
+            UPDATE updateStatement
 
 /////
 ///INSERT
 /////
 
-insertStatement = INSERTINTO UID insertBody
+insertStatement = UID insertBody
 
-insertBody = VALUES OPENPAREN listOfValues CLOSEPAREN |
-             OPENPAREN listOfUIds CLOSEPAREN VALUES OPENPAREN listOfValues CLOSEPAREN
+insertBody = VALUES parenthesisedListOfValues |
+             OPENPAREN listOfUIds CLOSEPAREN parenthesisedListOfValues
+
+parenthesisedListOfValues OPENPAREN listOfValues CLOSEPAREN
 
 value = ARG |
         LITERAL |
@@ -115,7 +117,7 @@ comparable = QID |
 //UPDATE
 /////
 
-updateStatement = UPDATE UID SET assignmentList optionalWhereClause
+updateStatement = UID SET assignmentList optionalWhereClause
 
 assignmentList = UID EQUAL value optionalConjunctAssignmentList
 
