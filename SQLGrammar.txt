@@ -14,8 +14,10 @@ statement = INSERTINTO insertStatement |
 
 insertStatement = UID insertBody
 
-insertBody = VALUES parenthesisedListOfValues |
-             OPENPAREN listOfUIds CLOSEPAREN parenthesisedListOfValues
+insertBody = optionalParenthesisedListOfUIds VALUES parenthesisedListOfValues
+
+optionalParenthesisedListOfUIds = OPENPAREN listOfUIds CLOSEPAREN |
+                                  ""
 
 parenthesisedListOfValues OPENPAREN listOfValues CLOSEPAREN
 

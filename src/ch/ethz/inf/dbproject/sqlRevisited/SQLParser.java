@@ -9,117 +9,114 @@ public class SQLParser {
 	//PUBLIC
 	////
 	
-	public int parse(ArrayList<SQLToken> tokenStream) {
-		System.out.println(tokenStream);
+	public int parse(ArrayList<SQLToken> tokenStream) throws SQLParseException {
 		return statement(tokenStream);
 	}
 	
 	////
 	//IMPLEMENTATION
 	//Top down recursive parser
-	//TODO: throw error or similar if no match
 	////
 	
-	private int statement(ArrayList<SQLToken> tokens) {
+	private int statement(ArrayList<SQLToken> tokens) throws SQLParseException {
 		int position = 0;
 		if (SQLToken.SQLTokenClass.INSERTINTO == getTokenClass(tokens, position)) {
-				System.out.println(tokens.get(position));
-				position += 1;
-				position = insertStatement(tokens, position);
-				
+			position += 1;
+			position = insertStatement(tokens, position);
+		} else {
+			throw new SQLParseException(SQLToken.SQLTokenClass.INSERTINTO, position);
 		}
 		return position;
 	}
-	
 	
 	////
 	//INSERT
 	////
 
-	private int insertStatement(ArrayList<SQLToken> tokens, int position) {
+	private int insertStatement(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		if (SQLToken.SQLTokenClass.UID == getTokenClass(tokens, position)) {
-			System.out.println(tokens.get(position));
 			position += 1;
 			position = insertBody(tokens, position);
 		} else {
-			//ERROR
+			throw new SQLParseException(SQLToken.SQLTokenClass.UID, position);
 		}
 		return position;
 	}
 	
-	private int insertBody(ArrayList<SQLToken> tokens, int position) {
+	private int insertBody(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
+		
+		position = optionalParenthesisedListOfUIds(tokens, position);
 		
 		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.VALUES) {
-			System.out.println(tokens.get(position));
 			position += 1;
 			position = parenthesisedListOfVariables(tokens, position);
-		} else if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.OPENPAREN) {
-			System.out.println(tokens.get(position));
+		} else {
+			throw new SQLParseException(SQLToken.SQLTokenClass.VALUES, position);
+		}
+		
+		return position;
+	}
+	
+	private int optionalParenthesisedListOfUIds(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
+		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.OPENPAREN) {
 			position += 1;
 			position = listOfUIds(tokens, position);
 			if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.CLOSEPAREN) {
-				System.out.println(tokens.get(position));
 				position += 1;
-				if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.VALUES) {
-					System.out.println(tokens.get(position));
-					position += 1;
-					position = parenthesisedListOfVariables(tokens, position);
-				}
+			} else {
+				throw new SQLParseException(SQLToken.SQLTokenClass.CLOSEPAREN, position);
 			}
-		} else {
-			//ERROR
 		}
-		
 		return position;
 	}
 	
-	private int parenthesisedListOfVariables(ArrayList<SQLToken> tokens, int position) {
+	private int parenthesisedListOfVariables(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.OPENPAREN) {
-			System.out.println(tokens.get(position));
 			position += 1;
 			position = listOfValues(tokens, position);
 			if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.CLOSEPAREN) {
-				System.out.println(tokens.get(position));
 				position += 1;
+			} else {
+				throw new SQLParseException(SQLToken.SQLTokenClass.CLOSEPAREN, position);
 			}
 		} else {
-			//ERROR
+			throw new SQLParseException(SQLToken.SQLTokenClass.OPENPAREN, position);
 		}
 		return position;
 	}
 	
-	private int listOfUIds(ArrayList<SQLToken> tokens, int position) {
+	private int listOfUIds(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.UID) {
-			System.out.println(tokens.get(position));
 			position += 1;
 			position = optionalConjunctListOfUIds(tokens, position);
+		} else {
+			throw new SQLParseException(SQLToken.SQLTokenClass.UID, position);
 		}
 		return position;
 	}
 	
-	private int optionalConjunctListOfUIds(ArrayList<SQLToken> tokens, int position) {
+	private int optionalConjunctListOfUIds(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.COMMA) {
-			System.out.println(tokens.get(position));
 			position += 1;
 			position = listOfUIds(tokens, position);
 		}
 		return position;
 	}
 	
-	private int listOfValues(ArrayList<SQLToken> tokens, int position) {
+	private int listOfValues(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.ARGUMENT ||
 		    getTokenClass(tokens, position) == SQLToken.SQLTokenClass.LITERAL ||
 		    getTokenClass(tokens, position) == SQLToken.SQLTokenClass.BOOL) {
-			System.out.println(tokens.get(position));
 			position += 1;
 			position = optionalConjunctListOfValues(tokens, position);
+		} else {
+			throw new SQLParseException(position);
 		}
 		return position;
 	}
 	
-	private int optionalConjunctListOfValues(ArrayList<SQLToken> tokens, int position) {
+	private int optionalConjunctListOfValues(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.COMMA) {
-			System.out.println(tokens.get(position));
 			position += 1;
 			position = listOfValues(tokens, position);
 		}
@@ -134,20 +131,26 @@ public class SQLParser {
 	//PREDICATES
 	////
 	
-	private int predicate(ArrayList<SQLToken> tokens, int position) {
+	private int predicate(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		position = comparable(tokens, position);
+		position = compareOperator(tokens, position);
+		position = comparable(tokens, position);
+		position = optionalConjunctPredicate(tokens, position);
+
+		return position;
+	}
+	
+	private int compareOperator(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.EQUAL ||
 			getTokenClass(tokens, position) == SQLToken.SQLTokenClass.COMPARATOR) {
 			position += 1;
-			position = comparable(tokens, position);
-			position = optionalConjunctPredicate(tokens, position);
 		} else {
-			//ERROR
+			throw new SQLParseException(position);
 		}
 		return position;
 	}
 	
-	private int comparable(ArrayList<SQLToken> tokens, int position) {
+	private int comparable(ArrayList<SQLToken> tokens, int position) throws SQLParseException {
 		
 		SQLToken.SQLTokenClass token = getTokenClass(tokens, position);
 		if (token == SQLToken.SQLTokenClass.QID ||
@@ -157,12 +160,12 @@ public class SQLParser {
 		    token == SQLToken.SQLTokenClass.BOOL) {
 			position += 1;
 		} else {
-			//ERROR
+			throw new SQLParseException(position);
 		}
 		return position;
 	}
 	
-	private int optionalConjunctPredicate(ArrayList<SQLToken> tokens, int position) {
+	private int optionalConjunctPredicate(ArrayList<SQLToken> tokens, int position) throws SQLParseException  {
 		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.AND) {
 			position += 1;
 			position = predicate(tokens, position);

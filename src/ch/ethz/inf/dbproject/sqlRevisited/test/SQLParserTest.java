@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import ch.ethz.inf.dbproject.sqlRevisited.SQLLexer;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLParseException;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLParser;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLToken;
 
@@ -20,6 +21,8 @@ public class SQLParserTest {
 			"?)";//authorUsername
 	
 	private static final String addPersonString = "insert into Person(personId, firstName, lastName, birthdate) values(?, ?, ?, ?)";
+	
+	private static final String insertIntoConvictionQuery = "insert into Conviction values (?, ?, ?, ?, ?)";
 	
 	//missing close parent
 	private static final String insertQueryE1 = "insert into CaseNote(caseId, authorUsername " +
@@ -39,39 +42,58 @@ public class SQLParserTest {
 	private static final String insertQueryE4 = "insert into CaseNote " +
 			"values (notaliteral)";
 	
+	private static final String insertQueryE5 = "insert into CaseNote() values(?)";
+	
 	private static final String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
+	
+	private String[] testInsertSucceeds = {insertIntoCaseNoteQuery, addPersonString, insertIntoConvictionQuery};
+	
+	private String[] testInsertFails = {insertQueryE1, insertQueryE2, insertQueryE3, insertQueryE4, insertQueryE5};
 	
 	@Test
 	public void testInserts() {
+		testSucceedsParse(testInsertSucceeds);
+		testFailsParse(testInsertFails);
+	}
+	
+	private void testSucceedsParse(String[] tests) {
 		SQLLexer lex = new SQLLexer();
 		SQLParser parser = new SQLParser();
+		ArrayList<SQLToken> tokens;
+		int parsedUntil;
 		
-		//Should parse
-		ArrayList<SQLToken> tokens = lex.tokenize(insertIntoCaseNoteQuery);
-		int parsedUntil = parser.parse(tokens);
-		assertTrue(parsedUntil == tokens.size());
+		for (String query : tests) {
+			tokens = lex.tokenize(query);
+			System.out.println(tokens);
+			try {
+				parsedUntil = parser.parse(tokens);
+				assertTrue(parsedUntil == tokens.size());
+			} catch (SQLParseException e) {
+				
+				e.printStackTrace();
+				fail("parse failed unexpectedly for query "+ query);
+				
+			}
+		}
+	}
+	
+	private void testFailsParse(String[] tests) {
+		SQLLexer lex = new SQLLexer();
+		SQLParser parser = new SQLParser();
+		ArrayList<SQLToken> tokens;
+		int parsedUntil;
 		
-		tokens = lex.tokenize(addPersonString);
-		parsedUntil = parser.parse(tokens);
-		assertTrue(parsedUntil == tokens.size());
-		
-		//Shouldn't parse
-		tokens = lex.tokenize(insertQueryE1);
-		parsedUntil = parser.parse(tokens);
-		assertFalse(parsedUntil == tokens.size());
-		
-		tokens = lex.tokenize(insertQueryE2);
-		parsedUntil = parser.parse(tokens);
-		assertFalse(parsedUntil == tokens.size());
-		
-		tokens = lex.tokenize(insertQueryE3);
-		parsedUntil = parser.parse(tokens);
-		assertFalse(parsedUntil == tokens.size());
-		
-		tokens = lex.tokenize(insertQueryE4);
-		parsedUntil = parser.parse(tokens);
-		assertFalse(parsedUntil == tokens.size());
-		
+		for (String query : tests) {
+			tokens = lex.tokenize(query);
+			System.out.println(tokens);
+			try {
+				parsedUntil = parser.parse(tokens);
+				
+				fail("parse succeeded unexpectedly for query " + query);
+			} catch (SQLParseException e) {
+				
+			}
+		}
 	}
 	
 	@Test
@@ -80,8 +102,8 @@ public class SQLParserTest {
 		SQLParser parser = new SQLParser();
 		
 		ArrayList<SQLToken> tokens = lex.tokenize(updateCaseIsOpenQuery);
-		int parsedUntil = parser.parse(tokens);
-		assertTrue(parsedUntil == tokens.size());
+		//int parsedUntil = parser.parse(tokens);
+		//assertTrue(parsedUntil == tokens.size());
 	}
 
 }
