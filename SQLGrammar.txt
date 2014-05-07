@@ -19,7 +19,7 @@ insertBody = VALUES parenthesisedListOfValues |
 
 parenthesisedListOfValues OPENPAREN listOfValues CLOSEPAREN
 
-value = ARG |
+value = ARGUMENT |
         LITERAL |
         BOOL
 
@@ -109,7 +109,7 @@ compareOperator = COMPARATOR |
 
 comparable = QID |
              UID |
-             ARG |
+             ARGUMENT |
              LITERAL |
              BOOL
 

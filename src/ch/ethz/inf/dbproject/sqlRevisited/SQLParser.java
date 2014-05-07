@@ -17,6 +17,7 @@ public class SQLParser {
 	////
 	//IMPLEMENTATION
 	//Top down recursive parser
+	//TODO: throw error or similar if no match
 	////
 	
 	private int statement(ArrayList<SQLToken> tokens) {
@@ -29,12 +30,19 @@ public class SQLParser {
 		}
 		return position;
 	}
+	
+	
+	////
+	//INSERT
+	////
 
 	private int insertStatement(ArrayList<SQLToken> tokens, int position) {
 		if (SQLToken.SQLTokenClass.UID == getTokenClass(tokens, position)) {
 			System.out.println(tokens.get(position));
 			position += 1;
 			position = insertBody(tokens, position);
+		} else {
+			//ERROR
 		}
 		return position;
 	}
@@ -58,6 +66,8 @@ public class SQLParser {
 					position = parenthesisedListOfVariables(tokens, position);
 				}
 			}
+		} else {
+			//ERROR
 		}
 		
 		return position;
@@ -72,6 +82,8 @@ public class SQLParser {
 				System.out.println(tokens.get(position));
 				position += 1;
 			}
+		} else {
+			//ERROR
 		}
 		return position;
 	}
@@ -114,10 +126,60 @@ public class SQLParser {
 		return position;
 	}
 	
+	////
+	//SELECT
+	////
+	
+	////
+	//PREDICATES
+	////
+	
+	private int predicate(ArrayList<SQLToken> tokens, int position) {
+		position = comparable(tokens, position);
+		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.EQUAL ||
+			getTokenClass(tokens, position) == SQLToken.SQLTokenClass.COMPARATOR) {
+			position += 1;
+			position = comparable(tokens, position);
+			position = optionalConjunctPredicate(tokens, position);
+		} else {
+			//ERROR
+		}
+		return position;
+	}
+	
+	private int comparable(ArrayList<SQLToken> tokens, int position) {
+		
+		SQLToken.SQLTokenClass token = getTokenClass(tokens, position);
+		if (token == SQLToken.SQLTokenClass.QID ||
+			token == SQLToken.SQLTokenClass.UID ||
+			token == SQLToken.SQLTokenClass.ARGUMENT ||
+			token == SQLToken.SQLTokenClass.LITERAL ||
+		    token == SQLToken.SQLTokenClass.BOOL) {
+			position += 1;
+		} else {
+			//ERROR
+		}
+		return position;
+	}
+	
+	private int optionalConjunctPredicate(ArrayList<SQLToken> tokens, int position) {
+		if (getTokenClass(tokens, position) == SQLToken.SQLTokenClass.AND) {
+			position += 1;
+			position = predicate(tokens, position);
+		}
+		return position;
+	}
+	
+	////
+	//HELPER
+	////
+	
 	private SQLToken.SQLTokenClass getTokenClass(ArrayList<SQLToken> array, int index) {
 		if (index >= array.size()) {
 			return null;
 		}
 		return array.get(index).tokenClass;
 	}
+	
+	
 }

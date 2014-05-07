@@ -39,8 +39,10 @@ public class SQLParserTest {
 	private static final String insertQueryE4 = "insert into CaseNote " +
 			"values (notaliteral)";
 	
+	private static final String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
+	
 	@Test
-	public void test() {
+	public void testInserts() {
 		SQLLexer lex = new SQLLexer();
 		SQLParser parser = new SQLParser();
 		
@@ -69,6 +71,17 @@ public class SQLParserTest {
 		tokens = lex.tokenize(insertQueryE4);
 		parsedUntil = parser.parse(tokens);
 		assertFalse(parsedUntil == tokens.size());
+		
+	}
+	
+	@Test
+	public void testUpdates() {
+		SQLLexer lex = new SQLLexer();
+		SQLParser parser = new SQLParser();
+		
+		ArrayList<SQLToken> tokens = lex.tokenize(updateCaseIsOpenQuery);
+		int parsedUntil = parser.parse(tokens);
+		assertTrue(parsedUntil == tokens.size());
 	}
 
 }
