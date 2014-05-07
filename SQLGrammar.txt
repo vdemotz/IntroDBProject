@@ -4,8 +4,13 @@ nonterminals in CamelCase
 statement is the start symbol
 "" denotes the empty word
 
-statement = insertStatement
-            | selectStatement
+statement = insertStatement |
+            selectStatement |
+            updateStatement
+
+/////
+///INSERT
+/////
 
 insertStatement = INSERTINTO insertBody
 
@@ -16,9 +21,15 @@ value = ARG |
         LITERAL |
         BOOL
 
-listOfValues = value | value COMMA listOfValues
+listOfValues = value |
+               value COMMA listOfValues
 
-listOfUIds = UID | UID COMMA listOfUIds
+listOfUIds = UID |
+             UID COMMA listOfUIds
+
+//////
+///SELECT
+/////
 
 selectStatement = selectStatementInner optionalOrderByClause
 
@@ -30,7 +41,6 @@ concreteAttribute = UID |
 
 concreteListOfAttributes = concreteAttribute |
                            concreteAttribute COMMA concreteListOfAttributes
-
 
 optionalOrderDirection = ORDERDIRECTION |
                          ""
@@ -63,12 +73,18 @@ renamable = AS UID |
             ""
 
 fromList = fromId |
-           fromId fromList
+           fromId COMMA fromList
 
 optionalWhereClause = WHERE predicate |
                       ""
-predicate = comparable COMPARATOR comparable |
-            predicate AND predicate
+
+predicate = comparable compareOperator comparable optionalConjuctPredicate
+
+optionalConjunctPredicate = AND predicate |
+                            ""
+
+compareOperator = COMPARATOR |
+                  EQUAL
 
 comparable = QID |
              UID |
@@ -78,3 +94,14 @@ comparable = QID |
 
 optionalGroupClause = GROUPBY listOfUIds |
                       ""
+
+////
+//UPDATE
+/////
+
+updateStatement = UPDATE UID SET assignmentList optionalWhereClause
+
+assignmentList = UID EQUAL value optionalConjunctAssignmentList
+
+optionalConjunctAssignmentList = COMMA assignmentList |
+                                 ""

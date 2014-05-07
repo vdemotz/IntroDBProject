@@ -30,8 +30,10 @@ public class SQLToken {
 		LITERAL ("(\\d+\\b|'(.*)')"),
 		ARGUMENT ("\\?"),
 		STAR ("\\*"),
+		//compare and set
+		EQUAL ("="),
 		//compare
-		COMPARATOR ("<=|>=|<|=|>|\\blike\\b"),
+		COMPARATOR ("<=|>=|<|>|\\blike\\b"),
 		//Structure
 		COMMA (","),
 		OPENPAREN ("\\("),
