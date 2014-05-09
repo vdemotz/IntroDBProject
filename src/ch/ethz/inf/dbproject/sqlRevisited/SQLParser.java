@@ -18,7 +18,11 @@ public class SQLParser {
 	public boolean parse(SQLTokenStream tokenStream) throws SQLParseException {
 		tokenStream.rewind();
 		statement(tokenStream);
-		return tokenStream.getToken() == null;
+		if (tokenStream.getToken() != null) {//If not the whole stream was consumed, an error occured
+			throw new SQLParseException(tokenStream.getPosition());
+		} else {
+			return true;
+		}
 	}
 	
 	////
@@ -34,7 +38,7 @@ public class SQLParser {
 		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()){
 			selectStatement(tokens);
 		} else {
-			throw new SQLParseException(SQLToken.SQLTokenClass.INSERTINTO, tokens.getPosition());
+			throw new SQLParseException(tokens.getPosition());
 		}
 	}
 	
@@ -144,7 +148,7 @@ public class SQLParser {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ORDERBY) {
 			tokens.advance();
 			concreteListOfAttributes(tokens);
-			optionalOrderDirection(tokens);
+			
 		}
 	}
 	
@@ -159,6 +163,7 @@ public class SQLParser {
 	
 	private void concreteListOfAttributes(SQLTokenStream tokens) throws SQLParseException {
 		concreteAttribute(tokens);
+		optionalOrderDirection(tokens);
 		optionalConjunctConcreteListOfAttributes(tokens);
 	}
 	

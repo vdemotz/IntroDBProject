@@ -68,7 +68,7 @@ public class SQLParserTest {
 			   "and categoryForCase.categoryName = ? " +
 			   "order by lastName, firstName";
 	
-	private String[] testSelectFails = {selectQueryE1};
+	private String[] testSelectFails = {selectQueryE1, selectQueryE2};
 	
 	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString};
 	
@@ -95,8 +95,9 @@ public class SQLParserTest {
 			tokens = new SQLTokenStream(lex.tokenize(query));
 			try {
 				assertTrue(parser.parse(tokens));
-				System.out.println(tokens);
+				//System.out.println(tokens);
 				assertTrue(parser.parse(tokens));
+				System.out.println(tokens);
 			} catch (SQLParseException e) {
 				System.out.println(tokens);
 				e.printStackTrace();

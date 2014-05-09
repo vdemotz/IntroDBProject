@@ -42,13 +42,13 @@ optionalConjunctListOfUIds = COMMA listOfUIds |
 
 selectStatement = selectStatementInner optionalOrderByClause
 
-optionalOrderByClause = ORDERBY concreteListOfAttributes optionalOrderDirection |
+optionalOrderByClause = ORDERBY concreteListOfAttributes |
                         ""
 
 concreteAttribute = UID |
                     QID
 
-concreteListOfAttributes = concreteAttribute optionalConjunctConcreteListOfAttributes
+concreteListOfAttributes = concreteAttribute optionalOrderDirection optionalConjunctConcreteListOfAttributes
 
 optionalConjunctConcreteListOfAttributes = COMMA concreteListOfAttributes |
                                            ""
