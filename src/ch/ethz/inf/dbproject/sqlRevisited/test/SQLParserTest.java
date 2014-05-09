@@ -68,7 +68,7 @@ public class SQLParserTest {
 			   "and categoryForCase.categoryName = ? " +
 			   "order by lastName, firstName";
 	
-	private String[] testSelectFails = {selectQueryE1, selectQueryE2};
+	private String[] testSelectFails = {selectQueryE1};
 	
 	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString};
 	
