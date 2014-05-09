@@ -51,10 +51,38 @@ public class SQLParserTest {
 	
 	private String[] testInsertFails = {insertQueryE1, insertQueryE2, insertQueryE3, insertQueryE4, insertQueryE5};
 	
+	
+	
+	private final String selectQueryE1 = "select authorUsername from , , ";
+	
+	private final String selectQueryE2 = "select authorUsername from CaseDetail distinct asc";
+	
+	private static final String suspectsForCaseQuery = "select person.* " +
+			  "from Person person, Suspected suspected " +
+            "where suspected.caseId = ? and suspected.personId = person.personId";
+	
+	private static final String getPersonsForConvictionTypeString = "select person.* " +
+			   "from Conviction conviction, Person person, CategoryForCase categoryForCase "+
+			   "where conviction.personId = person.personId "+
+			   "and conviction.caseId = categoryForCase.caseId " +
+			   "and categoryForCase.categoryName = ? " +
+			   "order by lastName, firstName";
+	
+	private String[] testSelectFails = {selectQueryE1, selectQueryE2};
+	
+	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString};
+	
+	
 	@Test
 	public void testInserts() {
 		testSucceedsParse(testInsertSucceeds);
 		testFailsParse(testInsertFails);
+	}
+	
+	@Test
+	public void testSelect() {
+		testFailsParse(testSelectFails);
+		testSucceedsParse(testSelectSucceeds);
 	}
 	
 	private void testSucceedsParse(String[] tests) {
@@ -70,7 +98,7 @@ public class SQLParserTest {
 				System.out.println(tokens);
 				assertTrue(parser.parse(tokens));
 			} catch (SQLParseException e) {
-				
+				System.out.println(tokens);
 				e.printStackTrace();
 				fail("parse failed unexpectedly for query "+ query);
 				
