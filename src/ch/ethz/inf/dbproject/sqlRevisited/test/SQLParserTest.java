@@ -68,9 +68,15 @@ public class SQLParserTest {
 			   "and categoryForCase.categoryName = ? " +
 			   "order by lastName, firstName";
 	
-	private String[] testSelectFails = {selectQueryE1, selectQueryE2};
+	private static final String categoriesForCaseQuery = "select distinct Category.* " +
+			"from CaseDetail caseDetail, CategoryForCase categoryForCase, Category category " +
+		    "where caseDetail.caseId = ? and categoryForCase.caseId = caseDetail.caseId and categoryForCase.categoryName = category.Name";
 	
-	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString};
+	private static final String getAllPersonsString = "select * from Person order by lastName desc, firstName desc";
+	
+	private String[] testSelectFails = {selectQueryE1, selectQueryE2, "select order by name", "select A B from C", "select A, B from C, (select * from C)"};
+	
+	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, "select A, B from C, (select * from C) as B", categoriesForCaseQuery, getAllPersonsString};
 	
 	
 	@Test

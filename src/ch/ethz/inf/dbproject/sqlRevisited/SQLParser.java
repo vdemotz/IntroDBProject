@@ -18,7 +18,7 @@ public class SQLParser {
 	public boolean parse(SQLTokenStream tokenStream) throws SQLParseException {
 		tokenStream.rewind();
 		statement(tokenStream);
-		if (tokenStream.getToken() != null) {//If not the whole stream was consumed, an error occured
+		if (tokenStream.getToken() != null) {//If not the whole stream was consumed, an error occurred
 			throw new SQLParseException(tokenStream.getPosition());
 		} else {
 			return true;
