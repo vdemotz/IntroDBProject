@@ -86,6 +86,15 @@ public class SQLParserTest {
 	private String[] testUpdateSucceeds = {updateCaseIsOpenQuery};
 	
 	
+	
+	
+	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where caseId=? and personId=?";
+	
+	private String[] testDeleteFails = {"delete", "delete A", "delete A where"};
+
+	private String[] testDeleteSucceeds = {deleteSuspectFromCaseQuery};
+	
+	
 	@Test
 	public void testInserts() {
 		testSucceedsParse(testInsertSucceeds);
@@ -102,6 +111,12 @@ public class SQLParserTest {
 	public void testUpdates() {
 		testFailsParse(testUpdateFails);
 		testSucceedsParse(testUpdateSucceeds);
+	}
+	
+	@Test
+	public void testDeletes() {
+		testFailsParse(testDeleteFails);
+		testSucceedsParse(testDeleteSucceeds);
 	}
 	
 	private void testSucceedsParse(String[] tests) {

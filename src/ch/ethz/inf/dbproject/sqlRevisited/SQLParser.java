@@ -40,6 +40,9 @@ public class SQLParser {
 		} else if (SQLToken.SQLTokenClass.UPDATE == tokens.getTokenClass()) {
 			tokens.advance();
 			updateStatement(tokens);
+		} else if (SQLToken.SQLTokenClass.DELETE == tokens.getTokenClass()) {
+			tokens.advance();
+			deleteStatement(tokens);
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
@@ -395,5 +398,23 @@ public class SQLParser {
 			assignmentList(tokens);
 		}
 		
+	}
+	
+	////
+	//DELETE
+	////
+	
+	private void deleteStatement(SQLTokenStream tokens) throws SQLParseException{
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			tokens.advance();
+			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
+				tokens.advance();
+				predicate(tokens);
+			} else {
+				throw new SQLParseException(SQLToken.SQLTokenClass.WHERE, tokens.getPosition());
+			}
+		} else {
+			throw new SQLParseException(SQLToken.SQLTokenClass.UID, tokens.getPosition());
+		}
 	}
 }
