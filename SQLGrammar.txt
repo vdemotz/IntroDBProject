@@ -6,7 +6,8 @@ statement is the start symbol
 
 statement = INSERTINTO insertStatement |
             selectStatement |
-            UPDATE updateStatement
+            UPDATE updateStatement |
+            DELETE deleteStatement
 
 /////
 ///INSERT
@@ -55,16 +56,10 @@ optionalConjunctConcreteListOfAttributes = COMMA concreteListOfAttributes |
 optionalOrderDirection = ORDERDIRECTION |
                          ""
 
-selectStatementInner = SELECT optionalDistinct selectBody |
-                       unionList
+selectStatementInner = SELECT optionalDistinct selectBody
 
 optionalDistinct = DISTINCT |
                    ""
-
-unionList = subSelectStatement optionalConjunctUnionList
-
-optionalConjunctUnionList = UNION unionList |
-                            ""
 
 subSelectStatement = OPENPAREN selectStatement CLOSEPAREN
 
@@ -78,7 +73,8 @@ optionalConjunctSelectionList = COMMA selectionList |
 selectable = STAR |
              QID |
              UID |
-             QSTARID
+             QSTARID |
+             AGGREGATE renamable
 
 fromId = UID renamable |
          subSelectStatement AS UID
@@ -125,3 +121,9 @@ assignmentList = UID EQUAL value optionalConjunctAssignmentList
 
 optionalConjunctAssignmentList = COMMA assignmentList |
                                  ""
+
+////
+//DELETE
+////
+
+deleteStatement = UID WHERE predicate

@@ -16,7 +16,7 @@ public class SQLToken {
 		INSERTINTO ("\\binsert\\s+into\\b"),
 		UPDATE ("\\bupdate\\b"),
 		SET("\\bset\\b"),
-		DELETE ("\\bdelete\\b"),
+		DELETE ("\\bdelete\\s+from\\b"),
 		AS ("\\bas\\b"),
 		VALUES ("\\bvalues\\b"),
 		ORDERDIRECTION ("\\b(desc|asc)\\b"),
