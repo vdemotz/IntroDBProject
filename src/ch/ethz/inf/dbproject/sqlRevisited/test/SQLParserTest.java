@@ -79,6 +79,13 @@ public class SQLParserTest {
 	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, "select A, B from C, (select * from C) as B", categoriesForCaseQuery, getAllPersonsString};
 	
 	
+
+	
+	private String[] testUpdateFails = {"update A set A = B, ", "update A set B"};
+	
+	private String[] testUpdateSucceeds = {updateCaseIsOpenQuery};
+	
+	
 	@Test
 	public void testInserts() {
 		testSucceedsParse(testInsertSucceeds);
@@ -89,6 +96,12 @@ public class SQLParserTest {
 	public void testSelect() {
 		testFailsParse(testSelectFails);
 		testSucceedsParse(testSelectSucceeds);
+	}
+	
+	@Test
+	public void testUpdates() {
+		testFailsParse(testUpdateFails);
+		testSucceedsParse(testUpdateSucceeds);
 	}
 	
 	private void testSucceedsParse(String[] tests) {
@@ -129,16 +142,6 @@ public class SQLParserTest {
 				System.out.println(tokens);
 			}
 		}
-	}
-	
-	@Test
-	public void testUpdates() {
-		SQLLexer lex = new SQLLexer();
-		SQLParser parser = new SQLParser();
-		
-		ArrayList<SQLToken> tokens = lex.tokenize(updateCaseIsOpenQuery);
-		//int parsedUntil = parser.parse(tokens);
-		//assertTrue(parsedUntil == tokens.size());
 	}
 
 }

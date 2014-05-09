@@ -35,8 +35,11 @@ public class SQLParser {
 		if (SQLToken.SQLTokenClass.INSERTINTO == tokens.getTokenClass()) {
 			tokens.advance();
 			insertStatement(tokens);
-		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()){
+		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()) {
 			selectStatement(tokens);
+		} else if (SQLToken.SQLTokenClass.UPDATE == tokens.getTokenClass()) {
+			tokens.advance();
+			updateStatement(tokens);
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
@@ -115,16 +118,19 @@ public class SQLParser {
 		
 	}
 	
-	private void listOfValues(SQLTokenStream tokens) throws SQLParseException {
+	private void value(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ARGUMENT ||
-		    tokens.getTokenClass() == SQLToken.SQLTokenClass.LITERAL ||
+			tokens.getTokenClass() == SQLToken.SQLTokenClass.LITERAL ||
 		    tokens.getTokenClass() == SQLToken.SQLTokenClass.BOOL) {
 			tokens.advance();
-			optionalConjunctListOfValues(tokens);
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
-		
+	}
+	
+	private void listOfValues(SQLTokenStream tokens) throws SQLParseException {
+		value(tokens);
+		optionalConjunctListOfValues(tokens);
 	}
 	
 	private void optionalConjunctListOfValues(SQLTokenStream tokens) throws SQLParseException {
@@ -344,6 +350,49 @@ public class SQLParser {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AND) {
 			tokens.advance();
 			predicate(tokens);
+		}
+		
+	}
+	
+	////
+	//UPDATE
+	////
+	
+	private void updateStatement(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			tokens.advance();
+			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.SET) {
+				tokens.advance();
+				assignmentList(tokens);
+				optionalWhereClause(tokens);
+			} else {
+				throw new SQLParseException(SQLToken.SQLTokenClass.SET, tokens.getPosition());
+			}
+		} else {
+			throw new SQLParseException(SQLToken.SQLTokenClass.UID, tokens.getPosition());
+		}
+		
+	}
+
+	private void assignmentList(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			tokens.advance();
+			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.EQUAL) {
+				tokens.advance();
+				value(tokens);
+				optionalConjunctAssignmentList(tokens);
+			} else {
+				throw new SQLParseException(SQLToken.SQLTokenClass.EQUAL, tokens.getPosition());
+			}
+		} else {
+			throw new SQLParseException(SQLToken.SQLTokenClass.UID, tokens.getPosition());
+		}
+	}
+	
+	private void optionalConjunctAssignmentList(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
+			tokens.advance();
+			assignmentList(tokens);
 		}
 		
 	}
