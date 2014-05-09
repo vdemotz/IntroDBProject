@@ -250,7 +250,7 @@ public class SQLParser {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
 			tokens.advance();
 			renamable(tokens);
-		} else {
+		} else if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
 			subSelectStatement(tokens);
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AS) {
 				tokens.advance();
@@ -258,7 +258,9 @@ public class SQLParser {
 					tokens.advance();
 				} else { throw new SQLParseException(tokens.getPosition()); }
 			} else { throw new SQLParseException(tokens.getPosition()); }
-		} 
+		}  else {
+			throw new SQLParseException(tokens.getPosition());
+		}
 	}
 	
 	private void renamable(SQLTokenStream tokens) throws SQLParseException {
