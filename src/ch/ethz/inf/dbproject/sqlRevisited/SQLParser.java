@@ -31,6 +31,9 @@ public class SQLParser {
 		if (SQLToken.SQLTokenClass.INSERTINTO == tokens.getTokenClass()) {
 			tokens.advance();
 			insertStatement(tokens);
+		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()){
+			tokens.advance();
+			selectStatement(tokens);
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.INSERTINTO, tokens.getPosition());
 		}
@@ -133,6 +136,170 @@ public class SQLParser {
 	//SELECT
 	////
 	
+	private void selectStatement(SQLTokenStream tokens) throws SQLParseException {
+		selectStatementInner(tokens);
+		optionalOrderByClause(tokens);
+	}
+	
+	private void optionalOrderByClause(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.DISTINCT) {
+			tokens.advance();
+			concreteListOfAttributes(tokens);
+			optionalOrderDirection(tokens);
+		}
+	}
+	
+	private void concreteAttribute(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID ||
+				tokens.getTokenClass() == SQLToken.SQLTokenClass.QID) {
+			tokens.advance();
+		} else {
+			throw new SQLParseException(tokens.getPosition());
+		}
+	}
+	
+	private void concreteListOfAttributes(SQLTokenStream tokens) throws SQLParseException {
+		concreteAttribute(tokens);
+		optionalConjunctConcreteListOfAttributes(tokens);
+	}
+	
+	private void optionalConjunctConcreteListOfAttributes(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
+			tokens.advance();
+			concreteListOfAttributes(tokens);
+		}
+	}
+	
+	private void optionalOrderDirection(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ORDERDIRECTION) {
+			tokens.advance();
+		}
+	}
+
+	
+	private void selectStatementInner(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.SELECT) {
+			tokens.advance();
+			optionalDistinct(tokens);
+			selectBody(tokens);
+		} else {
+			throw new SQLParseException(tokens.getPosition());
+		}
+	}
+	
+	private void optionalDistinct(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.DISTINCT) {
+			tokens.advance();
+		}
+	}
+	
+	private void subSelectStatement(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
+			tokens.advance();
+			selectStatement(tokens);
+			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.CLOSEPAREN) {
+				tokens.advance();
+			} else {
+				throw new SQLParseException(tokens.getPosition());
+			}
+		} else {
+			throw new SQLParseException(tokens.getPosition());
+		}
+	}
+	
+	
+	private void selectBody(SQLTokenStream tokens) throws SQLParseException {
+		selectionList(tokens);
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.FROM) {
+			tokens.advance();
+		} else {
+			throw new SQLParseException(tokens.getPosition());
+		}
+		fromList(tokens);
+		optionalWhereClause(tokens);
+		optionalGroupClause(tokens);
+	}
+	
+	private void selectionList(SQLTokenStream tokens) throws SQLParseException {
+		selectable(tokens);
+		optionalConjunctSelectionList(tokens);
+	}
+	
+	private void optionalConjunctSelectionList(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
+			tokens.advance();
+			selectionList(tokens);
+		}
+	}
+	
+	
+	private void selectable(SQLTokenStream tokens) throws SQLParseException {
+		if (	tokens.getTokenClass() == SQLToken.SQLTokenClass.STAR ||
+				tokens.getTokenClass() == SQLToken.SQLTokenClass.QID ||
+				tokens.getTokenClass() == SQLToken.SQLTokenClass.UID ||
+				tokens.getTokenClass() == SQLToken.SQLTokenClass.QSTARID) {
+			tokens.advance();
+		} else if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AGGREGATE) {
+			tokens.advance();
+			renamable(tokens);
+		} else {
+			throw new SQLParseException(tokens.getPosition());
+		}
+	}
+	
+	private void fromId(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			tokens.advance();
+			renamable(tokens);
+		} else {
+			subSelectStatement(tokens);
+			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AS) {
+				tokens.advance();
+				if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+					tokens.advance();
+				} else { throw new SQLParseException(tokens.getPosition()); }
+			} else { throw new SQLParseException(tokens.getPosition()); }
+		}
+	}
+	
+	private void renamable(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AS) {
+			tokens.advance();
+			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+				tokens.advance();
+			} else {
+				throw new SQLParseException(tokens.getPosition());
+			}
+		}
+	}
+	
+	private void fromList(SQLTokenStream tokens) throws SQLParseException {
+		fromId(tokens);
+		optionalConjunctFromList(tokens);
+	}
+	
+	private void optionalConjunctFromList(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
+			tokens.advance();
+			fromList(tokens);
+		} 
+	}
+	
+	private void optionalWhereClause(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
+			tokens.advance();
+			predicate(tokens);
+		} 
+	}
+	
+	private void optionalGroupClause(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.GROUPBY) {
+			tokens.advance();
+			listOfUIds(tokens);
+		} 
+	}
+	
+	
 	////
 	//PREDICATES
 	////
@@ -151,7 +318,6 @@ public class SQLParser {
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
-		
 	}
 	
 	private void comparable(SQLTokenStream tokens) throws SQLParseException {
@@ -166,7 +332,6 @@ public class SQLParser {
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
-		
 	}
 	
 	private void optionalConjunctPredicate(SQLTokenStream tokens) throws SQLParseException  {
@@ -176,7 +341,4 @@ public class SQLParser {
 		}
 		
 	}
-	
-	
-	
 }
