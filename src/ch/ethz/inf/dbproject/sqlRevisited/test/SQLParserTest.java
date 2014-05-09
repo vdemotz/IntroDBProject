@@ -10,6 +10,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLLexer;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLParseException;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLParser;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLToken;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLTokenStream;
 
 public class SQLParserTest {
 
@@ -59,15 +60,15 @@ public class SQLParserTest {
 	private void testSucceedsParse(String[] tests) {
 		SQLLexer lex = new SQLLexer();
 		SQLParser parser = new SQLParser();
-		ArrayList<SQLToken> tokens;
+		SQLTokenStream tokens;
 		int parsedUntil;
 		
 		for (String query : tests) {
-			tokens = lex.tokenize(query);
-			System.out.println(tokens);
+			tokens = new SQLTokenStream(lex.tokenize(query));
 			try {
-				parsedUntil = parser.parse(tokens);
-				assertTrue(parsedUntil == tokens.size());
+				assertTrue(parser.parse(tokens));
+				System.out.println(tokens);
+				assertTrue(parser.parse(tokens));
 			} catch (SQLParseException e) {
 				
 				e.printStackTrace();
@@ -80,18 +81,17 @@ public class SQLParserTest {
 	private void testFailsParse(String[] tests) {
 		SQLLexer lex = new SQLLexer();
 		SQLParser parser = new SQLParser();
-		ArrayList<SQLToken> tokens;
+		SQLTokenStream tokens;
 		int parsedUntil;
 		
 		for (String query : tests) {
-			tokens = lex.tokenize(query);
-			System.out.println(tokens);
+			tokens = new SQLTokenStream(lex.tokenize(query));
 			try {
-				parsedUntil = parser.parse(tokens);
-				
+				parser.parse(tokens);
+				System.out.println(tokens);
 				fail("parse succeeded unexpectedly for query " + query);
 			} catch (SQLParseException e) {
-				
+				System.out.println(tokens);
 			}
 		}
 	}
