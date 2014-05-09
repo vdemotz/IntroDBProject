@@ -27,7 +27,9 @@ public class SQLParser {
 	
 	////
 	//IMPLEMENTATION
-	//Top down recursive parser
+	//Top down recursive parser (scans left to right)
+	//Based directly on the grammar specified in SQLGrammar.txt
+	//Since the grammar is LL(1) no backtracking is needed
 	////
 	
 	private void statement(SQLTokenStream tokens) throws SQLParseException {
@@ -336,7 +338,6 @@ public class SQLParser {
 	}
 	
 	private void comparable(SQLTokenStream tokens) throws SQLParseException {
-		
 		SQLToken.SQLTokenClass token = tokens.getTokenClass();
 		if (token == SQLToken.SQLTokenClass.QID ||
 			token == SQLToken.SQLTokenClass.UID ||
