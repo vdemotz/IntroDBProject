@@ -32,7 +32,6 @@ public class SQLParser {
 			tokens.advance();
 			insertStatement(tokens);
 		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()){
-			tokens.advance();
 			selectStatement(tokens);
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.INSERTINTO, tokens.getPosition());
@@ -142,7 +141,7 @@ public class SQLParser {
 	}
 	
 	private void optionalOrderByClause(SQLTokenStream tokens) throws SQLParseException {
-		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.DISTINCT) {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ORDERBY) {
 			tokens.advance();
 			concreteListOfAttributes(tokens);
 			optionalOrderDirection(tokens);
@@ -259,7 +258,7 @@ public class SQLParser {
 					tokens.advance();
 				} else { throw new SQLParseException(tokens.getPosition()); }
 			} else { throw new SQLParseException(tokens.getPosition()); }
-		}
+		} 
 	}
 	
 	private void renamable(SQLTokenStream tokens) throws SQLParseException {
