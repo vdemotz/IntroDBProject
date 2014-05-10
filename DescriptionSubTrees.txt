@@ -22,7 +22,11 @@ The operator of update statement can optionnally apply the where clause to the t
 ***
 insertStatement
 
-to be done
+first child : UID of the table
+second child : OPTIONAL list of columns names (attributes)
+third child : list of values
+
+The operator of insert statement can insert into the table the values given, matching optionally with the columns names.
 
 ***
 predicate

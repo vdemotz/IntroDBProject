@@ -39,7 +39,7 @@ public class SQLParser {
 		
 		if (SQLToken.SQLTokenClass.INSERTINTO == tokens.getTokenClass()) {
 			tokens.advance();
-			insertStatement(tokens);
+			insertStatement(tokens, root);
 		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()) {
 			selectStatement(tokens);
 		} else if (SQLToken.SQLTokenClass.UPDATE == tokens.getTokenClass()) {
@@ -60,46 +60,49 @@ public class SQLParser {
 	//INSERT
 	////
 
-	private void insertStatement(SQLTokenStream tokens) throws SQLParseException {
+	private void insertStatement(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
 		if (SQLToken.SQLTokenClass.UID == tokens.getTokenClass()) {
+			root.addChildren(new ASTNode(tokens.getToken()));
 			tokens.advance();
-			insertBody(tokens);
+			insertBody(tokens, root);
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.UID, tokens.getPosition());
 		}
 		
 	}
 	
-	private void insertBody(SQLTokenStream tokens) throws SQLParseException {
+	private void insertBody(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
 		
-		optionalParenthesisedListOfUIds(tokens);
+		root.addChildren(optionalParenthesisedListOfUIds(tokens));
 		
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.VALUES) {
 			tokens.advance();
-			parenthesisedListOfVariables(tokens);
+			root.addChildren(parenthesisedListOfVariables(tokens));
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.VALUES, tokens.getPosition());
 		}
-		
 	}
 	
-	private void optionalParenthesisedListOfUIds(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode optionalParenthesisedListOfUIds(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
 			tokens.advance();
-			listOfUIds(tokens);
+			root = listOfUIds(tokens);
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.CLOSEPAREN) {
 				tokens.advance();
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.CLOSEPAREN, tokens.getPosition());
 			}
 		}
+		return root;
 		
 	}
 	
-	private void parenthesisedListOfVariables(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode parenthesisedListOfVariables(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
 			tokens.advance();
-			listOfValues(tokens);
+			root = listOfValues(tokens);
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.CLOSEPAREN) {
 				tokens.advance();
 			} else {
@@ -108,25 +111,28 @@ public class SQLParser {
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.OPENPAREN, tokens.getPosition());
 		}
-		
+		return root;
 	}
 	
-	private void listOfUIds(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode listOfUIds(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			root = new ASTNode(tokens.getToken());
 			tokens.advance();
-			optionalConjunctListOfUIds(tokens);
+			root.addChildren(optionalConjunctListOfUIds(tokens));
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.UID, tokens.getPosition());
 		}
-		
+		return root;
 	}
 	
-	private void optionalConjunctListOfUIds(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode optionalConjunctListOfUIds(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
 			tokens.advance();
-			listOfUIds(tokens);
+			root = listOfUIds(tokens);
 		}
-		
+		return root;
 	}
 	
 	private ASTNode value(SQLTokenStream tokens) throws SQLParseException {
@@ -142,17 +148,20 @@ public class SQLParser {
 		return ast;
 	}
 	
-	private void listOfValues(SQLTokenStream tokens) throws SQLParseException {
-		value(tokens);
-		optionalConjunctListOfValues(tokens);
+	private ASTNode listOfValues(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root = null;
+		root = value(tokens);
+		root.addChildren(optionalConjunctListOfValues(tokens));
+		return root;
 	}
 	
-	private void optionalConjunctListOfValues(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode optionalConjunctListOfValues(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
 			tokens.advance();
-			listOfValues(tokens);
+			root = listOfValues(tokens);
 		}
-		
+		return root;
 	}
 	
 	////
