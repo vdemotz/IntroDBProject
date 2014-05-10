@@ -34,7 +34,8 @@ public class SQLParser {
 	
 	private SQLAbstractSyntaxTree statement(SQLTokenStream tokens) throws SQLParseException {
 		
-		SQLAbstractSyntaxTree ast;
+		ASTNode root = new ASTNode(tokens.getToken());
+		SQLAbstractSyntaxTree ast = new SQLAbstractSyntaxTree(root);
 		
 		if (SQLToken.SQLTokenClass.INSERTINTO == tokens.getTokenClass()) {
 			tokens.advance();
@@ -45,13 +46,12 @@ public class SQLParser {
 			tokens.advance();
 			updateStatement(tokens);
 		} else if (SQLToken.SQLTokenClass.DELETE == tokens.getTokenClass()) {
-			ast = new SQLAbstractSyntaxTree(new ASTNode(tokens.getToken()));
 			tokens.advance();
-			deleteStatement(tokens);
+			deleteStatement(tokens, root);
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
-		return null;
+		return ast;
 	}
 	
 	
@@ -327,41 +327,50 @@ public class SQLParser {
 	//PREDICATES
 	////
 	
-	private void predicate(SQLTokenStream tokens) throws SQLParseException {
-		comparable(tokens);
-		compareOperator(tokens);
-		comparable(tokens);
-		optionalConjunctPredicate(tokens);
+	private ASTNode predicate(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root = new ASTNode(tokens.getToken());
+		tokens.advance();
+		root.addChildren(comparable(tokens));
+		root.addChildren(compareOperator(tokens));
+		root.addChildren(comparable(tokens));
+		root.addChildren(optionalConjunctPredicate(tokens));
+		return root;
 	}
 	
-	private void compareOperator(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode compareOperator(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.EQUAL ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.COMPARATOR) {
+			root = new ASTNode(tokens.getToken());
 			tokens.advance();
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
+		return root;
 	}
 	
-	private void comparable(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode comparable(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root;
 		SQLToken.SQLTokenClass token = tokens.getTokenClass();
 		if (token == SQLToken.SQLTokenClass.QID ||
 			token == SQLToken.SQLTokenClass.UID ||
 			token == SQLToken.SQLTokenClass.ARGUMENT ||
 			token == SQLToken.SQLTokenClass.LITERAL ||
 		    token == SQLToken.SQLTokenClass.BOOL) {
+			root = new ASTNode(tokens.getToken());
 			tokens.advance();
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
+		return root;
 	}
 	
-	private void optionalConjunctPredicate(SQLTokenStream tokens) throws SQLParseException  {
+	private ASTNode optionalConjunctPredicate(SQLTokenStream tokens) throws SQLParseException  {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AND) {
-			tokens.advance();
-			predicate(tokens);
+			return predicate(tokens);
+		} else {
+			return null;
 		}
-		
 	}
 	
 	////
@@ -411,19 +420,18 @@ public class SQLParser {
 	//DELETE
 	////
 	
-	private SQLAbstractSyntaxTree deleteStatement(SQLTokenStream tokens) throws SQLParseException {
+	private void deleteStatement(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
 		
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			root.addChildren(new ASTNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
-				tokens.advance();
-				predicate(tokens);
+				root.addChildren(predicate(tokens));
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.WHERE, tokens.getPosition());
 			}
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.UID, tokens.getPosition());
 		}
-		return null;
 	}
 }

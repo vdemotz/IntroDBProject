@@ -27,10 +27,11 @@ public class ASTNode {
 	}
 	
 	/**
-	 * Add a child to the node
+	 * Add a child to the node if a_child not null
 	 * @param a_child
 	 */
 	public void addChildren(ASTNode a_child) {
+		if (a_child == null) { return; }
 		this.children.add(a_child);
 	}	
 }
