@@ -1,6 +1,7 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
 import java.util.ArrayList;
+
 
 public class ASTNode {
 

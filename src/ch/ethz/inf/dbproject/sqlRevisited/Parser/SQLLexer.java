@@ -1,9 +1,9 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
 import java.util.ArrayList;
 import java.util.regex.*;
 
-import ch.ethz.inf.dbproject.sqlRevisited.SQLToken.SQLTokenClass;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken.SQLTokenClass;
 
 public class SQLLexer {
 

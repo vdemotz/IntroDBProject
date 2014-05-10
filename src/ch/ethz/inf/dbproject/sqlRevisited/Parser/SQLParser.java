@@ -1,7 +1,8 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
 import java.util.ArrayList;
 import ch.ethz.inf.dbproject.sqlRevisited.*;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken.SQLTokenClass;
 
 public class SQLParser {
 
@@ -32,26 +33,26 @@ public class SQLParser {
 	//Since the grammar is LL(1) no backtracking is needed
 	////
 	
-	private SQLAbstractSyntaxTree statement(SQLTokenStream tokens) throws SQLParseException {
+	private SyntaxTreeNode statement(SQLTokenStream tokens) throws SQLParseException {
 		
-		ASTNode root = new ASTNode(tokens.getToken());
-		SQLAbstractSyntaxTree ast = new SQLAbstractSyntaxTree(root);
+		SyntaxTreeNode root = null;
 		
 		if (SQLToken.SQLTokenClass.INSERTINTO == tokens.getTokenClass()) {
 			tokens.advance();
-			insertStatement(tokens, root);
+			//insertStatement(tokens);
 		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()) {
-			selectStatement(tokens);
+			root = selectStatement(tokens);
 		} else if (SQLToken.SQLTokenClass.UPDATE == tokens.getTokenClass()) {
 			tokens.advance();
-			updateStatement(tokens, root);
+			//updateStatement(tokens, root);
 		} else if (SQLToken.SQLTokenClass.DELETE == tokens.getTokenClass()) {
 			tokens.advance();
-			deleteStatement(tokens, root);
+			//deleteStatement(tokens, root);
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
-		return ast;
+		
+		return root;
 	}
 	
 	
@@ -168,70 +169,96 @@ public class SQLParser {
 	//SELECT
 	////
 	
-	private void selectStatement(SQLTokenStream tokens) throws SQLParseException {
-		selectStatementInner(tokens);
-		optionalOrderByClause(tokens);
+	private SyntaxTreeNode selectStatement(SQLTokenStream tokens) throws SQLParseException {
+		
+		SyntaxTreeNode innerStatement = selectStatementInner(tokens);
+		SyntaxTreeListNode<SyntaxTreeOrderingNode> orderStatement = optionalOrderByClause(tokens);
+		
+		if (orderStatement == null) {
+			return innerStatement;
+		} else {
+			return new SyntaxTreeSortOperator(innerStatement, orderStatement);
+		}
 	}
 	
-	private void optionalOrderByClause(SQLTokenStream tokens) throws SQLParseException {
+	//Ordering begin
+	private SyntaxTreeListNode<SyntaxTreeOrderingNode> optionalOrderByClause(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ORDERBY) {
 			tokens.advance();
-			concreteListOfAttributes(tokens);
-			
+			return concreteListOfAttributes(tokens);
 		}
+		return null;
 	}
 	
-	private void concreteAttribute(SQLTokenStream tokens) throws SQLParseException {
+	private SyntaxTreeIdentifierNode concreteAttribute(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID ||
-				tokens.getTokenClass() == SQLToken.SQLTokenClass.QID) {
+			tokens.getTokenClass() == SQLToken.SQLTokenClass.QID) {
+			SyntaxTreeIdentifierNode node = new SyntaxTreeIdentifierNode(tokens.getToken());
 			tokens.advance();
+			return node;
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
 	}
 	
-	private void concreteListOfAttributes(SQLTokenStream tokens) throws SQLParseException {
-		concreteAttribute(tokens);
-		optionalOrderDirection(tokens);
-		optionalConjunctConcreteListOfAttributes(tokens);
+	private SyntaxTreeListNode<SyntaxTreeOrderingNode> concreteListOfAttributes(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeIdentifierNode attribute = concreteAttribute(tokens);
+		SyntaxTreeOrderingNode node = new SyntaxTreeOrderingNode(attribute.generatingToken, optionalOrderDirection(tokens));
+		
+		return new SyntaxTreeListNode<SyntaxTreeOrderingNode>(node, optionalConjunctConcreteListOfAttributes(tokens));
 	}
 	
-	private void optionalConjunctConcreteListOfAttributes(SQLTokenStream tokens) throws SQLParseException {
+	private SyntaxTreeListNode<SyntaxTreeOrderingNode> optionalConjunctConcreteListOfAttributes(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
 			tokens.advance();
-			concreteListOfAttributes(tokens);
+			return concreteListOfAttributes(tokens);
 		}
+		return null;
 	}
 	
-	private void optionalOrderDirection(SQLTokenStream tokens) throws SQLParseException {
+	private boolean optionalOrderDirection(SQLTokenStream tokens) throws SQLParseException {
+		boolean asc = true;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ORDERDIRECTION) {
+			if (tokens.getToken().content.equals("desc")) asc = false;
 			tokens.advance();
 		}
+		return asc;
 	}
-
 	
-	private void selectStatementInner(SQLTokenStream tokens) throws SQLParseException {
+	////
+	//general select structure
+	////
+	
+	private SyntaxTreeNode selectStatementInner(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.SELECT) {
 			tokens.advance();
-			optionalDistinct(tokens);
-			selectBody(tokens);
+			boolean distinct = optionalDistinct(tokens);
+			SyntaxTreeNode body = selectBody(tokens);
+			if (distinct) {
+				return new SyntaxTreeNodeDistinct(body);
+			} else {
+				return body;
+			}
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
 	}
 	
-	private void optionalDistinct(SQLTokenStream tokens) throws SQLParseException {
+	private boolean optionalDistinct(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.DISTINCT) {
 			tokens.advance();
+			return true;
 		}
+		return false;
 	}
 	
-	private void subSelectStatement(SQLTokenStream tokens) throws SQLParseException {
+	private SyntaxTreeNode subSelectStatement(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
 			tokens.advance();
-			selectStatement(tokens);
+			SyntaxTreeNode result = selectStatement(tokens);
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.CLOSEPAREN) {
 				tokens.advance();
+				return result;
 			} else {
 				throw new SQLParseException(tokens.getPosition());
 			}
@@ -240,120 +267,201 @@ public class SQLParser {
 		}
 	}
 	
-	
-	private void selectBody(SQLTokenStream tokens) throws SQLParseException {
-		selectionList(tokens);
+	private SyntaxTreeNode selectBody(SQLTokenStream tokens) throws SQLParseException {
+		//gather trees from different clauses
+		SyntaxTreeListNode<SyntaxTreeNode> projectOnto = selectionList(tokens);
+		
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.FROM) {
 			tokens.advance();
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
-		fromList(tokens);
-		optionalWhereClause(tokens);
-		optionalGroupClause(tokens);
-	}
-	
-	private void selectionList(SQLTokenStream tokens) throws SQLParseException {
-		selectable(tokens);
-		optionalConjunctSelectionList(tokens);
-	}
-	
-	private void optionalConjunctSelectionList(SQLTokenStream tokens) throws SQLParseException {
-		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
-			tokens.advance();
-			selectionList(tokens);
+		SyntaxTreeNode from = fromList(tokens);
+		SyntaxTreeNode where = optionalWhereClause(tokens, from);
+		SyntaxTreeListNode<SyntaxTreeIdentifierNode> groupByList = optionalGroupClause(tokens);
+		
+		//assemble the resulting tree
+		SyntaxTreeNode result = from;
+		if (where != null) {
+			result = where;
 		}
-	}
-	
-	
-	private void selectable(SQLTokenStream tokens) throws SQLParseException {
-		if (	tokens.getTokenClass() == SQLToken.SQLTokenClass.STAR ||
-				tokens.getTokenClass() == SQLToken.SQLTokenClass.QID ||
-				tokens.getTokenClass() == SQLToken.SQLTokenClass.UID ||
-				tokens.getTokenClass() == SQLToken.SQLTokenClass.QSTARID) {
-			tokens.advance();
-		} else if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AGGREGATE) {
-			tokens.advance();
-			renamable(tokens);
-		} else {
-			throw new SQLParseException(tokens.getPosition());
+		if (groupByList != null) {
+			result = new SyntaxTreeGroupByNode(result, groupByList);
 		}
+		
+		result = new SyntaxTreeProjectAndAggregateOperatorNode(result, projectOnto);
+		
+		return result;
 	}
 	
-	private void fromId(SQLTokenStream tokens) throws SQLParseException {
-		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
-			tokens.advance();
-			renamable(tokens);
-		} else if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
-			subSelectStatement(tokens);
-			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AS) {
-				tokens.advance();
-				if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
-					tokens.advance();
-				} else { throw new SQLParseException(tokens.getPosition()); }
-			} else { throw new SQLParseException(tokens.getPosition()); }
-		}  else {
-			throw new SQLParseException(tokens.getPosition());
-		}
-	}
-	
-	private void renamable(SQLTokenStream tokens) throws SQLParseException {
+	private String renamable(SQLTokenStream tokens) throws SQLParseException {
+		String result = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AS) {
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+				result = tokens.getToken().content;
 				tokens.advance();
 			} else {
 				throw new SQLParseException(tokens.getPosition());
 			}
 		}
+		return result;
 	}
 	
-	private void fromList(SQLTokenStream tokens) throws SQLParseException {
-		fromId(tokens);
-		optionalConjunctFromList(tokens);
+	////
+	///Projection / aggregate choice (selection list)
+	////
+	
+	private SyntaxTreeListNode<SyntaxTreeNode> selectionList(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeNode identifier = selectable(tokens);
+		return new SyntaxTreeListNode<SyntaxTreeNode>(identifier, optionalConjunctSelectionList(tokens));
 	}
 	
-	private void optionalConjunctFromList(SQLTokenStream tokens) throws SQLParseException {
+	private SyntaxTreeListNode<SyntaxTreeNode> optionalConjunctSelectionList(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
 			tokens.advance();
-			fromList(tokens);
-		} 
+			return selectionList(tokens);
+		}
+		return null;
 	}
 	
-	private ASTNode optionalWhereClause(SQLTokenStream tokens) throws SQLParseException {
-		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
-			return predicate(tokens);
+	private SyntaxTreeNode selectable(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeIdentifierNode node = null;
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.STAR ||
+			tokens.getTokenClass() == SQLToken.SQLTokenClass.QID ||
+			tokens.getTokenClass() == SQLToken.SQLTokenClass.UID ||
+			tokens.getTokenClass() == SQLToken.SQLTokenClass.QSTARID) {
+			node = new SyntaxTreeIdentifierNode(tokens.getToken());
+			tokens.advance();
+		} else if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AGGREGATE) {
+			node = new SyntaxTreeIdentifierNode(tokens.getToken());
+			tokens.advance();
+			renamable(tokens);
+		} else {
+			throw new SQLParseException(tokens.getPosition());
+		}
+		return node;
+	}
+	
+	////
+	//Cross products (from list)
+	////
+	
+	private SyntaxTreeNode fromId(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			SyntaxTreeBaseRelationNode relation = new SyntaxTreeBaseRelationNode(tokens.getToken().content);
+			tokens.advance();
+			String newName = renamable(tokens);
+			if (newName != null) {
+				return new SyntaxTreeRenameTableNode(relation, newName);
+			} else {
+				return relation;
+			}
+			
+		} else if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
+			SyntaxTreeNode subquery = subSelectStatement(tokens);
+			String newName = renamable(tokens);
+			if (newName != null) {
+				return new SyntaxTreeRenameTableNode(subquery, newName);
+			} else {
+				throw new SQLParseException(tokens.getPosition());
+			}
+		}  else {
+			throw new SQLParseException(tokens.getPosition());
+		}
+	}
+	
+	private SyntaxTreeNode fromList(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeNode right = fromId(tokens);
+		SyntaxTreeNode left = optionalConjunctFromList(tokens);
+		if (left == null) return right;//in the case case, don't construct a new cross product
+		return new SyntaxTreeCrossNode(left, right);//construct the subtree by combining the two children via a cross product
+	}
+	
+	private SyntaxTreeNode optionalConjunctFromList(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
+			tokens.advance();
+			return fromList(tokens);
 		} 
 		return null;
 	}
 	
-	private void optionalGroupClause(SQLTokenStream tokens) throws SQLParseException {
-		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.GROUPBY) {
+	////
+	//Selection (where clause)
+	///
+	
+	private SyntaxTreeNode optionalWhereClause(SQLTokenStream tokens, SyntaxTreeNode subtreeToApplyTo) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
 			tokens.advance();
-			listOfUIds(tokens);
+			return predicate(tokens, subtreeToApplyTo);
 		} 
+		return null;
 	}
 	
+	////
+	//group by
+	////
+	
+	private SyntaxTreeListNode<SyntaxTreeIdentifierNode> optionalGroupClause(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.GROUPBY) {
+			tokens.advance();
+			return listOfConcreteIds(tokens);
+		}
+		return null;
+	}
+	
+	private SyntaxTreeListNode<SyntaxTreeIdentifierNode> listOfConcreteIds(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeIdentifierNode identifier = concreteId(tokens);
+		return new SyntaxTreeListNode<SyntaxTreeIdentifierNode>(identifier, optionalConjunctListOfConcreteIds(tokens));
+	}
+	
+	private SyntaxTreeListNode<SyntaxTreeIdentifierNode> optionalConjunctListOfConcreteIds(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
+			tokens.advance();
+			return listOfConcreteIds(tokens);
+		}
+		return null;
+	}
+	
+	private SyntaxTreeIdentifierNode concreteId(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeIdentifierNode node = null;
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.QID ||
+			tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			node = new SyntaxTreeIdentifierNode(tokens.getToken());
+			tokens.advance();
+		} else {
+			throw new SQLParseException(tokens.getPosition());
+		}
+		return node;
+	}
 	
 	////
 	//PREDICATES
 	////
 	
-	private ASTNode predicate(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root = new ASTNode(tokens.getToken());
-		tokens.advance();
-		root.addChildren(comparable(tokens));
-		root.addChildren(compareOperator(tokens));
-		root.addChildren(comparable(tokens));
-		root.addChildren(optionalConjunctPredicate(tokens));
-		return root;
+	/**
+	 * Builds a tree of SelectionOperatorNodes and appends the subtreeToApplyTo as the last rightmost leaf
+	 * @param tokens
+	 * @param subtreeToApplyTo
+	 */
+	private SyntaxTreeNode predicate(SQLTokenStream tokens, SyntaxTreeNode subtreeToApplyTo) throws SQLParseException {
+		
+		SyntaxTreeIdentifierNode leftValue = comparable(tokens);
+		SyntaxTreeIdentifierNode operator = compareOperator(tokens);
+		SyntaxTreeIdentifierNode rightValue = comparable(tokens);
+		SyntaxTreeNode child = optionalConjunctPredicate(tokens, subtreeToApplyTo);
+		if (child != null) {
+			return new SyntaxTreeSelectionOperatorNode(leftValue, operator, rightValue, child);
+		} else {
+			return new SyntaxTreeSelectionOperatorNode(leftValue, operator, rightValue, subtreeToApplyTo);
+		}
 	}
 	
-	private ASTNode compareOperator(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root;
+	private SyntaxTreeIdentifierNode compareOperator(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeIdentifierNode root;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.EQUAL ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.COMPARATOR) {
-			root = new ASTNode(tokens.getToken());
+			root = new SyntaxTreeIdentifierNode(tokens.getToken());
 			tokens.advance();
 		} else {
 			throw new SQLParseException(tokens.getPosition());
@@ -361,15 +469,15 @@ public class SQLParser {
 		return root;
 	}
 	
-	private ASTNode comparable(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root;
+	private SyntaxTreeIdentifierNode comparable(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeIdentifierNode root;
 		SQLToken.SQLTokenClass token = tokens.getTokenClass();
 		if (token == SQLToken.SQLTokenClass.QID ||
 			token == SQLToken.SQLTokenClass.UID ||
 			token == SQLToken.SQLTokenClass.ARGUMENT ||
 			token == SQLToken.SQLTokenClass.LITERAL ||
 		    token == SQLToken.SQLTokenClass.BOOL) {
-			root = new ASTNode(tokens.getToken());
+			root = new SyntaxTreeIdentifierNode(tokens.getToken());
 			tokens.advance();
 		} else {
 			throw new SQLParseException(tokens.getPosition());
@@ -377,9 +485,10 @@ public class SQLParser {
 		return root;
 	}
 	
-	private ASTNode optionalConjunctPredicate(SQLTokenStream tokens) throws SQLParseException  {
+	private SyntaxTreeNode optionalConjunctPredicate(SQLTokenStream tokens, SyntaxTreeNode subtreeToApplyTo) throws SQLParseException  {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AND) {
-			return predicate(tokens);
+			tokens.advance();
+			return predicate(tokens, subtreeToApplyTo);
 		} else {
 			return null;
 		}
@@ -395,7 +504,7 @@ public class SQLParser {
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.SET) {
 				root.addChildren(assignmentList(tokens));
-				root.addChildren(optionalWhereClause(tokens));
+				//root.addChildren(optionalWhereClause(tokens));
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.SET, tokens.getPosition());
 			}
@@ -407,7 +516,7 @@ public class SQLParser {
 
 	private ASTNode assignmentList(SQLTokenStream tokens) throws SQLParseException {
 		ASTNode root = new ASTNode(tokens.getToken());
-		tokens.advance();
+		tokens.advance();	
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
 			root.addChildren(new ASTNode(tokens.getToken()));
 			tokens.advance();
@@ -443,7 +552,7 @@ public class SQLParser {
 			root.addChildren(new ASTNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
-				root.addChildren(predicate(tokens));
+				//root.addChildren(predicate(tokens));
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.WHERE, tokens.getPosition());
 			}
