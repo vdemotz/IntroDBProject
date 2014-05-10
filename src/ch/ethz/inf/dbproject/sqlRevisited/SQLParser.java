@@ -44,7 +44,7 @@ public class SQLParser {
 			selectStatement(tokens);
 		} else if (SQLToken.SQLTokenClass.UPDATE == tokens.getTokenClass()) {
 			tokens.advance();
-			updateStatement(tokens);
+			updateStatement(tokens, root);
 		} else if (SQLToken.SQLTokenClass.DELETE == tokens.getTokenClass()) {
 			tokens.advance();
 			deleteStatement(tokens, root);
@@ -129,14 +129,17 @@ public class SQLParser {
 		
 	}
 	
-	private void value(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode value(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode ast = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ARGUMENT ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.LITERAL ||
 		    tokens.getTokenClass() == SQLToken.SQLTokenClass.BOOL) {
+			ast = new ASTNode(tokens.getToken());
 			tokens.advance();
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
+		return ast;
 	}
 	
 	private void listOfValues(SQLTokenStream tokens) throws SQLParseException {
@@ -308,11 +311,11 @@ public class SQLParser {
 		} 
 	}
 	
-	private void optionalWhereClause(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode optionalWhereClause(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
-			tokens.advance();
-			predicate(tokens);
+			return predicate(tokens);
 		} 
+		return null;
 	}
 	
 	private void optionalGroupClause(SQLTokenStream tokens) throws SQLParseException {
@@ -377,13 +380,13 @@ public class SQLParser {
 	//UPDATE
 	////
 	
-	private void updateStatement(SQLTokenStream tokens) throws SQLParseException {
+	private void updateStatement(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			root.addChildren(new ASTNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.SET) {
-				tokens.advance();
-				assignmentList(tokens);
-				optionalWhereClause(tokens);
+				root.addChildren(assignmentList(tokens));
+				root.addChildren(optionalWhereClause(tokens));
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.SET, tokens.getPosition());
 			}
@@ -393,26 +396,32 @@ public class SQLParser {
 		
 	}
 
-	private void assignmentList(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode assignmentList(SQLTokenStream tokens) throws SQLParseException {
+		ASTNode root = new ASTNode(tokens.getToken());
+		tokens.advance();
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
+			root.addChildren(new ASTNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.EQUAL) {
+				root.addChildren(new ASTNode(tokens.getToken()));
 				tokens.advance();
-				value(tokens);
-				optionalConjunctAssignmentList(tokens);
+				root.addChildren(value(tokens));
+				root.addChildren(optionalConjunctAssignmentList(tokens));
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.EQUAL, tokens.getPosition());
 			}
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.UID, tokens.getPosition());
 		}
+		return root;
 	}
 	
-	private void optionalConjunctAssignmentList(SQLTokenStream tokens) throws SQLParseException {
+	private ASTNode optionalConjunctAssignmentList(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
 			tokens.advance();
-			assignmentList(tokens);
+			return assignmentList(tokens);
 		}
+		return null;
 		
 	}
 	
@@ -421,7 +430,6 @@ public class SQLParser {
 	////
 	
 	private void deleteStatement(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
-		
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
 			root.addChildren(new ASTNode(tokens.getToken()));
 			tokens.advance();
