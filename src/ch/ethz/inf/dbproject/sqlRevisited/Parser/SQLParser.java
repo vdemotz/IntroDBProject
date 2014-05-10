@@ -326,7 +326,7 @@ public class SQLParser {
 	}
 	
 	private SyntaxTreeNode selectable(SQLTokenStream tokens) throws SQLParseException {
-		SyntaxTreeIdentifierNode node = null;
+		SyntaxTreeNode node = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.STAR ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.QID ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.UID ||
@@ -336,7 +336,10 @@ public class SQLParser {
 		} else if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AGGREGATE) {
 			node = new SyntaxTreeIdentifierNode(tokens.getToken());
 			tokens.advance();
-			renamable(tokens);
+			String newName = renamable(tokens);
+			if (newName != null) {
+				node = new SyntaxTreeRenameTableNode(node, newName);
+			}
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
@@ -552,6 +555,7 @@ public class SQLParser {
 			root.addChildren(new ASTNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
+				tokens.advance();
 				//root.addChildren(predicate(tokens));
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.WHERE, tokens.getPosition());
