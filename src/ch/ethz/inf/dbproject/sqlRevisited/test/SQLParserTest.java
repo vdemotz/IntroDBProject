@@ -83,7 +83,7 @@ public class SQLParserTest {
 	
 	private String[] testUpdateFails = {"update A set A = B, ", "update A set B"};
 	
-	private String[] testUpdateSucceeds = {updateCaseIsOpenQuery};
+	private String[] testUpdateSucceeds = {updateCaseIsOpenQuery, "update A set a=3, b=5, c=?, h=true"};
 	
 	
 	
