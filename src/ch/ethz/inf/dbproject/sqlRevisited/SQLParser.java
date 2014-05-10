@@ -32,8 +32,10 @@ public class SQLParser {
 	//Since the grammar is LL(1) no backtracking is needed
 	////
 	
-	private void statement(SQLTokenStream tokens) throws SQLParseException {
-
+	private SQLAbstractSyntaxTree statement(SQLTokenStream tokens) throws SQLParseException {
+		
+		SQLAbstractSyntaxTree ast;
+		
 		if (SQLToken.SQLTokenClass.INSERTINTO == tokens.getTokenClass()) {
 			tokens.advance();
 			insertStatement(tokens);
@@ -43,12 +45,16 @@ public class SQLParser {
 			tokens.advance();
 			updateStatement(tokens);
 		} else if (SQLToken.SQLTokenClass.DELETE == tokens.getTokenClass()) {
+			ast = new SQLAbstractSyntaxTree(new ASTNode(tokens.getToken()));
 			tokens.advance();
 			deleteStatement(tokens);
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
+		return null;
 	}
+	
+	
 	
 	////
 	//INSERT
@@ -405,7 +411,8 @@ public class SQLParser {
 	//DELETE
 	////
 	
-	private void deleteStatement(SQLTokenStream tokens) throws SQLParseException{
+	private SQLAbstractSyntaxTree deleteStatement(SQLTokenStream tokens) throws SQLParseException {
+		
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
@@ -417,5 +424,6 @@ public class SQLParser {
 		} else {
 			throw new SQLParseException(SQLToken.SQLTokenClass.UID, tokens.getPosition());
 		}
+		return null;
 	}
 }
