@@ -2,7 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 public class SQLSyntaxTreeIdentifierNode extends SyntaxTreeNode {
 	
-	SQLToken generatingToken;
+	public final SQLToken generatingToken;
 	//String tableName;
 	//String attributeName;
 	

@@ -2,7 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 public class SQLAbstractSyntaxTree {
 	
-	//Represents an SQL statement as an (immutable) tree
+	//Represents an SQL statement as a tree
 	ASTNode root;
 	
 	public SQLAbstractSyntaxTree() {}

@@ -2,15 +2,15 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 public class SQLSyntaxTreeIdentifierListNode extends SyntaxTreeNode {
 
-	SQLSyntaxTreeIdentifierListNode getNext() {
+	public SQLSyntaxTreeIdentifierListNode getNext() {
 		return (SQLSyntaxTreeIdentifierListNode)children[0];
 	}
 	
-	SQLSyntaxTreeIdentifierNode getIdentifier() {
+	public SQLSyntaxTreeIdentifierNode getIdentifier() {
 		return (SQLSyntaxTreeIdentifierNode)children[1];
 	}
 	
-	SQLSyntaxTreeIdentifierListNode(SQLSyntaxTreeIdentifierListNode next, SQLSyntaxTreeIdentifierNode identifier) {
+	public SQLSyntaxTreeIdentifierListNode(SQLSyntaxTreeIdentifierListNode next, SQLSyntaxTreeIdentifierNode identifier) {
 		super(next, identifier);
 	}
 	
