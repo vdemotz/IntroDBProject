@@ -1,4 +1,4 @@
-For delete, insert and update I propose a really straight-forward AST of height 2.
+For delete, insert and update I propose a really straight-forward AST.
 
 The first node (the root), contains which operation to apply and we thus have a case split
 
