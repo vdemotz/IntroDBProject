@@ -1,0 +1,40 @@
+For delete, insert and update I propose a really straight-forward AST of height 2.
+
+The first node (the root), contains which operation to apply and we thus have a case split
+
+***
+deleteStatement
+
+first child : UID of the table
+second child : WHERE-clause to apply to table
+
+The operator of delete statement can apply the where clause to the table given by first child and delete entries which remain.
+
+***
+updateStatement
+
+first child : UID of the table
+second child : SET assignment
+third child : optional WHERE-clause
+
+The operator of update statement can optionnally apply the where clause to the table and the update the entries which remain.
+
+***
+insertStatement
+
+to be done
+
+***
+predicate
+
+first child : comparable
+second child : comparator
+third child : comparable
+fourth child : optional AND (which has the same form)
+
+***
+set
+
+first child : column (attribute) of a table
+second child : value
+third child : optional SET
