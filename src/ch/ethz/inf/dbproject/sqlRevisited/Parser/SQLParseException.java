@@ -1,4 +1,6 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Parser;
+
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken.SQLTokenClass;
 
 public class SQLParseException extends Exception{
 

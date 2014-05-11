@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import ch.ethz.inf.dbproject.sqlRevisited.SQLLexer;
-import ch.ethz.inf.dbproject.sqlRevisited.SQLParseException;
-import ch.ethz.inf.dbproject.sqlRevisited.SQLParser;
-import ch.ethz.inf.dbproject.sqlRevisited.SQLToken;
-import ch.ethz.inf.dbproject.sqlRevisited.SQLTokenStream;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLLexer;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParseException;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParser;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLTokenStream;
 
 public class SQLParserTest {
 

@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.test;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import ch.ethz.inf.dbproject.sqlRevisited.*;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLLexer;
 
 public class SQLTokenTest {
 

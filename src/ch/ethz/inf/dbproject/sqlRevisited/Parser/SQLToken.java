@@ -1,4 +1,4 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
 public class SQLToken {
 
