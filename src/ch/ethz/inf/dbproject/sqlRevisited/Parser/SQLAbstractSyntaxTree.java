@@ -6,15 +6,15 @@ public class SQLAbstractSyntaxTree {
 	//Represents an SQL statement as a tree
 	//TODO: this class is probably unnecessary
 	
-	ASTNode root;
+	SyntaxTreeDynamicNode root;
 	
 	public SQLAbstractSyntaxTree() {}
 	
-	public SQLAbstractSyntaxTree(ASTNode root) {
+	public SQLAbstractSyntaxTree(SyntaxTreeDynamicNode root) {
 		this.root = root;
 	}
 	
-	public void setRoot(ASTNode root){
+	public void setRoot(SyntaxTreeDynamicNode root){
 		this.root = root;
 	}
 }

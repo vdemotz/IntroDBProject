@@ -35,24 +35,25 @@ public class SQLParser {
 	
 	private SyntaxTreeNode statement(SQLTokenStream tokens) throws SQLParseException {
 		
-		SyntaxTreeNode root = null;
+		SyntaxTreeDynamicNode droot = new SyntaxTreeDynamicNode(tokens.getToken());
 		
 		if (SQLToken.SQLTokenClass.INSERTINTO == tokens.getTokenClass()) {
 			tokens.advance();
-			//insertStatement(tokens);
+			insertStatement(tokens, droot);
 		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()) {
-			root = selectStatement(tokens);
+			SyntaxTreeNode root = selectStatement(tokens);
+			droot.addChildren(root);
 		} else if (SQLToken.SQLTokenClass.UPDATE == tokens.getTokenClass()) {
 			tokens.advance();
-			//updateStatement(tokens, root);
+			updateStatement(tokens, droot);
 		} else if (SQLToken.SQLTokenClass.DELETE == tokens.getTokenClass()) {
 			tokens.advance();
-			//deleteStatement(tokens, root);
+			deleteStatement(tokens, droot);
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
 		
-		return root;
+		return droot;
 	}
 	
 	
@@ -61,9 +62,9 @@ public class SQLParser {
 	//INSERT
 	////
 
-	private void insertStatement(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
+	private void insertStatement(SQLTokenStream tokens, SyntaxTreeDynamicNode root) throws SQLParseException {
 		if (SQLToken.SQLTokenClass.UID == tokens.getTokenClass()) {
-			root.addChildren(new ASTNode(tokens.getToken()));
+			root.addChildren(new SyntaxTreeDynamicNode(tokens.getToken()));
 			tokens.advance();
 			insertBody(tokens, root);
 		} else {
@@ -72,7 +73,7 @@ public class SQLParser {
 		
 	}
 	
-	private void insertBody(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
+	private void insertBody(SQLTokenStream tokens, SyntaxTreeDynamicNode root) throws SQLParseException {
 		
 		root.addChildren(optionalParenthesisedListOfUIds(tokens));
 		
@@ -84,8 +85,8 @@ public class SQLParser {
 		}
 	}
 	
-	private ASTNode optionalParenthesisedListOfUIds(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root = null;
+	private SyntaxTreeDynamicNode optionalParenthesisedListOfUIds(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeDynamicNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
 			tokens.advance();
 			root = listOfUIds(tokens);
@@ -99,8 +100,8 @@ public class SQLParser {
 		
 	}
 	
-	private ASTNode parenthesisedListOfVariables(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root = null;
+	private SyntaxTreeDynamicNode parenthesisedListOfVariables(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeDynamicNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.OPENPAREN) {
 			tokens.advance();
 			root = listOfValues(tokens);
@@ -115,10 +116,10 @@ public class SQLParser {
 		return root;
 	}
 	
-	private ASTNode listOfUIds(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root = null;
+	private SyntaxTreeDynamicNode listOfUIds(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeDynamicNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
-			root = new ASTNode(tokens.getToken());
+			root = new SyntaxTreeDynamicNode(tokens.getToken());
 			tokens.advance();
 			root.addChildren(optionalConjunctListOfUIds(tokens));
 		} else {
@@ -127,8 +128,8 @@ public class SQLParser {
 		return root;
 	}
 	
-	private ASTNode optionalConjunctListOfUIds(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root = null;
+	private SyntaxTreeDynamicNode optionalConjunctListOfUIds(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeDynamicNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
 			tokens.advance();
 			root = listOfUIds(tokens);
@@ -136,12 +137,12 @@ public class SQLParser {
 		return root;
 	}
 	
-	private ASTNode value(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode ast = null;
+	private SyntaxTreeDynamicNode value(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeDynamicNode ast = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ARGUMENT ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.LITERAL ||
 		    tokens.getTokenClass() == SQLToken.SQLTokenClass.BOOL) {
-			ast = new ASTNode(tokens.getToken());
+			ast = new SyntaxTreeDynamicNode(tokens.getToken());
 			tokens.advance();
 		} else {
 			throw new SQLParseException(tokens.getPosition());
@@ -149,15 +150,15 @@ public class SQLParser {
 		return ast;
 	}
 	
-	private ASTNode listOfValues(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root = null;
+	private SyntaxTreeDynamicNode listOfValues(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeDynamicNode root = null;
 		root = value(tokens);
 		root.addChildren(optionalConjunctListOfValues(tokens));
 		return root;
 	}
 	
-	private ASTNode optionalConjunctListOfValues(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root = null;
+	private SyntaxTreeDynamicNode optionalConjunctListOfValues(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeDynamicNode root = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
 			tokens.advance();
 			root = listOfValues(tokens);
@@ -501,13 +502,13 @@ public class SQLParser {
 	//UPDATE
 	////
 	
-	private void updateStatement(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
+	private void updateStatement(SQLTokenStream tokens, SyntaxTreeDynamicNode root) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
-			root.addChildren(new ASTNode(tokens.getToken()));
+			root.addChildren(new SyntaxTreeDynamicNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.SET) {
 				root.addChildren(assignmentList(tokens));
-				//root.addChildren(optionalWhereClause(tokens));
+				root.addChildren(optionalWhereClause(tokens, null));
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.SET, tokens.getPosition());
 			}
@@ -517,14 +518,14 @@ public class SQLParser {
 		
 	}
 
-	private ASTNode assignmentList(SQLTokenStream tokens) throws SQLParseException {
-		ASTNode root = new ASTNode(tokens.getToken());
+	private SyntaxTreeDynamicNode assignmentList(SQLTokenStream tokens) throws SQLParseException {
+		SyntaxTreeDynamicNode root = new SyntaxTreeDynamicNode(tokens.getToken());
 		tokens.advance();	
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
-			root.addChildren(new ASTNode(tokens.getToken()));
+			root.addChildren(new SyntaxTreeDynamicNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.EQUAL) {
-				root.addChildren(new ASTNode(tokens.getToken()));
+				root.addChildren(new SyntaxTreeDynamicNode(tokens.getToken()));
 				tokens.advance();
 				root.addChildren(value(tokens));
 				root.addChildren(optionalConjunctAssignmentList(tokens));
@@ -537,7 +538,7 @@ public class SQLParser {
 		return root;
 	}
 	
-	private ASTNode optionalConjunctAssignmentList(SQLTokenStream tokens) throws SQLParseException {
+	private SyntaxTreeDynamicNode optionalConjunctAssignmentList(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
 			tokens.advance();
 			return assignmentList(tokens);
@@ -550,13 +551,13 @@ public class SQLParser {
 	//DELETE
 	////
 	
-	private void deleteStatement(SQLTokenStream tokens, ASTNode root) throws SQLParseException {
+	private void deleteStatement(SQLTokenStream tokens, SyntaxTreeDynamicNode root) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
-			root.addChildren(new ASTNode(tokens.getToken()));
+			root.addChildren(new SyntaxTreeDynamicNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
 				tokens.advance();
-				//root.addChildren(predicate(tokens));
+				root.addChildren(predicate(tokens, null));
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.WHERE, tokens.getPosition());
 			}

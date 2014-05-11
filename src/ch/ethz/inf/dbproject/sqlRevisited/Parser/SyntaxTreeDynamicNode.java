@@ -3,20 +3,20 @@ package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 import java.util.ArrayList;
 
 
-public class ASTNode {
+public class SyntaxTreeDynamicNode extends SyntaxTreeIdentifierNode {
 
 	//Represents a node in an SQLAbstractSyntaxTree
 	
 	private SQLToken token;
-	private ArrayList<ASTNode> children;
+	private ArrayList<SyntaxTreeNode> dynamicChildren;
 	
 	/**
 	 * Create a new node with empty ArrayList of child and a (immutable) token
 	 * @param token
 	 */
-	public ASTNode(SQLToken token) {
-		this.token = token;
-		children = new ArrayList<ASTNode>();
+	public SyntaxTreeDynamicNode(SQLToken token) {
+		super(token);
+		dynamicChildren = new ArrayList<SyntaxTreeNode>();
 	}
 	
 	/**
@@ -31,8 +31,10 @@ public class ASTNode {
 	 * Add a child to the node if a_child not null
 	 * @param a_child
 	 */
-	public void addChildren(ASTNode a_child) {
-		if (a_child == null) { return; }
-		this.children.add(a_child);
+	public void addChildren(SyntaxTreeNode a_child) {
+		if (a_child == null) {
+			return;
+		}
+		this.dynamicChildren.add(a_child);
 	}	
 }
