@@ -90,7 +90,7 @@ public class SQLParserTest {
 	
 	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where caseId=? and personId=?";
 	
-	private String[] testDeleteFails = {"delete", "delete A", "delete A where"};
+	private String[] testDeleteFails = {"delte", "delete from", "delete from A", "delete from A,B where a=b"};
 
 	private String[] testDeleteSucceeds = {deleteSuspectFromCaseQuery};
 	
