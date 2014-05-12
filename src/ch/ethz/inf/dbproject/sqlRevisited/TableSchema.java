@@ -12,7 +12,7 @@ public class TableSchema {
 	 * This class is meant to be accessed through the Connection, to make it synchronized.
 	 * A possibility is to make it as a subclass of Connection.
 	 * 
-	 * To be added : The array of keys
+	 * To be added : The array of keys (For me not belongs to there!)
 	 * 
 	 * To see if needed : only access on names and attributes. (Instead of directly with pair<Name, Type>
 	 */
