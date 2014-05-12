@@ -7,7 +7,6 @@ public class SyntaxTreeDynamicNode extends SyntaxTreeIdentifierNode {
 
 	//Represents a node in an SQLAbstractSyntaxTree
 	
-	private SQLToken token;
 	private ArrayList<SyntaxTreeNode> dynamicChildren;
 	
 	/**
@@ -24,7 +23,7 @@ public class SyntaxTreeDynamicNode extends SyntaxTreeIdentifierNode {
 	 * @return token
 	 */
 	public SQLToken getToken() {
-		return token;
+		return generatingToken;
 	}
 	
 	/**
