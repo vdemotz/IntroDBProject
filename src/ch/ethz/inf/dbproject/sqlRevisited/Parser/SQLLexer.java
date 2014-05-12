@@ -21,10 +21,12 @@ public class SQLLexer {
 		ArrayList<SQLToken> tokenStream = new ArrayList<SQLToken>();
 		
 		Matcher matcher = pattern.matcher(statement);
-		
+		int argumentCount = 1;//keeps track of how many arguments (?) have been encountered
 		while (matcher.find()) {
+			
 			for (SQLTokenClass tokenClass : SQLToken.SQLTokenClass.values()) {
 				String match = matcher.group(tokenClass.name());
+				SQLToken token;
 				if (match != null && tokenClass != SQLToken.SQLTokenClass.WHITESPACE) {
 					//"rewrite renaming of tables to always use explicit 'as'
 					if (tokenStream.size() > 0 && tokenClass == SQLToken.SQLTokenClass.UID && tokenStream.get(tokenStream.size()-1).tokenClass == SQLToken.SQLTokenClass.UID) {
@@ -33,7 +35,14 @@ public class SQLLexer {
 					if (tokenClass != SQLToken.SQLTokenClass.LITERAL) {//SQL is case insensitive
 						match = match.toLowerCase();
 					}
-					tokenStream.add(new SQLToken(tokenClass, match));
+					
+					if (tokenClass == SQLToken.SQLTokenClass.ARGUMENT) {
+						token = new SQLToken(tokenClass, match, argumentCount++);
+					} else {
+						token = new SQLToken(tokenClass, match);
+					}
+					
+					tokenStream.add(token);
 					break;
 				}
 			}

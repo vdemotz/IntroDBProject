@@ -51,10 +51,18 @@ public class SQLToken {
 		}
 	}
 	
+	public final int identifier;//0 by default, may be used to distinguish tokens that occur multiple times (like ARGUMENT)
 	public final String content;
 	public final SQLTokenClass tokenClass;
 	
 	public SQLToken (SQLTokenClass tokenClass, String content) {
+		identifier = 0;
+		this.content = content;
+		this.tokenClass = tokenClass;
+	}
+	
+	public SQLToken (SQLTokenClass tokenClass, String content, int identifier) {
+		this.identifier = identifier;
 		this.content = content;
 		this.tokenClass = tokenClass;
 	}
@@ -68,6 +76,8 @@ public class SQLToken {
 	}
 	
 	public String toString() {
-		return "(" + tokenClass.name() + ", '" + content.toString() + "')";
+		String result = "(" + tokenClass.name() + ", '" + content.toString();
+		if (identifier != 0) result += ", " + identifier;
+		return result + "')";
 	}
 }
