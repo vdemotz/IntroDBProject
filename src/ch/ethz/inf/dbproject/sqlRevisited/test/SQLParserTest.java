@@ -128,9 +128,9 @@ public class SQLParserTest {
 		for (String query : tests) {
 			tokens = new SQLTokenStream(lex.tokenize(query));
 			try {
-				assertTrue(parser.parse(tokens));
+				assertNotNull(parser.parse(tokens));
 				//System.out.println(tokens);
-				assertTrue(parser.parse(tokens));
+				assertNotNull(parser.parse(tokens));
 				System.out.println(tokens);
 			} catch (SQLParseException e) {
 				System.out.println(tokens);

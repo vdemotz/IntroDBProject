@@ -16,13 +16,13 @@ public class SQLParser {
 	 * @return true if the stream parsed, false otherwise
 	 * @throws SQLParseException if a parsing error occurs
 	 */
-	public boolean parse(SQLTokenStream tokenStream) throws SQLParseException {
+	public SyntaxTreeNode parse(SQLTokenStream tokenStream) throws SQLParseException {
 		tokenStream.rewind();
-		statement(tokenStream);
+		SyntaxTreeNode ast = statement(tokenStream);
 		if (tokenStream.getToken() != null) {//If not the whole stream was consumed, an error occurred
 			throw new SQLParseException(tokenStream.getPosition());
 		} else {
-			return true;
+			return ast;
 		}
 	}
 	
@@ -508,7 +508,7 @@ public class SQLParser {
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.SET) {
 				root.addChildren(assignmentList(tokens));
-				root.addChildren(optionalWhereClause(tokens, null));
+				root.addChildren(optionalWhereClause(tokens, null));//TODO: maybe add new SyntaxTreeIdentifierNode as child to where clause
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.SET, tokens.getPosition());
 			}
@@ -540,11 +540,10 @@ public class SQLParser {
 	
 	private SyntaxTreeDynamicNode optionalConjunctAssignmentList(SQLTokenStream tokens) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.COMMA) {
-			tokens.advance();
+			//tokens.advance();
 			return assignmentList(tokens);
 		}
 		return null;
-		
 	}
 	
 	////
@@ -557,7 +556,7 @@ public class SQLParser {
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
 				tokens.advance();
-				root.addChildren(predicate(tokens, null));
+				root.addChildren(predicate(tokens, null));//TODO: maybe add new SyntaxTreeIdentifierNode as child to where clause
 			} else {
 				throw new SQLParseException(SQLToken.SQLTokenClass.WHERE, tokens.getPosition());
 			}
