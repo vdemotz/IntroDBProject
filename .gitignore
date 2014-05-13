@@ -1,3 +1,5 @@
 *.class
-.classpath
+
 src/ch/ethz/inf/dbproject/sqlRevisited/RelAlgebraOperator.java
+
+.classpath
