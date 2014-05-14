@@ -5,3 +5,9 @@ src/ch/ethz/inf/dbproject/sqlRevisited/RelAlgebraOperator.java
 ./.classpath
 
 .classpath
+
+.classpath
+
+.settings/org.eclipse.jdt.core.prefs
+
+.settings/org.eclipse.wst.common.project.facet.core.xml

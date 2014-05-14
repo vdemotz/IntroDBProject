@@ -8,7 +8,7 @@ public class SyntaxTreeOrderingNode extends SyntaxTreeNode {
 	public final String identifier;
 	
 	public SyntaxTreeOrderingNode(SQLToken token, boolean asc) {
-		assert(token.tokenClass == SQLToken.SQLTokenClass.UID);
+		assert(token.tokenClass == SQLToken.SQLTokenClass.UID || token.tokenClass == SQLToken.SQLTokenClass.QID);
 		
 		identifier = token.content;
 		ascending = asc;

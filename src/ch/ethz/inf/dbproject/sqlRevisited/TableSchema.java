@@ -17,12 +17,36 @@ public class TableSchema {
 	 * Get a schema of a table in DB
 	 * @param tableName the name of the table
 	 */
+	public TableSchema(String tableName, TableSchemaAttributeDetail[] attributes) {
+		this.tableName = tableName;
+		int length = attributes.length;
+		attributeNames = new String[length];
+		attributeTypes = new SQLType[length];
+		isPrimaryKey = new boolean[length];
+		int i = 0;
+		for (TableSchemaAttributeDetail attribute : attributes) {
+			attributeNames[i] = attribute.attributeName;
+			attributeTypes[i] = attribute.attributeType;
+			isPrimaryKey[i] = attribute.isKey;
+			i++;
+		}
+	}
+	
+	/**
+	 * Get a schema of a table in DB
+	 * @param tableName the name of the table
+	 */
 	public TableSchema(String tableName, String[] attributeNames, SQLType[] attributeTypes, boolean[] isPrimaryKey) {
 		assert (attributeNames.length == attributeTypes.length && attributeTypes.length == isPrimaryKey.length);
 		this.tableName = tableName;
 		this.attributeNames = attributeNames;
 		this.attributeTypes = attributeTypes;
 		this.isPrimaryKey = isPrimaryKey;
+	}
+	
+	public int getLength()
+	{
+		return attributeNames.length;
 	}
 	
 	/**
@@ -57,5 +81,4 @@ public class TableSchema {
 	public boolean[] getIfPrimaryKey(){
 		return isPrimaryKey.clone();
 	}
-	
 }
