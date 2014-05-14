@@ -1,73 +1,58 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.Pair;
 
 public class TableSchema {
-
 	
-	/*
-	 * This class is meant to be accessed through the Connection, to make it synchronized.
-	 * A possibility is to make it as a subclass of Connection.
-	 * 
-	 * To be added : The array of keys (For me not belongs to there!)
-	 * 
-	 * To see if needed : only access on names and attributes. (Instead of directly with pair<Name, Type>
-	 */
-	
-	ArrayList<AttributeDetail> attributes;
-	
+	public final String tableName;
+	public final String[] attributeNames;
+	public final SQLType[] attributeTypes;
+	public final boolean[] isPrimaryKey;
 	
 	/**
 	 * Get a schema of a table in DB
 	 * @param tableName the name of the table
 	 */
-	public TableSchema(String tableName){
-
+	public TableSchema(String tableName, String[] attributeNames, SQLType[] attributeTypes, boolean[] isPrimaryKey) {
+		assert (attributeNames.length == attributeTypes.length && attributeTypes.length == isPrimaryKey.length);
+		this.tableName = tableName;
+		this.attributeNames = attributeNames;
+		this.attributeTypes = attributeTypes;
+		this.isPrimaryKey = isPrimaryKey;
 	}
 	
 	/**
-	 * Get a List of the attributes names of the table
+	 * Get a copy of the attributes names of the table as a list
 	 * @return all attributes names of the table
 	 */
 	public List<String> getAttributesNames(){
-		return null;
+		return Arrays.asList(attributeNames.clone());
 	}
 	
 	/**
-	 * Get a List of the attributes types of the table
+	 * Get a copy of the attributes types of the table as a list
 	 * @return all attributes types of the table
 	 */
 	public List<SQLType> getAttributesTypes(){
-		return null;
+		return Arrays.asList(attributeTypes.clone());
 	}
 	
 	/**
-	 * Get a List of attributes
-	 * @return A pair containing on first the name of the attribute and on second the type of the attribute
-	 */
-	public List<Pair<String, SQLType>> getAttributesNamesAndTypes(){
-		return null;
-	}
-	
-	/**
-	 * Get a List of the names of the primary keys of the table
+	 * Get a copy of the the names of the primary keys of the table as a list
 	 * @return all primary keys names of the table
 	 */
-	public List<String> getPrimaryKeysNames(){
+	public List<String> getPrimaryKeyNames(){
 		return null;
 	}
-	
-
 	
 	protected class AttributeDetail{
 		String attributeName;
 		SQLType attributeType;
 		boolean isKey;
-		int size; //in case of VARCHAR, -1 (or 0) otherwise
-		//int index;
 		
 		/**
 		 * Create (get from DB) a new AttributeDetail
