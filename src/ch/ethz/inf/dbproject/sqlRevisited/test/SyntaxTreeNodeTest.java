@@ -27,10 +27,12 @@ public class SyntaxTreeNodeTest {
 	String q2 = "select distinct A.a, B.b from A, B where A.a = B.b and B.b = A.a order by B.b asc";
 	String q3 = "select A.a, count(*), B.b from A, B where A.a = B.b";
 	String q4 = "select * from A, B";
-	String q5 = "select B.* from A, B";
+	String q5 = "select b.* from B";
+	String q6 = "select count(*), max(A.a) from A, B";
+	String q7 = "select B.a, C.c from (select * from B) as C, (select * from A) as B";
 	
 	TableSchemaAttributeDetail[] qA = {new TableSchemaAttributeDetail("a", new SQLType(SQLType.BaseType.Integer), true)};
-	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Integer), true)};
+	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Datetime), true)};
  	
 	TableSchema qTableA = new TableSchema("a", qA);
  	TableSchema qTableB = new TableSchema("b", qB);
@@ -39,11 +41,11 @@ public class SyntaxTreeNodeTest {
 	List<TableSchema> Blist = Arrays.asList(qTableB);
 	List<TableSchema> ABlist = Arrays.asList(qTableA,qTableB);
  	
- 	String[] testSucceeds = {q0, q1, q2, q3, q4};
- 	List<List<TableSchema>> testSucceedsSchemata = Arrays.asList(ABlist, Alist, ABlist, ABlist, ABlist);
+ 	String[] testSucceeds = {q0, q1, q2, q3, q4, q5, q6, q7};
+ 	List<List<TableSchema>> testSucceedsSchemata = Arrays.asList(ABlist, Alist, ABlist, ABlist, ABlist, ABlist, ABlist, ABlist);
  	
- 	String[] testFails = {q0, q1};
- 	List<List<TableSchema>> testFailsSchemata = Arrays.asList(Alist, Blist);
+ 	String[] testFails = {q0, q1, q5};
+ 	List<List<TableSchema>> testFailsSchemata = Arrays.asList(Alist, Blist, Alist);
  	
 	@Test
 	public void testSelect() {

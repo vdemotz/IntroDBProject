@@ -93,6 +93,14 @@ public class TableSchema {
 	}
 	
 	/**
+	 * Get a copy of the attributes names of the table as a list
+	 * @return all attributes names of the table
+	 */
+	public List<String> getQualifiers(){
+		return Arrays.asList(qualifiers.clone());
+	}
+	
+	/**
 	 * Get a copy of the attributes types of the table as a list
 	 * @return all attributes types of the table
 	 */
