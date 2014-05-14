@@ -65,13 +65,15 @@ subSelectStatement = OPENPAREN selectStatement CLOSEPAREN
 
 selectBody = selectionList FROM fromList optionalWhereClause optionalGroupClause
 
+selectionClause = STAR |
+                  selectionList
+
 selectionList = selectable optionalConjunctSelectionList
 
 optionalConjunctSelectionList = COMMA selectionList |
                                 ""
 
-selectable = STAR |
-             QID |
+selectable = QID |
              UID |
              QSTARID |
              AGGREGATE renamable

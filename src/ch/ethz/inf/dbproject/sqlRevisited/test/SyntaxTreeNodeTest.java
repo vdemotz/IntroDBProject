@@ -29,7 +29,7 @@ public class SyntaxTreeNodeTest {
 	String q4 = "select * from A, B";
 	String q5 = "select b.* from B";
 	String q6 = "select count(*), max(A.a) from A, B";
-	String q7 = "select B.a, C.c from (select * from B) as C, (select * from A) as B";
+	String q7 = "select B.a, C.c from (select * from B order by c desc) as C, (select * from A where A.a = ?) as B";
 	
 	TableSchemaAttributeDetail[] qA = {new TableSchemaAttributeDetail("a", new SQLType(SQLType.BaseType.Integer), true)};
 	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Datetime), true)};
