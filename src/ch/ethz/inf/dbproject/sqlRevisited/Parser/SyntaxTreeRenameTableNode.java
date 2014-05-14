@@ -1,6 +1,10 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
 public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
 	

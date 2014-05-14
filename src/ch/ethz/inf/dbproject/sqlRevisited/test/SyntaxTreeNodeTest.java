@@ -24,18 +24,26 @@ public class SyntaxTreeNodeTest {
 	
 	String q0 = "select A.a from A, B where A.a = B.b";
 	String q1 = "select distinct A.a from A order by A.a";
-	String q2 = "select distinct A.a from A, B where A.a = B.b and B.b = A.a order by B.b asc";
+	String q2 = "select distinct A.a, B.b from A, B where A.a = B.b and B.b = A.a order by B.b asc";
+	String q3 = "select A.a, count(*), B.b from A, B where A.a = B.b";
+	String q4 = "select * from A, B";
+	String q5 = "select B.* from A, B";
 	
 	TableSchemaAttributeDetail[] qA = {new TableSchemaAttributeDetail("a", new SQLType(SQLType.BaseType.Integer), true)};
-	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Integer), true)};
- 	TableSchema qTableA = new TableSchema("a", qA);
+	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Integer), true)};
+ 	
+	TableSchema qTableA = new TableSchema("a", qA);
  	TableSchema qTableB = new TableSchema("b", qB);
  	
- 	String[] testSucceeds = {q0, q1, q2};
- 	List<List<TableSchema>> testSucceedsSchemata = Arrays.asList(Arrays.asList(qTableA, qTableB), Arrays.asList(qTableA), Arrays.asList(qTableA, qTableB));
+	List<TableSchema> Alist = Arrays.asList(qTableA);
+	List<TableSchema> Blist = Arrays.asList(qTableB);
+	List<TableSchema> ABlist = Arrays.asList(qTableA,qTableB);
+ 	
+ 	String[] testSucceeds = {q0, q1, q2, q3, q4};
+ 	List<List<TableSchema>> testSucceedsSchemata = Arrays.asList(ABlist, Alist, ABlist, ABlist, ABlist);
  	
  	String[] testFails = {q0, q1};
- 	List<List<TableSchema>> testFailsSchemata = Arrays.asList(Arrays.asList(qTableA), Arrays.asList(qTableB));
+ 	List<List<TableSchema>> testFailsSchemata = Arrays.asList(Alist, Blist);
  	
 	@Test
 	public void testSelect() {
@@ -54,8 +62,8 @@ public class SyntaxTreeNodeTest {
 				tokens = new SQLTokenStream(lex.tokenize(testQueries[i]));
 				SyntaxTreeDynamicNode parse = parser.parse(tokens);
 				System.out.println(parse.dynamicChildren.get(0));
-				parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));
-				
+				SyntaxTreeNode result = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));
+				System.out.println(result.schema);
 			} catch (SQLParseException e) {
 				e.printStackTrace();
 				fail("unexpected parse error");

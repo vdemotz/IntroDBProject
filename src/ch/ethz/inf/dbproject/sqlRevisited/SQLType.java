@@ -19,7 +19,7 @@ public class SQLType {
 	 * @param basetype
 	 */
 	public SQLType(BaseType basetype) {
-		assert(basetype != BaseType.Varchar);
+		assert(basetype != BaseType.Varchar && basetype != BaseType.Char);
 		
 		this.type = basetype;
 		this.size = null;
@@ -30,8 +30,8 @@ public class SQLType {
 	 * @param size if the type has a variable size parameter, it is specified in size
 	 */
 	public SQLType(BaseType basetype, Integer size) {
-		assert (size == null || basetype == BaseType.Varchar);
-		assert(size != null || basetype != BaseType.Varchar);
+		assert (size == null || basetype == BaseType.Varchar ||  basetype == BaseType.Char);
+		assert(size != null || (basetype != BaseType.Varchar && basetype != BaseType.Char));
 		
 		this.type = basetype;
 		this.size = size;

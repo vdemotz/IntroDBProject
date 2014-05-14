@@ -76,7 +76,7 @@ public class SQLParserTest {
 	
 	private String[] testSelectFails = {selectQueryE1, selectQueryE2, "select order by name", "select A B from C", "select A, B from C, (select * from C)"};
 	
-	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, "select A, B from C, (select * from C) as B", categoriesForCaseQuery, getAllPersonsString};
+	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, "select A, B from C, (select * from C) as B", categoriesForCaseQuery, getAllPersonsString, "select count(*), max(A.a) from B"};
 	
 	
 

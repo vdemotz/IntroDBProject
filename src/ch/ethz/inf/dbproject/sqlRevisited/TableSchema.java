@@ -2,6 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.Pair;
@@ -27,7 +28,22 @@ public class TableSchema {
 		isPrimaryKey = new boolean[length];
 		qualifiers = new String[length];
 		this.tableName = tableName;
-		int i = 0;
+		initWithIterator(Arrays.asList(attributes));
+	}
+	
+	public TableSchema(String tableName, List<TableSchemaAttributeDetail> attributes) {
+		
+		int length = attributes.size();
+		attributeNames = new String[length];
+		attributeTypes = new SQLType[length];
+		isPrimaryKey = new boolean[length];
+		qualifiers = new String[length];
+		this.tableName = tableName;
+		initWithIterator(attributes);
+	}
+	
+	private void initWithIterator(Iterable<TableSchemaAttributeDetail> attributes) {
+		int i=0;
 		for (TableSchemaAttributeDetail attribute : attributes) {
 			attributeNames[i] = attribute.attributeName;
 			attributeTypes[i] = attribute.attributeType;
@@ -122,7 +138,7 @@ public class TableSchema {
 				System.out.println(this);
 				throw new SQLSemanticException(SQLSemanticException.Type.NoSuchAttributeException, qualifier + "." + attributeName);
 			}
-		} while (qualifiers[cur] != qualifier);
+		} while (!qualifiers[cur].equals(qualifier));
 		return cur;
 	}
 
