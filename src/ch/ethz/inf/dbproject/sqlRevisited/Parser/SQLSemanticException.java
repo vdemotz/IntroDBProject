@@ -4,7 +4,8 @@ public class SQLSemanticException extends Exception {
 
 	public enum Type
 	{
-		NoSuchTableException("No table with name : ");
+		NoSuchTableException("No table with name : "),
+		InternalError("An internal error occurred : ");
 		
 		public final String message;
 		Type(String message) {

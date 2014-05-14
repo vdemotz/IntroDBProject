@@ -38,10 +38,7 @@ public class AttributedTableSchema extends TableSchema {
 	
 	private static <T> T[] concatArrays(T[] left, T[] right)
 	{
-		System.out.println(left.length);
-		System.out.println(right.length);
 		T[] result = Arrays.copyOf(left, left.length+right.length);
-		System.out.println(result.length);
 		for (int i=left.length; i < left.length+right.length; i++) {
 			result[i] = right[i-left.length];
 		}

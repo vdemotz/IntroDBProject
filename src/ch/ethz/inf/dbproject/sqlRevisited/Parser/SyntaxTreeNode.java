@@ -93,11 +93,18 @@ public class SyntaxTreeNode implements Cloneable {
 			result = projectAggregate.transform((SyntaxTreeProjectAndAggregateOperatorNode) this, childResults.get(0));
 			
 		} else if (this.getClass().equals(SyntaxTreeRenameTableNode.class) ) {
-			result = selection.transform((SyntaxTreeSelectionOperatorNode) this, childResults.get(0));
+			result = rename.transform((SyntaxTreeRenameTableNode) this, childResults.get(0));
 			
 		} else if (this.getClass().equals(SyntaxTreeSortOperatorNode.class) ) {
 			result = sort.transform((SyntaxTreeSortOperatorNode) this, childResults.get(0));
+			
+		} else if (this.getClass().equals(SyntaxTreeSelectionOperatorNode.class)){
+			result = selection.transform((SyntaxTreeSelectionOperatorNode) this, childResults.get(0));
+			
+		} else {
+			throw new SQLSemanticException(SQLSemanticException.Type.InternalError, this.toString());
 		}
+		
 		return result;
 	}
 	
@@ -161,6 +168,7 @@ public class SyntaxTreeNode implements Cloneable {
 	{
 		@Override
 		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) {
+			assert(childResult != null);
 			return new SyntaxTreeProjectAndAggregateOperatorNode(childResult.schema, childResult, currentNode.getProjectionList());
 		}
 	}

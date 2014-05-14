@@ -52,9 +52,6 @@ public class SyntaxTreeNodeTest {
 			fail("unexpected semantic error");
 		}
 		
-		
-		
-		fail("Not yet implemented");
 	}
 
 }
