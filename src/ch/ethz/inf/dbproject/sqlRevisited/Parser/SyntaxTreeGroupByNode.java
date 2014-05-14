@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SyntaxTreeGroupByNode extends SyntaxTreeNode {
 
@@ -19,7 +19,7 @@ public class SyntaxTreeGroupByNode extends SyntaxTreeNode {
 		assert(groupByList != null);
 	}
 
-	public SyntaxTreeGroupByNode(AttributedTableSchema schema, SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeIdentifierNode> groupByList) {
+	public SyntaxTreeGroupByNode(TableSchema schema, SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeIdentifierNode> groupByList) {
 		super(schema, child, groupByList);
 		assert(schema != null);
 		assert(child != null);

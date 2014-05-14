@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SyntaxTreeBaseRelationNode extends SyntaxTreeNode{
 
@@ -11,7 +11,7 @@ public class SyntaxTreeBaseRelationNode extends SyntaxTreeNode{
 		assert(name != null);
 	}
 
-	public SyntaxTreeBaseRelationNode(AttributedTableSchema schema) {
+	public SyntaxTreeBaseRelationNode(TableSchema schema) {
 		super(schema);
 		this.name = schema.tableName;
 		assert(schema != null);

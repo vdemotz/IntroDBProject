@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 	
@@ -16,7 +16,7 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 		assert(projectOnto != null);
 	}
 
-	public SyntaxTreeProjectAndAggregateOperatorNode(AttributedTableSchema schema, SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectionList) {
+	public SyntaxTreeProjectAndAggregateOperatorNode(TableSchema schema, SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectionList) {
 		super(schema, child, projectionList);
 		assert(schema != null);
 		assert(child != null);

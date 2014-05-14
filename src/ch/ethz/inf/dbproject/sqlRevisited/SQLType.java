@@ -36,5 +36,12 @@ public class SQLType {
 		this.type = basetype;
 		this.size = size;
 	}
+	
+	public String toString()
+	{
+		String result =  this.type.toString();
+		if (size != null) result = result + "(" + size + ")";
+		return result;
+	}
 }
 
