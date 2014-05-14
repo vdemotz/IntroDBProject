@@ -17,6 +17,7 @@ public class SyntaxTreeSortOperatorNode extends SyntaxTreeNode {
 
 	public SyntaxTreeSortOperatorNode(AttributedTableSchema schema, SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeOrderingNode> orderStatement) {
 		super(schema, child, orderStatement);
+		assert(schema != null);
 	}
 
 }

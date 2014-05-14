@@ -7,7 +7,7 @@ public class SyntaxTreeDynamicNode extends SyntaxTreeIdentifierNode {
 
 	//Represents a node in an SQLAbstractSyntaxTree
 	
-	private ArrayList<SyntaxTreeNode> dynamicChildren;
+	public ArrayList<SyntaxTreeNode> dynamicChildren;
 	
 	/**
 	 * Create a new node with empty ArrayList of child and a (immutable) token

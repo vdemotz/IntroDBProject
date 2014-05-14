@@ -15,5 +15,6 @@ public class SyntaxTreeNodeDistinct extends SyntaxTreeNode {
 
 	public SyntaxTreeNodeDistinct(SyntaxTreeNode child, AttributedTableSchema schema) {
 		super(schema, child);
+		assert(schema != null);
 	}
 }

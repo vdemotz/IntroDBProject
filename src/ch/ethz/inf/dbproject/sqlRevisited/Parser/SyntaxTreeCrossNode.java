@@ -18,6 +18,9 @@ public class SyntaxTreeCrossNode extends SyntaxTreeNode {
 
 	public SyntaxTreeCrossNode(AttributedTableSchema schema,SyntaxTreeNode left, SyntaxTreeNode right) {
 		super(schema, left, right);
+		assert(schema != null);
+		assert(left != null);
+		assert(right != null);
 	}
 	
 }

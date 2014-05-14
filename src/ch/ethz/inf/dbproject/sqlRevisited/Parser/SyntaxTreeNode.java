@@ -16,7 +16,7 @@ public class SyntaxTreeNode implements Cloneable {
 	
 	SyntaxTreeNode(AttributedTableSchema schema, SyntaxTreeNode...children) {
 		this.children = children;
-		this.schema = null;
+		this.schema = schema;
 	}
 	
 	SyntaxTreeNode(SyntaxTreeNode...children) {
@@ -75,30 +75,28 @@ public class SyntaxTreeNode implements Cloneable {
 				childResults.add (child.fold(base, cross, group, distinct, projectAggregate, rename, selection, sort));
 			}
 		}
-		T[] childResultsArray = null;
-		childResultsArray = childResults.toArray(childResultsArray);
 		
 		T result = null;
 		if (this.getClass().equals(SyntaxTreeBaseRelationNode.class)) {
 			result = base.transform((SyntaxTreeBaseRelationNode) this);
 			
 		} else if (this.getClass().equals(SyntaxTreeGroupByNode.class) ) {
-			result = group.transform((SyntaxTreeGroupByNode) this, childResultsArray[0]);
+			result = group.transform((SyntaxTreeGroupByNode) this, childResults.get(0));
 			
 		} else if (this.getClass().equals(SyntaxTreeCrossNode.class) ) {
-			result = cross.transform((SyntaxTreeCrossNode) this, childResultsArray[0], childResultsArray[1]);
+			result = cross.transform((SyntaxTreeCrossNode) this, childResults.get(0), childResults.get(1));
 			
 		} else if (this.getClass().equals(SyntaxTreeNodeDistinct.class) ) {
-			result = distinct.transform((SyntaxTreeNodeDistinct) this, childResultsArray[0]);
+			result = distinct.transform((SyntaxTreeNodeDistinct) this, childResults.get(0));
 			
 		} else if (this.getClass().equals(SyntaxTreeProjectAndAggregateOperatorNode.class) ) {
-			result = projectAggregate.transform((SyntaxTreeProjectAndAggregateOperatorNode) this, childResultsArray[0]);
+			result = projectAggregate.transform((SyntaxTreeProjectAndAggregateOperatorNode) this, childResults.get(0));
 			
 		} else if (this.getClass().equals(SyntaxTreeRenameTableNode.class) ) {
-			result = selection.transform((SyntaxTreeSelectionOperatorNode) this, childResultsArray[0]);
+			result = selection.transform((SyntaxTreeSelectionOperatorNode) this, childResults.get(0));
 			
 		} else if (this.getClass().equals(SyntaxTreeSortOperatorNode.class) ) {
-			result = sort.transform((SyntaxTreeSortOperatorNode) this, childResultsArray[0]);
+			result = sort.transform((SyntaxTreeSortOperatorNode) this, childResults.get(0));
 		}
 		return result;
 	}
@@ -181,6 +179,17 @@ public class SyntaxTreeNode implements Cloneable {
 		public SyntaxTreeNode transform(SyntaxTreeSortOperatorNode currentNode, SyntaxTreeNode childResult) {
 			return new SyntaxTreeSortOperatorNode(childResult.schema, childResult, currentNode.getOrderStatement());
 		}
+	}
+	
+	public String toString()
+	{
+		String result = this.getClass().getSimpleName() + "[ ";
+		for (SyntaxTreeNode child : children) {
+			if (child != null) {
+				result += child.toString() + " ";
+			}
+		}
+		return  result + "]";
 	}
 	
 }

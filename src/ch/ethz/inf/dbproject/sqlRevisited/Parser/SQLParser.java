@@ -16,9 +16,9 @@ public class SQLParser {
 	 * @return true if the stream parsed, false otherwise
 	 * @throws SQLParseException if a parsing error occurs
 	 */
-	public SyntaxTreeNode parse(SQLTokenStream tokenStream) throws SQLParseException {
+	public SyntaxTreeDynamicNode parse(SQLTokenStream tokenStream) throws SQLParseException {
 		tokenStream.rewind();
-		SyntaxTreeNode ast = statement(tokenStream);
+		SyntaxTreeDynamicNode ast = statement(tokenStream);
 		if (tokenStream.getToken() != null) {//If not the whole stream was consumed, an error occurred
 			throw new SQLParseException(tokenStream.getPosition());
 		} else {
@@ -33,7 +33,7 @@ public class SQLParser {
 	//Since the grammar is LL(1) no backtracking is needed
 	////
 	
-	private SyntaxTreeNode statement(SQLTokenStream tokens) throws SQLParseException {
+	private SyntaxTreeDynamicNode statement(SQLTokenStream tokens) throws SQLParseException {
 		
 		SyntaxTreeDynamicNode droot = new SyntaxTreeDynamicNode(tokens.getToken());
 		

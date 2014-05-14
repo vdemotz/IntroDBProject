@@ -8,10 +8,13 @@ public class SyntaxTreeBaseRelationNode extends SyntaxTreeNode{
 	
 	public SyntaxTreeBaseRelationNode(String name) {
 		this.name = name;
+		assert(name != null);
 	}
 
 	public SyntaxTreeBaseRelationNode(AttributedTableSchema schema) {
 		super(schema);
 		this.name = schema.tableName;
+		assert(schema != null);
+		assert(name != null);
 	}
 }

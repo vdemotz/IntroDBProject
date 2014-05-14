@@ -14,6 +14,7 @@ public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
 	public SyntaxTreeRenameTableNode(AttributedTableSchema schema, SyntaxTreeNode table) {
 		super(schema, table);
 		this.name = schema.tableName;
+		assert(schema != null);
 	}
 	
 }

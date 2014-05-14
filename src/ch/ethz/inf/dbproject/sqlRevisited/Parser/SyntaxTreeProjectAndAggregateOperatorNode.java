@@ -12,10 +12,15 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 	
 	public SyntaxTreeProjectAndAggregateOperatorNode(SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectOnto) {
 		super(child, projectOnto);
+		assert(child != null);
+		assert(projectOnto != null);
 	}
 
-	public SyntaxTreeProjectAndAggregateOperatorNode(AttributedTableSchema schema, SyntaxTreeNode childResult, SyntaxTreeListNode<SyntaxTreeNode> projectionList) {
-		super(schema, childResult, projectionList);
+	public SyntaxTreeProjectAndAggregateOperatorNode(AttributedTableSchema schema, SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectionList) {
+		super(schema, child, projectionList);
+		assert(schema != null);
+		assert(child != null);
+		assert(projectionList != null);
 	}
 	
 }

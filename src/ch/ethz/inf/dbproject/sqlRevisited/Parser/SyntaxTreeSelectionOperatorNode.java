@@ -21,6 +21,9 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 	
 	SyntaxTreeSelectionOperatorNode(SyntaxTreeIdentifierNode leftValue, SyntaxTreeIdentifierNode operator, SyntaxTreeIdentifierNode rightValue, SyntaxTreeNode child) {
 		super(leftValue, operator, rightValue, child);
+		assert(leftValue != null);
+		assert(operator != null);
+		assert(child != null);
 	}
 
 	public SyntaxTreeSelectionOperatorNode(AttributedTableSchema schema,
@@ -28,6 +31,10 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 			SyntaxTreeIdentifierNode operator,
 			SyntaxTreeIdentifierNode rightValue, SyntaxTreeNode child) {
 		super(schema, leftValue, operator, rightValue, child);
+		assert(leftValue != null);
+		assert(operator != null);
+		assert(child != null);
+		assert(schema != null);
 	}
 	
 }
