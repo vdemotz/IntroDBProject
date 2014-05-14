@@ -26,39 +26,36 @@ public class TableSchema {
 	}
 	
 	/**
-	 * Get a copy of the attributes names of the table as a list
+	 * Get the name of the table
+	 * @return the name of the table
+	 */
+	public String getTableName(){
+		return tableName;
+	}
+	
+	/**
+	 * Get a copy of the attributes names of the table
 	 * @return all attributes names of the table
 	 */
-	public List<String> getAttributesNames(){
-		return Arrays.asList(attributeNames.clone());
+	public String[] getAttributesNames(){
+		return attributeNames.clone();
 	}
 	
 	/**
-	 * Get a copy of the attributes types of the table as a list
+	 * Get a copy of the attributes types of the table
 	 * @return all attributes types of the table
 	 */
-	public List<SQLType> getAttributesTypes(){
-		return Arrays.asList(attributeTypes.clone());
+	public SQLType[] getAttributesTypes(){
+		return attributeTypes.clone();
 	}
 	
 	/**
-	 * Get a copy of the the names of the primary keys of the table as a list
-	 * @return all primary keys names of the table
+	 * Get a copy of the boolean which indicates if attribute is a key
+	 * @return 
+	 * @return all boolean which indicates if attribute is a key
 	 */
-	public List<String> getPrimaryKeyNames(){
-		return null;
+	public boolean[] getIfPrimaryKey(){
+		return isPrimaryKey.clone();
 	}
 	
-	protected class AttributeDetail{
-		String attributeName;
-		SQLType attributeType;
-		boolean isKey;
-		
-		/**
-		 * Create (get from DB) a new AttributeDetail
-		 */
-		public AttributeDetail() {
-			
-		}
-	}
 }
