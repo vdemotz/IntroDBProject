@@ -9,7 +9,7 @@ import java.util.Set;
 import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SyntaxTreeNode implements Cloneable {
+public class SyntaxTreeNode {
 
 	protected final AttributedTableSchema schema;
 	protected final SyntaxTreeNode[] children;
