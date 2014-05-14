@@ -178,7 +178,7 @@ public class SQLParser {
 		if (orderStatement == null) {
 			return innerStatement;
 		} else {
-			return new SyntaxTreeSortOperator(innerStatement, orderStatement);
+			return new SyntaxTreeSortOperatorNode(innerStatement, orderStatement);
 		}
 	}
 	
