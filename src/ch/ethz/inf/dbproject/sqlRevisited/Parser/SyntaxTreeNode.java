@@ -48,7 +48,7 @@ public class SyntaxTreeNode {
 	
 	/**
 	 * Fold operation over all non-list, non-identifier nodes of the subtree rooted at this node
-	 * It is strongly encourages not to modify any of the nodes, but instead to create a new copy of the nodes
+	 * It is strongly encouraged not to modify any of the nodes, but instead to create a new copy of the nodes
 	 * @param base
 	 * @param cross
 	 * @param group

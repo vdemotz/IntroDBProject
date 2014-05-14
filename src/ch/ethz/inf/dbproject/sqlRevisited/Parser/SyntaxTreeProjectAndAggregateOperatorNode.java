@@ -52,7 +52,6 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 					throw new SQLSemanticException(SQLSemanticException.Type.NoSuchTableException, attributeQualifier);
 				}
 				
-				System.out.println(attributeQualifier);
 				for (TableSchemaAttributeDetail attribute : allAttributes) {
 					if (attribute.qualifier.equals(attributeQualifier)) {
 						result.add(attribute);
