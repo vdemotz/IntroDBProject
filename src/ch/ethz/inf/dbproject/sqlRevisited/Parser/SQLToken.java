@@ -24,7 +24,7 @@ public class SQLToken {
 		//UNARYCONNECTIVE ("\\bnot\\b"),
 		//data
 		BOOL ("\\b(true|false)\\b"),
-		AGGREGATE ("\\b(count|max)\\([*a-z]+\\)"),
+		AGGREGATE ("\\b(count|max)\\([*a-z]+(\\.[*a-z])?\\)"),
 		QID ("\\b[a-z]+\\.([a-z]+\\b)"),
 		QSTARID ("\\b[a-z]+\\.\\*"),
 		UID ("\\b[a-z]+\\b"),
