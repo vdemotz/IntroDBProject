@@ -296,7 +296,7 @@ public class SyntaxTreeNode {
 		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
 			assert(childResult != null);
 			List<TableSchemaAttributeDetail> resolvedProjectionList = SyntaxTreeProjectAndAggregateOperatorNode.resolve(currentNode.getProjectionList(), childResult.schema);
-			return new SyntaxTreeProjectAndAggregateOperatorNode(new TableSchema("()", resolvedProjectionList), childResult, currentNode.getProjectionList());
+			return new SyntaxTreeProjectAndAggregateOperatorNode(new TableSchema("", resolvedProjectionList), childResult, currentNode.getProjectionList());
 		}
 	}
 	
@@ -324,7 +324,7 @@ public class SyntaxTreeNode {
 	public String toString()
 	{
 		String info = infoToString();
-		String result = this.getClass().getSimpleName();
+		String result = this.getClass().getSimpleName().substring("SyntaxTree".length());
 		if (info != null && info.length() > 0) {
 		result = result + " (" + infoToString() + ")";
 		}

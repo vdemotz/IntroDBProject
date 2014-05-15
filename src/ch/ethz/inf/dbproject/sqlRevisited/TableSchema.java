@@ -232,7 +232,7 @@ public class TableSchema {
 	 * @return a new schema that represents the concatenation of schema to this
 	 */
 	public TableSchema append(TableSchema schema) {
-		return new TableSchema(tableName + "||" + schema.tableName, concatArrays(attributeNames, schema.attributeNames),
+		return new TableSchema("", concatArrays(attributeNames, schema.attributeNames),
 				concatArrays(attributeTypes, schema.attributeTypes), concatArrays(isPrimaryKey, schema.isPrimaryKey), concatArrays(qualifiers, schema.qualifiers));
 	}
 	

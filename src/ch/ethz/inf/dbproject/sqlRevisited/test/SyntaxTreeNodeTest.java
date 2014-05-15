@@ -35,6 +35,7 @@ public class SyntaxTreeNodeTest {
 	String q9 = "select B.c from B, C where B.b=B.c";
 	String q10 = "select C.c from B, C where B.b=?";
 	String q11 = "select C.c from B, C where ?=b";
+	String q12 = "select C.c from B, C where 5=?";
 	
 	TableSchemaAttributeDetail[] qA = {new TableSchemaAttributeDetail("a", new SQLType(SQLType.BaseType.Integer), true)};
 	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Datetime), true)};
@@ -55,7 +56,7 @@ public class SyntaxTreeNodeTest {
  	String[] testFails = {q0, q1, q5};
  	List<List<TableSchema>> testFailsSchemata = Arrays.asList(Alist, Blist, Alist);
  	
- 	String[] rewriteTests = {q9, q10, q11};
+ 	String[] rewriteTests = {q9, q10, q11, q12};
  	
 	SQLParser parser = new SQLParser();
  	
@@ -70,7 +71,7 @@ public class SyntaxTreeNodeTest {
 		SQLLexer lex = new SQLLexer();
 		SQLTokenStream tokens = null;
 		String[] testQueries = rewriteTests;
-		List<List<TableSchema>> schemata = Arrays.asList(ABClist, ABClist, ABClist);
+		List<List<TableSchema>> schemata = Arrays.asList(ABClist, ABClist, ABClist, ABClist);
 		
 		for (int i=0; i<testQueries.length; i++) {
 			tokens = new SQLTokenStream(lex.tokenize(testQueries[i]));

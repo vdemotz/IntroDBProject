@@ -14,4 +14,10 @@ public class SyntaxTreeOrderingNode extends SyntaxTreeNode {
 		ascending = asc;
 	}
 	
+	@Override
+	protected String infoToString()
+	{
+		return identifier.toUpperCase() + " " + (ascending ? "asc" : "desc");
+	}
+	
 }
