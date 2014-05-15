@@ -11,17 +11,17 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 	
 	SyntaxTreeIdentifierNode getRightValue()
 	{
-		return (SyntaxTreeIdentifierNode) children[1];
+		return (SyntaxTreeIdentifierNode) children[2];
 	}
 	
 	SyntaxTreeIdentifierNode getOperator()
 	{
-		return (SyntaxTreeIdentifierNode) children[2];
+		return (SyntaxTreeIdentifierNode) children[1];
 	}
 	
 	SyntaxTreeNode getChild()
 	{
-		return children[0];
+		return children[3];
 	}
 	
 	SyntaxTreeSelectionOperatorNode(SyntaxTreeIdentifierNode leftValue, SyntaxTreeIdentifierNode operator, SyntaxTreeIdentifierNode rightValue, SyntaxTreeNode child) {
