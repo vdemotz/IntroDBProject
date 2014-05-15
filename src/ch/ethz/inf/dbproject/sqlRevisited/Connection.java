@@ -79,12 +79,13 @@ public class Connection {
 
 	/**
 	 * Insert an object into a table
-	 * @param toInsert object to be inserted
+	 * @param valuesToInsert values to be inserted
+	 * @param attributesNames matching values to be inserted
 	 * @param tableName a table name of the database
 	 * @return true if object has been inserted, else false
 	 */
-	public boolean insert(Object toInsert, String tableName){
-		return db.insert(toInsert, tableName);
+	public boolean insert(Object[] valuesToInsert, String[] attributesNames, String tableName){
+		return db.insert(valuesToInsert, attributesNames, tableName);
 	}
 	
 	/**

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -70,16 +71,12 @@ public class Database {
 	}
 	
 	public Object min(String tableName) throws Exception{
-		//Check if table exist
-		File f = new File(DB_PATH + tableName + EXT_DATA);
-		if(!f.exists()) 
-			throw new Exception("Table doesn't exist.");
 		
 		//Get the number of bytes per entry 
 		int sizeEntry = this.getTableSchema(tableName).getSizeOfEntry();
 		
 		//Create connection to file and allocate buffer
-		FileInputStream in = new FileInputStream(DB_PATH + tableName + EXT_META_DATA);
+		FileInputStream in = this.getFileInputStream(tableName, true);
 		FileChannel channel = in.getChannel();
 		ByteBuffer buf = ByteBuffer.allocateDirect(sizeEntry);
 		if (channel.read(buf) == -1) {
@@ -107,7 +104,7 @@ public class Database {
 		return false;
 	}
 
-	public boolean insert(Object toInsert, String tableName){
+	public boolean insert(Object[] valuesToInsert, String[] attributesNames, String tableName){
 		return false;
 	}
 	
@@ -417,5 +414,63 @@ public class Database {
 	 */
 	private Object createObjectFromBytesArrayAndTableName(ByteBuffer data, String tableName){
 		return null;
+	}
+	
+	/**
+	 * Transform an object into a byte array to write into the database
+	 * @param data the object to transform
+	 * @return a byte array to write to database
+	 */
+	private byte[] getByteArrayFromObject(Object data){
+		return null;
+	}
+	
+	/**
+	 * Write a given piece of data into the database
+	 * @param data to be written
+	 * @param position the offset (take care of alignment!)
+	 * @return true if succeed, false otherwise
+	 */
+	private boolean writeToData(byte[] data, int position, String tableName) throws Exception{
+		
+		FileOutputStream in = this.getFileOutputStream(tableName, false);
+		try{
+			in.write(data, position, data.length);
+			in.close();
+			return true;
+		} catch (Exception ex){
+			System.err.println("Unable to write data to "+tableName);
+			ex.printStackTrace();
+			in.close();
+			return false;
+		}
+	}
+	
+	/**
+	 * Get a new file to read from the database
+	 */
+	private FileInputStream getFileInputStream(String tableName, boolean metaData) throws Exception{
+		
+		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
+		
+		//Check if table exist
+		File f = new File(filename);
+		if(!f.exists()) 
+			throw new Exception("Table doesn't exist.");
+		return new FileInputStream(filename);
+	}
+	
+	/**
+	 * Get a new file to write from the database
+	 */
+	private FileOutputStream getFileOutputStream(String tableName, boolean metaData) throws Exception{
+		
+		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
+		
+		//Check if table exist
+		File f = new File(filename);
+		if(!f.exists()) 
+			throw new Exception("Table doesn't exist.");
+		return new FileOutputStream(filename);
 	}
 }
