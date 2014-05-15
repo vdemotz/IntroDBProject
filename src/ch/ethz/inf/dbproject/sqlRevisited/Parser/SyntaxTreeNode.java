@@ -103,11 +103,11 @@ public class SyntaxTreeNode {
 						SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
 						return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
 						
-				} else {
+				} else {//Sub-Case No Push : don't push
 					return node;
-				}
+				}//TODO: Sub-case Join : check if token of class EQUAL, make a join (maybe check if ids refer to valid attributes at all)
 				
-			} else {
+			} else {//Case else : don't push
 				return node;
 			}
 		}

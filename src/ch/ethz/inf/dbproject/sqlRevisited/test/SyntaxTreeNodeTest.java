@@ -35,7 +35,7 @@ public class SyntaxTreeNodeTest {
 	String q9 = "select B.c from B, C where B.b=B.c";
 	String q10 = "select C.c from B, C where B.b=?";
 	String q11 = "select C.c from B, C where ?=b";
-	String q12 = "select C.c from B, C where 5=?";
+	String q12 = "select B.b from B, C where 5=? and ?=C.c and B.c=C.c";
 	
 	TableSchemaAttributeDetail[] qA = {new TableSchemaAttributeDetail("a", new SQLType(SQLType.BaseType.Integer), true)};
 	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Datetime), true)};
@@ -80,7 +80,8 @@ public class SyntaxTreeNodeTest {
 				SyntaxTreeNode instanciatedTree = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));//infer schema for all nodes in the AST
 				SyntaxTreeNode rewrittenTree = instanciatedTree.rewrite();
 				
-				assertTrue(instanciatedTree.schema.equals(rewrittenTree.instanciateWithSchemata(schemata.get(i)).schema));
+				assertEquals(instanciatedTree.schema, rewrittenTree.instanciateWithSchemata(schemata.get(i)).schema);
+				
 				System.out.println(instanciatedTree);
 				System.out.println(rewrittenTree);
 				
@@ -109,6 +110,7 @@ public class SyntaxTreeNodeTest {
 				
 				SyntaxTreeNode result = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));//infer schema for all nodes in the AST
 				assertNotNull(result.schema);
+				assertEquals(result.schema, result.instanciateWithSchemata(schemata.get(i)).schema);//inferring twice should give the same result
 				System.out.println(result.schema);//print inferred schema
 				
 			} catch (SQLParseException e) {
