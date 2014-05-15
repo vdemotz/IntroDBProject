@@ -10,5 +10,11 @@ public class SyntaxTreeIdentifierNode extends SyntaxTreeNode {
 	public SyntaxTreeIdentifierNode(SQLToken token) {
 		generatingToken = token;
 	}
+	
+	@Override
+	protected String infoToString()
+	{
+		return generatingToken.content.toUpperCase();
+	}
 
 }

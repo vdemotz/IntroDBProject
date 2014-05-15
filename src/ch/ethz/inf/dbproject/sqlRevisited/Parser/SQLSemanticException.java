@@ -7,7 +7,7 @@ public class SQLSemanticException extends Exception {
 		NoSuchTableException("No table with name : "),
 		NoSuchAttributeException("No attribute with name : "),
 		InternalError("An internal error occurred : "),
-		NotApplicableToTokenWithClass("Not applicable to token with class ");
+		NotApplicableToTokenWithClass("Not applicable to token ");
 		
 		public final String message;
 		Type(String message) {

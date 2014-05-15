@@ -17,4 +17,10 @@ public class SyntaxTreeBaseRelationNode extends SyntaxTreeNode{
 		assert(schema != null);
 		assert(name != null);
 	}
+	
+	@Override
+	protected String infoToString()
+	{
+		return name.toUpperCase();
+	}
 }

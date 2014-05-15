@@ -79,23 +79,31 @@ public class SyntaxTreeNode {
 			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class)) {//Case cross : push down left or right, if possible
 				SyntaxTreeCrossNode child = (SyntaxTreeCrossNode)node.getChild();
 				
-				Pair<String, String> leftFragments = node.getLeftValue().generatingToken.getFragmentsForIdentifier();
-				Pair<String, String> rightFragments = node.getRightValue().generatingToken.getFragmentsForIdentifier();
+				boolean leftChildHasLeftAttribute = false;
+				boolean leftChildHasRightAttribute = false;
+				boolean rightChildHasRightAttribute = false;
+				boolean rightChildHasLeftAttribute = false;
 				
-				boolean leftChildHasLeftAttribute = child.getLeft().schema.hasAttribute(leftFragments);
-				boolean leftChildHasRightAttribute = child.getLeft().schema.hasAttribute(rightFragments);
-				boolean rightChildHasRightAttribute = child.getRight().schema.hasAttribute(rightFragments);
-				boolean rightChildHasLeftAttribute = child.getRight().schema.hasAttribute(leftFragments);
-
+				if (node.getLeftValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.QID || node.getLeftValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.UID) {
+					Pair<String, String> leftFragments = node.getLeftValue().generatingToken.getFragmentsForIdentifier();
+					leftChildHasLeftAttribute = child.getLeft().schema.hasAttribute(leftFragments);
+					rightChildHasLeftAttribute = child.getRight().schema.hasAttribute(leftFragments);
+				}
+				if (node.getRightValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.QID || node.getRightValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.UID) {
+					Pair<String, String> rightFragments = node.getRightValue().generatingToken.getFragmentsForIdentifier();	
+					leftChildHasRightAttribute = child.getLeft().schema.hasAttribute(rightFragments);
+					rightChildHasRightAttribute = child.getRight().schema.hasAttribute(rightFragments);	
+				}
+				
 				if (!rightChildHasRightAttribute && !rightChildHasLeftAttribute) {//Sub-Case Push Left
 					SyntaxTreeSelectionOperatorNode nodePointingToLeftGrandchild = node.copyWithChild(child.getLeft());
 					return child.copyWithLeftChild(pushDown(nodePointingToLeftGrandchild));//recursively push down the left subtree and reassemble
-					
+						
 				} else if (!leftChildHasRightAttribute && !leftChildHasLeftAttribute) {//Sub-Case Push Right
-					SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
-					return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
-					
-				} else {//Sub-Case No Push
+						SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
+						return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
+						
+				} else {
 					return node;
 				}
 				
@@ -315,13 +323,26 @@ public class SyntaxTreeNode {
 	@Override
 	public String toString()
 	{
-		String result = this.getClass().getSimpleName() + "[ ";
-		for (SyntaxTreeNode child : children) {
-			if (child != null) {
-				result += child.toString() + " ";
-			}
+		String info = infoToString();
+		String result = this.getClass().getSimpleName();
+		if (info != null && info.length() > 0) {
+		result = result + " (" + infoToString() + ")";
 		}
-		return  result + "]";
+		if (children.length > 0) {
+			result += "[ ";
+			for (SyntaxTreeNode child : children) {
+				if (child != null) {
+					result += child.toString() + " ";
+				}
+			}
+			result += "]";
+		}
+		return  result;
+	}
+	
+	protected String infoToString()
+	{
+		return "";
 	}
 	
 }

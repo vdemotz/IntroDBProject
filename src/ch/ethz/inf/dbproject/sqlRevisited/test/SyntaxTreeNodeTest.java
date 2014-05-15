@@ -23,8 +23,8 @@ public class SyntaxTreeNodeTest {
 
 	
 	String q0 = "select A.a from A, B where A.a = B.b";
-	String q1 = "select distinct A.a from A order by A.a";
-	String q2 = "select distinct A.a, B.b from A, B where A.a = B.b and B.b = A.a order by B.b asc";
+	String q1 = "select distinct a from A order by A.a";
+	String q2 = "select distinct a, B.b from A, B where A.a = B.b and B.b = A.a order by B.b asc";
 	String q3 = "select A.a, count(*), B.b from A, B where A.a = B.b";
 	String q4 = "select * from A, B";
 	String q5 = "select b.* from B";
@@ -33,6 +33,8 @@ public class SyntaxTreeNodeTest {
 	String q8 = "select B.c from A, B, C";
 	
 	String q9 = "select B.c from B, C where B.b=B.c";
+	String q10 = "select C.c from B, C where B.b=?";
+	String q11 = "select C.c from B, C where ?=b";
 	
 	TableSchemaAttributeDetail[] qA = {new TableSchemaAttributeDetail("a", new SQLType(SQLType.BaseType.Integer), true)};
 	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Datetime), true)};
@@ -53,7 +55,7 @@ public class SyntaxTreeNodeTest {
  	String[] testFails = {q0, q1, q5};
  	List<List<TableSchema>> testFailsSchemata = Arrays.asList(Alist, Blist, Alist);
  	
- 	String[] rewriteTests = {q9};
+ 	String[] rewriteTests = {q9, q10, q11};
  	
 	SQLParser parser = new SQLParser();
  	
@@ -68,7 +70,7 @@ public class SyntaxTreeNodeTest {
 		SQLLexer lex = new SQLLexer();
 		SQLTokenStream tokens = null;
 		String[] testQueries = rewriteTests;
-		List<List<TableSchema>> schemata = Arrays.asList(ABClist);
+		List<List<TableSchema>> schemata = Arrays.asList(ABClist, ABClist, ABClist);
 		
 		for (int i=0; i<testQueries.length; i++) {
 			tokens = new SQLTokenStream(lex.tokenize(testQueries[i]));
@@ -90,6 +92,7 @@ public class SyntaxTreeNodeTest {
 			}
 			
 		}
+		System.out.println();
 		
 	}
 	
@@ -115,6 +118,7 @@ public class SyntaxTreeNodeTest {
 				fail("instanciation failed unexpectedly " + tokens);
 			}
 		}
+		System.out.println();
 	}
 	
 	private void testFailsInstantiation(String[] testQueries, List<List<TableSchema>> schemata) {
@@ -134,6 +138,7 @@ public class SyntaxTreeNodeTest {
 			} catch (SQLSemanticException e) {
 			}
 		}
+		System.out.println();
 	}
 
 }
