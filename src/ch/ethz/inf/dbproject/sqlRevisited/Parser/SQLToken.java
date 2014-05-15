@@ -92,6 +92,10 @@ public class SQLToken {
 	public Pair<String, String> getFragmentsForIdentifier() throws SQLSemanticException {
 		if (!(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID || tokenClass == SQLTokenClass.UID)) throw new SQLSemanticException(SQLSemanticException.Type.NotApplicableToTokenWithClass, toString());
 		String[] fragments = content.split("\\.", 2);
-		return new Pair<String, String>(fragments[0], fragments[1]);
+		if (fragments.length > 1) {
+			return new Pair<String, String>(fragments[0], fragments[1]);
+		} else {
+			return new Pair<String, String>(null, fragments[0]);
+		}
 	}
 }

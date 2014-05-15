@@ -257,6 +257,16 @@ public class TableSchema {
 		return this.tableName + " " + this.getAttributes().toString();
 	}
 	
+	@Override
+	public boolean equals(Object other)
+	{
+		if (other != null && other.getClass().equals(TableSchema.class)) {
+			return getAttributes().equals(((TableSchema)other).getAttributes());
+			
+		}
+		return false;
+	}
+	
 	////
 	//PRIVATE
 	////

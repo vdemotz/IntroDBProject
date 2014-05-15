@@ -63,6 +63,27 @@ public class SQLType {
 		return -1;
 	}
 	
+	////
+	//OVERRIDING OBJECT
+	////
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		boolean result = false;
+		if (other != null && other.getClass().equals(SQLType.class)) {
+			SQLType otherType = (SQLType)other;
+			result = otherType.type == type;
+			if (size == null) {
+				result = result && otherType.size == null;
+			} else {
+				result = result && size.equals(otherType.size);
+			}
+		}
+		return result;
+	}
+	
+	@Override
 	public String toString()
 	{
 		String result =  this.type.toString();

@@ -32,6 +32,8 @@ public class SyntaxTreeNodeTest {
 	String q7 = "select B.a, C.c from (select B.c from B order by c desc) as C, (select * from A where A.a = ?) as B";
 	String q8 = "select B.c from A, B, C";
 	
+	String q9 = "select B.c from B, C where B.b=B.c";
+	
 	TableSchemaAttributeDetail[] qA = {new TableSchemaAttributeDetail("a", new SQLType(SQLType.BaseType.Integer), true)};
 	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Datetime), true)};
 	TableSchemaAttributeDetail[] qC = {new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Date), true)};
@@ -45,23 +47,55 @@ public class SyntaxTreeNodeTest {
 	List<TableSchema> ABlist = Arrays.asList(qTableA,qTableB);
 	List<TableSchema> ABClist = Arrays.asList(qTableA,qTableB,qTableC);
  	
- 	String[] testSucceeds = {q0, q1, q2, q3, q4, q5, q6, q7, q8};
- 	List<List<TableSchema>> testSucceedsSchemata = Arrays.asList(ABlist, Alist, ABlist, ABlist, ABlist, ABlist, ABlist, ABlist, ABClist);
+ 	String[] testSucceeds = {q0, q1, q2, q3, q4, q5, q6, q7, q8, q9};
+ 	List<List<TableSchema>> testSucceedsSchemata = Arrays.asList(ABlist, Alist, ABlist, ABlist, ABlist, ABlist, ABlist, ABlist, ABClist, ABClist);
  	
  	String[] testFails = {q0, q1, q5};
  	List<List<TableSchema>> testFailsSchemata = Arrays.asList(Alist, Blist, Alist);
  	
+ 	String[] rewriteTests = {q9};
+ 	
+	SQLParser parser = new SQLParser();
+ 	
 	@Test
-	public void testSelect() {
+	public void testSelectInstantiation() {
 		testSucceedsInstantiation(testSucceeds, testSucceedsSchemata);
 		testFailsInstantiation(testFails, testFailsSchemata);
 	}
 	
+	@Test
+	public void TestSelectRewrite() {
+		SQLLexer lex = new SQLLexer();
+		SQLTokenStream tokens = null;
+		String[] testQueries = rewriteTests;
+		List<List<TableSchema>> schemata = Arrays.asList(ABClist);
+		
+		for (int i=0; i<testQueries.length; i++) {
+			tokens = new SQLTokenStream(lex.tokenize(testQueries[i]));
+			try {
+				SyntaxTreeDynamicNode parse = parser.parse(tokens);
+				SyntaxTreeNode instanciatedTree = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));//infer schema for all nodes in the AST
+				SyntaxTreeNode rewrittenTree = instanciatedTree.rewrite();
+				
+				assertTrue(instanciatedTree.schema.equals(rewrittenTree.instanciateWithSchemata(schemata.get(i)).schema));
+				System.out.println(instanciatedTree);
+				System.out.println(rewrittenTree);
+				
+			} catch (SQLParseException e) {
+				e.printStackTrace();
+				fail("unexpected parse error");
+			} catch (SQLSemanticException e) {
+				e.printStackTrace();
+				fail("unexpected semantic exception");
+			}
+			
+		}
+		
+	}
+	
 	private void testSucceedsInstantiation(String[] testQueries, List<List<TableSchema>> schemata) {
 		SQLLexer lex = new SQLLexer();
-		SQLParser parser = new SQLParser();
 		SQLTokenStream tokens = null;
-		int parsedUntil;
 		
 		for (int i=0; i<testQueries.length; i++) {
 			try {
@@ -85,9 +119,7 @@ public class SyntaxTreeNodeTest {
 	
 	private void testFailsInstantiation(String[] testQueries, List<List<TableSchema>> schemata) {
 		SQLLexer lex = new SQLLexer();
-		SQLParser parser = new SQLParser();
 		SQLTokenStream tokens;
-		int parsedUntil;
 		
 		for (int i=0; i<testQueries.length; i++) {
 			try {

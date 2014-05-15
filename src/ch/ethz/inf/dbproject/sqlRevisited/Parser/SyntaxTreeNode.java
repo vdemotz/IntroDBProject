@@ -87,15 +87,15 @@ public class SyntaxTreeNode {
 				boolean rightChildHasRightAttribute = child.getRight().schema.hasAttribute(rightFragments);
 				boolean rightChildHasLeftAttribute = child.getRight().schema.hasAttribute(leftFragments);
 
-				if (!rightChildHasRightAttribute && !rightChildHasLeftAttribute) {//Case Push Left
+				if (!rightChildHasRightAttribute && !rightChildHasLeftAttribute) {//Sub-Case Push Left
 					SyntaxTreeSelectionOperatorNode nodePointingToLeftGrandchild = node.copyWithChild(child.getLeft());
 					return child.copyWithLeftChild(pushDown(nodePointingToLeftGrandchild));//recursively push down the left subtree and reassemble
 					
-				} else if (!leftChildHasRightAttribute && !leftChildHasLeftAttribute) {//Case Push Right
+				} else if (!leftChildHasRightAttribute && !leftChildHasLeftAttribute) {//Sub-Case Push Right
 					SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
 					return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
 					
-				} else {//Case No Push
+				} else {//Sub-Case No Push
 					return node;
 				}
 				
