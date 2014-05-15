@@ -2,11 +2,31 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 public class Connection {
 	
+	private static Database db;
+	private static Connection instance;
+	
+	/**
+	 * Get a new connection
+	 * @return a connection to database
+	 */
+	public static Connection getConnection(){
+		if (instance == null){
+			instance = new Connection();
+		}
+		return instance;
+	}
+	
 	/**
 	 * Create a new connection to the database.
 	 */
-	public Connection() {
-		
+	private Connection() {
+		if (db == null)
+			try{
+				db = new Database();
+			} catch (Exception ex){
+				ex.printStackTrace();
+				System.err.println("Failed to create new Database");
+			}
 	}
 	
 	/**
@@ -76,5 +96,19 @@ public class Connection {
 	 */
 	public boolean update(Object[] primaryKeys, Object toUpdate, String tableName){
 		return false;
+	}
+	
+	/**
+	 * Get a table schema for a given table
+	 * @param tableName the table name
+	 * @return a table schema representing the schema of the table
+	 */
+	public TableSchema getTableSchema(String tableName){
+		try {
+			return db.getTableSchema(tableName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
