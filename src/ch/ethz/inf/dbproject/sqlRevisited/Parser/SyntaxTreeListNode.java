@@ -3,8 +3,8 @@ package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 public class SyntaxTreeListNode<T extends SyntaxTreeNode> extends SyntaxTreeNode {
 
 	@SuppressWarnings("unchecked")
-	public T getNext() {
-		return (T)children[0];
+	public SyntaxTreeListNode<T> getNext() {
+		return (SyntaxTreeListNode<T>)children[0];
 	}
 	
 	@SuppressWarnings("unchecked")

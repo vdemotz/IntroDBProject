@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SyntaxTreeNodeDistinct extends SyntaxTreeNode {
 	
@@ -13,7 +13,7 @@ public class SyntaxTreeNodeDistinct extends SyntaxTreeNode {
 		assert (body != null);
 	}
 
-	public SyntaxTreeNodeDistinct(SyntaxTreeNode child, AttributedTableSchema schema) {
+	public SyntaxTreeNodeDistinct(SyntaxTreeNode child, TableSchema schema) {
 		super(schema, child);
 		assert(schema != null);
 	}

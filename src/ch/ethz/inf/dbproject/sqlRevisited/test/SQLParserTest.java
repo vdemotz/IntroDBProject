@@ -74,9 +74,9 @@ public class SQLParserTest {
 	
 	private static final String getAllPersonsString = "select * from Person order by lastName desc, firstName desc";
 	
-	private String[] testSelectFails = {selectQueryE1, selectQueryE2, "select order by name", "select A B from C", "select A, B from C, (select * from C)"};
+	private String[] testSelectFails = {selectQueryE1, selectQueryE2, "select order by name", "select A B from C", "select A, B from C, (select * from C)", "select *, A from B", "select *, * from C"};
 	
-	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, "select A, B from C, (select * from C) as B", categoriesForCaseQuery, getAllPersonsString};
+	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, "select A, B from C, (select * from C) as B", categoriesForCaseQuery, getAllPersonsString, "select count(*), max(A.a) from B"};
 	
 	
 
@@ -90,7 +90,7 @@ public class SQLParserTest {
 	
 	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where caseId=? and personId=?";
 	
-	private String[] testDeleteFails = {"delte", "delete from", "delete from A", "delete from A,B where a=b"};
+	private String[] testDeleteFails = {"delete", "delete from", "delete from A", "delete from A,B where a=b"};
 
 	private String[] testDeleteSucceeds = {deleteSuspectFromCaseQuery};
 	

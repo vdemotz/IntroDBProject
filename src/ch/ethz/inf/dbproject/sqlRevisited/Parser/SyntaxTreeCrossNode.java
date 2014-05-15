@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SyntaxTreeCrossNode extends SyntaxTreeNode {
 	
@@ -16,7 +16,7 @@ public class SyntaxTreeCrossNode extends SyntaxTreeNode {
 		super(left, right);
 	}
 
-	public SyntaxTreeCrossNode(AttributedTableSchema schema,SyntaxTreeNode left, SyntaxTreeNode right) {
+	public SyntaxTreeCrossNode(TableSchema schema,SyntaxTreeNode left, SyntaxTreeNode right) {
 		super(schema, left, right);
 		assert(schema != null);
 		assert(left != null);

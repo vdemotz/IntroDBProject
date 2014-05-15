@@ -1,8 +1,17 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
+import java.util.LinkedList;
+import java.util.List;
+
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
 public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
+	
+	SyntaxTreeNode getChild()
+	{
+		return children[0];
+	}
 	
 	String name;
 	
@@ -11,7 +20,7 @@ public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
 		this.name = newName;
 	}
 
-	public SyntaxTreeRenameTableNode(AttributedTableSchema schema, SyntaxTreeNode table) {
+	public SyntaxTreeRenameTableNode(TableSchema schema, SyntaxTreeNode table) {
 		super(schema, table);
 		this.name = schema.tableName;
 		assert(schema != null);

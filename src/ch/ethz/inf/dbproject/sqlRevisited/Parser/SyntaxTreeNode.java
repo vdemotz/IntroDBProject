@@ -2,19 +2,21 @@ package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
+
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
 public class SyntaxTreeNode {
 
-	protected final AttributedTableSchema schema;
+	public final TableSchema schema;
 	protected final SyntaxTreeNode[] children;
 	
-	SyntaxTreeNode(AttributedTableSchema schema, SyntaxTreeNode...children) {
+	SyntaxTreeNode(TableSchema schema, SyntaxTreeNode...children) {
 		this.children = children;
 		this.schema = schema;
 	}
@@ -47,7 +49,7 @@ public class SyntaxTreeNode {
 	
 	/**
 	 * Fold operation over all non-list, non-identifier nodes of the subtree rooted at this node
-	 * It is strongly encourages not to modify any of the nodes, but instead to create a new copy of the nodes
+	 * It is strongly encouraged not to modify any of the nodes, but instead to create a new copy of the nodes
 	 * @param base
 	 * @param cross
 	 * @param group
@@ -128,7 +130,7 @@ public class SyntaxTreeNode {
 		public SyntaxTreeBaseRelationNode transform(SyntaxTreeBaseRelationNode currentNode) throws SQLSemanticException {
 			TableSchema schema = schemata.get(currentNode.name);
 			if (schema == null) throw new SQLSemanticException(SQLSemanticException.Type.NoSuchTableException, currentNode.name);
-			return new SyntaxTreeBaseRelationNode(new AttributedTableSchema(schema));
+			return new SyntaxTreeBaseRelationNode(schema);
 		}
 	}
 	
@@ -167,9 +169,10 @@ public class SyntaxTreeNode {
 	private class InstanciateSchemaProjectAggregate implements TransformUnary<SyntaxTreeProjectAndAggregateOperatorNode, SyntaxTreeNode>
 	{
 		@Override
-		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) {
+		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
 			assert(childResult != null);
-			return new SyntaxTreeProjectAndAggregateOperatorNode(childResult.schema, childResult, currentNode.getProjectionList());
+			List<TableSchemaAttributeDetail> resolvedProjectionList = SyntaxTreeProjectAndAggregateOperatorNode.resolve(currentNode.getProjectionList(), childResult.schema);
+			return new SyntaxTreeProjectAndAggregateOperatorNode(new TableSchema("", resolvedProjectionList), childResult, currentNode.getProjectionList());
 		}
 	}
 	

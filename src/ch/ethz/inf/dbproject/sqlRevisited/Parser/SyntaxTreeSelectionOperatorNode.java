@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-import ch.ethz.inf.dbproject.sqlRevisited.AttributedTableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 
@@ -26,7 +26,7 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 		assert(child != null);
 	}
 
-	public SyntaxTreeSelectionOperatorNode(AttributedTableSchema schema,
+	public SyntaxTreeSelectionOperatorNode(TableSchema schema,
 			SyntaxTreeIdentifierNode leftValue,
 			SyntaxTreeIdentifierNode operator,
 			SyntaxTreeIdentifierNode rightValue, SyntaxTreeNode child) {

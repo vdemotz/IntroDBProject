@@ -270,7 +270,7 @@ public class SQLParser {
 	
 	private SyntaxTreeNode selectBody(SQLTokenStream tokens) throws SQLParseException {
 		//gather trees from different clauses
-		SyntaxTreeListNode<SyntaxTreeNode> projectOnto = selectionList(tokens);
+		SyntaxTreeListNode<SyntaxTreeNode> projectOnto = selectionClause(tokens);
 		
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.FROM) {
 			tokens.advance();
@@ -313,6 +313,16 @@ public class SQLParser {
 	///Projection / aggregate choice (selection list)
 	////
 	
+	private SyntaxTreeListNode<SyntaxTreeNode> selectionClause(SQLTokenStream tokens) throws SQLParseException {
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.STAR) {
+			SyntaxTreeNode identifier = new SyntaxTreeIdentifierNode(tokens.getToken());
+			tokens.advance();
+			return new SyntaxTreeListNode<SyntaxTreeNode>(identifier, null);
+		} else {
+			return selectionList(tokens);
+		}
+	}
+	
 	private SyntaxTreeListNode<SyntaxTreeNode> selectionList(SQLTokenStream tokens) throws SQLParseException {
 		SyntaxTreeNode identifier = selectable(tokens);
 		return new SyntaxTreeListNode<SyntaxTreeNode>(identifier, optionalConjunctSelectionList(tokens));
@@ -328,8 +338,7 @@ public class SQLParser {
 	
 	private SyntaxTreeNode selectable(SQLTokenStream tokens) throws SQLParseException {
 		SyntaxTreeNode node = null;
-		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.STAR ||
-			tokens.getTokenClass() == SQLToken.SQLTokenClass.QID ||
+		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.QID ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.UID ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.QSTARID) {
 			node = new SyntaxTreeIdentifierNode(tokens.getToken());
