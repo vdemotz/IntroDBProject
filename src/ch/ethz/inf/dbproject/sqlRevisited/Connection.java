@@ -43,7 +43,7 @@ public class Connection {
 	 * @param tableName a table name of the database
 	 * @return the first Object of this table
 	 */
-	public Object min(String tableName){
+	public Object min(String tableName) throws Exception{
 		return db.min(tableName);
 	}
 	

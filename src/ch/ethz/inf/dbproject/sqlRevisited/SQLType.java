@@ -2,6 +2,11 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 public class SQLType {
 	
+	//Number of characters of Date and Datatime
+	private int CHAR_DATE = 10;
+	private int CHAR_DATETIME = 19;
+	
+	
 	public enum BaseType {
 		Integer,
 		Char,
@@ -39,7 +44,7 @@ public class SQLType {
 	
 	/**
 	 * Compute the size in bytes needed to store this particular type
-	 * @return size in bytes
+	 * @return size in bytes, -1 if problem occured
 	 */
 	public int byteSizeOfType(){
 		if(this.type == BaseType.Integer){
@@ -51,9 +56,9 @@ public class SQLType {
 		} else if (this.type == BaseType.Varchar){
 			return (Character.SIZE*this.size);
 		} else if (this.type == BaseType.Date){
-			return -1;
+			return (Character.SIZE*CHAR_DATE);
 		} else if (this.type == BaseType.Datetime){
-			return -1;
+			return (Character.SIZE*CHAR_DATETIME);
 		} 
 		return -1;
 	}

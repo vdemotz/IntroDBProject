@@ -69,8 +69,30 @@ public class Database {
 		return null;
 	}
 	
-	public Object min(String tableName){
-		return null;
+	public Object min(String tableName) throws Exception{
+		//Check if table exist
+		File f = new File(DB_PATH + tableName + EXT_DATA);
+		if(!f.exists()) 
+			throw new Exception("Table doesn't exist.");
+		
+		//Get the number of bytes per entry 
+		int sizeEntry = this.getTableSchema(tableName).getSizeOfEntry();
+		
+		//Create connection to file and allocate buffer
+		FileInputStream in = new FileInputStream(DB_PATH + tableName + EXT_META_DATA);
+		FileChannel channel = in.getChannel();
+		ByteBuffer buf = ByteBuffer.allocateDirect(sizeEntry);
+		if (channel.read(buf) == -1) {
+			in.close();
+			throw new Exception("File too big to be opened.");
+		}
+			
+		//Create object from bytes array
+		buf.flip();
+		Object ret = this.createObjectFromBytesArrayAndTableName(buf, tableName);
+		buf.clear();
+		in.close();
+		return ret;
 	}
 	
 	public Object get(Object[] primaryKeys, String tableName){
@@ -385,5 +407,15 @@ public class Database {
 		} else {
 			throw new Exception("File "+tableName+" doesn't exist.");
 		}
+	}
+	
+	/**
+	 * Create a new object of the class given by table name and written in ByteBuffer
+	 * @param data represents an object
+	 * @param tableName the type of the object
+	 * @return an object of type tableName.class
+	 */
+	private Object createObjectFromBytesArrayAndTableName(ByteBuffer data, String tableName){
+		return null;
 	}
 }
