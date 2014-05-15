@@ -83,8 +83,9 @@ public class Connection {
 	 * @param attributesNames matching values to be inserted
 	 * @param tableName a table name of the database
 	 * @return true if object has been inserted, else false
+	 * @throws Exception 
 	 */
-	public boolean insert(Object[] valuesToInsert, String[] attributesNames, String tableName){
+	public boolean insert(Object[] valuesToInsert, String[] attributesNames, String tableName) throws Exception{
 		return db.insert(valuesToInsert, attributesNames, tableName);
 	}
 	

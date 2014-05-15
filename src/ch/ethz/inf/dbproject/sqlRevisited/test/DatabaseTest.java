@@ -1,6 +1,8 @@
 package ch.ethz.inf.dbproject.sqlRevisited.test;
 
 import org.junit.Test;
+
+import ch.ethz.inf.dbproject.sqlRevisited.Connection;
 import ch.ethz.inf.dbproject.sqlRevisited.Database;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
@@ -9,6 +11,16 @@ public class DatabaseTest {
 	@Test
 	public void testDatabase() throws Exception{
 		this.testMetaDataCreation();
+		this.testWriting();
+	}
+	
+	@Test
+	public void testWriting() throws Exception{
+		Connection connection1 = Connection.getConnection();
+		Connection connection2 = Connection.getConnection();
+		assert(connection1.equals(connection2));
+		connection1.insert(new String[]{"vinvin", "Vincent", "Demotz", "bla"}, new String[]{"username", "firstName", "lastName", "password"}, "User");
+		System.out.println("Data should have been inserted into User");
 	}
 	
 	@Test

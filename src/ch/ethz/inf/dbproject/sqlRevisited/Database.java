@@ -4,12 +4,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
+
+import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 
 public class Database {
 
@@ -86,7 +90,7 @@ public class Database {
 			
 		//Create object from bytes array
 		buf.flip();
-		Object ret = this.createObjectFromBytesArrayAndTableName(buf, tableName);
+		Object ret = this.createObjectFromByteBufferAndTableName(buf, tableName);
 		buf.clear();
 		in.close();
 		return ret;
@@ -104,7 +108,17 @@ public class Database {
 		return false;
 	}
 
-	public boolean insert(Object[] valuesToInsert, String[] attributesNames, String tableName){
+	public boolean insert(Object[] valuesToInsert, String[] attributesNames, String tableName) throws Exception{
+		
+		//actual implementation only for tests purposes
+		int offset = 0;
+		for (int i = 0; i < valuesToInsert.length; i++){
+			byte[] data = this.getByteArrayFromObject(valuesToInsert[i], new SQLType(BaseType.Varchar, 40));
+			this.writeToData(data, offset, tableName);
+			offset = offset + data.length;
+		}
+		
+		
 		return false;
 	}
 	
@@ -412,7 +426,17 @@ public class Database {
 	 * @param tableName the type of the object
 	 * @return an object of type tableName.class
 	 */
-	private Object createObjectFromBytesArrayAndTableName(ByteBuffer data, String tableName){
+	private Object createObjectFromByteBufferAndTableName(ByteBuffer data, String tableName){
+		return null;
+	}
+	
+	/**
+	 * Create a new object of the class given by table name and written in byte array
+	 * @param data represents an object
+	 * @param tableName the type of the object
+	 * @return an object of type tableName.class
+	 */
+	private Object createObjectFromBytesArrayAndTableName(byte[] data, String tableName){
 		return null;
 	}
 	
@@ -421,29 +445,72 @@ public class Database {
 	 * @param data the object to transform
 	 * @return a byte array to write to database
 	 */
-	private byte[] getByteArrayFromObject(Object data){
-		return null;
+	private byte[] getByteArrayFromObject(Object data, SQLType type) throws Exception{
+		byte[] ret = null;
+		if(type.type == BaseType.Integer){
+			ret = ByteBuffer.allocate(type.byteSizeOfType()).putInt((int) data).array();
+		} else if (type.type == BaseType.Boolean){
+			boolean dataB = (boolean) data;
+			ret = dataB ? "1".getBytes() : "0".getBytes();
+		} else if (type.type == BaseType.Char){
+			ret = ByteBuffer.allocate(type.byteSizeOfType()).putChar((char) data).array();
+		} else if (type.type == BaseType.Varchar || type.type == BaseType.Date || type.type == BaseType.Datetime){
+			ret = ((String)data).getBytes();
+		} else {
+			throw new Exception("Not accepted SQLType");
+		}
+		return ret;
 	}
 	
 	/**
-	 * Write a given piece of data into the database
+	 * Read from memory
+	 */
+	private Object readFromData(int position, int size, String tableName) throws Exception{
+		FileInputStream in = this.getFileInputStream(tableName, false);
+		byte[] ret = new byte[size];
+		try{
+			in.read(ret, position, size);
+		} catch (Exception ex){
+			System.err.println("Unable to read from data "+tableName);
+			throw ex;
+		}
+		return this.createObjectFromBytesArrayAndTableName(ret, tableName);
+	}
+	
+	/**
+	 * Write a given piece of data into the database. It doesn't check size!
 	 * @param data to be written
 	 * @param position the offset (take care of alignment!)
 	 * @return true if succeed, false otherwise
 	 */
 	private boolean writeToData(byte[] data, int position, String tableName) throws Exception{
-		
-		FileOutputStream in = this.getFileOutputStream(tableName, false);
+	    RandomAccessFile raf = this.getRandomAccesFile(tableName, "rw", false);
 		try{
-			in.write(data, position, data.length);
-			in.close();
+			FileChannel channel = raf.getChannel();
+			MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
+			buf.put(data);
+			raf.close();
 			return true;
 		} catch (Exception ex){
 			System.err.println("Unable to write data to "+tableName);
 			ex.printStackTrace();
-			in.close();
+			raf.close();
 			return false;
 		}
+	}
+	
+	/**
+	 * Get a new file for random access to read from and write to the database
+	 * @param mode the mode to write (see RandomAccessFile constructor)
+	 */
+	private RandomAccessFile getRandomAccesFile(String tableName, String mode, boolean metaData) throws Exception{
+		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
+		
+		//Check if table exist
+		File f = new File(filename);
+		if(!f.exists()) 
+			throw new Exception("Table doesn't exist.");
+		return new RandomAccessFile(filename, mode);
 	}
 	
 	/**
@@ -467,10 +534,11 @@ public class Database {
 		
 		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
 		
+		
 		//Check if table exist
 		File f = new File(filename);
 		if(!f.exists()) 
 			throw new Exception("Table doesn't exist.");
-		return new FileOutputStream(filename);
+		return new FileOutputStream(filename, true);
 	}
 }

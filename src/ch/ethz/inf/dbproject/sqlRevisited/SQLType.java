@@ -2,9 +2,9 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 public class SQLType {
 	
-	//Number of characters of Date and Datatime
-	private int CHAR_DATE = 10;
-	private int CHAR_DATETIME = 19;
+	//Number of characters of Date and Datetime
+	public int CHAR_DATE = 10;
+	public int CHAR_DATETIME = 19;
 	
 	
 	public enum BaseType {
