@@ -7,7 +7,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 public class DatabaseTest {
 
 	@Test
-	public void testDatabase() throws Exception {
+	public void testDatabase() throws Exception{
 		this.testMetaDataCreation();
 	}
 	

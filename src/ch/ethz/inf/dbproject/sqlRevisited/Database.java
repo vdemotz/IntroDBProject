@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +33,16 @@ public class Database {
 	//Constants
 	////
 	private int MAX_MD_FILE_SIZE = 1024;
+
+	////
+	//Very used values
+	////
+	private TableSchema[] tablesSchema;
 	
 
+	////
+	//Constructor -- may take some time (Principle based on SQLite)
+	////
 	public Database() throws Exception {
 		
 		if (this.newFolder()){
@@ -46,42 +56,46 @@ public class Database {
 					System.err.println("Failed to create database");
 				}
 			}
+			tablesSchema = this.getTablesSchema();
 		} else {
 			throw new Exception("Cannot create folder of Database");
 		}
 	}
 	
+	////
+	//Public methods, meant accessed through a (singleton) connection
+	////
 	
-	/**
-	 * Get the table schema for a particular table
-	 * @param tableName the name of the table
-	 * @return a TableSchema storing attributes, types and keys of the table
-	 * @throws Exception 
-	 */
 	public TableSchema getTableSchema(String tableName) throws Exception{
-		File f = new File(DB_PATH + tableName + EXT_META_DATA);
-		if(f.exists() && !f.isDirectory()) {
-			//open connection to file
-			FileInputStream in = new FileInputStream(DB_PATH + tableName + EXT_META_DATA);
-			FileChannel channel = in.getChannel();
-			ByteBuffer buf = ByteBuffer.allocateDirect(MAX_MD_FILE_SIZE);
-			if (channel.read(buf) == -1) {
-				in.close();
-				throw new Exception("File too big to be opened.");
-			}
-				
-			//copy bytes into arrays
-			buf.flip();
-			String[] attributesNames = this.getLine(buf);
-			SQLType[] attributesTypes = this.getSQLTypeArrayFromStringArray(this.getLine(buf));
-			boolean[] isKey = this.getBooleanArrayFromStringArray(this.getLine(buf));
-			buf.clear();
-			in.close();
-			
-			return new TableSchema(tableName, attributesNames, attributesTypes, isKey);
-		} else {
-			throw new Exception("File "+tableName+" doesn't exist.");
+		for (int i = 0; i < tablesSchema.length; i++){
+			if (tablesSchema[i].getTableName().equals(tableName))
+				return tablesSchema[i];
 		}
+		return null;
+	}
+	
+	public Object min(String tableName){
+		return null;
+	}
+	
+	public Object get(Object[] primaryKeys, String tableName){
+		return null;
+	}
+	
+	public Object succ(Object[] primaryKeys, String tableName){
+		return null;
+	}
+	
+	public boolean delete(Object[] primaryKeys, String tableName){
+		return false;
+	}
+
+	public boolean insert(Object toInsert, String tableName){
+		return false;
+	}
+	
+	public boolean update(Object[] primaryKeys, Object toUpdate, String tableName){
+		return false;
 	}
 	
 	////
@@ -293,6 +307,22 @@ public class Database {
 		public TableSchema getCurrent(){
 			return new TableSchema(tablesNames[position], attributesNames[position], attributesTypes[position], isPrimaryKey[position]);
 		}	
+		
+		/**
+		 * Get number of tables
+		 * @return number of tables
+		 */
+		public int getNumberTables(){
+			return this.tablesNames.length;
+		}
+		
+		/**
+		 * Get all names of the tables
+		 * @return an array of string representing all tables names.
+		 */
+		public String[] getTablesNames(){
+			return this.tablesNames;
+		}
 	}
 	
 		////
@@ -398,10 +428,68 @@ public class Database {
 		}
 		
 		/**
-		 * Create a new directory where to put the database
+		 * Create a new directory where to put the database if not exist
 		 * @return true if success, false otherwise
 		 */
 		private boolean newFolder(){
-			return (new File(DB_PATH)).mkdirs();
+			if (new File(DB_PATH).exists()) {
+			    return true;
+			} else {
+				return (new File(DB_PATH)).mkdirs();
+			}
+		}
+		
+		/**
+		 * Get all tables schemas from database
+		 * @return an array of TableSchema
+		 */
+		private TableSchema[] getTablesSchema(){
+			try{
+				TableSet ts = new TableSet();
+				String[] tablesNames = ts.getTablesNames();
+				TableSchema[] ret = new TableSchema[ts.getNumberTables()];
+				int i = 0;
+				while(ts.next()){
+					ret[i] = this.getTableSchemaFromDB(tablesNames[i]);
+					i++;
+				}
+				return ret;
+			} catch (Exception ex){
+				System.err.println("Failed to get all tables schemas.");
+				ex.printStackTrace();
+				return null;
+			}
+		}
+		
+		/**
+		 * Read a table schema from database
+		 * @param tableName the name of the table
+		 * @return a TableSchema representing meta data of the table
+		 * @throws Exception
+		 */
+		private TableSchema getTableSchemaFromDB(String tableName) throws Exception{
+			File f = new File(DB_PATH + tableName + EXT_META_DATA);
+			if(f.exists() && !f.isDirectory()) {
+				//open connection to file
+				FileInputStream in = new FileInputStream(DB_PATH + tableName + EXT_META_DATA);
+				FileChannel channel = in.getChannel();
+				ByteBuffer buf = ByteBuffer.allocateDirect(MAX_MD_FILE_SIZE);
+				if (channel.read(buf) == -1) {
+					in.close();
+					throw new Exception("File too big to be opened.");
+				}
+					
+				//copy bytes into arrays
+				buf.flip();
+				String[] attributesNames = this.getLine(buf);
+				SQLType[] attributesTypes = this.getSQLTypeArrayFromStringArray(this.getLine(buf));
+				boolean[] isKey = this.getBooleanArrayFromStringArray(this.getLine(buf));
+				buf.clear();
+				in.close();
+				
+				return new TableSchema(tableName, attributesNames, attributesTypes, isKey);
+			} else {
+				throw new Exception("File "+tableName+" doesn't exist.");
+			}
 		}
 }
