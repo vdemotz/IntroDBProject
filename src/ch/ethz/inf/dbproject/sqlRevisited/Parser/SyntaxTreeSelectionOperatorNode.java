@@ -42,4 +42,11 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 		assert(schema != null);
 	}
 	
+	/**
+	 * @param child
+	 * @return a shallow copy of this node, except that the the child is set to newChild
+	 */
+	SyntaxTreeSelectionOperatorNode copyWithChild(SyntaxTreeNode newChild) {
+		return new SyntaxTreeSelectionOperatorNode(schema, getLeftValue(), getOperator(), getRightValue(), newChild);
+	}
 }

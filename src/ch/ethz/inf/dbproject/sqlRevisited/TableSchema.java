@@ -3,6 +3,8 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import ch.ethz.inf.dbproject.Pair;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLSemanticException;
 
 public class TableSchema {
@@ -189,6 +191,22 @@ public class TableSchema {
 			throw new SQLSemanticException(SQLSemanticException.Type.NoSuchAttributeException, qualifier + "." + attributeName);
 		}
 		return cur;
+	}
+	
+	public boolean hasAttribute(Pair<String, String> attribute)
+	{
+		assert(attribute.second != null);
+		try {
+			if (attribute.first == null) {
+				indexOfAttributeName(attribute.second, 0);
+			} else {
+				
+				indexOfQualifiedAttributeName(attribute.first, attribute.second);
+			}
+		} catch (SQLSemanticException e) {
+			return false;
+		}
+		return true;
 	}
 	
 	

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+import ch.ethz.inf.dbproject.Pair;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
@@ -63,18 +64,40 @@ public class SyntaxTreeNode {
 		@Override
 		public SyntaxTreeNode transform(SyntaxTreeSelectionOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
 			
-			SyntaxTreeSelectionOperatorNode oldRoot = new SyntaxTreeSelectionOperatorNode(currentNode.schema, currentNode.getLeftValue(), currentNode.getOperator(), currentNode.getRightValue(), childResult);
+			SyntaxTreeSelectionOperatorNode oldRoot = currentNode.copyWithChild(childResult);
 			SyntaxTreeNode newRoot = pushDown(oldRoot);//push down selection as far as possible
 			//TODO: if possible, make join operator
 			return newRoot;
 		}
 		
-		public SyntaxTreeNode pushDown(SyntaxTreeSelectionOperatorNode node) {
+		public SyntaxTreeNode pushDown(SyntaxTreeSelectionOperatorNode node) throws SQLSemanticException {
 			if (node.getChild().getClass().equals(SyntaxTreeSelectionOperatorNode.class)) {//Case selection : always push down
-				return null;
+				SyntaxTreeSelectionOperatorNode child = (SyntaxTreeSelectionOperatorNode)node.getChild();
+				SyntaxTreeSelectionOperatorNode nodePointingToGrandchild = node.copyWithChild(child.getChild());
+				return child.copyWithChild(pushDown(nodePointingToGrandchild));//recursively push down
 				
 			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class)) {//Case cross : push down left or right, if possible
-				return null;
+				SyntaxTreeCrossNode child = (SyntaxTreeCrossNode)node.getChild();
+				
+				Pair<String, String> leftFragments = node.getLeftValue().generatingToken.getFragmentsForIdentifier();
+				Pair<String, String> rightFragments = node.getRightValue().generatingToken.getFragmentsForIdentifier();
+				
+				boolean leftChildHasLeftAttribute = child.getLeft().schema.hasAttribute(leftFragments);
+				boolean leftChildHasRightAttribute = child.getLeft().schema.hasAttribute(rightFragments);
+				boolean rightChildHasRightAttribute = child.getRight().schema.hasAttribute(rightFragments);
+				boolean rightChildHasLeftAttribute = child.getRight().schema.hasAttribute(leftFragments);
+
+				if (!rightChildHasRightAttribute && !rightChildHasLeftAttribute) {//Case Push Left
+					SyntaxTreeSelectionOperatorNode nodePointingToLeftGrandchild = node.copyWithChild(child.getLeft());
+					return child.copyWithLeftChild(pushDown(nodePointingToLeftGrandchild));//recursively push down the left subtree and reassemble
+					
+				} else if (!leftChildHasRightAttribute && !leftChildHasLeftAttribute) {//Case Push Right
+					SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
+					return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
+					
+				} else {//Case No Push
+					return node;
+				}
 				
 			} else {
 				return node;
@@ -123,7 +146,6 @@ public class SyntaxTreeNode {
 			return currentNode;
 		}
 	}
-	
 	
 	////
 	//PSEUDO-FOLD OPERATORS
@@ -266,7 +288,7 @@ public class SyntaxTreeNode {
 		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
 			assert(childResult != null);
 			List<TableSchemaAttributeDetail> resolvedProjectionList = SyntaxTreeProjectAndAggregateOperatorNode.resolve(currentNode.getProjectionList(), childResult.schema);
-			return new SyntaxTreeProjectAndAggregateOperatorNode(new TableSchema("", resolvedProjectionList), childResult, currentNode.getProjectionList());
+			return new SyntaxTreeProjectAndAggregateOperatorNode(new TableSchema("()", resolvedProjectionList), childResult, currentNode.getProjectionList());
 		}
 	}
 	
@@ -286,6 +308,11 @@ public class SyntaxTreeNode {
 		}
 	}
 	
+	////
+	//OVERRIDING OBJECT
+	////
+	
+	@Override
 	public String toString()
 	{
 		String result = this.getClass().getSimpleName() + "[ ";
