@@ -2,10 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-
-import ch.ethz.inf.dbproject.Pair;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLSemanticException;
 
 public class TableSchema {
@@ -198,11 +195,15 @@ public class TableSchema {
 		return this.tableName + " " + this.getAttributes().toString();
 	}
 	
+	/**
+	 * Get the size in bytes of each entry of the table
+	 * @return the size of on entry in bytes
+	 */
 	public int getSizeOfEntry(){
 		int size = 0;
 		for (int i = 0; i < this.attributeTypes.length; i++){
 			size = size + attributeTypes[i].byteSizeOfType();
 		}
-		return -1;
+		return size;
 	}
 }

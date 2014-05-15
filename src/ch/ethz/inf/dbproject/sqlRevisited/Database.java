@@ -6,14 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-
-import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 
 public class Database {
 
@@ -268,7 +263,7 @@ public class Database {
 		String[] splitted = type.split(",");
 		Integer length = 0;
 		try {	
-			Integer.parseInt(splitted[1]);
+			length = Integer.parseInt(splitted[1]);
 		} catch (Exception ex){
 			length = null;
 		}

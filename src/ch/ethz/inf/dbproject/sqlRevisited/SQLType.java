@@ -39,10 +39,9 @@ public class SQLType {
 	
 	/**
 	 * Compute the size in bytes needed to store this particular type
-	 * @return
+	 * @return size in bytes
 	 */
 	public int byteSizeOfType(){
-		int typeSize = 0;
 		if(this.type == BaseType.Integer){
 			return (Integer.SIZE);
 		} else if (this.type == BaseType.Boolean){
