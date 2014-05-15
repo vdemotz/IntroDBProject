@@ -37,6 +37,28 @@ public class SQLType {
 		this.size = size;
 	}
 	
+	/**
+	 * Compute the size in bytes needed to store this particular type
+	 * @return
+	 */
+	public int byteSizeOfType(){
+		int typeSize = 0;
+		if(this.type == BaseType.Integer){
+			return (Integer.SIZE);
+		} else if (this.type == BaseType.Boolean){
+			return (Character.SIZE);
+		} else if (this.type == BaseType.Char){
+			return (Character.SIZE);
+		} else if (this.type == BaseType.Varchar){
+			return (Character.SIZE*this.size);
+		} else if (this.type == BaseType.Date){
+			return -1;
+		} else if (this.type == BaseType.Datetime){
+			return -1;
+		} 
+		return -1;
+	}
+	
 	public String toString()
 	{
 		String result =  this.type.toString();

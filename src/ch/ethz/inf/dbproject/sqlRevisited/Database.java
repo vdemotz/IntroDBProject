@@ -224,272 +224,171 @@ public class Database {
 		}
 	}
 	
-	/*
-	 * Content of the database.
-	 * Its constructed as a bag, with a pointer to indicate which
-	 * element the bag currently point
+	////
+	//Utilities
+	////
+	
+	/**
+	 * Read an array of String and turns it into a boolean array
+	 * @param array of String representing booleans
+	 * @return an array of boolean
+	 * @throws Exception
 	 */
-	protected class TableSet{
+	private boolean[] getBooleanArrayFromStringArray(String[] array) throws Exception{
+		boolean[] ret = new boolean[array.length];
+		for (int i = 0; i < array.length; i++){
+			if (array[i].equals("1")) { ret[i] = true; }
+			else if (array[i].equals("0")) { ret[i] = false; }
+			else { throw new Exception("The String " + array[i] + " doesn't represent a boolean"); } 
+		}
+		return ret;
+	}
 		
-		//Some often used SQLType's :
-		private SQLType vc40 = new SQLType(BaseType.Varchar, 40);
-		private SQLType vct = new SQLType(BaseType.Varchar, 255);
-		private SQLType i = new SQLType(BaseType.Integer);
-		private SQLType b = new SQLType(BaseType.Boolean);
-		private SQLType d = new SQLType(BaseType.Date);
-		private SQLType dt = new SQLType(BaseType.Datetime);
-		
-		/**
-		 * Construct a new TableSet and set position pointer before first element
-		 */
-		public TableSet(){
-			position = -1;
+	/**
+	 * Read an array of String and turns it into a SQLType array
+	 * @param array of String representing SQLType
+	 * @return an array of SQLTypes
+	 * @throws Exception
+	 */
+	private SQLType[] getSQLTypeArrayFromStringArray(String[] array) throws Exception{
+		SQLType[] ret = new SQLType[array.length];
+		for (int i = 0; i < array.length; i++){
+			ret[i] = this.getSQLTypeFromString(array[i]);
+		}
+		return ret;
+	}
+	
+	/**
+	 * Return a SQLType from a String
+	 * @param type represents a SQLType of the form SQLType.BaseType,SIZE
+	 * @return a new SQLType
+	 * @throws Exception
+	 */
+	private SQLType getSQLTypeFromString(String type) throws Exception{
+		String[] splitted = type.split(",");
+		Integer length = 0;
+		try {	
+			Integer.parseInt(splitted[1]);
+		} catch (Exception ex){
+			length = null;
 		}
 		
-		//position of the iterator
-		private int position;
-		//tables names
-		private String[] tablesNames = new String[]{"User", "CaseDetail", "CaseNote", "Person", "PersonNote", "Category", "CategoryForCase", "Suspected", "Conviction"};
-		//attributes names
-		private String[][] attributesNames = new String[][] {
-				{"username", "firstName", "lastName", "password"}, //User
-				{"caseId", "title", "street", "city", "zipCode", "isOpen", "date", "description", "authorName"}, //CaseDetail
-				{"caseId", "caseNoteId", "text", "date", "authorUsername"}, //CaseNote
-				{"personId", "firstName", "lastName", "birthdate"}, //Person
-				{"personId", "personNoteId", "text", "date", "authorUsername"}, //PersonNote
-				{"name"}, //Category
-				{"caseId", "categoryName"}, //CategoryForCase
-				{"personId", "caseId"}, //Suspected
-				{"convictionId", "personId", "caseId", "startDate", "endDate"} //Conviction
-		};
-		//attributes types
-		private SQLType[][] attributesTypes = new SQLType[][] {
-				{this.vc40, this.vc40, this.vc40, this.vc40}, //User
-				{this.i, this.vc40, this.vc40, this.vc40, this.vc40, this.b, this.dt, this.vct, this.vc40}, //CaseDetail
-				{this.i, this.i, this.vct, this.dt, this.vct}, //CaseNote
-				{this.i, this.vc40, this.vc40, this.d}, //Person
-				{this.i, this.i, this.vct, this.dt, this.vct}, //PersonNote
-				{this.vc40}, //Category
-				{this.i, this.vc40}, //CategoryForCase
-				{this.i, this.i}, //Suspected
-				{this.i, this.i, this.i, this.d, this.d}, //Conviction
-				
-		};
-		//attributes is primary key
-		private boolean[][] isPrimaryKey = new boolean[][] {
-				{true, false, false, false}, //User
-				{true, false, false, false, false, false, false, false}, //CaseDetail
-				{true, true, false, false, false}, //CaseNote
-				{true, false, false, false}, //Person
-				{true, true, false, false, false}, //PersonNote
-				{true}, //Category
-				{true, true}, //CategoryForCase
-				{true, true}, //Suspected
-				{true, false, false, false, false} //Conviction
-		};
-		
-		/**
-		 * Move the pointer of TableSet to the next element and return if there is
-		 * one or not
-		 * @return true if there is an other element, else false
-		 */
-		public boolean next(){
-			position++;
-			if (position >= tablesNames.length)
-				return false;
-			return true;
+		if (splitted[0].equals("Integer")){
+			return new SQLType(SQLType.BaseType.Integer, length);
+		} else if (splitted[0].equals("Char")){
+			return new SQLType(SQLType.BaseType.Char, length);
+		} else if (splitted[0].equals("Varchar")){
+			return new SQLType(SQLType.BaseType.Varchar, length);
+		} else if (splitted[0].equals("Date")){
+			return new SQLType(SQLType.BaseType.Date, length);
+		} else if (splitted[0].equals("Datetime")){
+			return new SQLType(SQLType.BaseType.Datetime, length);
+		} else if (splitted[0].equals("Boolean")){
+			return new SQLType(SQLType.BaseType.Boolean, length);
+		} else {
+			throw new Exception("The String "+type+" doesn't represent a SQLType");
 		}
+	}
 		
-		/**
-		 * Get currently pointed TableSchema
-		 * @return the TableSchema pointed by TableSet
-		 */
-		public TableSchema getCurrent(){
-			return new TableSchema(tablesNames[position], attributesNames[position], attributesTypes[position], isPrimaryKey[position]);
-		}	
-		
-		/**
-		 * Get number of tables
-		 * @return number of tables
-		 */
-		public int getNumberTables(){
-			return this.tablesNames.length;
+	/**
+	 * Get a line from a file through a buffer
+	 * @param buf which points to a file
+	 * @return a string array of all entries of this line
+	 */
+	private String[] getLine(ByteBuffer buf){
+		List<String> args = new ArrayList<String>();
+		String anAttribute = "";
+		while(buf.hasRemaining()){
+			char aChar = (char) buf.get();
+			if (aChar == ' '){
+				args.add(anAttribute);
+				anAttribute = "";
+			} else if (aChar == '\n'){
+				break;
+			} else {
+				anAttribute = anAttribute+aChar;
+			}
 		}
+		String[] ret = (String[]) args.toArray(new String[args.size()]);
+		return ret;
+	}
 		
-		/**
-		 * Get all names of the tables
-		 * @return an array of string representing all tables names.
-		 */
-		public String[] getTablesNames(){
-			return this.tablesNames;
+	/**
+	 * Write a new line into the file pointed by a given channel
+	 * @param channel which points to a file	
+	 * @throws IOException
+	 */
+	private void newLine(FileChannel channel) throws IOException{
+		byte[] bytes = "\n".getBytes();
+		ByteBuffer buf;
+		buf = ByteBuffer.allocateDirect(bytes.length).put(bytes);
+		buf.rewind();
+		channel.write(buf);
+	}
+	
+	/**
+	 * Create a new directory where to put the database if not exist
+	 * @return true if success, false otherwise
+	 */
+	private boolean newFolder(){
+		if (new File(DB_PATH).exists()) {
+		    return true;
+		} else {
+			return (new File(DB_PATH)).mkdirs();
 		}
 	}
 	
-		////
-		//Utilities
-		////
-		
-		/**
-		 * Read an array of String and turns it into a boolean array
-		 * @param array of String representing booleans
-		 * @return an array of boolean
-		 * @throws Exception
-		 */
-		private boolean[] getBooleanArrayFromStringArray(String[] array) throws Exception{
-			boolean[] ret = new boolean[array.length];
-			for (int i = 0; i < array.length; i++){
-				if (array[i].equals("1")) { ret[i] = true; }
-				else if (array[i].equals("0")) { ret[i] = false; }
-				else { throw new Exception("The String " + array[i] + " doesn't represent a boolean"); } 
+	/**
+	 * Get all tables schemas from database
+	 * @return an array of TableSchema
+	 */
+	private TableSchema[] getTablesSchema(){
+		try{
+			TableSet ts = new TableSet();
+			String[] tablesNames = ts.getTablesNames();
+			TableSchema[] ret = new TableSchema[ts.getNumberTables()];
+			int i = 0;
+			while(ts.next()){
+				ret[i] = this.getTableSchemaFromDB(tablesNames[i]);
+				i++;
 			}
 			return ret;
+		} catch (Exception ex){
+			System.err.println("Failed to get all tables schemas.");
+			ex.printStackTrace();
+			return null;
 		}
-		
-		/**
-		 * Read an array of String and turns it into a SQLType array
-		 * @param array of String representing SQLType
-		 * @return an array of SQLTypes
-		 * @throws Exception
-		 */
-		private SQLType[] getSQLTypeArrayFromStringArray(String[] array) throws Exception{
-			SQLType[] ret = new SQLType[array.length];
-			for (int i = 0; i < array.length; i++){
-				ret[i] = this.getSQLTypeFromString(array[i]);
-			}
-			return ret;
-		}
-		
-		/**
-		 * Return a SQLType from a String
-		 * @param type represents a SQLType of the form SQLType.BaseType,SIZE
-		 * @return a new SQLType
-		 * @throws Exception
-		 */
-		private SQLType getSQLTypeFromString(String type) throws Exception{
-			String[] splitted = type.split(",");
-			Integer length = 0;
-			try {
-				Integer.parseInt(splitted[1]);
-			} catch (Exception ex){
-				length = null;
-			}
-			
-			if (splitted[0].equals("Integer")){
-				return new SQLType(SQLType.BaseType.Integer, length);
-			} else if (splitted[0].equals("Char")){
-				return new SQLType(SQLType.BaseType.Char, length);
-			} else if (splitted[0].equals("Varchar")){
-				return new SQLType(SQLType.BaseType.Varchar, length);
-			} else if (splitted[0].equals("Date")){
-				return new SQLType(SQLType.BaseType.Date, length);
-			} else if (splitted[0].equals("Datetime")){
-				return new SQLType(SQLType.BaseType.Datetime, length);
-			} else if (splitted[0].equals("Boolean")){
-				return new SQLType(SQLType.BaseType.Boolean, length);
-			} else {
-				throw new Exception("The String "+type+" doesn't represent a SQLType");
-			}
-		}
-		
-		/**
-		 * Get a line from a file through a buffer
-		 * @param buf which points to a file
-		 * @return a string array of all entries of this line
-		 */
-		private String[] getLine(ByteBuffer buf){
-			List<String> args = new ArrayList<String>();
-			String anAttribute = "";
-			while(buf.hasRemaining()){
-				char aChar = (char) buf.get();
-				if (aChar == ' '){
-					args.add(anAttribute);
-					anAttribute = "";
-				} else if (aChar == '\n'){
-					break;
-				} else {
-					anAttribute = anAttribute+aChar;
-				}
-			}
-			String[] ret = (String[]) args.toArray(new String[args.size()]);
-			return ret;
-		}
-		
-		/**
-		 * Write a new line into the file pointed by a given channel
-		 * @param channel which points to a file
-		 * @throws IOException
-		 */
-		private void newLine(FileChannel channel) throws IOException{
-			byte[] bytes = "\n".getBytes();
-			ByteBuffer buf;
-			buf = ByteBuffer.allocateDirect(bytes.length).put(bytes);
-			buf.rewind();
-			channel.write(buf);
-		}
-		
-		/**
-		 * Create a new directory where to put the database if not exist
-		 * @return true if success, false otherwise
-		 */
-		private boolean newFolder(){
-			if (new File(DB_PATH).exists()) {
-			    return true;
-			} else {
-				return (new File(DB_PATH)).mkdirs();
-			}
-		}
-		
-		/**
-		 * Get all tables schemas from database
-		 * @return an array of TableSchema
-		 */
-		private TableSchema[] getTablesSchema(){
-			try{
-				TableSet ts = new TableSet();
-				String[] tablesNames = ts.getTablesNames();
-				TableSchema[] ret = new TableSchema[ts.getNumberTables()];
-				int i = 0;
-				while(ts.next()){
-					ret[i] = this.getTableSchemaFromDB(tablesNames[i]);
-					i++;
-				}
-				return ret;
-			} catch (Exception ex){
-				System.err.println("Failed to get all tables schemas.");
-				ex.printStackTrace();
-				return null;
-			}
-		}
-		
-		/**
-		 * Read a table schema from database
-		 * @param tableName the name of the table
-		 * @return a TableSchema representing meta data of the table
-		 * @throws Exception
-		 */
-		private TableSchema getTableSchemaFromDB(String tableName) throws Exception{
-			File f = new File(DB_PATH + tableName + EXT_META_DATA);
-			if(f.exists() && !f.isDirectory()) {
-				//open connection to file
-				FileInputStream in = new FileInputStream(DB_PATH + tableName + EXT_META_DATA);
-				FileChannel channel = in.getChannel();
-				ByteBuffer buf = ByteBuffer.allocateDirect(MAX_MD_FILE_SIZE);
-				if (channel.read(buf) == -1) {
-					in.close();
-					throw new Exception("File too big to be opened.");
-				}
-					
-				//copy bytes into arrays
-				buf.flip();
-				String[] attributesNames = this.getLine(buf);
-				SQLType[] attributesTypes = this.getSQLTypeArrayFromStringArray(this.getLine(buf));
-				boolean[] isKey = this.getBooleanArrayFromStringArray(this.getLine(buf));
-				buf.clear();
+	}
+	
+	/**
+	 * Read a table schema from database
+	 * @param tableName the name of the table
+	 * @return a TableSchema representing meta data of the table
+	 * @throws Exception
+	 */
+	private TableSchema getTableSchemaFromDB(String tableName) throws Exception{
+		File f = new File(DB_PATH + tableName + EXT_META_DATA);
+		if(f.exists() && !f.isDirectory()) {
+			//open connection to file
+			FileInputStream in = new FileInputStream(DB_PATH + tableName + EXT_META_DATA);
+			FileChannel channel = in.getChannel();
+			ByteBuffer buf = ByteBuffer.allocateDirect(MAX_MD_FILE_SIZE);
+			if (channel.read(buf) == -1) {
 				in.close();
-				
-				return new TableSchema(tableName, attributesNames, attributesTypes, isKey);
-			} else {
-				throw new Exception("File "+tableName+" doesn't exist.");
+				throw new Exception("File too big to be opened.");
 			}
+				
+			//copy bytes into arrays
+			buf.flip();
+			String[] attributesNames = this.getLine(buf);
+			SQLType[] attributesTypes = this.getSQLTypeArrayFromStringArray(this.getLine(buf));
+			boolean[] isKey = this.getBooleanArrayFromStringArray(this.getLine(buf));
+			buf.clear();
+			in.close();
+			
+			return new TableSchema(tableName, attributesNames, attributesTypes, isKey);
+		} else {
+			throw new Exception("File "+tableName+" doesn't exist.");
 		}
+	}
 }

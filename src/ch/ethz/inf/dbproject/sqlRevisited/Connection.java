@@ -44,7 +44,7 @@ public class Connection {
 	 * @return the first Object of this table
 	 */
 	public Object min(String tableName){
-		return null;
+		return db.min(tableName);
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class Connection {
 	 * @return the object with given primary keys
 	 */
 	public Object get(Object[] primaryKeys, String tableName){
-		return null;
+		return db.get(primaryKeys, tableName);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class Connection {
 	 * @return the successor of the object with given primary keys
 	 */
 	public Object succ(Object[] primaryKeys, String tableName){
-		return null;
+		return db.succ(primaryKeys, tableName);
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class Connection {
 	 * @return true if object has been deleted, else false
 	 */
 	public boolean delete(Object[] primaryKeys, String tableName){
-		return false;
+		return db.delete(primaryKeys, tableName);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class Connection {
 	 * @return true if object has been inserted, else false
 	 */
 	public boolean insert(Object toInsert, String tableName){
-		return false;
+		return db.insert(toInsert, tableName);
 	}
 	
 	/**
@@ -95,20 +95,16 @@ public class Connection {
 	 * @return true if object has been updated, else false
 	 */
 	public boolean update(Object[] primaryKeys, Object toUpdate, String tableName){
-		return false;
+		return db.update(primaryKeys, toUpdate, tableName);
 	}
 	
 	/**
 	 * Get a table schema for a given table
 	 * @param tableName the table name
 	 * @return a table schema representing the schema of the table
+	 * @throws Exception 
 	 */
-	public TableSchema getTableSchema(String tableName){
-		try {
-			return db.getTableSchema(tableName);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public TableSchema getTableSchema(String tableName) throws Exception{
+		return db.getTableSchema(tableName);
 	}
 }

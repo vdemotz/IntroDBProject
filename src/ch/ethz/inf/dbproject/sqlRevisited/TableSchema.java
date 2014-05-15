@@ -197,4 +197,12 @@ public class TableSchema {
 	{
 		return this.tableName + " " + this.getAttributes().toString();
 	}
+	
+	public int getSizeOfEntry(){
+		int size = 0;
+		for (int i = 0; i < this.attributeTypes.length; i++){
+			size = size + attributeTypes[i].byteSizeOfType();
+		}
+		return -1;
+	}
 }
