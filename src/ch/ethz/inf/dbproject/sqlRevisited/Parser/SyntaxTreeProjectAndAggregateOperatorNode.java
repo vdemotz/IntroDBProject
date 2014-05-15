@@ -4,6 +4,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 import java.util.LinkedList;
 import java.util.List;
 
+import ch.ethz.inf.dbproject.Pair;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
@@ -48,7 +49,7 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 				
 			} else if (idnode.generatingToken.tokenClass == SQLToken.SQLTokenClass.QSTARID) {//Case 1b :: add all attributes that have the right qualifier
 				List<TableSchemaAttributeDetail> allAttributes = schema.getAttributes();
-				String attributeQualifier = getQualifierForIdentifier(idnode.generatingToken);
+				String attributeQualifier = idnode.generatingToken.getQualifierForIdentifier();
 				if (!schema.getQualifiers().contains(attributeQualifier)) {
 					throw new SQLSemanticException(SQLSemanticException.Type.NoSuchTableException, attributeQualifier);
 				}
@@ -60,13 +61,13 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 				}
 				
 			} else if (idnode.generatingToken.tokenClass == SQLToken.SQLTokenClass.QID) {//Case 1c :: add the first attribute that has the right name and right qualifier
-				String[] nameParts = getFragmentsForIdentifier(idnode.generatingToken);
-				int currentIndex = schema.indexOfQualifiedAttributeName(nameParts[0], nameParts[1]);
+				Pair<String, String> nameParts = idnode.generatingToken.getFragmentsForIdentifier();
+				int currentIndex = schema.indexOfQualifiedAttributeName(nameParts.first, nameParts.second);
 				result.add(schema.getAttributes().get(currentIndex));
 				
 			} else if (idnode.generatingToken.tokenClass == SQLToken.SQLTokenClass.UID) {//Case 1d :: add the first attribute that has the right name
-				String[] nameParts = getFragmentsForIdentifier(idnode.generatingToken);
-				int index = schema.indexOfAttributeName(nameParts[1], 0);
+				Pair<String, String> nameParts = idnode.generatingToken.getFragmentsForIdentifier();
+				int index = schema.indexOfAttributeName(nameParts.second, 0);
 				result.add(schema.getAttributes().get(index));
 				
 			} else if (idnode.generatingToken.tokenClass == SQLToken.SQLTokenClass.AGGREGATE) {//Case 1d unnamed aggregate :: add a new aggregate attribute without renaming
@@ -86,14 +87,5 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 		
 		return result;
 	}
-	
-	private static String getQualifierForIdentifier(SQLToken token) {
-		return getFragmentsForIdentifier(token)[0];
-	}
-	
-	private static String[] getFragmentsForIdentifier(SQLToken token) {
-		return token.content.split("\\.", 2);
-	}
-	
 	
 }

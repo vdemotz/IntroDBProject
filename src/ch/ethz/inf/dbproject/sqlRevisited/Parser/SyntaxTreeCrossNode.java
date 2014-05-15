@@ -23,4 +23,12 @@ public class SyntaxTreeCrossNode extends SyntaxTreeNode {
 		assert(right != null);
 	}
 	
+	public SyntaxTreeCrossNode copyWithLeftChild(SyntaxTreeNode left) {
+		return new SyntaxTreeCrossNode(schema, left, getRight());
+	}
+
+	public SyntaxTreeNode copyWithRightChild(SyntaxTreeNode right) {
+		return new SyntaxTreeCrossNode(schema, getLeft(), right);
+	}
+	
 }

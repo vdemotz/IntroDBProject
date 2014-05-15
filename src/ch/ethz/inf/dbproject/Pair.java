@@ -6,7 +6,7 @@ public class Pair<V, E> {
 	public final V first;
 	public final E second;
 	
-	Pair(V fst, E scd) {
+	public Pair(V fst, E scd) {
 		first = fst;
 		second = scd;
 	}

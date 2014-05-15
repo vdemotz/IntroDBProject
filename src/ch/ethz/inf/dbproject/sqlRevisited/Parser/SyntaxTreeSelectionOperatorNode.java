@@ -19,6 +19,11 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 		return (SyntaxTreeIdentifierNode) children[2];
 	}
 	
+	SyntaxTreeNode getChild()
+	{
+		return children[0];
+	}
+	
 	SyntaxTreeSelectionOperatorNode(SyntaxTreeIdentifierNode leftValue, SyntaxTreeIdentifierNode operator, SyntaxTreeIdentifierNode rightValue, SyntaxTreeNode child) {
 		super(leftValue, operator, rightValue, child);
 		assert(leftValue != null);
@@ -37,4 +42,11 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 		assert(schema != null);
 	}
 	
+	/**
+	 * @param child
+	 * @return a shallow copy of this node, except that the the child is set to newChild
+	 */
+	SyntaxTreeSelectionOperatorNode copyWithChild(SyntaxTreeNode newChild) {
+		return new SyntaxTreeSelectionOperatorNode(schema, getLeftValue(), getOperator(), getRightValue(), newChild);
+	}
 }

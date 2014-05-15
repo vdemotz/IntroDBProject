@@ -1,5 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
+import ch.ethz.inf.dbproject.Pair;
+
 public class SQLToken {
 
 	public enum SQLTokenClass {
@@ -79,5 +81,17 @@ public class SQLToken {
 		String result = "(" + tokenClass.name() + ", '" + content.toString();
 		if (identifier != 0) result += ", " + identifier;
 		return result + "')";
+	}
+	
+	public String getQualifierForIdentifier() throws SQLSemanticException {
+		if (!(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID)) throw new SQLSemanticException(SQLSemanticException.Type.NotApplicableToTokenWithClass, toString());
+		assert(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID);
+		return getFragmentsForIdentifier().first;
+	}
+	
+	public Pair<String, String> getFragmentsForIdentifier() throws SQLSemanticException {
+		if (!(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID || tokenClass == SQLTokenClass.UID)) throw new SQLSemanticException(SQLSemanticException.Type.NotApplicableToTokenWithClass, toString());
+		String[] fragments = content.split("\\.", 2);
+		return new Pair<String, String>(fragments[0], fragments[1]);
 	}
 }

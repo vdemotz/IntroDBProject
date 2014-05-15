@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+import ch.ethz.inf.dbproject.Pair;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
@@ -26,9 +27,124 @@ public class SyntaxTreeNode {
 		this.schema = null;
 	}
 	
+	/**
+	 * Infers the schema for this node and all its operator descendants
+	 * the schema includes the names, qualifiers and types of the result output by a particular operator
+	 * @param schemata
+	 * @return an augmented, syntactically equivalent syntax tree
+	 * @throws SQLSemanticException if a BaseRelationNode references a table that is not in the list of schemata,
+	 * 								or if a SyntaxTreeProjectAndAggregateOperator refers to an attribute thats not in its child schema
+	 * 								or if an unexpected node structure is encountered
+	 */
 	public SyntaxTreeNode instanciateWithSchemata(List<TableSchema> schemata) throws SQLSemanticException {
 		return fold(new InstanciateSchemaBase(schemata), new InstanciateSchemaCross(), new InstanciateSchemaGroup(), new InstanciateSchemaDistinct(),
-				new InstanciateSchemaProjectAggregate(), new InstanciateSchemaRename(), new InstanciateSchemaSelection(), new InstanciateSchemaSort());
+					new InstanciateSchemaProjectAggregate(), new InstanciateSchemaRename(), new InstanciateSchemaSelection(), new InstanciateSchemaSort());
+	}
+	
+	/**
+	 * Rewrites the syntax tree to a semantically equivalent, but one that can perform queries faster
+	 * This involves pushing down selection as far as possible and introducing joins where possible
+	 * @return a semantically equivalent syntax tree
+	 * @throws SQLSemanticException
+	 */
+	public SyntaxTreeNode rewrite() throws SQLSemanticException
+	{
+		return fold(new RewriteBase(), new RewriteCross(), new RewriteGroup(), new RewriteDistinct(),
+					new RewriteProjectAndAggregate(), new RewriteRename(), new RewriteSelection(), new RewriteSort());
+	}
+	
+	private class RewriteSort implements TransformUnary<SyntaxTreeSortOperatorNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeSortOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeSortOperatorNode(currentNode.schema, childResult, currentNode.getOrderStatement());
+		}
+	}
+	
+	private class RewriteSelection implements TransformUnary<SyntaxTreeSelectionOperatorNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeSelectionOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			
+			SyntaxTreeSelectionOperatorNode oldRoot = currentNode.copyWithChild(childResult);
+			SyntaxTreeNode newRoot = pushDown(oldRoot);//push down selection as far as possible
+			//TODO: if possible, make join operator
+			return newRoot;
+		}
+		
+		public SyntaxTreeNode pushDown(SyntaxTreeSelectionOperatorNode node) throws SQLSemanticException {
+			if (node.getChild().getClass().equals(SyntaxTreeSelectionOperatorNode.class)) {//Case selection : always push down
+				SyntaxTreeSelectionOperatorNode child = (SyntaxTreeSelectionOperatorNode)node.getChild();
+				SyntaxTreeSelectionOperatorNode nodePointingToGrandchild = node.copyWithChild(child.getChild());
+				return child.copyWithChild(pushDown(nodePointingToGrandchild));//recursively push down
+				
+			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class)) {//Case cross : push down left or right, if possible
+				SyntaxTreeCrossNode child = (SyntaxTreeCrossNode)node.getChild();
+				
+				Pair<String, String> leftFragments = node.getLeftValue().generatingToken.getFragmentsForIdentifier();
+				Pair<String, String> rightFragments = node.getRightValue().generatingToken.getFragmentsForIdentifier();
+				
+				boolean leftChildHasLeftAttribute = child.getLeft().schema.hasAttribute(leftFragments);
+				boolean leftChildHasRightAttribute = child.getLeft().schema.hasAttribute(rightFragments);
+				boolean rightChildHasRightAttribute = child.getRight().schema.hasAttribute(rightFragments);
+				boolean rightChildHasLeftAttribute = child.getRight().schema.hasAttribute(leftFragments);
+
+				if (!rightChildHasRightAttribute && !rightChildHasLeftAttribute) {//Case Push Left
+					SyntaxTreeSelectionOperatorNode nodePointingToLeftGrandchild = node.copyWithChild(child.getLeft());
+					return child.copyWithLeftChild(pushDown(nodePointingToLeftGrandchild));//recursively push down the left subtree and reassemble
+					
+				} else if (!leftChildHasRightAttribute && !leftChildHasLeftAttribute) {//Case Push Right
+					SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
+					return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
+					
+				} else {//Case No Push
+					return node;
+				}
+				
+			} else {
+				return node;
+			}
+		}
+	}
+	
+	private class RewriteRename implements TransformUnary<SyntaxTreeRenameTableNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeRenameTableNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeRenameTableNode(currentNode.schema, childResult);
+		}
+	}
+	
+	private class RewriteProjectAndAggregate implements TransformUnary<SyntaxTreeProjectAndAggregateOperatorNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeProjectAndAggregateOperatorNode(currentNode.schema, childResult, currentNode.getProjectionList());
+		}
+	}
+	
+	private class RewriteDistinct implements TransformUnary<SyntaxTreeNodeDistinct, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeNodeDistinct currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeNodeDistinct(currentNode.schema, childResult);
+		}
+	}
+	
+	private class RewriteGroup implements TransformUnary<SyntaxTreeGroupByNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeGroupByNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeGroupByNode(currentNode.schema, childResult, currentNode.groupByList());
+		}
+	}
+	
+	private class RewriteCross implements TransformBinary<SyntaxTreeCrossNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeCrossNode currentNode, SyntaxTreeNode leftChildResult, SyntaxTreeNode rightChildResult) throws SQLSemanticException {
+			 return new SyntaxTreeCrossNode(currentNode.schema, leftChildResult, rightChildResult);
+		}
+	}
+	
+	private class RewriteBase implements TransformBase<SyntaxTreeBaseRelationNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeBaseRelationNode currentNode) throws SQLSemanticException {
+			return currentNode;
+		}
 	}
 	
 	////
@@ -162,7 +278,7 @@ public class SyntaxTreeNode {
 	{
 		@Override
 		public SyntaxTreeNode transform(SyntaxTreeNodeDistinct currentNode, SyntaxTreeNode childResult) {
-			return new SyntaxTreeNodeDistinct(childResult, childResult.schema);
+			return new SyntaxTreeNodeDistinct(childResult.schema, childResult);
 		}
 	}
 	
@@ -172,7 +288,7 @@ public class SyntaxTreeNode {
 		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
 			assert(childResult != null);
 			List<TableSchemaAttributeDetail> resolvedProjectionList = SyntaxTreeProjectAndAggregateOperatorNode.resolve(currentNode.getProjectionList(), childResult.schema);
-			return new SyntaxTreeProjectAndAggregateOperatorNode(new TableSchema("", resolvedProjectionList), childResult, currentNode.getProjectionList());
+			return new SyntaxTreeProjectAndAggregateOperatorNode(new TableSchema("()", resolvedProjectionList), childResult, currentNode.getProjectionList());
 		}
 	}
 	
@@ -192,6 +308,11 @@ public class SyntaxTreeNode {
 		}
 	}
 	
+	////
+	//OVERRIDING OBJECT
+	////
+	
+	@Override
 	public String toString()
 	{
 		String result = this.getClass().getSimpleName() + "[ ";
