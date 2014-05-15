@@ -26,10 +26,89 @@ public class SyntaxTreeNode {
 		this.schema = null;
 	}
 	
+	/**
+	 * Infers the schema for this node and all its operator descendants
+	 * the schema includes the names, qualifiers and types of the result output by a particular operator
+	 * @param schemata
+	 * @return an augmented, syntactically equivalent syntax tree
+	 * @throws SQLSemanticException if a BaseRelationNode references a table that is not in the list of schemata,
+	 * 								or if a SyntaxTreeProjectAndAggregateOperator refers to an attribute thats not in its child schema
+	 * 								or if an unexpected node structure is encountered
+	 */
 	public SyntaxTreeNode instanciateWithSchemata(List<TableSchema> schemata) throws SQLSemanticException {
 		return fold(new InstanciateSchemaBase(schemata), new InstanciateSchemaCross(), new InstanciateSchemaGroup(), new InstanciateSchemaDistinct(),
-				new InstanciateSchemaProjectAggregate(), new InstanciateSchemaRename(), new InstanciateSchemaSelection(), new InstanciateSchemaSort());
+					new InstanciateSchemaProjectAggregate(), new InstanciateSchemaRename(), new InstanciateSchemaSelection(), new InstanciateSchemaSort());
 	}
+	
+	/**
+	 * Rewrites the syntax tree to a semantically equivalent, but one that can perform queries faster
+	 * This involves pushing down selection as far as possible and introducing joins where possible
+	 * @return a semantically equivalent syntax tree
+	 * @throws SQLSemanticException
+	 */
+	public SyntaxTreeNode rewrite() throws SQLSemanticException
+	{
+		return fold(new RewriteBase(), new RewriteCross(), new RewriteGroup(), new RewriteDistinct(),
+					new RewriteProjectAndAggregate(), new RewriteRename(), new RewriteSelection(), new RewriteSort());
+	}
+	
+	private class RewriteSort implements TransformUnary<SyntaxTreeSortOperatorNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeSortOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeSortOperatorNode(currentNode.schema, childResult, currentNode.getOrderStatement());
+		}
+	}
+	
+	private class RewriteSelection implements TransformUnary<SyntaxTreeSelectionOperatorNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeSelectionOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	}
+	
+	private class RewriteRename implements TransformUnary<SyntaxTreeRenameTableNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeRenameTableNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeRenameTableNode(currentNode.schema, childResult);
+		}
+	}
+	
+	private class RewriteProjectAndAggregate implements TransformUnary<SyntaxTreeProjectAndAggregateOperatorNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeProjectAndAggregateOperatorNode(currentNode.schema, childResult, currentNode.getProjectionList());
+		}
+	}
+	
+	private class RewriteDistinct implements TransformUnary<SyntaxTreeNodeDistinct, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeNodeDistinct currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeNodeDistinct(currentNode.schema, childResult);
+		}
+	}
+	
+	private class RewriteGroup implements TransformUnary<SyntaxTreeGroupByNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeGroupByNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeGroupByNode(currentNode.schema, childResult, currentNode.groupByList());
+		}
+	}
+	
+	private class RewriteCross implements TransformBinary<SyntaxTreeCrossNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeCrossNode currentNode, SyntaxTreeNode leftChildResult, SyntaxTreeNode rightChildResult) throws SQLSemanticException {
+			 return new SyntaxTreeCrossNode(currentNode.schema, leftChildResult, rightChildResult);
+		}
+	}
+	
+	private class RewriteBase implements TransformBase<SyntaxTreeBaseRelationNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeBaseRelationNode currentNode) throws SQLSemanticException {
+			return currentNode;
+		}
+	}
+	
 	
 	////
 	//PSEUDO-FOLD OPERATORS
@@ -162,7 +241,7 @@ public class SyntaxTreeNode {
 	{
 		@Override
 		public SyntaxTreeNode transform(SyntaxTreeNodeDistinct currentNode, SyntaxTreeNode childResult) {
-			return new SyntaxTreeNodeDistinct(childResult, childResult.schema);
+			return new SyntaxTreeNodeDistinct(childResult.schema, childResult);
 		}
 	}
 	

@@ -20,8 +20,8 @@ public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
 		this.name = newName;
 	}
 
-	public SyntaxTreeRenameTableNode(TableSchema schema, SyntaxTreeNode table) {
-		super(schema, table);
+	public SyntaxTreeRenameTableNode(TableSchema schema, SyntaxTreeNode child) {
+		super(schema, child);
 		this.name = schema.tableName;
 		assert(schema != null);
 	}

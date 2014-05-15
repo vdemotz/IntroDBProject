@@ -13,7 +13,7 @@ public class SyntaxTreeNodeDistinct extends SyntaxTreeNode {
 		assert (body != null);
 	}
 
-	public SyntaxTreeNodeDistinct(SyntaxTreeNode child, TableSchema schema) {
+	public SyntaxTreeNodeDistinct(TableSchema schema, SyntaxTreeNode child) {
 		super(schema, child);
 		assert(schema != null);
 	}
