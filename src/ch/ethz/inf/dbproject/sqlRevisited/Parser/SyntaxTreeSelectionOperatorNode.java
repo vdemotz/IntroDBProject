@@ -19,6 +19,11 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 		return (SyntaxTreeIdentifierNode) children[2];
 	}
 	
+	SyntaxTreeNode getChild()
+	{
+		return children[0];
+	}
+	
 	SyntaxTreeSelectionOperatorNode(SyntaxTreeIdentifierNode leftValue, SyntaxTreeIdentifierNode operator, SyntaxTreeIdentifierNode rightValue, SyntaxTreeNode child) {
 		super(leftValue, operator, rightValue, child);
 		assert(leftValue != null);

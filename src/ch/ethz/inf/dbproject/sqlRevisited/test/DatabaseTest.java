@@ -44,7 +44,7 @@ public class DatabaseTest {
 		for (int i = 0; i < tsUser.getAttributesNames().length; i++){
 			System.out.print("The attribute " + tsUser.getAttributesNames()[i]+" has type : ");
 			System.out.print(tsUser.getAttributesTypes()[i].type.toString()+"("+tsUser.getAttributesTypes()[i].size.toString()+")"+", ");
-			System.out.print("primary key : " +tsUser.isPrimaryKey[i]+"\r\n");
+			System.out.print("primary key : " +tsUser.isPrimaryKey(i)+"\r\n");
 		}
 	}
 }

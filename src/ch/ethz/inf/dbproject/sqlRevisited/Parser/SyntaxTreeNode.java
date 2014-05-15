@@ -62,8 +62,23 @@ public class SyntaxTreeNode {
 	private class RewriteSelection implements TransformUnary<SyntaxTreeSelectionOperatorNode, SyntaxTreeNode> {
 		@Override
 		public SyntaxTreeNode transform(SyntaxTreeSelectionOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
-			// TODO Auto-generated method stub
-			return null;
+			
+			SyntaxTreeSelectionOperatorNode oldRoot = new SyntaxTreeSelectionOperatorNode(currentNode.schema, currentNode.getLeftValue(), currentNode.getOperator(), currentNode.getRightValue(), childResult);
+			SyntaxTreeNode newRoot = pushDown(oldRoot);//push down selection as far as possible
+			//TODO: if possible, make join operator
+			return newRoot;
+		}
+		
+		public SyntaxTreeNode pushDown(SyntaxTreeSelectionOperatorNode node) {
+			if (node.getChild().getClass().equals(SyntaxTreeSelectionOperatorNode.class)) {//Case selection : always push down
+				return null;
+				
+			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class)) {//Case cross : push down left or right, if possible
+				return null;
+				
+			} else {
+				return node;
+			}
 		}
 	}
 	

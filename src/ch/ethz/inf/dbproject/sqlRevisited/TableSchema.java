@@ -8,10 +8,14 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLSemanticException;
 public class TableSchema {
 	
 	public final String tableName;
-	public final String[] attributeNames;
-	public final String[] qualifiers;
-	public final SQLType[] attributeTypes;
-	public final boolean[] isPrimaryKey;
+	private final String[] attributeNames;
+	private final String[] qualifiers;
+	private final SQLType[] attributeTypes;
+	private final boolean[] isPrimaryKey;
+	
+	////
+	//CONSTRUCTORS
+	////
 	
 	/**
 	 * Create a schema of a table
@@ -20,7 +24,6 @@ public class TableSchema {
 	 * @param attributes
 	 */
 	public TableSchema(String tableName, TableSchemaAttributeDetail[] attributes) {
-
 		int length = attributes.length;
 		attributeNames = new String[length];
 		attributeTypes = new SQLType[length];
@@ -37,7 +40,6 @@ public class TableSchema {
 	 * @param attributes
 	 */
 	public TableSchema(String tableName, List<TableSchemaAttributeDetail> attributes) {
-		
 		int length = attributes.size();
 		attributeNames = new String[length];
 		attributeTypes = new SQLType[length];
@@ -74,12 +76,17 @@ public class TableSchema {
 	 * @param qualifiers
 	 */
 	public TableSchema(String tableName, String[] attributeNames, SQLType[] attributeTypes, boolean[] isPrimaryKey, String[] qualifiers) {
+		assert (attributeNames.length == attributeTypes.length && attributeTypes.length == isPrimaryKey.length && isPrimaryKey.length == qualifiers.length);
 		this.attributeNames = attributeNames;
 		this.attributeTypes = attributeTypes;
 		this.isPrimaryKey = isPrimaryKey;
 		this.qualifiers = qualifiers;
 		this.tableName = tableName;
 	}
+	
+	////
+	//ACCESS
+	////
 	
 	/**
 	 * Get the number of attributes of the table
@@ -142,6 +149,10 @@ public class TableSchema {
 	public boolean[] getIfPrimaryKey(){
 		return isPrimaryKey.clone();
 	}
+	
+	public boolean isPrimaryKey(int i){
+		return isPrimaryKey[i];
+	}
 
 	/**
 	 * @param name of the attribute (unqualified)
@@ -179,7 +190,25 @@ public class TableSchema {
 		}
 		return cur;
 	}
+	
+	
+	/**
+	 * Get the size in bytes of each entry of the table
+	 * @return the size of on entry in bytes
+	 */
+	public int getSizeOfEntry(){
+		int size = 0;
+		for (int i = 0; i < this.attributeTypes.length; i++){
+			size = size + attributeTypes[i].byteSizeOfType();
+		}
+		return size;
+	}
+	
 
+	////
+	//FACTORY
+	////
+	
 	/**
 	 * @param schema
 	 * @return a new schema that represents the concatenation of schema to this
@@ -198,18 +227,6 @@ public class TableSchema {
 		String[] newQualifiers = new String[getLength()];
 		Arrays.fill(newQualifiers, newName);
 		return new TableSchema(newName, attributeNames, attributeTypes, isPrimaryKey, newQualifiers);
-	}
-	
-	/**
-	 * Get the size in bytes of each entry of the table
-	 * @return the size of on entry in bytes
-	 */
-	public int getSizeOfEntry(){
-		int size = 0;
-		for (int i = 0; i < this.attributeTypes.length; i++){
-			size = size + attributeTypes[i].byteSizeOfType();
-		}
-		return size;
 	}
 	
 	////
