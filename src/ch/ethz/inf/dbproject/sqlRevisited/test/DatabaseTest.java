@@ -19,7 +19,7 @@ public class DatabaseTest {
 		Connection connection1 = Connection.getConnection();
 		Connection connection2 = Connection.getConnection();
 		assert(connection1.equals(connection2));
-		connection1.insert(new String[]{"vinvin", "Vincent", "Demotz", "bla"}, new String[]{"username", "firstName", "lastName", "password"}, "User");
+		//connection1.insert(new String[]{"vinvin", "Vincent", "Demotz", "bla"}, new String[]{"username", "firstName", "lastName", "password"}, "User");
 		System.out.println("Data should have been inserted into User");
 	}
 	

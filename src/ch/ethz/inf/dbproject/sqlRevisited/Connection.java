@@ -39,74 +39,11 @@ public class Connection {
 	}
 	
 	/**
-	 * Return the first object of the given table name
-	 * @param tableName a table name of the database
-	 * @return the first Object of this table
+	 * Open and get a connection to a table of the database
+	 * @param tableName the name of the table
+	 * @return an object TableConnection which represents a table
 	 */
-	public Object min(String tableName) throws Exception{
-		return db.min(tableName);
-	}
-	
-	/**
-	 * Get a particular object of a table given a primary key
-	 * @param primaryKeys which identify the object
-	 * @param tableName a table name of the database
-	 * @return the object with given primary keys
-	 */
-	public Object get(Object[] primaryKeys, String tableName){
-		return db.get(primaryKeys, tableName);
-	}
-	
-	/**
-	 * Get the successor of a particular object of a table given a primary key
-	 * @param primaryKeys which identify the predecessor of returned object
-	 * @param tableName a table name of the database
-	 * @return the successor of the object with given primary keys
-	 */
-	public Object succ(Object[] primaryKeys, String tableName){
-		return db.succ(primaryKeys, tableName);
-	}
-	
-	/**
-	 * Delete an object from a table if exists given a primary key
-	 * @param primaryKeys which identify the predecessor of returned object
-	 * @param tableName a table name of the database
-	 * @return true if object has been deleted, else false
-	 */
-	public boolean delete(Object[] primaryKeys, String tableName){
-		return db.delete(primaryKeys, tableName);
-	}
-
-	/**
-	 * Insert an object into a table
-	 * @param valuesToInsert values to be inserted
-	 * @param attributesNames matching values to be inserted
-	 * @param tableName a table name of the database
-	 * @return true if object has been inserted, else false
-	 * @throws Exception 
-	 */
-	public boolean insert(Object[] valuesToInsert, String[] attributesNames, String tableName) throws Exception{
-		return db.insert(valuesToInsert, attributesNames, tableName);
-	}
-	
-	/**
-	 * Update an object of a table
-	 * @param primaryKeys which identify the object to update
-	 * @param toUpdate object to be updated 
-	 * @param tableName a table name of the database
-	 * @return true if object has been updated, else false
-	 */
-	public boolean update(Object[] primaryKeys, Object toUpdate, String tableName){
-		return db.update(primaryKeys, toUpdate, tableName);
-	}
-	
-	/**
-	 * Get a table schema for a given table
-	 * @param tableName the table name
-	 * @return a table schema representing the schema of the table
-	 * @throws Exception 
-	 */
-	public TableSchema getTableSchema(String tableName) throws Exception{
-		return db.getTableSchema(tableName);
+	public TableConnection getTable(String tableName){
+		return null;
 	}
 }

@@ -188,9 +188,8 @@ public class Database {
 	
 	/**
 	 * Create the files which store the tables accordingly to TableSet
-	 * @throws IOException
 	 */
-	private void createTables() throws IOException{
+	private void createTables() throws Exception{
 		TableSet ts = new TableSet();
 		this.setSerialNumber();
 		while (ts.next()){
@@ -210,8 +209,7 @@ public class Database {
 			}
 			
 			//file for metadata
-			FileOutputStream out;
-			out = new FileOutputStream(DB_PATH + tableSchema.getTableName() + EXT_META_DATA);
+			FileOutputStream out = this.getFileOutputStream(tableSchema.getTableName(), true);
 			FileChannel channel = out.getChannel();
 			
 			//Get attributes names, types and if they are keys
@@ -436,7 +434,12 @@ public class Database {
 	 * @param tableName the type of the object
 	 * @return an object of type tableName.class
 	 */
-	private Object createObjectFromBytesArrayAndTableName(byte[] data, String tableName){
+	private Object createObjectFromBytesArrayAndTableName(byte[] data, String tableName) throws Exception{
+		SQLType[] attributesTypes = this.getTableSchema(tableName).getAttributesTypes();
+		List<Object> attributes = new ArrayList<Object>();
+		for (int i = 0; i < attributesTypes.length; i++){
+			
+		}
 		return null;
 	}
 	
@@ -513,6 +516,7 @@ public class Database {
 		return new RandomAccessFile(filename, mode);
 	}
 	
+
 	/**
 	 * Get a new file to read from the database
 	 */
