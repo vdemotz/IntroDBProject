@@ -10,7 +10,7 @@ public class TableConnection extends DataConnection {
 	//Fields
 	////
 	private Serializer serializer;
-	private StructureConnection dataStructure;
+	private StructureConnection structureConnection;
 	
 	////
 	//Constructor, finalize
@@ -29,7 +29,7 @@ public class TableConnection extends DataConnection {
 		this.EXT_DATA = extData;
 		this.raf = this.getRandomAccesFile(this.tableSchema.getTableName(), "rw", false);
 		this.channel = raf.getChannel();
-		this.dataStructure = new StructureConnection(this.tableSchema, dbPath, extMetaData, extData);
+		this.structureConnection = new StructureConnection(this.tableSchema, dbPath, extMetaData, extData);
 		this.serializer = new Serializer();
 	}
 	
@@ -66,7 +66,7 @@ public class TableConnection extends DataConnection {
 	 * @return true if operation succeed (write at least one tuple), false otherwise
 	 */
 	public boolean get(ByteBuffer keys, int numberKeys, ByteBuffer location){
-		List<Integer> position = this.dataStructure.getPositionsForKeys(keys, numberKeys);
+		List<Integer> position = this.structureConnection.getPositionsForKeys(keys, numberKeys);
 		return false;
 	}
 	
@@ -100,12 +100,21 @@ public class TableConnection extends DataConnection {
 	}
 	
 	/**
-	 * Insert a new tuple into the table. 
+	 * Insert a new tuple into the table. The method doesn't do any rewind: take care of position of object.
 	 * @param object the object to write. It should be exactly of the form describe in TableSchema
 	 * @return true if operation succeed (entry written in database), false otherwise
 	 */
-	public boolean insert(ByteBuffer object){
-		return false;
+	public boolean insert(ByteBuffer object) {
+		try{
+			int position = structureConnection.insertElement(object);
+			byte[] data = new byte[this.tableSchema.getSizeOfEntry()];
+			object.get(data);
+			this.writeToData(data, position);
+			return true;
+		} catch (Exception ex){
+			ex.printStackTrace();
+			return false;
+		}
 	}
 	
 	/**

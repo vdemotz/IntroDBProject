@@ -52,8 +52,8 @@ public class Database {
 					System.err.println("Failed to create database");
 				}
 			}
-			tablesSchema = this.getTablesSchema();
 			serializer = new Serializer();
+			tablesSchema = this.getTablesSchema();
 		} else {
 			throw new Exception("Cannot create folder of Database");
 		}
@@ -157,7 +157,7 @@ public class Database {
 			}
 			
 			//file for metadata
-			FileOutputStream out = new FileOutputStream(tableSchema.getTableName(), true);
+			FileOutputStream out = new FileOutputStream(DB_PATH + tableSchema.getTableName() + EXT_META_DATA, true);
 			FileChannel channel = out.getChannel();
 			
 			//Get attributes names, types and if they are keys

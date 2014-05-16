@@ -45,7 +45,11 @@ public class StructureConnection extends DataConnection{
 	 * Get the position of the table where to write this object
 	 */
 	public int insertElement(ByteBuffer object){
-		return -1;
+		int i = 0;
+		while (i < elementsPositions.size()){
+			
+		}
+		return elementsPositions.size()*this.ELEMENT_SIZE;
 	}
 	
 	private List<Pair<byte[], Integer>> instantiateElementsPositions(){

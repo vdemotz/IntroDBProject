@@ -52,13 +52,13 @@ public abstract class DataConnection {
 	 * @param position the offset (take care of alignment!)
 	 * @return true if succeed, false otherwise
 	 */
-	protected boolean writeToData(byte[] data, int position, String tableName) throws Exception{
+	protected boolean writeToData(byte[] data, int position) throws Exception{
 		try{
 			MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
 			buf.put(data);
 			return true;
 		} catch (Exception ex){
-			System.err.println("Unable to write data to "+tableName);
+			System.err.println("Unable to write data to "+this.tableSchema.getTableName());
 			ex.printStackTrace();
 			return false;
 		}

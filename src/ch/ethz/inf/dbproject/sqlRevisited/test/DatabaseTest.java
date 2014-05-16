@@ -1,26 +1,45 @@
 package ch.ethz.inf.dbproject.sqlRevisited.test;
 
+import java.nio.ByteBuffer;
+
 import org.junit.Test;
 
 import ch.ethz.inf.dbproject.sqlRevisited.Connection;
 import ch.ethz.inf.dbproject.sqlRevisited.Database;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
+import ch.ethz.inf.dbproject.sqlRevisited.Serializer;
+import ch.ethz.inf.dbproject.sqlRevisited.TableConnection;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class DatabaseTest {
 
 	@Test
 	public void testDatabase() throws Exception{
-		this.testMetaDataCreation();
+		//this.testMetaDataCreation();
 		this.testWriting();
 	}
 	
+	
+	
 	@Test
 	public void testWriting() throws Exception{
-		Connection connection1 = Connection.getConnection();
-		Connection connection2 = Connection.getConnection();
-		assert(connection1.equals(connection2));
-		//connection1.insert(new String[]{"vinvin", "Vincent", "Demotz", "bla"}, new String[]{"username", "firstName", "lastName", "password"}, "User");
-		System.out.println("Data should have been inserted into User");
+		Serializer serializer = new Serializer();
+		Database db = new Database();
+		TableConnection tc = db.getTableConnection("User");
+		SQLType vc40 = new SQLType(SQLType.BaseType.Varchar, 40);
+		byte[] username = serializer.getByteArrayFromObject("vinvin", vc40);
+		byte[] firstName = serializer.getByteArrayFromObject("Vincent", vc40);
+		byte[] lastName = serializer.getByteArrayFromObject("Demotz", vc40);
+		byte[] password = serializer.getByteArrayFromObject("Bla", vc40);
+		ByteBuffer buf = ByteBuffer.allocate(vc40.byteSizeOfType());
+		buf.rewind();
+		buf.put(username);
+		buf.put(firstName);
+		buf.put(lastName);
+		buf.put(password);
+		System.out.println(buf.toString());
+		buf.rewind();
+		tc.insert(buf);
 	}
 	
 	@Test
