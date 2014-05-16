@@ -1,26 +1,16 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.List;
 
-public class TableConnection {
+public class TableConnection extends DataConnection {
 
 	////
 	//Fields
 	////
-	private TableSchema tableSchema;
-	private RandomAccessFile raf;
-	private FileChannel channel;
-	private String DB_PATH;
-	private String EXT_META_DATA;
-	private String EXT_DATA;
 	private Serializer serializer;
+	private StructureConnection dataStructure;
 	
 	////
 	//Constructor, finalize
@@ -32,13 +22,15 @@ public class TableConnection {
 	 * @param ext_meta_data DB specific : extension of meta data files
 	 * @param ext_data DB specific : extension of data files
 	 */
-	public TableConnection(TableSchema ts, String db_path, String ext_meta_data, String ext_data) throws Exception{
+	public TableConnection(TableSchema ts, String dbPath, String extMetaData, String extData) throws Exception{
 		this.tableSchema = ts;
-		this.DB_PATH = db_path;
-		this.EXT_META_DATA = ext_meta_data;
-		this.EXT_DATA = ext_data;
+		this.DB_PATH = dbPath;
+		this.EXT_META_DATA = extMetaData;
+		this.EXT_DATA = extData;
 		this.raf = this.getRandomAccesFile(this.tableSchema.getTableName(), "rw", false);
 		this.channel = raf.getChannel();
+		this.dataStructure = new StructureConnection(this.tableSchema, dbPath, extMetaData, extData);
+		this.serializer = new Serializer();
 	}
 	
 	@Override
@@ -74,6 +66,7 @@ public class TableConnection {
 	 * @return true if operation succeed (write at least one tuple), false otherwise
 	 */
 	public boolean get(ByteBuffer keys, int numberKeys, ByteBuffer location){
+		List<Integer> position = this.dataStructure.getPositionsForKeys(keys, numberKeys);
 		return false;
 	}
 	
@@ -122,51 +115,5 @@ public class TableConnection {
 	 */
 	public boolean update(ByteBuffer object){
 		return false;
-	}
-	
-	////
-	//Read / write related methods
-	////
-	
-	/**
-	 * Read length bytes from table at given position into the destination ByteBuffer
-	 */
-	private boolean readFromData(int position, int length, ByteBuffer destination) throws Exception{
-		return false;
-	}
-	
-	/**
-	 * Write a given piece of data into the database. It doesn't check size!
-	 * @param data to be written
-	 * @param position the offset (take care of alignment!)
-	 * @return true if succeed, false otherwise
-	 */
-	private boolean writeToData(byte[] data, int position, String tableName) throws Exception{
-		try{
-			MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
-			buf.put(data);
-			return true;
-		} catch (Exception ex){
-			System.err.println("Unable to write data to "+tableName);
-			ex.printStackTrace();
-			return false;
-		}
-	}
-	
-	////
-	//Files related methods
-	////
-	/**
-	 * Get a new file for random access to read from and write to the database
-	 * @param mode the mode to write (see RandomAccessFile constructor)
-	 */
-	private RandomAccessFile getRandomAccesFile(String tableName, String mode, boolean metaData) throws Exception{
-		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
-		
-		//Check if table exists
-		File f = new File(filename);
-		if(!f.exists()) 
-			throw new Exception("Table doesn't exist.");
-		return new RandomAccessFile(filename, mode);
 	}
 }

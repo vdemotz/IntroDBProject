@@ -1,5 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -212,16 +213,40 @@ public class TableSchema {
 	
 	/**
 	 * Get the size in bytes of each entry of the table
-	 * @return the size of on entry in bytes
+	 * @return the size of an entry in bytes
 	 */
 	public int getSizeOfEntry(){
 		int size = 0;
 		for (int i = 0; i < this.attributeTypes.length; i++){
-			size = size + attributeTypes[i].byteSizeOfType();
+			size = size + this.attributeTypes[i].byteSizeOfType();
 		}
 		return size;
 	}
 	
+	/**
+	 * Get the size in bytes of the keys of the table
+	 * @return the size of keys in bytes
+	 */
+	public int getSizeOfKeys(){
+		int size = 0;
+		for (int i = 0; i < this.attributeTypes.length; i++){
+			if (this.isPrimaryKey[i])
+				size = size + this.attributeTypes[i].byteSizeOfType();
+		}
+		return size;
+	}
+	
+	/**
+	 * Get all the keys of this TableSchema
+	 * @return an array of types of keys (in order)
+	 */
+	public SQLType[] getKeys(){
+		int i = 0;
+		while (this.isPrimaryKey[i])
+			i++;
+		return Arrays.copyOf(this.attributeTypes.clone(), i);
+		
+	}
 
 	////
 	//FACTORY

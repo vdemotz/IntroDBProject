@@ -123,5 +123,17 @@ public class Serializer {
 			}
 			return ret;
 		}
-
+		
+		/**
+		 * Get a String from a ByteBuffer
+		 * @param data a byte[] which represents a String
+		 * @param length number of character to read
+		 * @return a string
+		 */
+		public String getStringFromByteBuffer(ByteBuffer data, int length){
+			String ret = "";
+			for (int i = 0; i < length; i++)
+				ret = ret+data.getChar();
+			return ret;
+		}
 }
