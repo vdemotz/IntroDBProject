@@ -107,8 +107,13 @@ public class TableConnection extends DataConnection {
 	public boolean insert(ByteBuffer object) {
 		try{
 			int position = structureConnection.insertElement(object);
-			byte[] data = new byte[this.tableSchema.getSizeOfEntry()];
+			//byte[] data = new byte[this.tableSchema.getSizeOfEntry()];
+			byte[] data = new byte[640];
+			System.out.println(object.toString());
+			System.out.println(data.length);
 			object.get(data);
+			for(int i = 0; i < data.length; i++)
+				System.out.print((char)data[i]);
 			this.writeToData(data, position);
 			return true;
 		} catch (Exception ex){
