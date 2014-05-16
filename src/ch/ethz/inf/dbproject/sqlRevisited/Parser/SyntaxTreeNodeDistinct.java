@@ -5,7 +5,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 public class SyntaxTreeNodeDistinct extends SyntaxTreeNode {
 	
 	public SyntaxTreeNode child() {
-		return children[0];
+		return children.get(0);
 	}
 	
 	public SyntaxTreeNodeDistinct(SyntaxTreeNode body) {

@@ -4,12 +4,12 @@ public class SyntaxTreeListNode<T extends SyntaxTreeNode> extends SyntaxTreeNode
 
 	@SuppressWarnings("unchecked")
 	public SyntaxTreeListNode<T> getNext() {
-		return (SyntaxTreeListNode<T>)children[0];
+		return (SyntaxTreeListNode<T>)children.get(0);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public T getNode() {
-		return (T)children[1];
+		return (T)children.get(1);
 	}
 	
 	public SyntaxTreeListNode(T node, SyntaxTreeListNode<T> next) {

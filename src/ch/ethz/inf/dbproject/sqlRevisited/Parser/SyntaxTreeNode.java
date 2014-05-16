@@ -14,16 +14,16 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
 public class SyntaxTreeNode {
 
-	public final TableSchema schema;
-	protected final SyntaxTreeNode[] children;
+	public final TableSchema schema;//may be null, but if it isn't then all descendants have a non null schema
+	protected final ImmutableArray<SyntaxTreeNode> children;
 	
 	SyntaxTreeNode(TableSchema schema, SyntaxTreeNode...children) {
-		this.children = children;
+		this.children = new ImmutableArray<SyntaxTreeNode>(children);
 		this.schema = schema;
 	}
 	
 	SyntaxTreeNode(SyntaxTreeNode...children) {
-		this.children = children;
+		this.children =  new ImmutableArray<SyntaxTreeNode>(children);
 		this.schema = null;
 	}
 	
@@ -42,7 +42,7 @@ public class SyntaxTreeNode {
 	}
 	
 	/**
-	 * Rewrites the syntax tree to a semantically equivalent, but one that can perform queries faster
+	 * Rewrites the syntax tree to a semantically equivalent tree that can perform queries faster
 	 * This involves pushing down selection as far as possible and introducing joins where possible
 	 * @return a semantically equivalent syntax tree
 	 * @throws SQLSemanticException

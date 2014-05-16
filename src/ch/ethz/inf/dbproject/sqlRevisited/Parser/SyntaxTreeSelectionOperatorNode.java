@@ -6,22 +6,22 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 
 	SyntaxTreeIdentifierNode getLeftValue()
 	{
-		return (SyntaxTreeIdentifierNode) children[0];
+		return (SyntaxTreeIdentifierNode) children.get(0);
 	}
 	
 	SyntaxTreeIdentifierNode getRightValue()
 	{
-		return (SyntaxTreeIdentifierNode) children[2];
+		return (SyntaxTreeIdentifierNode) children.get(2);
 	}
 	
 	SyntaxTreeIdentifierNode getOperator()
 	{
-		return (SyntaxTreeIdentifierNode) children[1];
+		return (SyntaxTreeIdentifierNode) children.get(1);
 	}
 	
 	SyntaxTreeNode getChild()
 	{
-		return children[3];
+		return children.get(3);
 	}
 	
 	SyntaxTreeSelectionOperatorNode(SyntaxTreeIdentifierNode leftValue, SyntaxTreeIdentifierNode operator, SyntaxTreeIdentifierNode rightValue, SyntaxTreeNode child) {

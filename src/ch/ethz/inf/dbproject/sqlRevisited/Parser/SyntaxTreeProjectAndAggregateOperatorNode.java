@@ -14,7 +14,7 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 	@SuppressWarnings("unchecked")
 	SyntaxTreeListNode<SyntaxTreeNode> getProjectionList()
 	{
-		return (SyntaxTreeListNode<SyntaxTreeNode>) children[1];
+		return (SyntaxTreeListNode<SyntaxTreeNode>) children.get(1);
 	}
 	
 	public SyntaxTreeProjectAndAggregateOperatorNode(SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectOnto) {

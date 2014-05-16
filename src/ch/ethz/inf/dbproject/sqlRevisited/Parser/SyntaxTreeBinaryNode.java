@@ -16,11 +16,11 @@ public abstract class SyntaxTreeBinaryNode extends SyntaxTreeNode{
 	}
 
 	public final SyntaxTreeNode getLeft() {
-		return children[0];
+		return children.get(0);
 	}
 	
 	public final SyntaxTreeNode getRight() {
-		return children[1];
+		return children.get(1);
 	}
 	
 	public SyntaxTreeBinaryNode copyWithLeftChild(SyntaxTreeNode left) {
