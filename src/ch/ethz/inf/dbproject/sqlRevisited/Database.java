@@ -38,6 +38,7 @@ public class Database {
 	//Very used values
 	////
 	private TableSchema[] tablesSchema;
+	private Serializer serializer;
 	
 
 	////
@@ -57,6 +58,7 @@ public class Database {
 				}
 			}
 			tablesSchema = this.getTablesSchema();
+			serializer = new Serializer();
 		} else {
 			throw new Exception("Cannot create folder of Database");
 		}
@@ -72,58 +74,6 @@ public class Database {
 				return tablesSchema[i];
 		}
 		return null;
-	}
-	
-	public Object min(String tableName) throws Exception{
-		
-		//Get the number of bytes per entry 
-		int sizeEntry = this.getTableSchema(tableName).getSizeOfEntry();
-		
-		//Create connection to file and allocate buffer
-		FileInputStream in = this.getFileInputStream(tableName, true);
-		FileChannel channel = in.getChannel();
-		ByteBuffer buf = ByteBuffer.allocateDirect(sizeEntry);
-		if (channel.read(buf) == -1) {
-			in.close();
-			throw new Exception("File too big to be opened.");
-		}
-			
-		//Create object from bytes array
-		buf.flip();
-		Object ret = this.createObjectFromByteBufferAndTableName(buf, tableName);
-		buf.clear();
-		in.close();
-		return ret;
-	}
-	
-	public Object get(Object[] primaryKeys, String tableName){
-		return null;
-	}
-	
-	public Object succ(Object[] primaryKeys, String tableName){
-		return null;
-	}
-	
-	public boolean delete(Object[] primaryKeys, String tableName){
-		return false;
-	}
-
-	public boolean insert(Object[] valuesToInsert, String[] attributesNames, String tableName) throws Exception{
-		
-		//actual implementation only for tests purposes
-		int offset = 0;
-		for (int i = 0; i < valuesToInsert.length; i++){
-			byte[] data = this.getByteArrayFromObject(valuesToInsert[i], new SQLType(BaseType.Varchar, 40));
-			this.writeToData(data, offset, tableName);
-			offset = offset + data.length;
-		}
-		
-		
-		return false;
-	}
-	
-	public boolean update(Object[] primaryKeys, Object toUpdate, String tableName){
-		return false;
 	}
 	
 	////
@@ -209,7 +159,7 @@ public class Database {
 			}
 			
 			//file for metadata
-			FileOutputStream out = this.getFileOutputStream(tableSchema.getTableName(), true);
+			FileOutputStream out = new FileOutputStream(tableSchema.getTableName(), true);
 			FileChannel channel = out.getChannel();
 			
 			//Get attributes names, types and if they are keys
@@ -250,71 +200,7 @@ public class Database {
 		}
 	}
 	
-	////
-	//Utilities
-	////
 	
-	/**
-	 * Read an array of String and turns it into a boolean array
-	 * @param array of String representing booleans
-	 * @return an array of boolean
-	 * @throws Exception
-	 */
-	private boolean[] getBooleanArrayFromStringArray(String[] array) throws Exception{
-		boolean[] ret = new boolean[array.length];
-		for (int i = 0; i < array.length; i++){
-			if (array[i].equals("1")) { ret[i] = true; }
-			else if (array[i].equals("0")) { ret[i] = false; }
-			else { throw new Exception("The String " + array[i] + " doesn't represent a boolean"); } 
-		}
-		return ret;
-	}
-		
-	/**
-	 * Read an array of String and turns it into a SQLType array
-	 * @param array of String representing SQLType
-	 * @return an array of SQLTypes
-	 * @throws Exception
-	 */
-	private SQLType[] getSQLTypeArrayFromStringArray(String[] array) throws Exception{
-		SQLType[] ret = new SQLType[array.length];
-		for (int i = 0; i < array.length; i++){
-			ret[i] = this.getSQLTypeFromString(array[i]);
-		}
-		return ret;
-	}
-	
-	/**
-	 * Return a SQLType from a String
-	 * @param type represents a SQLType of the form SQLType.BaseType,SIZE
-	 * @return a new SQLType
-	 * @throws Exception
-	 */
-	private SQLType getSQLTypeFromString(String type) throws Exception{
-		String[] splitted = type.split(",");
-		Integer length = 0;
-		try {	
-			length = Integer.parseInt(splitted[1]);
-		} catch (Exception ex){
-			length = null;
-		}
-		
-		if (splitted[0].equals("Integer")){
-			return new SQLType(SQLType.BaseType.Integer, length);
-		} else if (splitted[0].equals("Char")){
-			return new SQLType(SQLType.BaseType.Char, length);
-		} else if (splitted[0].equals("Varchar")){
-			return new SQLType(SQLType.BaseType.Varchar, length);
-		} else if (splitted[0].equals("Date")){
-			return new SQLType(SQLType.BaseType.Date, length);
-		} else if (splitted[0].equals("Datetime")){
-			return new SQLType(SQLType.BaseType.Datetime, length);
-		} else if (splitted[0].equals("Boolean")){
-			return new SQLType(SQLType.BaseType.Boolean, length);
-		} else {
-			throw new Exception("The String "+type+" doesn't represent a SQLType");
-		}
-	}
 		
 	/**
 	 * Get a line from a file through a buffer
@@ -365,7 +251,7 @@ public class Database {
 	}
 	
 	/**
-	 * Get all tables schemas from database
+	 * Get all tables schemas from database -- Maybe to be removed
 	 * @return an array of TableSchema
 	 */
 	private TableSchema[] getTablesSchema(){
@@ -407,8 +293,8 @@ public class Database {
 			//copy bytes into arrays
 			buf.flip();
 			String[] attributesNames = this.getLine(buf);
-			SQLType[] attributesTypes = this.getSQLTypeArrayFromStringArray(this.getLine(buf));
-			boolean[] isKey = this.getBooleanArrayFromStringArray(this.getLine(buf));
+			SQLType[] attributesTypes = serializer.getSQLTypeArrayFromStringArray(this.getLine(buf));
+			boolean[] isKey = serializer.getBooleanArrayFromStringArray(this.getLine(buf));
 			buf.clear();
 			in.close();
 			
@@ -416,133 +302,5 @@ public class Database {
 		} else {
 			throw new Exception("File "+tableName+" doesn't exist.");
 		}
-	}
-	
-	/**
-	 * Create a new object of the class given by table name and written in ByteBuffer
-	 * @param data represents an object
-	 * @param tableName the type of the object
-	 * @return an object of type tableName.class
-	 */
-	private Object createObjectFromByteBufferAndTableName(ByteBuffer data, String tableName){
-		return null;
-	}
-	
-	/**
-	 * Create a new object of the class given by table name and written in byte array
-	 * @param data represents an object
-	 * @param tableName the type of the object
-	 * @return an object of type tableName.class
-	 */
-	private Object createObjectFromBytesArrayAndTableName(byte[] data, String tableName) throws Exception{
-		SQLType[] attributesTypes = this.getTableSchema(tableName).getAttributesTypes();
-		List<Object> attributes = new ArrayList<Object>();
-		for (int i = 0; i < attributesTypes.length; i++){
-			
-		}
-		return null;
-	}
-	
-	/**
-	 * Transform an object into a byte array to write into the database
-	 * @param data the object to transform
-	 * @return a byte array to write to database
-	 */
-	private byte[] getByteArrayFromObject(Object data, SQLType type) throws Exception{
-		byte[] ret = null;
-		if(type.type == BaseType.Integer){
-			ret = ByteBuffer.allocate(type.byteSizeOfType()).putInt((int) data).array();
-		} else if (type.type == BaseType.Boolean){
-			boolean dataB = (boolean) data;
-			ret = dataB ? "1".getBytes() : "0".getBytes();
-		} else if (type.type == BaseType.Char){
-			ret = ByteBuffer.allocate(type.byteSizeOfType()).putChar((char) data).array();
-		} else if (type.type == BaseType.Varchar || type.type == BaseType.Date || type.type == BaseType.Datetime){
-			ret = ((String)data).getBytes();
-		} else {
-			throw new Exception("Not accepted SQLType");
-		}
-		return ret;
-	}
-	
-	/**
-	 * Read from memory
-	 */
-	private Object readFromData(int position, int size, String tableName) throws Exception{
-		FileInputStream in = this.getFileInputStream(tableName, false);
-		byte[] ret = new byte[size];
-		try{
-			in.read(ret, position, size);
-		} catch (Exception ex){
-			System.err.println("Unable to read from data "+tableName);
-			throw ex;
-		}
-		return this.createObjectFromBytesArrayAndTableName(ret, tableName);
-	}
-	
-	/**
-	 * Write a given piece of data into the database. It doesn't check size!
-	 * @param data to be written
-	 * @param position the offset (take care of alignment!)
-	 * @return true if succeed, false otherwise
-	 */
-	private boolean writeToData(byte[] data, int position, String tableName) throws Exception{
-	    RandomAccessFile raf = this.getRandomAccesFile(tableName, "rw", false);
-		try{
-			FileChannel channel = raf.getChannel();
-			MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
-			buf.put(data);
-			raf.close();
-			return true;
-		} catch (Exception ex){
-			System.err.println("Unable to write data to "+tableName);
-			ex.printStackTrace();
-			raf.close();
-			return false;
-		}
-	}
-	
-	/**
-	 * Get a new file for random access to read from and write to the database
-	 * @param mode the mode to write (see RandomAccessFile constructor)
-	 */
-	private RandomAccessFile getRandomAccesFile(String tableName, String mode, boolean metaData) throws Exception{
-		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
-		
-		//Check if table exist
-		File f = new File(filename);
-		if(!f.exists()) 
-			throw new Exception("Table doesn't exist.");
-		return new RandomAccessFile(filename, mode);
-	}
-	
-
-	/**
-	 * Get a new file to read from the database
-	 */
-	private FileInputStream getFileInputStream(String tableName, boolean metaData) throws Exception{
-		
-		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
-		
-		//Check if table exist
-		File f = new File(filename);
-		if(!f.exists()) 
-			throw new Exception("Table doesn't exist.");
-		return new FileInputStream(filename);
-	}
-	
-	/**
-	 * Get a new file to write from the database
-	 */
-	private FileOutputStream getFileOutputStream(String tableName, boolean metaData) throws Exception{
-		
-		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
-		
-		
-		//Check if table exist
-		File f = new File(filename);
-		if(!f.exists()) 
-			throw new Exception("Table doesn't exist.");
-		return new FileOutputStream(filename, true);
 	}
 }

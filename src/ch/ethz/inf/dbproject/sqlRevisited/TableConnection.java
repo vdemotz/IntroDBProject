@@ -1,7 +1,11 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class TableConnection {
@@ -9,6 +13,10 @@ public class TableConnection {
 	private TableSchema tableSchema;
 	private RandomAccessFile raf;
 	private FileChannel channel;
+	private String DB_PATH;
+	private String EXT_META_DATA;
+	private String EXT_DATA;
+	private Serializer serializer;
 	
 	public TableConnection(){
 		
@@ -84,5 +92,90 @@ public class TableConnection {
 	 */
 	public boolean update(ByteBuffer object){
 		return false;
+	}
+	
+	////
+	//
+	////
+	
+	/**
+	 * Read from memory
+	 */
+	private Object readFromData(int position, int size, String tableName) throws Exception{
+		FileInputStream in = this.getFileInputStream(tableName, false);
+		byte[] ret = new byte[size];
+		try{
+			in.read(ret, position, size);
+		} catch (Exception ex){
+			System.err.println("Unable to read from data "+tableName);
+			throw ex;
+		}
+		return serializer.createObjectFromBytesArrayAndTableName(ret, tableSchema.getAttributesTypes());
+	}
+	
+	/**
+	 * Write a given piece of data into the database. It doesn't check size!
+	 * @param data to be written
+	 * @param position the offset (take care of alignment!)
+	 * @return true if succeed, false otherwise
+	 */
+	private boolean writeToData(byte[] data, int position, String tableName) throws Exception{
+	    RandomAccessFile raf = this.getRandomAccesFile(tableName, "rw", false);
+		try{
+			FileChannel channel = raf.getChannel();
+			MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
+			buf.put(data);
+			raf.close();
+			return true;
+		} catch (Exception ex){
+			System.err.println("Unable to write data to "+tableName);
+			ex.printStackTrace();
+			raf.close();
+			return false;
+		}
+	}
+	
+	/**
+	 * Get a new file for random access to read from and write to the database
+	 * @param mode the mode to write (see RandomAccessFile constructor)
+	 */
+	private RandomAccessFile getRandomAccesFile(String tableName, String mode, boolean metaData) throws Exception{
+		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
+		
+		//Check if table exist
+		File f = new File(filename);
+		if(!f.exists()) 
+			throw new Exception("Table doesn't exist.");
+		return new RandomAccessFile(filename, mode);
+	}
+	
+
+	/**
+	 * Get a new file to read from the database
+	 */
+	private FileInputStream getFileInputStream(String tableName, boolean metaData) throws Exception{
+		
+		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
+		
+		//Check if table exist
+		File f = new File(filename);
+		if(!f.exists()) 
+			throw new Exception("Table doesn't exist.");
+		return new FileInputStream(filename);
+	}
+	
+	/**
+	 * Get a new file to write from the database
+	 */
+	private FileOutputStream getFileOutputStream(String tableName, boolean metaData) throws Exception{
+		
+		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
+		
+		
+		//Check if table exist
+		File f = new File(filename);
+		if(!f.exists()) 
+			throw new Exception("Table doesn't exist.");
+		return new FileOutputStream(filename, true);
 	}
 }
