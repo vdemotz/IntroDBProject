@@ -43,7 +43,7 @@ public class Connection {
 	 * @param tableName the name of the table
 	 * @return an object TableConnection which represents a table
 	 */
-	public TableConnection getTable(String tableName) throws Exception{
-		return this.db.getTableConnection(tableName);
+	private TableConnection getTable(String tableName) throws Exception{
+		return db.getTableConnection(tableName);
 	}
 }
