@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
@@ -10,6 +11,9 @@ import java.nio.channels.FileChannel;
 
 public class TableConnection {
 
+	////
+	//Fields
+	////
 	private TableSchema tableSchema;
 	private RandomAccessFile raf;
 	private FileChannel channel;
@@ -18,9 +22,35 @@ public class TableConnection {
 	private String EXT_DATA;
 	private Serializer serializer;
 	
-	public TableConnection(){
-		
+	////
+	//Constructor, finalize
+	////
+	/**
+	 * Create a new direct connection to a table
+	 * @param ts The table schema of the table which represents every meta data
+	 * @param db_path DB specific : path to folder of database
+	 * @param ext_meta_data DB specific : extension of meta data files
+	 * @param ext_data DB specific : extension of data files
+	 */
+	public TableConnection(TableSchema ts, String db_path, String ext_meta_data, String ext_data) throws Exception{
+		this.tableSchema = ts;
+		this.DB_PATH = db_path;
+		this.EXT_META_DATA = ext_meta_data;
+		this.EXT_DATA = ext_data;
+		this.raf = this.getRandomAccesFile(this.tableSchema.getTableName(), "rw", false);
+		this.channel = raf.getChannel();
 	}
+	
+	@Override
+	protected void finalize() throws Throwable{
+		channel.close();
+		raf.close();
+		super.finalize();
+	}
+	
+	////
+	//Public methods
+	////
 	
 	/**
 	 * Get the TableSchema for this table
@@ -95,22 +125,14 @@ public class TableConnection {
 	}
 	
 	////
-	//
+	//Read / write related methods
 	////
 	
 	/**
-	 * Read from memory
+	 * Read length bytes from table at given position into the destination ByteBuffer
 	 */
-	private Object readFromData(int position, int size, String tableName) throws Exception{
-		FileInputStream in = this.getFileInputStream(tableName, false);
-		byte[] ret = new byte[size];
-		try{
-			in.read(ret, position, size);
-		} catch (Exception ex){
-			System.err.println("Unable to read from data "+tableName);
-			throw ex;
-		}
-		return serializer.createObjectFromBytesArrayAndTableName(ret, tableSchema.getAttributesTypes());
+	private boolean readFromData(int position, int length, ByteBuffer destination) throws Exception{
+		return false;
 	}
 	
 	/**
@@ -120,21 +142,20 @@ public class TableConnection {
 	 * @return true if succeed, false otherwise
 	 */
 	private boolean writeToData(byte[] data, int position, String tableName) throws Exception{
-	    RandomAccessFile raf = this.getRandomAccesFile(tableName, "rw", false);
 		try{
-			FileChannel channel = raf.getChannel();
-			MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
+			MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
 			buf.put(data);
-			raf.close();
 			return true;
 		} catch (Exception ex){
 			System.err.println("Unable to write data to "+tableName);
 			ex.printStackTrace();
-			raf.close();
 			return false;
 		}
 	}
 	
+	////
+	//Files related methods
+	////
 	/**
 	 * Get a new file for random access to read from and write to the database
 	 * @param mode the mode to write (see RandomAccessFile constructor)
@@ -142,40 +163,10 @@ public class TableConnection {
 	private RandomAccessFile getRandomAccesFile(String tableName, String mode, boolean metaData) throws Exception{
 		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
 		
-		//Check if table exist
+		//Check if table exists
 		File f = new File(filename);
 		if(!f.exists()) 
 			throw new Exception("Table doesn't exist.");
 		return new RandomAccessFile(filename, mode);
-	}
-	
-
-	/**
-	 * Get a new file to read from the database
-	 */
-	private FileInputStream getFileInputStream(String tableName, boolean metaData) throws Exception{
-		
-		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
-		
-		//Check if table exist
-		File f = new File(filename);
-		if(!f.exists()) 
-			throw new Exception("Table doesn't exist.");
-		return new FileInputStream(filename);
-	}
-	
-	/**
-	 * Get a new file to write from the database
-	 */
-	private FileOutputStream getFileOutputStream(String tableName, boolean metaData) throws Exception{
-		
-		String filename = metaData ? DB_PATH + tableName + EXT_META_DATA : DB_PATH + tableName + EXT_DATA;
-		
-		
-		//Check if table exist
-		File f = new File(filename);
-		if(!f.exists()) 
-			throw new Exception("Table doesn't exist.");
-		return new FileOutputStream(filename, true);
 	}
 }

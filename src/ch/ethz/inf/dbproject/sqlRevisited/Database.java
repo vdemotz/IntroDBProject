@@ -4,16 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-
-import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 
 public class Database {
 
@@ -67,13 +62,16 @@ public class Database {
 	////
 	//Public methods, meant accessed through a (singleton) connection
 	////
-	
 	public TableSchema getTableSchema(String tableName) throws Exception{
 		for (int i = 0; i < tablesSchema.length; i++){
 			if (tablesSchema[i].getTableName().equals(tableName))
 				return tablesSchema[i];
 		}
 		return null;
+	}
+	
+	public TableConnection getTableConnection(String tableName) throws Exception{
+		return new TableConnection(this.getTableSchema(tableName), this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA);
 	}
 	
 	////

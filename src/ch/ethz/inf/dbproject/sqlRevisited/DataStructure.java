@@ -5,15 +5,15 @@ public class DataStructure {
 	private String name = "To be updated";
 	private int BLOCK_SIZE = -1;
 	private int ELEMENT_SIZE = -1;
+	static private DataStructure instance;
 	
-	
-	/**
-	 * Create a new data structure to insert, delete, get and update elements
-	 */
-	public DataStructure(){
+	static public DataStructure getDataStructure(){
+		if (instance != null)
+			return instance;
+		instance = new DataStructure();
+		return instance;
+	}	
+	private DataStructure(){
 		
 	}
-	
-	
-
 }
