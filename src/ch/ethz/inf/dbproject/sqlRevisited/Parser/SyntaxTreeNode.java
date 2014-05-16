@@ -37,7 +37,7 @@ public class SyntaxTreeNode {
 	 * 								or if an unexpected node structure is encountered
 	 */
 	public SyntaxTreeNode instanciateWithSchemata(List<TableSchema> schemata) throws SQLSemanticException {
-		return fold(new InstanciateSchemaBase(schemata), new InstanciateSchemaCross(), new InstanciateSchemaGroup(), new InstanciateSchemaDistinct(),
+		return fold(new InstanciateSchemaBase(schemata), new InstanciateSchemaCross(), new InstanciateSchemaJoin(), new InstanciateSchemaGroup(), new InstanciateSchemaDistinct(),
 					new InstanciateSchemaProjectAggregate(), new InstanciateSchemaRename(), new InstanciateSchemaSelection(), new InstanciateSchemaSort());
 	}
 	
@@ -49,7 +49,7 @@ public class SyntaxTreeNode {
 	 */
 	public SyntaxTreeNode rewrite() throws SQLSemanticException
 	{
-		return fold(new RewriteBase(), new RewriteCross(), new RewriteGroup(), new RewriteDistinct(),
+		return fold(new RewriteBase(), new RewriteCross(), new RewriteJoin(), new RewriteGroup(), new RewriteDistinct(),
 					new RewriteProjectAndAggregate(), new RewriteRename(), new RewriteSelection(), new RewriteSort());
 	}
 	
@@ -66,7 +66,6 @@ public class SyntaxTreeNode {
 			
 			SyntaxTreeSelectionOperatorNode oldRoot = currentNode.copyWithChild(childResult);
 			SyntaxTreeNode newRoot = pushDown(oldRoot);//push down selection as far as possible
-			//TODO: if possible, make join operator
 			return newRoot;
 		}
 		
@@ -76,21 +75,24 @@ public class SyntaxTreeNode {
 				SyntaxTreeSelectionOperatorNode nodePointingToGrandchild = node.copyWithChild(child.getChild());
 				return child.copyWithChild(pushDown(nodePointingToGrandchild));//recursively push down
 				
-			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class)) {//Case cross : push down left or right, if possible
-				SyntaxTreeCrossNode child = (SyntaxTreeCrossNode)node.getChild();
+			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class) || node.getChild().getClass().equals(SyntaxTreeJoinNode.class)) {//Case cross : push down left or right, if possible
+				SyntaxTreeBinaryNode child = (SyntaxTreeBinaryNode)node.getChild();
 				
 				boolean leftChildHasLeftAttribute = false;
 				boolean leftChildHasRightAttribute = false;
 				boolean rightChildHasRightAttribute = false;
 				boolean rightChildHasLeftAttribute = false;
 				
+				Pair<String, String> leftFragments = null;
+				Pair<String, String> rightFragments = null;
+				
 				if (node.getLeftValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.QID || node.getLeftValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.UID) {
-					Pair<String, String> leftFragments = node.getLeftValue().generatingToken.getFragmentsForIdentifier();
+					leftFragments = node.getLeftValue().generatingToken.getFragmentsForIdentifier();
 					leftChildHasLeftAttribute = child.getLeft().schema.hasAttribute(leftFragments);
 					rightChildHasLeftAttribute = child.getRight().schema.hasAttribute(leftFragments);
 				}
 				if (node.getRightValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.QID || node.getRightValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.UID) {
-					Pair<String, String> rightFragments = node.getRightValue().generatingToken.getFragmentsForIdentifier();	
+					rightFragments = node.getRightValue().generatingToken.getFragmentsForIdentifier();	
 					leftChildHasRightAttribute = child.getLeft().schema.hasAttribute(rightFragments);
 					rightChildHasRightAttribute = child.getRight().schema.hasAttribute(rightFragments);	
 				}
@@ -103,13 +105,31 @@ public class SyntaxTreeNode {
 						SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
 						return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
 						
+				} else if (node.getChild().getClass().equals(SyntaxTreeCrossNode.class) && node.getOperator().generatingToken.tokenClass == SQLToken.SQLTokenClass.EQUAL) {//Sub-case Join
+					if (leftChildHasRightAttribute && rightChildHasLeftAttribute) {
+						return new SyntaxTreeJoinNode(node.schema, child.getLeft(), child.getRight(), rightFragments, leftFragments);
+						
+					} else if (leftChildHasLeftAttribute && rightChildHasRightAttribute) {
+						return new SyntaxTreeJoinNode(node.schema, child.getLeft(), child.getRight(), leftFragments, rightFragments);
+						
+					} else {
+						throw new SQLSemanticException(SQLSemanticException.Type.InternalError);
+					}
+					
 				} else {//Sub-Case No Push : don't push
 					return node;
-				}//TODO: Sub-case Join : check if token of class EQUAL, make a join (maybe check if ids refer to valid attributes at all)
+				}
 				
 			} else {//Case else : don't push
 				return node;
 			}
+		}
+	}
+	
+	private class RewriteJoin implements TransformBinary<SyntaxTreeJoinNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeJoinNode currentNode, SyntaxTreeNode leftChildResult, SyntaxTreeNode rightChildResult) throws SQLSemanticException {
+			return currentNode.copyWithChildren(leftChildResult, rightChildResult);
 		}
 	}
 	
@@ -187,6 +207,7 @@ public class SyntaxTreeNode {
 	 */
 	protected <T> T fold(TransformBase<SyntaxTreeBaseRelationNode, T> base,
 					  TransformBinary<SyntaxTreeCrossNode, T> cross,
+					  TransformBinary<SyntaxTreeJoinNode, T> join,
 					  TransformUnary<SyntaxTreeGroupByNode, T> group,
 					  TransformUnary<SyntaxTreeNodeDistinct, T> distinct,
 					  TransformUnary<SyntaxTreeProjectAndAggregateOperatorNode, T> projectAggregate,
@@ -198,7 +219,7 @@ public class SyntaxTreeNode {
 		ArrayList<T> childResults = new ArrayList<T>();
 		for (SyntaxTreeNode child : children) {
 			if (!child.getClass().equals(SyntaxTreeListNode.class) && !child.getClass().equals(SyntaxTreeIdentifierNode.class)) {//do not fold over list nodes, identifiers
-				childResults.add (child.fold(base, cross, group, distinct, projectAggregate, rename, selection, sort));
+				childResults.add (child.fold(base, cross, join, group, distinct, projectAggregate, rename, selection, sort));
 			}
 		}
 		
@@ -226,6 +247,9 @@ public class SyntaxTreeNode {
 			
 		} else if (this.getClass().equals(SyntaxTreeSelectionOperatorNode.class)){
 			result = selection.transform((SyntaxTreeSelectionOperatorNode) this, childResults.get(0));
+			
+		} else if (this.getClass().equals(SyntaxTreeJoinNode.class)){
+			result = join.transform((SyntaxTreeJoinNode) this, childResults.get(0), childResults.get(1));
 			
 		} else {
 			throw new SQLSemanticException(SQLSemanticException.Type.InternalError, this.toString());
@@ -255,6 +279,14 @@ public class SyntaxTreeNode {
 			TableSchema schema = schemata.get(currentNode.name);
 			if (schema == null) throw new SQLSemanticException(SQLSemanticException.Type.NoSuchTableException, currentNode.name);
 			return new SyntaxTreeBaseRelationNode(schema);
+		}
+	}
+	
+	private class InstanciateSchemaJoin implements TransformBinary<SyntaxTreeJoinNode, SyntaxTreeNode>
+	{
+		@Override
+		public SyntaxTreeJoinNode transform(SyntaxTreeJoinNode currentNode, SyntaxTreeNode leftChildResult, SyntaxTreeNode rightChildResult) {
+			return new SyntaxTreeJoinNode(leftChildResult.schema.append(rightChildResult.schema), leftChildResult, rightChildResult, currentNode.leftIdentifier, currentNode.rightIdentifier);
 		}
 	}
 	
