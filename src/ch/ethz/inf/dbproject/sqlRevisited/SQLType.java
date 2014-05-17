@@ -5,6 +5,9 @@ public class SQLType {
 	//Number of characters of Date and Datetime
 	public int CHAR_DATE = 10;
 	public int CHAR_DATETIME = 19;
+	public int BYTE_SIZE = 8;
+	public int CHARACTER_BYTE_SIZE = 2;
+	public int INT_BYTE_SIZE = 4;
 	
 	
 	public enum BaseType {
@@ -48,17 +51,17 @@ public class SQLType {
 	 */
 	public int byteSizeOfType(){
 		if(this.type == BaseType.Integer){
-			return (Integer.SIZE);
+			return (INT_BYTE_SIZE);
 		} else if (this.type == BaseType.Boolean){
-			return (Character.SIZE);
+			return (CHARACTER_BYTE_SIZE);
 		} else if (this.type == BaseType.Char){
-			return (Character.SIZE);
+			return (CHARACTER_BYTE_SIZE);
 		} else if (this.type == BaseType.Varchar){
-			return (Character.SIZE*this.size);
+			return (CHARACTER_BYTE_SIZE*this.size+INT_BYTE_SIZE);
 		} else if (this.type == BaseType.Date){
-			return (Character.SIZE*CHAR_DATE);
+			return (CHARACTER_BYTE_SIZE*CHAR_DATE);
 		} else if (this.type == BaseType.Datetime){
-			return (Character.SIZE*CHAR_DATETIME);
+			return (CHARACTER_BYTE_SIZE*CHAR_DATETIME);
 		} 
 		return -1;
 	}

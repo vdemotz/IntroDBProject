@@ -12,6 +12,7 @@ public class StructureConnection extends DataConnection{
 	 */
 	private final int ELEMENT_SIZE;	
 	private final int KEYS_SIZE;
+	private int OFFSET_META_DATA = 1024;
 	private List<Pair<byte[], Integer>> elementsPositions;
 	
 	public StructureConnection(TableSchema tableSchema, String dbPath, String extMetaData, String extData) throws Exception{

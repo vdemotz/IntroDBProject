@@ -85,8 +85,8 @@ public class TableConnection extends DataConnection {
 	 * @param location where to write tuples
 	 * @return true if operation succeed (write a tuple), false otherwise
 	 */
-	public boolean min(ByteBuffer location){
-		return false;
+	public boolean min(byte[] location) throws Exception{
+		return this.readFromData(0, this.getTableSchema().getSizeOfEntry(), location);
 	}
 	
 	/**
@@ -107,13 +107,8 @@ public class TableConnection extends DataConnection {
 	public boolean insert(ByteBuffer object) {
 		try{
 			int position = structureConnection.insertElement(object);
-			//byte[] data = new byte[this.tableSchema.getSizeOfEntry()];
-			byte[] data = new byte[640];
-			System.out.println(object.toString());
-			System.out.println(data.length);
+			byte[] data = new byte[this.tableSchema.getSizeOfEntry()];
 			object.get(data);
-			for(int i = 0; i < data.length; i++)
-				System.out.print((char)data[i]);
 			this.writeToData(data, position);
 			return true;
 		} catch (Exception ex){

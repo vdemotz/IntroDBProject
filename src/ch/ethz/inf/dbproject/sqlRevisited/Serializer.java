@@ -126,14 +126,31 @@ public class Serializer {
 		
 		/**
 		 * Get a String from a ByteBuffer
-		 * @param data a byte[] which represents a String
+		 * @param data a ByteBuffer which represents a String
 		 * @param length number of character to read
 		 * @return a string
 		 */
 		public String getStringFromByteBuffer(ByteBuffer data, int length){
 			String ret = "";
-			for (int i = 0; i < length; i++)
-				ret = ret+data.getChar();
+			for (int i = 0; i < length; i++){
+				char a = data.getChar();
+				System.out.print(i+a);
+				ret = ret+a;
+			}
+			return ret;
+		}
+		
+		/**
+		 * Get a String from a byte array. (Represents Varchar) The four first entries represent an integer which is the length of the string.
+		 * @param data a byte[] which represents a String
+		 * @return a string
+		 */
+		public String getStringFromByteArray(byte[] data){
+			String ret = "";
+			int length = (int)data[3]+(int)data[2]*16;
+			for (int i = 4; i < length+4; i++){
+				ret = ret+(char)data[i];
+			}
 			return ret;
 		}
 }

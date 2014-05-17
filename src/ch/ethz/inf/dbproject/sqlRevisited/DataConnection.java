@@ -42,8 +42,16 @@ public abstract class DataConnection {
 	/**
 	 * Read length bytes from table at given position into the destination ByteBuffer
 	 */
-	protected boolean readFromData(int position, int length, ByteBuffer destination) throws Exception{
-		return false;
+	protected boolean readFromData(int position, int length, byte[] destination) throws Exception{
+		try{
+			MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, length);
+			buf.get(destination);
+			return true;
+		} catch (Exception ex){
+			System.err.println("Unable to read data from "+this.tableSchema.getTableName());
+			ex.printStackTrace();
+			return false;
+		}
 	}
 	
 	/**
