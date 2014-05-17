@@ -2,17 +2,27 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.nio.*;
 
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.ImmutableArray;
+
 /**
  * The results of an SQLOperator is a list of tuples. The SQLOperator provides an iterator interface over these tuples.
- * All tuples share some array of types, an array of attribute names and attribute sizes. Each tuple is represented as a sequence of characters.
- * This means that the size of an attribute of different tuples may not vary (for now).
+ * All tuples share a TableSchema
  */
-public interface SQLOperator {
+public abstract class SQLOperator {
+	
+	public final TableSchema schema;
+	protected final ImmutableArray<SQLOperator> children;
+	
+	public SQLOperator(TableSchema schema, SQLOperator ... children)
+	{
+		this.schema = schema;
+		this.children = new ImmutableArray<SQLOperator>(children);
+	}
 	
 	/**
 	 * @return true if there is another result, false otherwise
 	 */
-	boolean hasNext();
+	abstract boolean hasNext();
 	
 	/**
 	 * Advance the iterator to the next position and write the next tuple into the resultBuffer.
@@ -21,36 +31,23 @@ public interface SQLOperator {
 	 * @precondition hasNext()==true
 	 * @result the sizes of the attributes
 	 */
-	void getNext(CharBuffer resultBuffer);
+	abstract void getNext(ByteBuffer resultBuffer);
 	
 	/**
 	 * Resets the iterator to point just before the first tuple.
 	 */
-	void rewind();
+	void rewind() {
+		for (SQLOperator operator : children) {
+			operator.rewind();
+		}
+		internalRewind();
+	}
 	
 	/**
-	 * @return the sum of attribute sizes
+	 * Subclasses can override this method to perform their local rewinding
+	 * It is called just after the rewind call to the children
 	 */
-	int getTupleSize();
-	
-	/**
-	 * @return an array of number of characters per attribute
-	 */
-	int[] getAttributeSizes();
-	
-	/**
-	 * @return an array of types of the resulting attributes.
-	 */
-	SQLType[] getAttributeTypes();
-	
-	/**
-	 * @return an array of names for the resulting attributes
-	 */
-	String[] getAttributeNames();
-	
-	/**
-	 * The result is always the same as the length of any of the attribute arrays
-	 * @return the number of attributes the results have
-	 */
-	int getNumberOfAttributes();
+	protected void internalRewind()
+	{
+	}
 }

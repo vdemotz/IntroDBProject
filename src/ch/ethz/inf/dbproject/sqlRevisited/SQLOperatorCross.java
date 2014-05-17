@@ -1,31 +1,19 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 import java.util.Arrays;
 
 public class SQLOperatorCross  extends SQLOperatorBinary {
 
-	final SQLType[] attributeTypes;
-	final String[] attributeNames;
-	final int[] attributeSizes;
-	final int numberOfAttributes;
-	final int tupleSize;
-	final CharBuffer currentLefthandTuple;
+	private final ByteBuffer currentLefthandTuple;
 	
-	public SQLOperatorCross(SQLOperator left, SQLOperator right) {
-		setChildren(left, right);
-		
-		numberOfAttributes = left.getNumberOfAttributes()+right.getNumberOfAttributes();
-		
-		attributeTypes = concatArrays(left.getAttributeTypes(), right.getAttributeTypes());
-		attributeNames = concatArrays(left.getAttributeNames(), right.getAttributeNames());
-		attributeSizes = concatArrays(left.getAttributeSizes(), right.getAttributeSizes());
-		
-		tupleSize = left.getTupleSize()+right.getTupleSize();
+	public SQLOperatorCross(TableSchema schema, SQLOperator left, SQLOperator right) {
+		super(schema, left, right);
 		
 		if (left.hasNext()) {
-			currentLefthandTuple = CharBuffer.wrap(new char[getLeftChild().getTupleSize()]);
+			currentLefthandTuple = ByteBuffer.wrap(new byte[getLeftChild().schema.getSizeOfKeys()]);
 		} else {
 			currentLefthandTuple = null;//indicates the left relation is empty
 		}
@@ -45,7 +33,7 @@ public class SQLOperatorCross  extends SQLOperatorBinary {
 	}
 
 	@Override
-	public void getNext(CharBuffer resultBuffer) {
+	public void getNext(ByteBuffer resultBuffer) {
 		assert (hasNext());
 		
 		if (!getRightChild().hasNext()) {//if the right relation is exhausted, go to the next left tuple and rewind the right relation
@@ -55,31 +43,6 @@ public class SQLOperatorCross  extends SQLOperatorBinary {
 		
 		resultBuffer.put(currentLefthandTuple.array());
 		getRightChild().getNext(resultBuffer);
-	}
-
-	@Override
-	public SQLType[] getAttributeTypes() {
-		return attributeTypes;
-	}
-
-	@Override
-	public String[] getAttributeNames() {
-		return attributeNames;
-	}
-
-	@Override
-	public int getNumberOfAttributes() {
-		return numberOfAttributes;
-	}
-
-	@Override
-	public int[] getAttributeSizes() {
-		return attributeSizes;
-	}
-	
-	@Override
-	public int getTupleSize() {
-		return tupleSize;
 	}
 	
 	////
@@ -97,26 +60,4 @@ public class SQLOperatorCross  extends SQLOperatorBinary {
 			getLeftChild().getNext(currentLefthandTuple);
 		}
 	}
-	
-	////
-	//HELPERS
-	////
-	
-	private static <T> T[] concatArrays(T[] left, T[] right)
-	{
-		T[] result = Arrays.copyOf(left, left.length+right.length);
-		for (int i=left.length; i < left.length+right.length; i++) {
-			result[i] = right[i];
-		}
-		return result;
-	}
-	
-	private int[] concatArrays(int[] left, int[] right) {
-		int[] result = Arrays.copyOf(left, left.length+right.length);
-		for (int i=left.length; i < left.length+right.length; i++) {
-			result[i] = right[i];
-		}
-		return result;
-	}
-
 }

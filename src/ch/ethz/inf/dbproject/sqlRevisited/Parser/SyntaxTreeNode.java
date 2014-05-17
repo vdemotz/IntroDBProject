@@ -79,7 +79,7 @@ public class SyntaxTreeNode {
 				SyntaxTreeSelectionOperatorNode nodePointingToGrandchild = node.copyWithChild(child.getChild());
 				return child.copyWithChild(pushDown(nodePointingToGrandchild));//recursively push down
 				
-			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class) || node.getChild().getClass().equals(SyntaxTreeJoinNode.class)) {//Case cross : push down left or right, if possible
+			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class) || node.getChild().getClass().equals(SyntaxTreeJoinNode.class)) {//Case cross or join
 				SyntaxTreeBinaryNode child = (SyntaxTreeBinaryNode)node.getChild();
 				
 				boolean leftChildHasLeftAttribute = false;
@@ -109,7 +109,7 @@ public class SyntaxTreeNode {
 						SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
 						return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
 						
-				} else if (node.getChild().getClass().equals(SyntaxTreeCrossNode.class) && node.getOperator().generatingToken.tokenClass == SQLToken.SQLTokenClass.EQUAL) {//Sub-case Join
+				} else if (node.getChild().getClass().equals(SyntaxTreeCrossNode.class) && node.getOperator().generatingToken.tokenClass == SQLToken.SQLTokenClass.EQUAL) {//Sub-case create Join
 					if (leftChildHasRightAttribute && rightChildHasLeftAttribute) {
 						return new SyntaxTreeJoinNode(node.schema, child.getLeft(), child.getRight(), rightFragments, leftFragments);
 						
