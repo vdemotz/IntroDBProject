@@ -10,7 +10,7 @@ public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
 	
 	SyntaxTreeNode getChild()
 	{
-		return children[0];
+		return children.get(0);
 	}
 	
 	String name;

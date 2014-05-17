@@ -80,6 +80,9 @@ public class SyntaxTreeNodeTest {
 				SyntaxTreeNode instanciatedTree = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));//infer schema for all nodes in the AST
 				SyntaxTreeNode rewrittenTree = instanciatedTree.rewrite();
 				
+				assertNotNull(instanciatedTree.schema);
+				assertNotNull(rewrittenTree);
+				assertNotNull(rewrittenTree.schema);
 				assertEquals(instanciatedTree.schema, rewrittenTree.instanciateWithSchemata(schemata.get(i)).schema);
 				
 				System.out.println(instanciatedTree);
