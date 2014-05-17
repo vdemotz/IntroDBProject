@@ -4,23 +4,19 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 
-	SyntaxTreeIdentifierNode getLeftValue()
-	{
+	SyntaxTreeIdentifierNode getLeftValue() {
 		return (SyntaxTreeIdentifierNode) children.get(0);
 	}
 	
-	SyntaxTreeIdentifierNode getRightValue()
-	{
+	SyntaxTreeIdentifierNode getRightValue() {
 		return (SyntaxTreeIdentifierNode) children.get(2);
 	}
 	
-	SyntaxTreeIdentifierNode getOperator()
-	{
+	SyntaxTreeIdentifierNode getOperator() {
 		return (SyntaxTreeIdentifierNode) children.get(1);
 	}
 	
-	SyntaxTreeNode getChild()
-	{
+	SyntaxTreeNode getChild() {
 		return children.get(3);
 	}
 	

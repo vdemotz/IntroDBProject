@@ -15,7 +15,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 public class SyntaxTreeNode {
 
 	public final TableSchema schema;//may be null, but if it isn't then all descendants have a non null schema
-	protected final ImmutableArray<SyntaxTreeNode> children;
+	protected final ImmutableArray<SyntaxTreeNode> children;//never null
 	
 	SyntaxTreeNode(TableSchema schema, SyntaxTreeNode...children) {
 		this.children = new ImmutableArray<SyntaxTreeNode>(children);
@@ -52,6 +52,10 @@ public class SyntaxTreeNode {
 		return fold(new RewriteBase(), new RewriteCross(), new RewriteJoin(), new RewriteGroup(), new RewriteDistinct(),
 					new RewriteProjectAndAggregate(), new RewriteRename(), new RewriteSelection(), new RewriteSort());
 	}
+	
+	////
+	//REWRITE IMPLEMENTATION
+	////
 	
 	private class RewriteSort implements TransformUnary<SyntaxTreeSortOperatorNode, SyntaxTreeNode> {
 		@Override
@@ -193,9 +197,9 @@ public class SyntaxTreeNode {
 	
 	/**
 	 * Fold operation over all non-list, non-identifier nodes of the subtree rooted at this node
-	 * It is strongly encouraged not to modify any of the nodes, but instead to create a new copy of the nodes
 	 * @param base
 	 * @param cross
+	 * @param join
 	 * @param group
 	 * @param distinct
 	 * @param projectAggregate

@@ -94,6 +94,8 @@ public class SQLParserTest {
 
 	private String[] testDeleteSucceeds = {deleteSuspectFromCaseQuery};
 	
+	SQLLexer lex = new SQLLexer();
+	SQLParser parser = new SQLParser();
 	
 	@Test
 	public void testInserts() {
@@ -120,8 +122,6 @@ public class SQLParserTest {
 	}
 	
 	private void testSucceedsParse(String[] tests) {
-		SQLLexer lex = new SQLLexer();
-		SQLParser parser = new SQLParser();
 		SQLTokenStream tokens;
 		int parsedUntil;
 		
@@ -130,7 +130,7 @@ public class SQLParserTest {
 			try {
 				assertNotNull(parser.parse(tokens));
 				//System.out.println(tokens);
-				assertNotNull(parser.parse(tokens));
+				System.out.println(parser.parse(tokens).dynamicChildren.get(0));
 				System.out.println(tokens);
 			} catch (SQLParseException e) {
 				System.out.println(tokens);
@@ -142,8 +142,6 @@ public class SQLParserTest {
 	}
 	
 	private void testFailsParse(String[] tests) {
-		SQLLexer lex = new SQLLexer();
-		SQLParser parser = new SQLParser();
 		SQLTokenStream tokens;
 		int parsedUntil;
 		

@@ -8,13 +8,12 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
 public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
 	
-	SyntaxTreeNode getChild()
-	{
+	public final String name;
+	
+	SyntaxTreeNode getChild() {
 		return children.get(0);
 	}
-	
-	String name;
-	
+
 	SyntaxTreeRenameTableNode(SyntaxTreeNode table, String newName) {
 		super(table);
 		this.name = newName;
