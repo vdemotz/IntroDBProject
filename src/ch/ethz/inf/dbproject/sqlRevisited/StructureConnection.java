@@ -33,11 +33,36 @@ public class StructureConnection extends DataConnection{
 		this.elementsPositions = this.instantiateElementsPositions();
 	}
 	
+	@Override
+	protected void finalize() throws Throwable{
+		channel.close();
+		raf.close();
+		super.finalize();
+	}
+	
 	/**
-	 * Get all positions where objects are matched by given keys.
+	 * Get tuple matched by keys
 	 */
-	public List<Integer> getPositionsForKeys(ByteBuffer keys, int numberKeys){
-		return null;
+	public int getPositionsForKeys(ByteBuffer keys) throws Exception{
+		for (int i = 0; i < elementsPositions.size(); i++){
+			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema));
+				return elementsPositions.get(i).second;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Get tuple matched by keys
+	 */
+	public int getPositionsNextForKeys(ByteBuffer keys) throws Exception{
+		for (int i = 0; i < elementsPositions.size(); i++){
+			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema));
+				if (i+1 < elementsPositions.size())
+					return elementsPositions.get(i+1).second;
+				else
+					break;
+		}
+		return -1;
 	}
 	
 	/**
@@ -53,7 +78,8 @@ public class StructureConnection extends DataConnection{
 	public int insertElement(ByteBuffer object) throws Exception{
 		int whereToWrite = (elementsPositions.size()+1)*this.ELEMENT_SIZE;
 		int position = this.getPositionAndInsert(object, whereToWrite);
-		this.shiftData(position, this.KEYS_SIZE);
+		System.out.println("Returned position : "+position);
+		this.shiftData(position, this.KEYS_SIZE+8);
 		this.writeToData(this.createKeysFromByteBufferAndPosition(object, whereToWrite).array(), position);
 		object.rewind();
 		return whereToWrite;
@@ -64,26 +90,35 @@ public class StructureConnection extends DataConnection{
 	////
 	
 	private ByteBuffer createKeysFromByteBufferAndPosition(ByteBuffer object, int positionToWrite){
-		ByteBuffer ret = ByteBuffer.allocate(this.KEYS_SIZE+4);
+		ByteBuffer ret = ByteBuffer.allocate(this.KEYS_SIZE+8);
 		ret.putInt(1);
-		for (int i = 0; i < this.KEYS_SIZE-4; i++){
+		for (int i = 0; i < this.KEYS_SIZE; i++){
 			ret.put(object.get());
 		}
 		ret.putInt(positionToWrite);
 		ret.rewind();
 		object.rewind();
+		System.out.println("Number bytes wrote : "+ret.remaining());
 		return ret;
 	}
 	
 	
 	
-	private void shiftData(int position, int numberBytes){
+	private void shiftData(int position, int numberBytes) throws IOException{
+		ByteBuffer buf = ByteBuffer.allocate(MAXIMAL_META_DATA_SIZE);
+		buf.rewind();
+		int a = channel.read(buf, position);
+		System.out.println("Bytes read : "+a);
+		buf.rewind();
+		System.out.println("Wrote at : "+(position+numberBytes));
+		a = channel.write(buf, position+numberBytes);
+		System.out.println("Bytes wrote : "+a);
 		return;
 	}
 	
 	private ByteBuffer getKeysFromByteBuffer(ByteBuffer object){
 		ByteBuffer ret = ByteBuffer.allocate(this.KEYS_SIZE);
-		for (int i = 0; i < this.KEYS_SIZE-4;i++)
+		for (int i = 0; i < this.KEYS_SIZE-8;i++)
 			ret.put(object.get());
 		ret.rewind();
 		object.rewind();
@@ -93,10 +128,15 @@ public class StructureConnection extends DataConnection{
 	private int getPositionAndInsert(ByteBuffer object, int whereToWrite) throws Exception{
 		int i = 0;
 		ByteBuffer keyToInsert = this.getKeysFromByteBuffer(object);
-		while((i < elementsPositions.size()) && serializer.compareKeys(keyToInsert, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))
-				i++;
-		elementsPositions.add(i, new Pair<byte[], Integer>(serializer.serialize(object, this.tableSchema), whereToWrite));
-		return 1024+i*this.KEYS_SIZE;
+		while((i < elementsPositions.size()) && !(serializer.compareKeys(keyToInsert, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))){
+			System.out.println("Enter loop search");	
+			i++;
+		}
+		elementsPositions.add(i, new Pair<byte[], Integer>(keyToInsert.array(), whereToWrite));
+		for (int k = 0; k < elementsPositions.size(); k++){
+			System.out.println("Fresh Key : "+serializer.getStringFromByteArray(elementsPositions.get(k).first));
+		}
+		return 1024+i*(this.KEYS_SIZE+8);
 	}
 	
 	private List<Pair<byte[], Integer>> instantiateElementsPositions() throws IOException{
@@ -106,9 +146,12 @@ public class StructureConnection extends DataConnection{
 		buf.get(bytes);
 		int i = 0;
 		while ((int)bytes[i+3] == 1){
-			System.out.print("I'm in!");
 			elementsPositions.add(new Pair<byte[], Integer>(Arrays.copyOfRange(bytes, i+4, i+4+this.KEYS_SIZE), i*this.ELEMENT_SIZE));
-			i += this.KEYS_SIZE;
+			i += this.KEYS_SIZE+8;
+			System.out.println("Keys at position "+i);
+		}
+		for (int k = 0; k < elementsPositions.size(); k++){
+			System.out.println("Key : "+serializer.getStringFromByteArray(elementsPositions.get(k).first));
 		}
 		return elementsPositions;
 	}

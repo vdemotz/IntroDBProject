@@ -18,7 +18,7 @@ public class DatabaseTest {
 		//this.testMetaDataCreation();
 		Database db = new Database();
 		this.testWriting(db);
-		this.testCreationDataStructure(db);
+		//this.testCreationDataStructure(db);
 	}
 	
 	public void testCreationDataStructure(Database db) throws Exception{
@@ -29,12 +29,11 @@ public class DatabaseTest {
 		Serializer serializer = new Serializer();
 		TableConnection tc = db.getTableConnection("User");
 		SQLType vc40 = new SQLType(SQLType.BaseType.Varchar, 40);
-		byte[] username = serializer.getByteArrayFromObject("vinvin", vc40);
+		byte[] username = serializer.getByteArrayFromObject("fc", vc40);
 		byte[] firstName = serializer.getByteArrayFromObject("Vincent", vc40);
 		byte[] lastName = serializer.getByteArrayFromObject("Demotz", vc40);
 		byte[] password = serializer.getByteArrayFromObject("Bla", vc40);
 		ByteBuffer buf = ByteBuffer.allocate(tc.getTableSchema().getSizeOfEntry());
-		System.out.println("Allocate : "+tc.getTableSchema().getSizeOfEntry());
 		buf.rewind();
 		buf.put(username);
 		buf.position(44);
@@ -43,22 +42,34 @@ public class DatabaseTest {
 		buf.put(lastName);
 		buf.position(132);
 		buf.put(password);
-		System.out.println(buf.toString());
+		//System.out.println(buf.toString());
 		buf.rewind();
 		tc.insert(buf);
 		
+		byte[] usernameKey = serializer.getByteArrayFromObject("kinvin", vc40);
+		ByteBuffer bufKey = ByteBuffer.allocate(tc.getTableSchema().getSizeOfKeys());
+		bufKey.put(usernameKey);
+		
 		byte[] dataRead = new byte[tc.getTableSchema().getSizeOfEntry()];
+		byte[] dataReadSucc = new byte[tc.getTableSchema().getSizeOfEntry()];
 		if (tc.min(dataRead)){
-			System.out.println("That's good beginning");
+			/*System.out.println("That's good beginning");
 			System.out.println("With size for first entry "+(int)dataRead[0]+(int)dataRead[1]+(int)dataRead[2]+(int)dataRead[3]);
 			System.out.println("Even better, second entry size : "+(int)dataRead[47]);
 			System.out.println("Even better, third entry size : "+(int)dataRead[91]);
-			System.out.println("Even better, fourth entry size : "+(int)dataRead[135]);
-			for (int i = 4; i < dataRead.length; i++){
+			System.out.println("Even better, fourth entry size : "+(int)dataRead[135]);*/
+			/*for (int i = 4; i < dataRead.length; i++){
 				System.out.print((char)dataRead[i]);
-			}
+			}*/
 			System.out.println("\r\nAnd now through serializer : ");
 			System.out.println(serializer.getStringFromByteArray(dataRead)+serializer.getStringFromByteArray(dataRead).length());
+			ByteBuffer key = ByteBuffer.wrap(usernameKey);
+			key.rewind();
+			ByteBuffer toRead = ByteBuffer.wrap(dataReadSucc);
+			toRead.rewind();
+			tc.succ(key, toRead);
+			System.out.println("\r\nAnd now through serializer : ");
+			System.out.println(serializer.getStringFromByteArray(dataReadSucc)+serializer.getStringFromByteArray(dataReadSucc).length());
 		} else {
 			System.out.println("Failed to read data");
 		}

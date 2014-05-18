@@ -62,22 +62,25 @@ public class TableConnection extends DataConnection {
 	 * Write in location tuples determined by numberKeys and keys
 	 * @param keys a ByteBuffer where the keys are written. Take care of position of pointer
 	 * @param numberKeys the number of keys to read
-	 * @param location where to write tuples
+	 * @param destination where to write tuples
 	 * @return true if operation succeed (write at least one tuple), false otherwise
 	 */
-	public boolean get(ByteBuffer keys, int numberKeys, ByteBuffer location){
-		List<Integer> position = this.structureConnection.getPositionsForKeys(keys, numberKeys);
-		return false;
+	public boolean get(ByteBuffer keys, ByteBuffer destination) throws Exception{
+		int position = this.structureConnection.getPositionsForKeys(keys);
+		this.readFromData(position, tableSchema.getSizeOfEntry(), destination.array());
+		return true;
 	}
 	
 	/**
 	 * Write in location successor of tuple determined by numberKeys and keys (keys should determine one or zero tuple)
 	 * @param keys a ByteBuffer where the keys are written. Take care of position of pointer
-	 * @param location where to write tuples
+	 * @param destination where to write tuples
 	 * @return true if operation succeed (write a tuple), false otherwise
 	 */
-	public boolean succ(ByteBuffer keys, ByteBuffer location){
-		return false;
+	public boolean succ(ByteBuffer keys, ByteBuffer destination) throws Exception{
+		int position = this.structureConnection.getPositionsNextForKeys(keys);
+		this.readFromData(position, tableSchema.getSizeOfEntry(), destination.array());
+		return true;
 	}
 	
 	/**
@@ -107,6 +110,7 @@ public class TableConnection extends DataConnection {
 	public boolean insert(ByteBuffer object) {
 		try{
 			int position = structureConnection.insertElement(object);
+			System.out.println("Position to insert : "+position);
 			byte[] data = new byte[this.tableSchema.getSizeOfEntry()];
 			object.get(data);
 			this.writeToData(data, position);

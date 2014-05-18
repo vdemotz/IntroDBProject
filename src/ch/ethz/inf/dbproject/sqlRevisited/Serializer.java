@@ -31,20 +31,60 @@ public class Serializer {
 		 * @return true if key1 < key2, false otherwise
 		 */
 		public boolean compareKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
+			int position1 = key1.position();
+			int position2 = key2.position();
 			boolean ret;
 			if (type.type == SQLType.BaseType.Integer){
 				ret = (key1.getInt() < key2.getInt()) ? true : false;
 			} else if (type.type == SQLType.BaseType.Varchar){
 				//O.o Long line
-				ret = (this.getStringFromByteBuffer(key1, type.byteSizeOfType()).compareTo(this.getStringFromByteBuffer(key2, type.byteSizeOfType())) < 0) ? true : false;
+				ret = (this.getStringFromByteBuffer(key1).compareTo(this.getStringFromByteBuffer(key2)) < 0) ? true : false;
 			} else {
 				throw new Exception("Key type not supported " + type.toString());
 			}
+			key1.position(position1);
+			key2.position(position2);
 			return ret;
 		}
 		
+		public boolean compareEqualityKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
+			int position1 = key1.position();
+			int position2 = key2.position();
+			boolean ret;
+			if (type.type == SQLType.BaseType.Integer){
+				ret = (key1.getInt() == key2.getInt()) ? true : false;
+			} else if (type.type == SQLType.BaseType.Varchar){
+				//O.o Long line
+				ret = (this.getStringFromByteBuffer(key1).compareTo(this.getStringFromByteBuffer(key2)) == 0) ? true : false;
+			} else {
+				throw new Exception("Key type not supported " + type.toString());
+			}
+			key1.position(position1);
+			key2.position(position2);
+			return ret;
+		}
+		
+		public boolean compareEqualityKeys(ByteBuffer key1, ByteBuffer key2, TableSchema tableSchema) throws Exception{
+			if (tableSchema.getKeys().length == 1){
+				return this.compareEqualityKeys(key1, key2, tableSchema.getKeys()[0]);
+			} else{
+				throw new Exception("You have two keys");
+			}
+		}
+
+		
 		public boolean compareKeys(ByteBuffer key1, ByteBuffer key2, TableSchema tableSchema) throws Exception{
-			return false;
+			int position1 = key1.position();
+			int position2 = key2.position();
+			boolean ret = false;
+			if (tableSchema.getKeys().length == 1){
+				ret = this.compareKeys(key1, key2, tableSchema.getKeys()[0]);
+			} else{
+				throw new Exception("You have two keys");
+			}
+			key1.position(position1);
+			key2.position(position2);
+			return ret;
 		}
 		
 		/**
@@ -153,17 +193,10 @@ public class Serializer {
 				ret = new byte[size.length + c.length];
 				System.arraycopy(size, 0, ret, 0, size.length);
 				System.arraycopy(c, 0, ret, size.length, c.length);
-				
-				for (int i = 0; i < ret.length; i++)
-					System.out.print(i+" "+(char)ret[i]);
 			} else {
 				throw new Exception("Not accepted SQLType");
 			}
 			return ret;
-		}
-		
-		public byte[] serialize(Object data, TableSchema tableSchema){
-			return null;
 		}
 		
 		/**
@@ -172,13 +205,15 @@ public class Serializer {
 		 * @param length number of character to read
 		 * @return a string
 		 */
-		public String getStringFromByteBuffer(ByteBuffer data, int length){
+		public String getStringFromByteBuffer(ByteBuffer data){
+			int position = data.position();
 			String ret = "";
+			int length = data.getInt();
 			for (int i = 0; i < length; i++){
-				char a = data.getChar();
-				System.out.print(i+a);
+				char a = (char)data.get();
 				ret = ret+a;
 			}
+			data.position(position);
 			return ret;
 		}
 		
