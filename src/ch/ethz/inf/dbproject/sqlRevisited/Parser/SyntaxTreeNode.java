@@ -82,39 +82,25 @@ public class SyntaxTreeNode {
 			} else if(node.getChild().getClass().equals(SyntaxTreeCrossNode.class) || node.getChild().getClass().equals(SyntaxTreeJoinNode.class)) {//Case cross or join
 				SyntaxTreeBinaryNode child = (SyntaxTreeBinaryNode)node.getChild();
 				
-				boolean leftChildHasLeftAttribute = false;
-				boolean leftChildHasRightAttribute = false;
-				boolean rightChildHasRightAttribute = false;
-				boolean rightChildHasLeftAttribute = false;
-				
-				Pair<String, String> leftFragments = null;
-				Pair<String, String> rightFragments = null;
-				
-				if (node.getLeftValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.QID || node.getLeftValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.UID) {
-					leftFragments = node.getLeftValue().generatingToken.getFragmentsForIdentifier();
-					leftChildHasLeftAttribute = child.getLeft().schema.hasAttribute(leftFragments);
-					rightChildHasLeftAttribute = child.getRight().schema.hasAttribute(leftFragments);
-				}
-				if (node.getRightValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.QID || node.getRightValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.UID) {
-					rightFragments = node.getRightValue().generatingToken.getFragmentsForIdentifier();	
-					leftChildHasRightAttribute = child.getLeft().schema.hasAttribute(rightFragments);
-					rightChildHasRightAttribute = child.getRight().schema.hasAttribute(rightFragments);	
-				}
+				boolean leftChildHasLeftAttribute = child.getLeft().schema.hasAttribute(node.leftIdentifier);
+				boolean leftChildHasRightAttribute = child.getLeft().schema.hasAttribute(node.rightIdentifier);
+				boolean rightChildHasRightAttribute = child.getRight().schema.hasAttribute(node.rightIdentifier);
+				boolean rightChildHasLeftAttribute = child.getRight().schema.hasAttribute(node.leftIdentifier);
 				
 				if (!rightChildHasRightAttribute && !rightChildHasLeftAttribute) {//Sub-Case Push Left
 					SyntaxTreeSelectionOperatorNode nodePointingToLeftGrandchild = node.copyWithChild(child.getLeft());
 					return child.copyWithLeftChild(pushDown(nodePointingToLeftGrandchild));//recursively push down the left subtree and reassemble
-						
+					
 				} else if (!leftChildHasRightAttribute && !leftChildHasLeftAttribute) {//Sub-Case Push Right
-						SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
-						return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
+					SyntaxTreeSelectionOperatorNode nodePointingToRightGrandchild = node.copyWithChild(child.getRight());
+					return child.copyWithRightChild(pushDown(nodePointingToRightGrandchild));//recursively push down the right subtree and reassemble
 						
 				} else if (node.getChild().getClass().equals(SyntaxTreeCrossNode.class) && node.getOperator().generatingToken.tokenClass == SQLToken.SQLTokenClass.EQUAL) {//Sub-case create Join
 					if (leftChildHasRightAttribute && rightChildHasLeftAttribute) {
-						return new SyntaxTreeJoinNode(node.schema, child.getLeft(), child.getRight(), rightFragments, leftFragments);
+						return new SyntaxTreeJoinNode(node.schema, child.getLeft(), child.getRight(), node.rightIdentifier, node.leftIdentifier);
 						
 					} else if (leftChildHasLeftAttribute && rightChildHasRightAttribute) {
-						return new SyntaxTreeJoinNode(node.schema, child.getLeft(), child.getRight(), leftFragments, rightFragments);
+						return new SyntaxTreeJoinNode(node.schema, child.getLeft(), child.getRight(), node.leftIdentifier, node.rightIdentifier);
 						
 					} else {
 						throw new SQLSemanticException(SQLSemanticException.Type.InternalError);
@@ -339,7 +325,7 @@ public class SyntaxTreeNode {
 	private class InstanciateSchemaSelection implements TransformUnary<SyntaxTreeSelectionOperatorNode, SyntaxTreeNode>
 	{
 		@Override
-		public SyntaxTreeNode transform(SyntaxTreeSelectionOperatorNode currentNode, SyntaxTreeNode childResult) {
+		public SyntaxTreeNode transform(SyntaxTreeSelectionOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
 			return new SyntaxTreeSelectionOperatorNode(childResult.schema, currentNode.getLeftValue(), currentNode.getOperator(), currentNode.getRightValue(), childResult);
 		}
 	}

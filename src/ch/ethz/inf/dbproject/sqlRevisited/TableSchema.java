@@ -196,12 +196,12 @@ public class TableSchema {
 	
 	public boolean hasAttribute(Pair<String, String> attribute)
 	{
+		if (attribute == null) return false;
 		assert(attribute.second != null);
 		try {
 			if (attribute.first == null) {
 				indexOfAttributeName(attribute.second, 0);
 			} else {
-				
 				indexOfQualifiedAttributeName(attribute.first, attribute.second);
 			}
 		} catch (SQLSemanticException e) {

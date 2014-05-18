@@ -18,7 +18,7 @@ public class SQLSemanticException extends Exception {
 	public final Type type;
 	public final String errorAttribute;
 	
-	SQLSemanticException(Type type) {
+	public SQLSemanticException(Type type) {
 		errorAttribute = "";
 		this.type = type;
 	}
