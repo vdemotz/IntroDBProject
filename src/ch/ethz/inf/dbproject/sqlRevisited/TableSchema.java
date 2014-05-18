@@ -179,7 +179,7 @@ public class TableSchema {
 	 * @param qualifier the table that qualifies the attribute
 	 * @param attributeName the name of the attribute (unqualified)
 	 * @return the smallest index k such that qualifier[k] equals qualifier and attribute[k] equals attributeName
-	 * @throws SQLSemanticException
+	 * @throws SQLSemanticException if no such index exists
 	 */
 	public int indexOfQualifiedAttributeName(String qualifier, String attributeName) throws SQLSemanticException {
 		int cur = -1;
@@ -197,17 +197,37 @@ public class TableSchema {
 	public boolean hasAttribute(Pair<String, String> attribute)
 	{
 		if (attribute == null) return false;
-		assert(attribute.second != null);
 		try {
-			if (attribute.first == null) {
-				indexOfAttributeName(attribute.second, 0);
-			} else {
-				indexOfQualifiedAttributeName(attribute.first, attribute.second);
-			}
+			indexOf(attribute);
 		} catch (SQLSemanticException e) {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * @param identifier a qualified or unqualified identifier. If there are several attributes with the same identifier, searching for this attribute returns an unspecified result.
+	 * @return the index of the attribute with the identifier
+	 * @throws SQLSemanticException if there is no such attribute
+	 */
+	public int indexOf(Pair<String, String> identifier) throws SQLSemanticException
+	{
+		assert(identifier.second != null);
+		
+		if (identifier.first == null) {
+			return indexOfAttributeName(identifier.second, 0);
+		} else {
+			return indexOfQualifiedAttributeName(identifier.first, identifier.second);
+		}
+	}
+	
+	public int getSizeOfAttributes(int numberOfAttributes) {
+		assert (numberOfAttributes < getLength());
+		int size = 0;
+		for (int i = 0; i < numberOfAttributes; i++){
+			size = size + this.attributeTypes[i].byteSizeOfType();
+		}
+		return size;
 	}
 	
 	
@@ -216,11 +236,7 @@ public class TableSchema {
 	 * @return the size of an entry in bytes
 	 */
 	public int getSizeOfEntry(){
-		int size = 0;
-		for (int i = 0; i < this.attributeTypes.length; i++){
-			size = size + this.attributeTypes[i].byteSizeOfType();
-		}
-		return size;
+		return getSizeOfAttributes(getLength());
 	}
 	
 	/**
@@ -328,5 +344,4 @@ public class TableSchema {
 		}
 		return result;
 	}
-	
 }

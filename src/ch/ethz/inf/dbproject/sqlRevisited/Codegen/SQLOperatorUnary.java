@@ -1,4 +1,6 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
+
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public abstract class SQLOperatorUnary extends SQLOperator{
 

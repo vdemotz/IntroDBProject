@@ -1,9 +1,11 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 import java.util.Arrays;
+
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SQLOperatorCross  extends SQLOperatorBinary {
 

@@ -1,7 +1,8 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import java.nio.*;
 
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ImmutableArray;
 
 /**

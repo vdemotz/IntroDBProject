@@ -1,7 +1,9 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import java.nio.ByteBuffer;
 import java.util.Comparator;
+
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 

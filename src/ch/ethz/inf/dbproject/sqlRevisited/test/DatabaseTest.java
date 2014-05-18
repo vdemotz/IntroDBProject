@@ -23,14 +23,13 @@ public class DatabaseTest {
 	
 	@Test
 	public void testWriting() throws Exception{
-		Serializer serializer = new Serializer();
 		Database db = new Database();
 		TableConnection tc = db.getTableConnection("User");
 		SQLType vc40 = new SQLType(SQLType.BaseType.Varchar, 40);
-		byte[] username = serializer.getByteArrayFromObject("vinvin", vc40);
-		byte[] firstName = serializer.getByteArrayFromObject("Vincent", vc40);
-		byte[] lastName = serializer.getByteArrayFromObject("Demotz", vc40);
-		byte[] password = serializer.getByteArrayFromObject("Bla", vc40);
+		byte[] username = Serializer.getByteArrayFromObject("vinvin", vc40);
+		byte[] firstName = Serializer.getByteArrayFromObject("Vincent", vc40);
+		byte[] lastName = Serializer.getByteArrayFromObject("Demotz", vc40);
+		byte[] password = Serializer.getByteArrayFromObject("Bla", vc40);
 		ByteBuffer buf = ByteBuffer.allocate(tc.getTableSchema().getSizeOfEntry());
 		System.out.println("Allocate : "+tc.getTableSchema().getSizeOfEntry());
 		buf.rewind();
@@ -60,7 +59,7 @@ public class DatabaseTest {
 				System.out.print((char)dataRead[i]);
 			}
 			System.out.println("\r\nAnd now through serializer : ");
-			System.out.println(serializer.getStringFromByteArray(dataRead)+serializer.getStringFromByteArray(dataRead).length());
+			System.out.println(Serializer.getStringFromByteArray(dataRead)+Serializer.getStringFromByteArray(dataRead).length());
 		} else {
 			System.out.println("Failed to read data");
 		}

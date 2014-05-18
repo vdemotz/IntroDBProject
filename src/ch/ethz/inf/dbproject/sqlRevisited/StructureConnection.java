@@ -25,7 +25,6 @@ public class StructureConnection extends DataConnection{
 		this.raf = this.getRandomAccesFile(this.tableSchema.getTableName(), "rw", true);
 		this.channel = raf.getChannel();
 		this.elementsPositions = this.instantiateElementsPositions();
-		this.serializer = new Serializer();
 	}
 	
 	/**
