@@ -1,9 +1,12 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 import java.util.Arrays;
+
+import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SQLOperatorCross  extends SQLOperatorBinary {
 
@@ -17,8 +20,6 @@ public class SQLOperatorCross  extends SQLOperatorBinary {
 		} else {
 			currentLefthandTuple = null;//indicates the left relation is empty
 		}
-		
-		open();
 	}
 	
 	////
@@ -33,7 +34,7 @@ public class SQLOperatorCross  extends SQLOperatorBinary {
 	}
 
 	@Override
-	public void getNext(ByteBuffer resultBuffer) {
+	public void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException {
 		assert (hasNext());
 		
 		if (!getRightChild().hasNext()) {//if the right relation is exhausted, go to the next left tuple and rewind the right relation
@@ -50,12 +51,12 @@ public class SQLOperatorCross  extends SQLOperatorBinary {
 	////
 	
 	@Override
-	protected void internalRewind()
+	protected void internalRewind() throws SQLPhysicalException
 	{
 		open();
 	}
 	
-	private void open() {
+	public void open()  throws SQLPhysicalException {
 		if (getLeftChild().hasNext()) {
 			getLeftChild().getNext(currentLefthandTuple);
 		}

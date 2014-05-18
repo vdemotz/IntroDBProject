@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.ethz.inf.dbproject.sqlRevisited.Codegen.Materializer;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 
 public class Serializer {
@@ -93,7 +94,7 @@ public class Serializer {
 		 * @return an array of boolean
 		 * @throws Exception
 		 */
-		public boolean[] getBooleanArrayFromStringArray(String[] array) throws Exception{
+		public static boolean[] getBooleanArrayFromStringArray(String[] array) throws Exception{
 			boolean[] ret = new boolean[array.length];
 			for (int i = 0; i < array.length; i++){
 				if (array[i].equals("1")) { ret[i] = true; }
@@ -109,10 +110,10 @@ public class Serializer {
 		 * @return an array of SQLTypes
 		 * @throws Exception
 		 */
-		public SQLType[] getSQLTypeArrayFromStringArray(String[] array) throws Exception{
+		public static SQLType[] getSQLTypeArrayFromStringArray(String[] array) throws Exception{
 			SQLType[] ret = new SQLType[array.length];
 			for (int i = 0; i < array.length; i++){
-				ret[i] = this.getSQLTypeFromString(array[i]);
+				ret[i] = getSQLTypeFromString(array[i]);
 			}
 			return ret;
 		}
@@ -123,7 +124,7 @@ public class Serializer {
 		 * @return a new SQLType
 		 * @throws Exception
 		 */
-		public SQLType getSQLTypeFromString(String type) throws Exception{
+		public static SQLType getSQLTypeFromString(String type) throws Exception{
 			String[] splitted = type.split(",");
 			Integer length = 0;
 			try {	
@@ -154,7 +155,7 @@ public class Serializer {
 		 * @param tableName the type of the object
 		 * @return an object of type tableName.class
 		 */
-		public Object createObjectFromByteBufferAndTableName(ByteBuffer data, String tableName){
+		public static Object createObjectFromByteBufferAndTableName(ByteBuffer data, String tableName){
 			return null;
 		}
 		
@@ -164,7 +165,7 @@ public class Serializer {
 		 * @param tableName the type of the object
 		 * @return an object of type tableName.class
 		 */
-		public Object createObjectFromBytesArrayAndTableName(byte[] data, SQLType[] attributesTypes) throws Exception{
+		public static Object createObjectFromBytesArrayAndTableName(byte[] data, SQLType[] attributesTypes) throws Exception{
 			List<Object> attributes = new ArrayList<Object>();
 			for (int i = 0; i < attributesTypes.length; i++){
 				
@@ -177,7 +178,7 @@ public class Serializer {
 		 * @param data the object to transform
 		 * @return a byte array to write to database
 		 */
-		public byte[] getByteArrayFromObject(Object data, SQLType type) throws Exception{
+		public static byte[] getByteArrayFromObject(Object data, SQLType type) throws Exception{
 			byte[] ret = null;
 			if(type.type == BaseType.Integer){
 				ret = ByteBuffer.allocate(type.byteSizeOfType()).putInt((int) data).array();
@@ -222,7 +223,7 @@ public class Serializer {
 		 * @param data a byte[] which represents a String
 		 * @return a string
 		 */
-		public String getStringFromByteArray(byte[] data){
+		public static String getStringFromByteArray(byte[] data){
 			String ret = "";
 			int length = (int)data[3]+(int)data[2]*16;
 			for (int i = 4; i < length+4; i++){
@@ -230,4 +231,19 @@ public class Serializer {
 			}
 			return ret;
 		}
+		
+		/**
+		 * @param data a byte[] that contains a serialization of a varchar, starting at the startIndex (inclusive)
+		 * @param startIndex the index of the first byte belonging to the varchar
+		 * @return a string representing the Varchar
+		 */
+		public static String getVarcharFromByteArray(byte[] data, int startIndex){
+			String ret = "";
+			int length = (int)data[3+startIndex]+(int)data[2+startIndex]*16;
+			for (int i = 4+startIndex; i < length+4+startIndex; i++){
+				ret = ret+(char)data[i];
+			}
+			return ret;
+		}
+		
 }

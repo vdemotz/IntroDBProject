@@ -70,6 +70,7 @@ public class DatabaseTest {
 			tc.succ(key, toRead);
 			System.out.println("\r\nAnd now through serializer : ");
 			System.out.println(serializer.getStringFromByteArray(dataReadSucc)+serializer.getStringFromByteArray(dataReadSucc).length());
+
 		} else {
 			System.out.println("Failed to read data");
 		}

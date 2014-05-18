@@ -1,7 +1,9 @@
-package ch.ethz.inf.dbproject.sqlRevisited;
+package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import java.nio.*;
 
+import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ImmutableArray;
 
 /**
@@ -20,6 +22,12 @@ public abstract class SQLOperator {
 	}
 	
 	/**
+	 * Has to be called before first use.
+	 * @throws SQLPhysicalException
+	 */
+	abstract void open() throws SQLPhysicalException;
+	
+	/**
 	 * @return true if there is another result, false otherwise
 	 */
 	abstract boolean hasNext();
@@ -31,12 +39,12 @@ public abstract class SQLOperator {
 	 * @precondition hasNext()==true
 	 * @result the sizes of the attributes
 	 */
-	abstract void getNext(ByteBuffer resultBuffer);
+	abstract void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException;
 	
 	/**
 	 * Resets the iterator to point just before the first tuple.
 	 */
-	void rewind() {
+	void rewind() throws SQLPhysicalException {
 		for (SQLOperator operator : children) {
 			operator.rewind();
 		}
@@ -47,7 +55,7 @@ public abstract class SQLOperator {
 	 * Subclasses can override this method to perform their local rewinding
 	 * It is called just after the rewind call to the children
 	 */
-	protected void internalRewind()
+	protected void internalRewind() throws SQLPhysicalException
 	{
 	}
 }

@@ -14,7 +14,24 @@ public abstract class DataConnection {
 	protected String EXT_DATA;
 	protected RandomAccessFile raf;
 	protected TableSchema tableSchema;
-	protected Serializer serializer;
+	
+	/**
+	 * Compare two keys. Be aware of positions of pointer of key1 and key2
+	 * @param numberKeys number of keys compared
+	 * @return true if key1 < key2, false otherwise
+	 */
+	protected boolean compareKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
+		boolean ret;
+		if (type.type == SQLType.BaseType.Integer){
+			ret = (key1.getInt() < key2.getInt()) ? true : false;
+		} else if (type.type == SQLType.BaseType.Varchar){
+			//O.o Long line
+			ret = (Serializer.getStringFromByteBuffer(key1, type.byteSizeOfType()).compareTo(Serializer.getStringFromByteBuffer(key2, type.byteSizeOfType())) < 0) ? true : false;
+		} else {
+			throw new Exception("Key type not supported " + type.toString());
+		}
+		return ret;
+	}
 	
 	
 	////

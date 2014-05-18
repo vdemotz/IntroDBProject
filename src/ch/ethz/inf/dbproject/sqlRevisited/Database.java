@@ -291,8 +291,8 @@ public class Database {
 			//copy bytes into arrays
 			buf.flip();
 			String[] attributesNames = this.getLine(buf);
-			SQLType[] attributesTypes = serializer.getSQLTypeArrayFromStringArray(this.getLine(buf));
-			boolean[] isKey = serializer.getBooleanArrayFromStringArray(this.getLine(buf));
+			SQLType[] attributesTypes = Serializer.getSQLTypeArrayFromStringArray(this.getLine(buf));
+			boolean[] isKey = Serializer.getBooleanArrayFromStringArray(this.getLine(buf));
 			buf.clear();
 			in.close();
 			
