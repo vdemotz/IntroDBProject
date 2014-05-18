@@ -2,6 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import java.nio.ByteBuffer;
 
+import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SQLOperatorDummy extends SQLOperator {
@@ -26,14 +27,18 @@ public class SQLOperatorDummy extends SQLOperator {
 	}
 
 	@Override
-	void getNext(ByteBuffer resultBuffer) {
+	void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException {
 		assert (hasNext());
 		resultBuffer.put(content, cur*toupleWidth, toupleWidth);
 	}
 	
 	@Override
-	protected void internalRewind() {
+	protected void internalRewind() throws SQLPhysicalException {
 		cur = 0;
+	}
+
+	@Override
+	void open() throws SQLPhysicalException {
 	}
 	
 }

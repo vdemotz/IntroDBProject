@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 import java.nio.ByteBuffer;
 import java.util.Comparator;
 
+import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SQLOperatorSelectionScan extends SQLOperatorUnary {
@@ -15,6 +16,10 @@ public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 		super(schema, child);
 		this.predicate = predicate;
 		this.nextResult = ByteBuffer.wrap(new byte[schema.getSizeOfEntry()]);
+	}
+	
+	@Override
+	void open() throws SQLPhysicalException {
 		findNext();
 	}
 
@@ -30,7 +35,12 @@ public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 		resultBuffer.put(nextResult);
 	}
 	
-	private void findNext() {
+	@Override
+	protected void internalRewind() throws SQLPhysicalException {
+		findNext();
+	}
+
+	private void findNext() throws SQLPhysicalException {
 		hasNext = false;
 		while (getChild().hasNext()) {
 			nextResult.rewind();
@@ -41,9 +51,6 @@ public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 			}
 		}
 	}
-	
-	protected void internalRewind()
-	{
-		findNext();
-	}
 }
+	
+
