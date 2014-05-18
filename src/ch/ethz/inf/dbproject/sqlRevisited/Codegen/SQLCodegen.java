@@ -1,10 +1,13 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ch.ethz.inf.dbproject.Pair;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 import ch.ethz.inf.dbproject.sqlRevisited.Serializer;
+import ch.ethz.inf.dbproject.sqlRevisited.TableConnection;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.*;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode.*;
@@ -12,8 +15,8 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 
 public class SQLCodegen {
 
-	SQLOperator generateSelectStatement(SyntaxTreeNode node, Comparable<? extends Object> [] arguments) throws SQLSemanticException {
-		return node.fold(new GeneratorBase(), new GeneratorCross(), new GeneratorJoin(arguments), new GeneratorGroup(), new GeneratorDistinct(),
+	SQLOperator generateSelectStatement(SyntaxTreeNode node, List<TableConnection> tables, Comparable<? extends Object> [] arguments) throws SQLSemanticException {
+		return node.fold(new GeneratorBase(tables), new GeneratorCross(), new GeneratorJoin(arguments), new GeneratorGroup(), new GeneratorDistinct(),
 						 new GeneratorProjectAndAggregate(), new GeneratorRename(), new GeneratorSelection(arguments), new GeneratorSort());	
 	}
 	
@@ -23,12 +26,26 @@ public class SQLCodegen {
 	
 	class GeneratorBase implements TransformBase<SyntaxTreeBaseRelationNode, SQLOperator>
 	{
+		private final Map<String, TableConnection> baseTables;
+		
+		GeneratorBase(List<TableConnection> tables) {
+			baseTables = new HashMap<String, TableConnection>();
+			for (TableConnection table : tables) {
+				baseTables.put(table.getTableSchema().tableName, table);
+			}
+		}
+		
 		@Override
 		public SQLOperator transform(SyntaxTreeBaseRelationNode currentNode) throws SQLSemanticException {
-			// TODO get TableConnection from Database
-			// TODO instantiate SQLOperatorBase with TableConnection and schema
-			return null;
+			// get TableConnection from Database
+			TableConnection table = baseTables.get(currentNode.name);
+			if (table == null) {
+				throw new SQLSemanticException(SQLSemanticException.Type.NoSuchTableException, currentNode.name);
+			}
+			// instantiate SQLOperatorBase with TableConnection and schema
+			return new SQLOperatorBase(currentNode.schema, table);
 		}
+		
 	}
 	
 	class GeneratorCross implements TransformBinary<SyntaxTreeCrossNode, SQLOperator>
@@ -41,16 +58,23 @@ public class SQLCodegen {
 	
 	class GeneratorJoin implements TransformBinary<SyntaxTreeJoinNode, SQLOperator>
 	{
+		private final Object[] arguments;
+		private final PredicateFromComparison equalComparator = new PredicateFromComparison(false, true, false);
 		
 		public GeneratorJoin(Object[] arguments) {
-			// TODO Auto-generated constructor stub
+			this.arguments = arguments;
 		}
 
 		@Override
 		public SQLOperator transform(SyntaxTreeJoinNode currentNode, SQLOperator leftChildResult, SQLOperator rightChildResult) throws SQLSemanticException {
-			// TODO resolve predicate
-			// TODO instantiate appropriate join operator (nested loops, index join, ...)
-			return null;
+			// Resolve predicate
+			Predicate<byte[]> predicate = resolveTwoSidedPredicate(currentNode.schema, currentNode.leftIdentifier, currentNode.rightIdentifier, equalComparator);
+			
+			// instantiate nested loops join operator by reducing to cross product & selection
+			SQLOperatorCross cross = new SQLOperatorCross(currentNode.schema, leftChildResult, rightChildResult);
+			return new SQLOperatorSelectionScan(currentNode.schema, cross, predicate);
+			
+			//TODO use index join when applicable
 		}
 	}
 	
@@ -96,9 +120,9 @@ public class SQLCodegen {
 	
 	class GeneratorSelection implements TransformUnary<SyntaxTreeSelectionOperatorNode, SQLOperator>
 	{
-		private final Comparable<? extends Object>[] arguments;
+		private final Object[] arguments;
 		
-		public GeneratorSelection(Comparable<? extends Object>[] arguments) {
+		public GeneratorSelection(Object[] arguments) {
 			this.arguments = arguments;
 		}
 
@@ -108,32 +132,32 @@ public class SQLCodegen {
 			// Resolve predicate
 			Predicate<byte[]> predicate;
 			
+			PredicateFromComparison operator = resolveOperatorToken(currentNode.getOperator().generatingToken);
+			
 			if (currentNode.leftIdentifier != null && currentNode.rightIdentifier != null) {
-				predicate = resolveTwoSidedPredicate(currentNode.schema, currentNode.leftIdentifier, currentNode.rightIdentifier, currentNode.getOperator().generatingToken);
+				predicate = resolveTwoSidedPredicate(currentNode.schema, currentNode.leftIdentifier, currentNode.rightIdentifier, operator);
 				
 			} else if (currentNode.leftIdentifier == null && currentNode.rightIdentifier != null) {
-				predicate = resolveOneSidedPredicate(currentNode.schema, currentNode.rightIdentifier, currentNode.getLeftValue().generatingToken, currentNode.getOperator().generatingToken, true);
+				predicate = resolveOneSidedPredicate(currentNode.schema, currentNode.rightIdentifier, currentNode.getLeftValue().generatingToken, operator, true);
 				
 			} else if (currentNode.leftIdentifier != null && currentNode.rightIdentifier == null) {
-				predicate = resolveOneSidedPredicate(currentNode.schema, currentNode.leftIdentifier, currentNode.getRightValue().generatingToken, currentNode.getOperator().generatingToken, false);
+				predicate = resolveOneSidedPredicate(currentNode.schema, currentNode.leftIdentifier, currentNode.getRightValue().generatingToken, operator, false);
 				
 			} else {
-				predicate = resolveZeroSidedPredicate(currentNode.getLeftValue().generatingToken, currentNode.getRightValue().generatingToken, currentNode.getOperator().generatingToken);
+				predicate = resolveZeroSidedPredicate(currentNode.getLeftValue().generatingToken, currentNode.getRightValue().generatingToken, operator);
 				
 			}
 			//Generate appropriate selection operator
 			return new SQLOperatorSelectionScan(currentNode.schema, childResult, predicate);
 		}
 		
-		private Predicate<byte[]> resolveZeroSidedPredicate(SQLToken leftValue, SQLToken rightValue, SQLToken operatorToken) throws SQLSemanticException {
+		private Predicate<byte[]> resolveZeroSidedPredicate(SQLToken leftValue, SQLToken rightValue, PredicateFromComparison operator) throws SQLSemanticException {
 			Object leftConstant = resolveConstant(leftValue);
 			Object rightConstant = resolveConstant(rightValue);
 			
 			if (! leftConstant.getClass().equals(rightConstant.getClass())) {
 				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 			}
-			
-			PredicateFromComparison operator = resolveOperatorToken(operatorToken);
 			
 			if (leftConstant.getClass().equals(String.class)) {
 				return new MaterializingPredicate<String>(new MaterializerConstant<String>((String)leftConstant), new MaterializerConstant<String>((String)rightConstant), operator);
@@ -159,10 +183,8 @@ public class SQLCodegen {
 		 * @return
 		 * @throws SQLSemanticException
 		 */
-		private Predicate<byte[]> resolveOneSidedPredicate(TableSchema schema, Pair<String, String> identifier, SQLToken constantToken, SQLToken operatorToken, boolean flipOperator) throws SQLSemanticException {
+		private Predicate<byte[]> resolveOneSidedPredicate(TableSchema schema, Pair<String, String> identifier, SQLToken constantToken, PredicateFromComparison operator, boolean flipOperator) throws SQLSemanticException {
 			Object constant = resolveConstant(constantToken);
-			
-			PredicateFromComparison operator = resolveOperatorToken(operatorToken);
 
 			int idIndex = schema.indexOf(identifier);
 			SQLType type = schema.getAttributesTypes()[idIndex];
@@ -192,45 +214,7 @@ public class SQLCodegen {
 			}
 		}
 		
-		private Predicate<byte[]> resolveTwoSidedPredicate(TableSchema schema, Pair<String, String> leftIdentifier, Pair<String, String> rightIdentifier, SQLToken operatorToken) throws SQLSemanticException {
-			
-			PredicateFromComparison operator = resolveOperatorToken(operatorToken);
-			
-			int leftIndex = schema.indexOf(leftIdentifier);
-			int rightIndex = schema.indexOf(rightIdentifier);
-			SQLType type = schema.getAttributesTypes()[leftIndex];
-			
-			if (!type.equals(schema.getAttributesTypes()[rightIndex])) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError, type.toString() + " != " + schema.getAttributesTypes()[rightIndex]);
-			}
-			
-			int leftAttributeByteOffset = schema.getSizeOfAttributes(leftIndex);
-			int rightAttributeByteOffset = schema.getSizeOfAttributes(leftIndex);
-			
-			if (type.type == SQLType.BaseType.Varchar) {
-				return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
-				
-			} else if (type.type == SQLType.BaseType.Char) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-				
-			} else if (type.type == SQLType.BaseType.Integer) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-				
-			} else if (type.type == SQLType.BaseType.Date) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-				
-			} else if (type.type == SQLType.BaseType.Datetime) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-				
-			} else if (type.type == SQLType.BaseType.Boolean) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-				
-			} else {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-			}
-		}
-		
-		private Comparable<? extends Object> resolveConstant(SQLToken token) throws SQLSemanticException {
+		private Object resolveConstant(SQLToken token) throws SQLSemanticException {
 			if (token.tokenClass == SQLToken.SQLTokenClass.ARGUMENT) {
 				return arguments[token.identifier];
 			} else if (token.tokenClass == SQLToken.SQLTokenClass.LITERAL) {
@@ -276,6 +260,46 @@ public class SQLCodegen {
 			// TODO resolve sort relation
 			// TODO instantiate appropriate sort operator
 			return null;
+		}
+	}
+	
+	/////
+	///PREDICATE INSTANCIATION
+	/////
+	
+	private Predicate<byte[]> resolveTwoSidedPredicate(TableSchema schema, Pair<String, String> leftIdentifier, Pair<String, String> rightIdentifier, PredicateFromComparison operator) throws SQLSemanticException {
+		
+		int leftIndex = schema.indexOf(leftIdentifier);
+		int rightIndex = schema.indexOf(rightIdentifier);
+		SQLType type = schema.getAttributesTypes()[leftIndex];
+		
+		if (!type.equals(schema.getAttributesTypes()[rightIndex])) {
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError, type.toString() + " != " + schema.getAttributesTypes()[rightIndex]);
+		}
+		
+		int leftAttributeByteOffset = schema.getSizeOfAttributes(leftIndex);
+		int rightAttributeByteOffset = schema.getSizeOfAttributes(leftIndex);
+		
+		if (type.type == SQLType.BaseType.Varchar) {
+			return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
+			
+		} else if (type.type == SQLType.BaseType.Char) {
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			
+		} else if (type.type == SQLType.BaseType.Integer) {
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			
+		} else if (type.type == SQLType.BaseType.Date) {
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			
+		} else if (type.type == SQLType.BaseType.Datetime) {
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			
+		} else if (type.type == SQLType.BaseType.Boolean) {
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			
+		} else {
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 		}
 	}
 	
