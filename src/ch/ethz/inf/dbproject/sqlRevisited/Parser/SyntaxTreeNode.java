@@ -183,15 +183,15 @@ public class SyntaxTreeNode {
 	//PSEUDO-FOLD OPERATORS
 	////
 	
-	protected interface TransformBase<S, T> {
+	public interface TransformBase<S, T> {
 		T transform(S currentNode) throws SQLSemanticException;
 	}
 	
-	protected interface TransformUnary<S, T> {
+	public interface TransformUnary<S, T> {
 		T transform(S currentNode, T childResult) throws SQLSemanticException;
 	}
 	
-	protected interface TransformBinary<S, T> {
+	public interface TransformBinary<S, T> {
 		T transform(S currentNode, T leftChildResult, T rightChildResult) throws SQLSemanticException;
 	}
 	
@@ -209,7 +209,7 @@ public class SyntaxTreeNode {
 	 * @return
 	 * @throws SQLSemanticException
 	 */
-	protected <T> T fold(TransformBase<SyntaxTreeBaseRelationNode, T> base,
+	public <T> T fold(TransformBase<SyntaxTreeBaseRelationNode, T> base,
 					  TransformBinary<SyntaxTreeCrossNode, T> cross,
 					  TransformBinary<SyntaxTreeJoinNode, T> join,
 					  TransformUnary<SyntaxTreeGroupByNode, T> group,
