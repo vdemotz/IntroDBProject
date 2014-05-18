@@ -228,7 +228,7 @@ public class TableSchema {
 	 * @return the size of keys in bytes
 	 */
 	public int getSizeOfKeys(){
-		int size = 0;
+		int size = 0; 
 		for (int i = 0; i < this.attributeTypes.length; i++){
 			if (this.isPrimaryKey[i])
 				size = size + this.attributeTypes[i].byteSizeOfType();

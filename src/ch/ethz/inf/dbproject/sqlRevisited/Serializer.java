@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,13 @@ public class Serializer {
 		////
 		
 		/**
+		 * Get a int from a byte array
+		 */
+		public int getIntFromByteArray(byte[] bytes, int offset) {
+		     return (int)bytes[offset] << 24 | ((int)bytes[offset + 1] & 0xFF) << 16 | ((int)bytes[offset + 2] & 0xFF) << 8 | ((int)bytes[offset + 3] & 0xFF);
+		}
+		
+		/**
 		 * Compare two keys. Be aware of positions of pointer of key1 and key2
 		 * @param numberKeys number of keys compared
 		 * @return true if key1 < key2, false otherwise
@@ -33,6 +41,10 @@ public class Serializer {
 				throw new Exception("Key type not supported " + type.toString());
 			}
 			return ret;
+		}
+		
+		public boolean compareKeys(ByteBuffer key1, ByteBuffer key2, TableSchema tableSchema) throws Exception{
+			return false;
 		}
 		
 		/**
@@ -135,11 +147,23 @@ public class Serializer {
 			} else if (type.type == BaseType.Char){
 				ret = ByteBuffer.allocate(type.byteSizeOfType()).putChar((char) data).array();
 			} else if (type.type == BaseType.Varchar || type.type == BaseType.Date || type.type == BaseType.Datetime){
-				ret = ((String)data).getBytes();
+				byte[] c = new byte[((String)data).length()+4];
+				byte[] size = this.getByteArrayFromObject(((String)data).length(), new SQLType(BaseType.Integer));
+				c = ((String)data).getBytes(Charset.defaultCharset());
+				ret = new byte[size.length + c.length];
+				System.arraycopy(size, 0, ret, 0, size.length);
+				System.arraycopy(c, 0, ret, size.length, c.length);
+				
+				for (int i = 0; i < ret.length; i++)
+					System.out.print(i+" "+(char)ret[i]);
 			} else {
 				throw new Exception("Not accepted SQLType");
 			}
 			return ret;
+		}
+		
+		public byte[] serialize(Object data, TableSchema tableSchema){
+			return null;
 		}
 		
 		/**

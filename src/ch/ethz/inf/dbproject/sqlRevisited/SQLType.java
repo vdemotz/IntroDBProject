@@ -6,7 +6,7 @@ public class SQLType {
 	public int CHAR_DATE = 10;
 	public int CHAR_DATETIME = 19;
 	public int BYTE_SIZE = 8;
-	public int CHARACTER_BYTE_SIZE = 2;
+	public int CHARACTER_BYTE_SIZE = 1;
 	public int INT_BYTE_SIZE = 4;
 	
 	

@@ -36,16 +36,12 @@ public class DatabaseTest {
 		ByteBuffer buf = ByteBuffer.allocate(tc.getTableSchema().getSizeOfEntry());
 		System.out.println("Allocate : "+tc.getTableSchema().getSizeOfEntry());
 		buf.rewind();
-		buf.putInt(6);
 		buf.put(username);
 		buf.position(44);
-		buf.putInt(7);
 		buf.put(firstName);
 		buf.position(88);
-		buf.putInt(6);
 		buf.put(lastName);
 		buf.position(132);
-		buf.putInt(3);
 		buf.put(password);
 		System.out.println(buf.toString());
 		buf.rewind();
