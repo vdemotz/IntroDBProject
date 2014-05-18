@@ -16,15 +16,17 @@ public class DatabaseTest {
 	@Test
 	public void testDatabase() throws Exception{
 		//this.testMetaDataCreation();
-		this.testWriting();
+		Database db = new Database();
+		this.testWriting(db);
+		this.testCreationDataStructure(db);
 	}
 	
+	public void testCreationDataStructure(Database db) throws Exception{
+		db.getTableConnection("User");
+	}
 	
-	
-	@Test
-	public void testWriting() throws Exception{
+	public void testWriting(Database db) throws Exception{
 		Serializer serializer = new Serializer();
-		Database db = new Database();
 		TableConnection tc = db.getTableConnection("User");
 		SQLType vc40 = new SQLType(SQLType.BaseType.Varchar, 40);
 		byte[] username = serializer.getByteArrayFromObject("vinvin", vc40);
