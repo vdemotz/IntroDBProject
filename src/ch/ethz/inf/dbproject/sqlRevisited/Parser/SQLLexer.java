@@ -16,12 +16,15 @@ public class SQLLexer {
 	 * @param statement the SQL to analyze
 	 * @return the stream of tokens, including error but without whitespace tokens
 	 * 		   if an error occurred, the last element of the result will be an error token
+	 * 		   By convention: Literal token contents do not contain the bracketing ''
+	 * 						  Argument token identifiers contain their argument position, starting counting from 0
+	 * 					      Numeric token identifiers contain their parsed value
 	 */
 	public ArrayList<SQLToken> tokenize(String statement) {
 		ArrayList<SQLToken> tokenStream = new ArrayList<SQLToken>();
 		
 		Matcher matcher = pattern.matcher(statement);
-		int argumentCount = 1;//keeps track of how many arguments (?) have been encountered
+		int argumentCount = 0;//keeps track of how many arguments (?) have been encountered
 		while (matcher.find()) {
 			
 			for (SQLTokenClass tokenClass : SQLToken.SQLTokenClass.values()) {
@@ -34,10 +37,14 @@ public class SQLLexer {
 					}
 					if (tokenClass != SQLToken.SQLTokenClass.LITERAL) {//SQL is case insensitive
 						match = match.toLowerCase();
+					} else {
+						match = match.substring(1, match.length()-1);
 					}
 					
 					if (tokenClass == SQLToken.SQLTokenClass.ARGUMENT) {
 						token = new SQLToken(tokenClass, match, argumentCount++);
+					} else if (tokenClass == SQLToken.SQLTokenClass.NUMERIC) {
+						token = new SQLToken(tokenClass, match, Integer.parseInt(match));
 					} else {
 						token = new SQLToken(tokenClass, match);
 					}

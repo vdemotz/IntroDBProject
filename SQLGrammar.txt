@@ -23,6 +23,7 @@ optionalParenthesisedListOfUIds = OPENPAREN listOfUIds CLOSEPAREN |
 parenthesisedListOfValues OPENPAREN listOfValues CLOSEPAREN
 
 value = ARGUMENT |
+        NUMERIC |
         LITERAL |
         BOOL
 
@@ -111,6 +112,7 @@ comparable = QID |
              UID |
              ARGUMENT |
              LITERAL |
+             NUMERIC |
              BOOL
 
 ////

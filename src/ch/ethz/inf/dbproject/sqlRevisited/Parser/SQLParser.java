@@ -141,6 +141,7 @@ public class SQLParser {
 		SyntaxTreeDynamicNode ast = null;
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.ARGUMENT ||
 			tokens.getTokenClass() == SQLToken.SQLTokenClass.LITERAL ||
+			tokens.getTokenClass() == SQLToken.SQLTokenClass.NUMERIC ||
 		    tokens.getTokenClass() == SQLToken.SQLTokenClass.BOOL) {
 			ast = new SyntaxTreeDynamicNode(tokens.getToken());
 			tokens.advance();
@@ -489,6 +490,7 @@ public class SQLParser {
 			token == SQLToken.SQLTokenClass.UID ||
 			token == SQLToken.SQLTokenClass.ARGUMENT ||
 			token == SQLToken.SQLTokenClass.LITERAL ||
+			token == SQLToken.SQLTokenClass.NUMERIC ||
 		    token == SQLToken.SQLTokenClass.BOOL) {
 			root = new SyntaxTreeIdentifierNode(tokens.getToken());
 			tokens.advance();

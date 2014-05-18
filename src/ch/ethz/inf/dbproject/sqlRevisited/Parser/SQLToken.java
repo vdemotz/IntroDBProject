@@ -25,18 +25,19 @@ public class SQLToken {
 		//BINARYCONNECTIVE ("\\b(and|or)\\b"),
 		//UNARYCONNECTIVE ("\\bnot\\b"),
 		//data
+		//compare
+		COMPARATOR ("<=|>=|<|>|\\blike\\b"),
 		BOOL ("\\b(true|false)\\b"),
 		AGGREGATE ("\\b(count|max)\\([*a-z]+(\\.[*a-z])?\\)"),
 		QID ("\\b[a-z]+\\.([a-z]+\\b)"),
 		QSTARID ("\\b[a-z]+\\.\\*"),
 		UID ("\\b[a-z]+\\b"),
-		LITERAL ("(\\d+\\b|'(.*)')"),
+		NUMERIC ("\\d+\\b"),
+		LITERAL ("'(.*)'"),
 		ARGUMENT ("\\?"),
 		STAR ("\\*"),
 		//compare and set
 		EQUAL ("="),
-		//compare
-		COMPARATOR ("<=|>=|<|>|\\blike\\b"),
 		//Structure
 		COMMA (","),
 		OPENPAREN ("\\("),

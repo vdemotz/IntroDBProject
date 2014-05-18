@@ -30,7 +30,7 @@ public class SyntaxTreeNodeTest {
 	String q5 = "select b.* from B";
 	String q6 = "select * from (select count(*), max(A.a) as maximum from A, B) as S";
 	String q7 = "select B.a, C.c from (select B.c from B order by c desc) as C, (select * from A where A.a = ?) as B";
-	String q8 = "select B.c from A, B, C";
+	String q8 = "select B.c from A, B, C where a = 5";
 	
 	String q9 = "select B.c from B, C where B.b=B.c";
 	String q10 = "select C.c from B, C where B.b=?";
