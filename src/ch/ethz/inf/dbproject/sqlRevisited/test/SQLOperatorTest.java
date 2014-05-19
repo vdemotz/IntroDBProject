@@ -27,17 +27,20 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;
 public class SQLOperatorTest {
 
 	
-	String t0 = "select * from User where 5<? and 'f' <= ? and username>'a' and username=password";
+	String t0 = "select * from User where 5<? and 'f' <= ? and username>'a' and username=password and favoriteNumber=7";
 	
 	SQLType varchar6 = new SQLType(SQLType.BaseType.Varchar, 6);
-	SQLType date = new SQLType(SQLType.BaseType.Date);
 	
-	TableSchemaAttributeDetail[] UserAttributes = {new TableSchemaAttributeDetail("username", varchar6, true), new TableSchemaAttributeDetail("password", varchar6, false), new TableSchemaAttributeDetail("createdAt", date, false)};
+	TableSchemaAttributeDetail[] UserAttributes = {new TableSchemaAttributeDetail("username", varchar6, true),
+												   new TableSchemaAttributeDetail("password", varchar6, false),
+												   new TableSchemaAttributeDetail("createdat", SQLType.DATE, false),
+												   new TableSchemaAttributeDetail("favoritenumber", SQLType.INTEGER, false)};
 	
 	TableSchema User = new TableSchema("user", UserAttributes);
 	String[] testUsers = {"a", "hans", "cccccc"};
 	String[] testPasswords = {"00", "hans", "222222"};
 	String[] testDates = {"12-10-12", "12-10-01", "05-01-01"};
+	Integer[] testNumber = {0, 7, 11};
 	List<TableSchema> schemata = Arrays.asList(User);
 	byte[] UserData = new byte[User.getSizeOfEntry()*testUsers.length];
 	byte[] ResultData = new byte[User.getSizeOfEntry()*testUsers.length];
@@ -60,7 +63,7 @@ public class SQLOperatorTest {
 			//write test data to buffer and create static table on it 
 			ByteBuffer sourceBuffer = ByteBuffer.wrap(UserData);
 			for (int i=0; i<testUsers.length; i++) {
-				Serializer.putBytesFromTuple(User, sourceBuffer, testUsers[i], testPasswords[i], testDates[i]);
+				Serializer.putBytesFromTuple(User, sourceBuffer, testUsers[i], testPasswords[i], testDates[i], testNumber[i]);
 				//System.out.println(Serializer.getVarcharFromByteArray( Arrays.copyOfRange(UserData, i*12, (i+1)*12),0));
 			}
 			PhysicalTableInterface testTable = new StaticPhysicalTable(User, UserData);
@@ -75,9 +78,13 @@ public class SQLOperatorTest {
 			while (operator.hasNext()) {
 				operator.getNext(resultBuffer);
 				System.out.println("has");
-				System.out.println(Serializer.getStringFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry(), (i+1)*User.getSizeOfEntry())));
-				System.out.println(Serializer.getStringFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry()+User.getSizeOfAttributes(1), (i+1)*User.getSizeOfEntry())));
-				System.out.println(Serializer.getStringFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry()+User.getSizeOfAttributes(2), (i+1)*User.getSizeOfEntry())));
+				for (int j=0; j<User.getLength(); j++) {
+					if (User.getAttributesTypes()[j].type == SQLType.BaseType.Varchar || User.getAttributesTypes()[j].type == SQLType.BaseType.Date) {
+						System.out.println(Serializer.getStringFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry()+User.getSizeOfAttributes(j), (i+1)*User.getSizeOfEntry())));
+					} else {
+						System.out.println(Serializer.getIntegerFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry()+User.getSizeOfAttributes(j), (i+1)*User.getSizeOfEntry())));
+					}
+				}
 				//System.out.println(Serializer.getVarcharFromByteArray(ResultData,0));
 				i++;
 			}

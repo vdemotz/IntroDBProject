@@ -3,12 +3,11 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 public class SQLType {
 	
 	//Number of characters of Date and Datetime
-	public int CHAR_DATE = 10;
-	public int CHAR_DATETIME = 19;
-	public int BYTE_SIZE = 8;
-	public int CHARACTER_BYTE_SIZE = 1;
-	public int INT_BYTE_SIZE = 4;
-	
+	public static final int CHAR_DATE = 10;
+	public static final int CHAR_DATETIME = 19;
+	public static final int BYTE_SIZE = 8;
+	public static final int CHARACTER_BYTE_SIZE = 1;
+	public static final int INT_BYTE_SIZE = 4;
 	
 	public enum BaseType {
 		Integer,
@@ -65,6 +64,15 @@ public class SQLType {
 		} 
 		return -1;
 	}
+	
+	////
+	//STATIC CONTANT TYPES
+	////
+	
+	public static final SQLType INTEGER = new SQLType(SQLType.BaseType.Integer);
+	public static final SQLType DATE = new SQLType(SQLType.BaseType.Varchar, CHAR_DATE);
+	public static final SQLType DATETIME = new SQLType(SQLType.BaseType.Varchar, CHAR_DATETIME);
+	public static final SQLType BOOLEAN = new SQLType(SQLType.BaseType.Boolean);
 	
 	////
 	//OVERRIDING OBJECT

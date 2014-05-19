@@ -189,7 +189,7 @@ public class SQLCodegen {
 		 */
 		private Predicate<byte[]> resolveOneSidedPredicate(TableSchema schema, Pair<String, String> identifier, SQLToken constantToken, PredicateFromComparison operator, boolean flipOperator) throws SQLSemanticException {
 			Object constant = resolveConstant(constantToken);
-
+			//TODO: flip order if necessary
 			int idIndex = schema.indexOf(identifier);
 			SQLType type = schema.getAttributesTypes()[idIndex];
 			int attributeByteOffset = schema.getSizeOfAttributes(idIndex);
@@ -202,7 +202,7 @@ public class SQLCodegen {
 				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 				
 			} else if (type.type == SQLType.BaseType.Integer) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+				return new MaterializingPredicate<Integer>(new IntegerMaterializer(attributeByteOffset), new MaterializerConstant<Integer>((Integer)constant), operator);
 				
 			} else if (type.type == SQLType.BaseType.Date) {
 				return new MaterializingPredicate<String>(new VarcharMaterializer(attributeByteOffset), new MaterializerConstant<String>((String)constant), operator);
@@ -294,7 +294,7 @@ public class SQLCodegen {
 			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 			
 		} else if (type.type == SQLType.BaseType.Integer) {
-			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			return new MaterializingPredicate<Integer>(new IntegerMaterializer(leftAttributeByteOffset), new IntegerMaterializer(rightAttributeByteOffset), operator);
 			
 		} else if (type.type == SQLType.BaseType.Date) {
 			return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
@@ -328,6 +328,22 @@ public class SQLCodegen {
 		public String get(byte[] bytes) {
 			//TODO (avoid copying all the time)
 			return Serializer.getStringFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
+			//return Serializer.getVarcharFromByteArray(bytes, attributeByteOffset);
+		}
+	}
+	
+	public class IntegerMaterializer implements Materializer<Integer>
+	{
+		int attributeByteOffset;
+		
+		IntegerMaterializer(int offsetOfAttributeInBytes) {
+			attributeByteOffset = offsetOfAttributeInBytes;
+		}
+		
+		@Override
+		public Integer get(byte[] bytes) {
+			//TODO (avoid copying all the time)
+			return Serializer.getIntegerFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
 			//return Serializer.getVarcharFromByteArray(bytes, attributeByteOffset);
 		}
 	}

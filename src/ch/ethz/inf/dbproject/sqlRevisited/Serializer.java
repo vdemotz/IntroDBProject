@@ -296,4 +296,13 @@ public class Serializer {
 			return ret;
 		}
 		
+		
+		public static Integer getIntegerFromByteBuffer(ByteBuffer data) {
+			return data.getInt();
+		}
+		
+		public static Integer getIntegerFromByteArray(byte[] data) {
+			ByteBuffer wrap = ByteBuffer.wrap(data);
+			return getIntegerFromByteBuffer(wrap);
+		}
 }
