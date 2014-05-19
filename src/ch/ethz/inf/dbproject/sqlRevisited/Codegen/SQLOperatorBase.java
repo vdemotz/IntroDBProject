@@ -21,18 +21,8 @@ public class SQLOperatorBase extends SQLOperator {
 		this.currentResult = ByteBuffer.wrap(new byte[schema.getSizeOfEntry()]);
 	}
 	
-<<<<<<< HEAD
-	void open() throws SQLPhysicalException {
-		//TODO change exception type in PhysicalTable
-		try {
-			physicalTable.min(currentResult);
-		} catch (Exception e) {
-			throw new SQLPhysicalException();
-		} 
-=======
 	public void open() throws SQLPhysicalException {
 		hasNext = physicalTable.min(currentResult);
->>>>>>> alternatePhysicalInterface
 	}
 
 	@Override
@@ -51,15 +41,8 @@ public class SQLOperatorBase extends SQLOperator {
 		currentResult.rewind();
 		nextResult.rewind();
 		//try to get the next tuple
-<<<<<<< HEAD
 		//TODO this is only correct if primary keys are stored at the beginning of the tuple by convention
-		try{
-=======
->>>>>>> alternatePhysicalInterface
 		hasNext = physicalTable.succ(currentResult, nextResult);
-		} catch (Exception ex){
-			ex.printStackTrace();
-		}
 		//swap next with current
 		ByteBuffer temp = currentResult;
 		currentResult = nextResult;

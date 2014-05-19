@@ -1,11 +1,8 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.nio.ByteBuffer;
-<<<<<<< HEAD
 import java.nio.charset.Charset;
-=======
 import java.nio.CharBuffer;
->>>>>>> alternatePhysicalInterface
 import java.util.ArrayList;
 import java.util.List;
 
