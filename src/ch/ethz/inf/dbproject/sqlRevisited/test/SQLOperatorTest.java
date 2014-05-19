@@ -27,14 +27,14 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;
 public class SQLOperatorTest {
 
 	
-	String t0 = "select * from User where 5=? and 'f' <= ? and username='aaaaaa'";
+	String t0 = "select * from User where 5=? and 'f' <= ? and username>'a'";
 	
 	SQLType varchar6 = new SQLType(SQLType.BaseType.Varchar, 6);
 	
 	TableSchemaAttributeDetail[] UserAttributes = {new TableSchemaAttributeDetail("username", varchar6, true), new TableSchemaAttributeDetail("password", varchar6, false)};
 	
 	TableSchema User = new TableSchema("user", UserAttributes);
-	String[] testUsers = {"aaaaaa", "bbbbbb", "cccccc"};
+	String[] testUsers = {"a", "bb", "cccccc"};
 	String[] testPasswords = {"000000", "111111", "222222"};
 	List<TableSchema> schemata = Arrays.asList(User);
 	byte[] UserData = new byte[User.getSizeOfEntry()*testUsers.length];

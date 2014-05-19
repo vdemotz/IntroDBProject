@@ -252,7 +252,7 @@ public class SQLCodegen {
 				allowsGreater = true;
 				cur = cur.substring(1);
 			}
-			if (cur.charAt(0) == '=') {
+			if (cur.length() > 0 && cur.charAt(0) == '=') {
 				allowsEqual = true;
 			}
 			return new PredicateFromComparison(allowsLess, allowsEqual, allowsGreater);
