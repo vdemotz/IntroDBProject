@@ -19,17 +19,17 @@ public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 	}
 	
 	@Override
-	void open() throws SQLPhysicalException {
+	public void open() throws SQLPhysicalException {
 		findNext();
 	}
 
 	@Override
-	boolean hasNext() {
+	public boolean hasNext() {
 		return hasNext;
 	}
 
 	@Override
-	void getNext(ByteBuffer resultBuffer) {
+	public void getNext(ByteBuffer resultBuffer) {
 		assert(hasNext);
 		nextResult.rewind();
 		resultBuffer.put(nextResult);

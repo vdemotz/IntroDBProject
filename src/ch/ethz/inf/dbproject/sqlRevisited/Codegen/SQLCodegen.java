@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.ethz.inf.dbproject.Pair;
+import ch.ethz.inf.dbproject.sqlRevisited.PhysicalTableInterface;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 import ch.ethz.inf.dbproject.sqlRevisited.Serializer;
 import ch.ethz.inf.dbproject.sqlRevisited.TableConnection;
@@ -15,7 +16,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 
 public class SQLCodegen {
 
-	SQLOperator generateSelectStatement(SyntaxTreeNode node, List<TableConnection> tables, Comparable<? extends Object> [] arguments) throws SQLSemanticException {
+	public SQLOperator generateSelectStatement(SyntaxTreeNode node, List<PhysicalTableInterface> tables, Object [] arguments) throws SQLSemanticException {
 		return node.fold(new GeneratorBase(tables), new GeneratorCross(), new GeneratorJoin(arguments), new GeneratorGroup(), new GeneratorDistinct(),
 						 new GeneratorProjectAndAggregate(), new GeneratorRename(), new GeneratorSelection(arguments), new GeneratorSort());	
 	}
@@ -26,11 +27,11 @@ public class SQLCodegen {
 	
 	class GeneratorBase implements TransformBase<SyntaxTreeBaseRelationNode, SQLOperator>
 	{
-		private final Map<String, TableConnection> baseTables;
+		private final Map<String, PhysicalTableInterface> baseTables;
 		
-		GeneratorBase(List<TableConnection> tables) {
-			baseTables = new HashMap<String, TableConnection>();
-			for (TableConnection table : tables) {
+		GeneratorBase(List<PhysicalTableInterface> tables) {
+			baseTables = new HashMap<String, PhysicalTableInterface>();
+			for (PhysicalTableInterface table : tables) {
 				baseTables.put(table.getTableSchema().tableName, table);
 			}
 		}
@@ -38,7 +39,7 @@ public class SQLCodegen {
 		@Override
 		public SQLOperator transform(SyntaxTreeBaseRelationNode currentNode) throws SQLSemanticException {
 			// get TableConnection from Database
-			TableConnection table = baseTables.get(currentNode.name);
+			PhysicalTableInterface table = baseTables.get(currentNode.name);
 			if (table == null) {
 				throw new SQLSemanticException(SQLSemanticException.Type.NoSuchTableException, currentNode.name);
 			}
@@ -149,6 +150,8 @@ public class SQLCodegen {
 			}
 			//Generate appropriate selection operator
 			return new SQLOperatorSelectionScan(currentNode.schema, childResult, predicate);
+			
+			//TODO generator index-select if possible
 		}
 		
 		private Predicate<byte[]> resolveZeroSidedPredicate(SQLToken leftValue, SQLToken rightValue, PredicateFromComparison operator) throws SQLSemanticException {

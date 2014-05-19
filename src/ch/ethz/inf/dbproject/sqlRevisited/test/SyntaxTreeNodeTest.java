@@ -58,6 +58,7 @@ public class SyntaxTreeNodeTest {
  	
  	String[] rewriteTests = {q9, q10, q11, q12};
  	
+	SQLLexer lex = new SQLLexer();
 	SQLParser parser = new SQLParser();
  	
 	@Test
@@ -68,7 +69,6 @@ public class SyntaxTreeNodeTest {
 	
 	@Test
 	public void TestSelectRewrite() {
-		SQLLexer lex = new SQLLexer();
 		SQLTokenStream tokens = null;
 		String[] testQueries = rewriteTests;
 		List<List<TableSchema>> schemata = Arrays.asList(ABClist, ABClist, ABClist, ABClist);
@@ -102,7 +102,6 @@ public class SyntaxTreeNodeTest {
 	}
 	
 	private void testSucceedsInstantiation(String[] testQueries, List<List<TableSchema>> schemata) {
-		SQLLexer lex = new SQLLexer();
 		SQLTokenStream tokens = null;
 		
 		for (int i=0; i<testQueries.length; i++) {
@@ -128,7 +127,6 @@ public class SyntaxTreeNodeTest {
 	}
 	
 	private void testFailsInstantiation(String[] testQueries, List<List<TableSchema>> schemata) {
-		SQLLexer lex = new SQLLexer();
 		SQLTokenStream tokens;
 		
 		for (int i=0; i<testQueries.length; i++) {

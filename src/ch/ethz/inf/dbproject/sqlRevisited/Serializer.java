@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +127,38 @@ public class Serializer {
 		}
 		
 		/**
+		 * Transform an object into a byte array to write into the database
+		 * @param data the object to transform
+		 * @return a byte array to write to database
+		 */
+		public static void putBytes(Object data, SQLType type, ByteBuffer destination) throws SQLPhysicalException {
+			if(type.type == BaseType.Integer){
+				destination.putInt((int)data);
+			} else if (type.type == BaseType.Boolean) {
+				boolean isTrue = (boolean)data;
+				if (isTrue) {
+					destination.put("1".getBytes());
+				} else {
+					destination.put("0".getBytes());
+				}
+			} else if (type.type == BaseType.Char){
+				destination.putChar((char) data);
+			} else if (type.type == BaseType.Varchar || type.type == BaseType.Date || type.type == BaseType.Datetime){
+				byte[] result = ((String)data).getBytes();
+				destination.put(result);
+			} else {
+				throw new SQLPhysicalException();
+			}
+		}
+		
+		public static void putBytesFromTuple(TableSchema schema, ByteBuffer destination, Object... data) throws SQLPhysicalException 
+		{
+			for (int i=0; i<schema.getLength(); i++) {
+				putBytes(data[i], schema.getAttributesTypes()[i], destination);
+			}
+		}
+		
+		/**
 		 * Get a String from a ByteBuffer
 		 * @param data a ByteBuffer which represents a String
 		 * @param length number of character to read
@@ -160,13 +193,15 @@ public class Serializer {
 		 * @param startIndex the index of the first byte belonging to the varchar
 		 * @return a string representing the Varchar
 		 */
-		public static String getVarcharFromByteArray(byte[] data, int startIndex){
-			String ret = "";
-			int length = (int)data[3+startIndex]+(int)data[2+startIndex]*16;
-			for (int i = 4+startIndex; i < length+4+startIndex; i++){
-				ret = ret+(char)data[i];
-			}
-			return ret;
+		public static String getVarcharFromByteArray(byte[] data, int startIndex) {
+			return new String(data);
+		}
+		
+		public static String getCharFromBuffer(ByteBuffer data, int length) {
+			CharBuffer charbuf = data.asCharBuffer();
+			char[] result = new char[length];
+			charbuf.get(result);
+			return new String(result);
 		}
 		
 }

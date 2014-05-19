@@ -22,12 +22,12 @@ public class SQLOperatorDummy extends SQLOperator {
 	}
 
 	@Override
-	boolean hasNext() {
+	public boolean hasNext() {
 		return cur < content.length;
 	}
 
 	@Override
-	void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException {
+	public void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException {
 		assert (hasNext());
 		resultBuffer.put(content, cur*toupleWidth, toupleWidth);
 	}
@@ -38,7 +38,7 @@ public class SQLOperatorDummy extends SQLOperator {
 	}
 
 	@Override
-	void open() throws SQLPhysicalException {
+	public void open() throws SQLPhysicalException {
 	}
 	
 }
