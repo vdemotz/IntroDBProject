@@ -27,7 +27,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;
 public class SQLOperatorTest {
 
 	
-	String t0 = "select * from User";
+	String t0 = "select * from User where 5=?";
 	
 	SQLType varchar6 = new SQLType(SQLType.BaseType.Varchar, 6);
 	
@@ -39,6 +39,7 @@ public class SQLOperatorTest {
 	List<TableSchema> schemata = Arrays.asList(User);
 	byte[] UserData = new byte[User.getSizeOfEntry()*testUsers.length];
 	byte[] ResultData = new byte[User.getSizeOfEntry()*testUsers.length];
+	Object[] arguments = {5};
 	
 	SQLLexer lex = new SQLLexer();
 	SQLParser parser = new SQLParser();
@@ -61,7 +62,7 @@ public class SQLOperatorTest {
 			}
 			
 			PhysicalTableInterface testTable = new StaticPhysicalTable(User, UserData);
-			SQLOperator operator = codegen.generateSelectStatement(rewrittenTree, Arrays.asList(testTable), new Object[0]);
+			SQLOperator operator = codegen.generateSelectStatement(rewrittenTree, Arrays.asList(testTable), arguments);
 			operator.open();
 			System.out.println(operator);
 			ByteBuffer resultBuffer = ByteBuffer.wrap(ResultData);

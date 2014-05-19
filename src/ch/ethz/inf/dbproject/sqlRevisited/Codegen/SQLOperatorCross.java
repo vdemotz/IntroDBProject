@@ -56,7 +56,7 @@ public class SQLOperatorCross  extends SQLOperatorBinary {
 		open();
 	}
 	
-	public void open()  throws SQLPhysicalException {
+	public void internalOpen()  throws SQLPhysicalException {
 		if (getLeftChild().hasNext()) {
 			getLeftChild().getNext(currentLefthandTuple);
 		}

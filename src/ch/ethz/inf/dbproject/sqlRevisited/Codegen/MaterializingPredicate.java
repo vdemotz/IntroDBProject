@@ -5,12 +5,14 @@ import java.util.Comparator;
 
 public class MaterializingPredicate <T extends Comparable<T>> implements Predicate<byte[]> {
 
-	PredicateFromComparison predicate;
-	public Materializer<T> materializerLeft;
-	public Materializer<T> materializerRight;
+	public final PredicateFromComparison predicate;
+	public final Materializer<T> materializerLeft;
+	public final Materializer<T> materializerRight;
 	
 	MaterializingPredicate(Materializer<T> leftMaterializer, Materializer<T> rightMaterializer, PredicateFromComparison predicate) {
 		this.predicate = predicate;
+		this.materializerLeft = leftMaterializer;
+		this.materializerRight = rightMaterializer;
 	}
 	
 	@Override

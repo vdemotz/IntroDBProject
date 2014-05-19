@@ -21,7 +21,8 @@ public class SQLOperatorBase extends SQLOperator {
 		this.currentResult = ByteBuffer.wrap(new byte[schema.getSizeOfEntry()]);
 	}
 	
-	public void open() throws SQLPhysicalException {
+	@Override
+	protected void internalOpen() throws SQLPhysicalException {
 		hasNext = physicalTable.min(currentResult);
 	}
 

@@ -26,8 +26,13 @@ public abstract class SQLOperator {
 	 * Has to be called before first use.
 	 * @throws SQLPhysicalException
 	 */
-	public abstract void open() throws SQLPhysicalException;
-	
+	public final void open() throws SQLPhysicalException {
+		for (SQLOperator child : children) {
+			child.open();
+		}
+		internalOpen();
+	} 
+
 	/**
 	 * @return true if there is another result, false otherwise
 	 */
@@ -45,7 +50,7 @@ public abstract class SQLOperator {
 	/**
 	 * Resets the iterator to point just before the first tuple.
 	 */
-	void rewind() throws SQLPhysicalException {
+	final void rewind() throws SQLPhysicalException {
 		for (SQLOperator operator : children) {
 			operator.rewind();
 		}
@@ -56,8 +61,14 @@ public abstract class SQLOperator {
 	 * Subclasses can override this method to perform their local rewinding
 	 * It is called just after the rewind call to the children
 	 */
-	protected void internalRewind() throws SQLPhysicalException
-	{
+	protected void internalRewind() throws SQLPhysicalException {
+	}
+	
+	/**
+	 * Subclasses may override this method to perform custom open operations.
+	 * This method is called after all children have been opened.
+	 */
+	protected void internalOpen() throws SQLPhysicalException {
 	}
 	
 	////

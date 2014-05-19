@@ -88,6 +88,7 @@ public class StaticPhysicalTable implements PhysicalTableInterface {
 	public boolean min(ByteBuffer destination) throws SQLPhysicalException {
 		if (data.length > 0) {
 			destination.put(data, 0, tupleWidth);
+			iterator = 1;
 			return true;
 		} else {
 			return false;

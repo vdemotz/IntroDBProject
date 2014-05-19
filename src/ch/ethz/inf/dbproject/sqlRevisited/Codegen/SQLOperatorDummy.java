@@ -36,9 +36,5 @@ public class SQLOperatorDummy extends SQLOperator {
 	protected void internalRewind() throws SQLPhysicalException {
 		cur = 0;
 	}
-
-	@Override
-	public void open() throws SQLPhysicalException {
-	}
 	
 }
