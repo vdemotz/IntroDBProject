@@ -57,7 +57,7 @@ public class SQLOperatorTest {
 			ByteBuffer sourceBuffer = ByteBuffer.wrap(UserData);
 			for (int i=0; i<testUsers.length; i++) {
 				Serializer.putBytesFromTuple(User, sourceBuffer, testUsers[i], testPasswords[i]);
-				System.out.println(Serializer.getVarcharFromByteArray( Arrays.copyOfRange(UserData, i*12, (i+1)*12),0));
+				//System.out.println(Serializer.getVarcharFromByteArray( Arrays.copyOfRange(UserData, i*12, (i+1)*12),0));
 			}
 			
 			PhysicalTableInterface testTable = new StaticPhysicalTable(User, UserData);
@@ -69,7 +69,8 @@ public class SQLOperatorTest {
 			while (operator.hasNext()) {
 				operator.getNext(resultBuffer);
 				System.out.println("has");
-				System.out.println(Serializer.getVarcharFromByteArray(ResultData,0));
+				System.out.println(Serializer.getStringFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry(), (i+1)*User.getSizeOfEntry())));
+				//System.out.println(Serializer.getVarcharFromByteArray(ResultData,0));
 				i++;
 			}
 			

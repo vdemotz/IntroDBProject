@@ -1,5 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -322,7 +323,9 @@ public class SQLCodegen {
 		
 		@Override
 		public String get(byte[] bytes) {
-			return Serializer.getVarcharFromByteArray(bytes, attributeByteOffset);
+			//TODO (avoid copying all the time)
+			return Serializer.getStringFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
+			//return Serializer.getVarcharFromByteArray(bytes, attributeByteOffset);
 		}
 	}
 	

@@ -247,6 +247,7 @@ public class Serializer {
 				destination.putChar((char) data);
 			} else if (type.type == BaseType.Varchar || type.type == BaseType.Date || type.type == BaseType.Datetime){
 				byte[] result = ((String)data).getBytes();
+				putBytes(result.length, new SQLType(BaseType.Integer), destination);
 				destination.put(result);
 			} else {
 				throw new SQLPhysicalException();
@@ -256,7 +257,10 @@ public class Serializer {
 		public static void putBytesFromTuple(TableSchema schema, ByteBuffer destination, Object... data) throws SQLPhysicalException 
 		{
 			for (int i=0; i<schema.getLength(); i++) {
+				destination.mark();
 				putBytes(data[i], schema.getAttributesTypes()[i], destination);
+				destination.reset();
+				destination.position(destination.position()+schema.getAttributesTypes()[i].byteSizeOfType());
 			}
 		}
 		
@@ -291,27 +295,5 @@ public class Serializer {
 			}
 			return ret;
 		}
-		
-		/**
-		 * @param data a byte[] that contains a serialization of a varchar, starting at the startIndex (inclusive)
-		 * @param startIndex the index of the first byte belonging to the varchar
-		 * @return a string representing the Varchar
-		 */
-		public static String getVarcharFromByteArray(byte[] data, int startIndex){
-			String ret = "";
-			int length = (int)data[3+startIndex]+(int)data[2+startIndex]*16;
-			for (int i = 4+startIndex; i < length+4+startIndex; i++){
-				ret = ret+(char)data[i];
-			}
-			return ret;
-		}
-		
-		/*
-		public static String getCharFromBuffer(ByteBuffer data, int length) {
-			CharBuffer charbuf = data.asCharBuffer();
-			char[] result = new char[length];
-			charbuf.get(result);
-			return new String(result);
-		}*/
 		
 }
