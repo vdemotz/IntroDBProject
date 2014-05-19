@@ -297,15 +297,21 @@ public class Serializer {
 		 * @param startIndex the index of the first byte belonging to the varchar
 		 * @return a string representing the Varchar
 		 */
-		public static String getVarcharFromByteArray(byte[] data, int startIndex) {
-			return new String(data);
+		public static String getVarcharFromByteArray(byte[] data, int startIndex){
+			String ret = "";
+			int length = (int)data[3+startIndex]+(int)data[2+startIndex]*16;
+			for (int i = 4+startIndex; i < length+4+startIndex; i++){
+				ret = ret+(char)data[i];
+			}
+			return ret;
 		}
 		
+		/*
 		public static String getCharFromBuffer(ByteBuffer data, int length) {
 			CharBuffer charbuf = data.asCharBuffer();
 			char[] result = new char[length];
 			charbuf.get(result);
 			return new String(result);
-		}
+		}*/
 		
 }
