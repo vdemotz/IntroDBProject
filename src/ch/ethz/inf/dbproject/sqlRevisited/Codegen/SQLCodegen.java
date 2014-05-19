@@ -205,10 +205,10 @@ public class SQLCodegen {
 				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 				
 			} else if (type.type == SQLType.BaseType.Date) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+				return new MaterializingPredicate<String>(new VarcharMaterializer(attributeByteOffset), new MaterializerConstant<String>((String)constant), operator);
 				
 			} else if (type.type == SQLType.BaseType.Datetime) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+				return new MaterializingPredicate<String>(new VarcharMaterializer(attributeByteOffset), new MaterializerConstant<String>((String)constant), operator);
 				
 			} else if (type.type == SQLType.BaseType.Boolean) {
 				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
@@ -285,7 +285,7 @@ public class SQLCodegen {
 		}
 		
 		int leftAttributeByteOffset = schema.getSizeOfAttributes(leftIndex);
-		int rightAttributeByteOffset = schema.getSizeOfAttributes(leftIndex);
+		int rightAttributeByteOffset = schema.getSizeOfAttributes(rightIndex);
 		
 		if (type.type == SQLType.BaseType.Varchar) {
 			return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
@@ -297,10 +297,10 @@ public class SQLCodegen {
 			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 			
 		} else if (type.type == SQLType.BaseType.Date) {
-			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
 			
 		} else if (type.type == SQLType.BaseType.Datetime) {
-			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
 			
 		} else if (type.type == SQLType.BaseType.Boolean) {
 			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);

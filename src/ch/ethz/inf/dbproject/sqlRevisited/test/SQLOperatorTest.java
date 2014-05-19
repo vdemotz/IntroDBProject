@@ -27,19 +27,21 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;
 public class SQLOperatorTest {
 
 	
-	String t0 = "select * from User where 5=? and 'f' <= ? and username>'a'";
+	String t0 = "select * from User where 5<? and 'f' <= ? and username>'a' and username=password";
 	
 	SQLType varchar6 = new SQLType(SQLType.BaseType.Varchar, 6);
+	SQLType date = new SQLType(SQLType.BaseType.Date);
 	
-	TableSchemaAttributeDetail[] UserAttributes = {new TableSchemaAttributeDetail("username", varchar6, true), new TableSchemaAttributeDetail("password", varchar6, false)};
+	TableSchemaAttributeDetail[] UserAttributes = {new TableSchemaAttributeDetail("username", varchar6, true), new TableSchemaAttributeDetail("password", varchar6, false), new TableSchemaAttributeDetail("createdAt", date, false)};
 	
 	TableSchema User = new TableSchema("user", UserAttributes);
-	String[] testUsers = {"a", "bb", "cccccc"};
-	String[] testPasswords = {"000000", "111111", "222222"};
+	String[] testUsers = {"a", "hans", "cccccc"};
+	String[] testPasswords = {"00", "hans", "222222"};
+	String[] testDates = {"12-10-12", "12-10-01", "05-01-01"};
 	List<TableSchema> schemata = Arrays.asList(User);
 	byte[] UserData = new byte[User.getSizeOfEntry()*testUsers.length];
 	byte[] ResultData = new byte[User.getSizeOfEntry()*testUsers.length];
-	Object[] arguments = {5, "j"};
+	Object[] arguments = {7, "j"};
 	
 	SQLLexer lex = new SQLLexer();
 	SQLParser parser = new SQLParser();
@@ -55,22 +57,27 @@ public class SQLOperatorTest {
 			SyntaxTreeNode instanciatedTree = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata);//infer schema for all nodes in the AST
 			SyntaxTreeNode rewrittenTree = instanciatedTree.rewrite();
 			
+			//write test data to buffer and create static table on it 
 			ByteBuffer sourceBuffer = ByteBuffer.wrap(UserData);
 			for (int i=0; i<testUsers.length; i++) {
-				Serializer.putBytesFromTuple(User, sourceBuffer, testUsers[i], testPasswords[i]);
+				Serializer.putBytesFromTuple(User, sourceBuffer, testUsers[i], testPasswords[i], testDates[i]);
 				//System.out.println(Serializer.getVarcharFromByteArray( Arrays.copyOfRange(UserData, i*12, (i+1)*12),0));
 			}
-			
 			PhysicalTableInterface testTable = new StaticPhysicalTable(User, UserData);
+			
+			//generate interpreter
 			SQLOperator operator = codegen.generateSelectStatement(rewrittenTree, Arrays.asList(testTable), arguments);
 			operator.open();
 			System.out.println(operator);
 			ByteBuffer resultBuffer = ByteBuffer.wrap(ResultData);
+			//get results
 			int i=0;
 			while (operator.hasNext()) {
 				operator.getNext(resultBuffer);
 				System.out.println("has");
 				System.out.println(Serializer.getStringFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry(), (i+1)*User.getSizeOfEntry())));
+				System.out.println(Serializer.getStringFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry()+User.getSizeOfAttributes(1), (i+1)*User.getSizeOfEntry())));
+				System.out.println(Serializer.getStringFromByteArray(Arrays.copyOfRange(ResultData, i*User.getSizeOfEntry()+User.getSizeOfAttributes(2), (i+1)*User.getSizeOfEntry())));
 				//System.out.println(Serializer.getVarcharFromByteArray(ResultData,0));
 				i++;
 			}
