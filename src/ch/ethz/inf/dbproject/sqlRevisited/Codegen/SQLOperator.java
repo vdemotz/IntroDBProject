@@ -5,6 +5,7 @@ import java.nio.*;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ImmutableArray;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;
 
 /**
  * The results of an SQLOperator is a list of tuples. The SQLOperator provides an iterator interface over these tuples.
@@ -25,12 +26,12 @@ public abstract class SQLOperator {
 	 * Has to be called before first use.
 	 * @throws SQLPhysicalException
 	 */
-	abstract void open() throws SQLPhysicalException;
+	public abstract void open() throws SQLPhysicalException;
 	
 	/**
 	 * @return true if there is another result, false otherwise
 	 */
-	abstract boolean hasNext();
+	public abstract boolean hasNext();
 	
 	/**
 	 * Advance the iterator to the next position and write the next tuple into the resultBuffer.
@@ -39,7 +40,7 @@ public abstract class SQLOperator {
 	 * @precondition hasNext()==true
 	 * @result the sizes of the attributes
 	 */
-	abstract void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException;
+	public abstract void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException;
 	
 	/**
 	 * Resets the iterator to point just before the first tuple.
@@ -57,5 +58,25 @@ public abstract class SQLOperator {
 	 */
 	protected void internalRewind() throws SQLPhysicalException
 	{
+	}
+	
+	////
+	//OVERRIDING OBJECT
+	////
+	
+	@Override
+	public String toString()
+	{
+		String result = this.getClass().getSimpleName().substring("SQLOperator".length());
+		if (children.length > 0) {
+			result += "[ ";
+			for (SQLOperator child : children) {
+				if (child != null) {
+					result += child.toString() + " ";
+				}
+			}
+			result += "]";
+		}
+		return  result;
 	}
 }
