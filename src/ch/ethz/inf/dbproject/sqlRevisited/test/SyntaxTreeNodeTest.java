@@ -31,6 +31,8 @@ public class SyntaxTreeNodeTest {
 	String q6 = "select * from (select count(*), max(A.a) as maximum from A, B) as S";
 	String q7 = "select B.a, C.c from (select B.c from B order by c desc) as C, (select * from A where A.a = ?) as B";
 	String q8 = "select B.c from A, B, C where a = 5";
+	String q13 = "select * from a where 'f'<=? and a='aaaaaa'";
+	
 	
 	String q9 = "select B.c from B, C where B.b=B.c";
 	String q10 = "select C.c from B, C where B.b=?";
@@ -50,8 +52,8 @@ public class SyntaxTreeNodeTest {
 	List<TableSchema> ABlist = Arrays.asList(qTableA,qTableB);
 	List<TableSchema> ABClist = Arrays.asList(qTableA,qTableB,qTableC);
  	
- 	String[] testSucceeds = {q0, q1, q2, q3, q4, q5, q6, q7, q8, q9};
- 	List<List<TableSchema>> testSucceedsSchemata = Arrays.asList(ABlist, Alist, ABlist, ABlist, ABlist, ABlist, ABlist, ABlist, ABClist, ABClist);
+ 	String[] testSucceeds = {q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q13};
+ 	List<List<TableSchema>> testSucceedsSchemata = Arrays.asList(ABlist, Alist, ABlist, ABlist, ABlist, ABlist, ABlist, ABlist, ABClist, ABClist, Alist);
  	
  	String[] testFails = {q0, q1, q5};
  	List<List<TableSchema>> testFailsSchemata = Arrays.asList(Alist, Blist, Alist);

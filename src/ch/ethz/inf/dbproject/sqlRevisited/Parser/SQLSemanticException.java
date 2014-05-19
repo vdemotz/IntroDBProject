@@ -8,6 +8,7 @@ public class SQLSemanticException extends Exception {
 		NoSuchAttributeException("No attribute with name : "),
 		InternalError("An internal error occurred : "),
 		NotApplicableToTokenWithClass("Not applicable to token "),
+		NotEnoughArgumentsProvided("Not enough arguments provided. "),
 		TypeError("Type mismatch ");
 		
 		public final String message;

@@ -33,7 +33,7 @@ public class SQLToken {
 		QSTARID ("\\b[a-z]+\\.\\*"),
 		UID ("\\b[a-z]+\\b"),
 		NUMERIC ("\\d+\\b"),
-		LITERAL ("'(.*)'"),
+		LITERAL ("'[^']*'"),
 		ARGUMENT ("\\?"),
 		STAR ("\\*"),
 		//compare and set

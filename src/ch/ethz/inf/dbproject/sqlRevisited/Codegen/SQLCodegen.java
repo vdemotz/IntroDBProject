@@ -220,6 +220,9 @@ public class SQLCodegen {
 		
 		private Object resolveConstant(SQLToken token) throws SQLSemanticException {
 			if (token.tokenClass == SQLToken.SQLTokenClass.ARGUMENT) {
+				if (token.identifier >= arguments.length) {
+					throw new SQLSemanticException(SQLSemanticException.Type.NotEnoughArgumentsProvided);
+				}
 				return arguments[token.identifier];
 			} else if (token.tokenClass == SQLToken.SQLTokenClass.LITERAL) {
 				return token.content;

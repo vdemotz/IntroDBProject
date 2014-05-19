@@ -27,7 +27,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;
 public class SQLOperatorTest {
 
 	
-	String t0 = "select * from User where 5=?";
+	String t0 = "select * from User where 5=? and 'f' <= ? and username='aaaaaa'";
 	
 	SQLType varchar6 = new SQLType(SQLType.BaseType.Varchar, 6);
 	
@@ -39,7 +39,7 @@ public class SQLOperatorTest {
 	List<TableSchema> schemata = Arrays.asList(User);
 	byte[] UserData = new byte[User.getSizeOfEntry()*testUsers.length];
 	byte[] ResultData = new byte[User.getSizeOfEntry()*testUsers.length];
-	Object[] arguments = {5};
+	Object[] arguments = {5, "j"};
 	
 	SQLLexer lex = new SQLLexer();
 	SQLParser parser = new SQLParser();
