@@ -31,7 +31,7 @@ public class Serializer {
 		 * @param numberKeys number of keys compared
 		 * @return true if key1 < key2, false otherwise
 		 */
-		public boolean compareKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
+		private boolean compareKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
 			int position1 = key1.position();
 			int position2 = key2.position();
 			boolean ret;
@@ -48,7 +48,7 @@ public class Serializer {
 			return ret;
 		}
 		
-		public boolean compareEqualityKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
+		private boolean compareEqualityKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
 			int position1 = key1.position();
 			int position2 = key2.position();
 			boolean ret;
@@ -65,15 +65,31 @@ public class Serializer {
 			return ret;
 		}
 		
+		/**
+		 * Compare equality of two keys of a table, based on the position of the bytebuffer and the tableSchema.
+		 * True if key1 == key2, false otherwise
+		 */
 		public boolean compareEqualityKeys(ByteBuffer key1, ByteBuffer key2, TableSchema tableSchema) throws Exception{
+			int position1 = key1.position();
+			int position2 = key2.position();
+			boolean ret = false;
 			if (tableSchema.getKeys().length == 1){
-				return this.compareEqualityKeys(key1, key2, tableSchema.getKeys()[0]);
+				ret = this.compareEqualityKeys(key1, key2, tableSchema.getKeys()[0]);
 			} else{
-				throw new Exception("You have two keys");
+				ret = this.compareEqualityKeys(key1, key2, tableSchema.getKeys()[0]);
+				key1.position(position1+tableSchema.getKeys()[0].byteSizeOfType());
+				key2.position(position2+tableSchema.getKeys()[0].byteSizeOfType());
+				ret = ret && this.compareEqualityKeys(key1, key2, tableSchema.getKeys()[1]);
 			}
+			key1.position(position1);
+			key2.position(position2);
+			return ret;
 		}
 
-		
+		/**
+		 * Compare two keys of a table, based on the position of the bytebuffer and the tableSchema.
+		 * True if key1 < key2, false otherwise
+		 */
 		public boolean compareKeys(ByteBuffer key1, ByteBuffer key2, TableSchema tableSchema) throws Exception{
 			int position1 = key1.position();
 			int position2 = key2.position();
@@ -81,7 +97,18 @@ public class Serializer {
 			if (tableSchema.getKeys().length == 1){
 				ret = this.compareKeys(key1, key2, tableSchema.getKeys()[0]);
 			} else{
-				throw new Exception("You have two keys");
+				boolean firstKey = this.compareKeys(key1, key2, tableSchema.getKeys()[0]);
+				if (firstKey){
+					return true;
+				} else {
+					key1.position(position1+tableSchema.getKeys()[0].byteSizeOfType());
+					key2.position(position2+tableSchema.getKeys()[0].byteSizeOfType());
+					boolean firstKeyEq = compareEqualityKeys(key1, key2, tableSchema.getKeys()[1]);
+					if (firstKeyEq)
+						ret = compareKeys(key1, key2, tableSchema.getKeys()[1]);
+					else
+						ret = false;
+				}
 			}
 			key1.position(position1);
 			key2.position(position2);
@@ -189,7 +216,7 @@ public class Serializer {
 				ret = ByteBuffer.allocate(type.byteSizeOfType()).putChar((char) data).array();
 			} else if (type.type == BaseType.Varchar || type.type == BaseType.Date || type.type == BaseType.Datetime){
 				byte[] c = new byte[((String)data).length()+4];
-				byte[] size = this.getByteArrayFromObject(((String)data).length(), new SQLType(BaseType.Integer));
+				byte[] size = getByteArrayFromObject(((String)data).length(), new SQLType(BaseType.Integer));
 				c = ((String)data).getBytes(Charset.defaultCharset());
 				ret = new byte[size.length + c.length];
 				System.arraycopy(size, 0, ret, 0, size.length);

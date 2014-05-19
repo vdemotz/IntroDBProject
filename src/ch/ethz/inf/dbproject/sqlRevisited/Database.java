@@ -12,7 +12,7 @@ import org.apache.tomcat.util.http.fileupload.FileUtils;
 
 public class Database {
 
-	private int SERIAL_NUMBER = 2;
+	private int SERIAL_NUMBER = 1;
 		//The serial number of the database. Change this number will result, at next
 		//session, of a drop of all tables and total reconstruction of the database.
 	

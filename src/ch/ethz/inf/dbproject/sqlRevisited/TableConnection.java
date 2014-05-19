@@ -9,7 +9,6 @@ public class TableConnection extends DataConnection {
 	////
 	//Fields
 	////
-	private Serializer serializer;
 	private StructureConnection structureConnection;
 	
 	////
@@ -59,7 +58,7 @@ public class TableConnection extends DataConnection {
 	}
 
 	/**
-	 * Write in location tuples determined by numberKeys and keys
+	 * Write in destination tuples determined by numberKeys and keys
 	 * @param keys a ByteBuffer where the keys are written. Take care of position of pointer
 	 * @param numberKeys the number of keys to read
 	 * @param destination where to write tuples
@@ -67,20 +66,23 @@ public class TableConnection extends DataConnection {
 	 */
 	public boolean get(ByteBuffer keys, ByteBuffer destination) throws Exception{
 		int position = this.structureConnection.getPositionsForKeys(keys);
-		this.readFromData(position, tableSchema.getSizeOfEntry(), destination.array());
-		return true;
+		System.out.println("Position to read data"+position);
+		if (position == -1)
+			return false;
+		return this.readFromData(position, tableSchema.getSizeOfEntry(), destination.array());
 	}
 	
 	/**
-	 * Write in location successor of tuple determined by numberKeys and keys (keys should determine one or zero tuple)
+	 * Write in destination successor of tuple determined by numberKeys and keys (keys should determine one or zero tuple)
 	 * @param keys a ByteBuffer where the keys are written. Take care of position of pointer
 	 * @param destination where to write tuples
 	 * @return true if operation succeed (write a tuple), false otherwise
 	 */
 	public boolean succ(ByteBuffer keys, ByteBuffer destination) throws Exception{
 		int position = this.structureConnection.getPositionsNextForKeys(keys);
-		this.readFromData(position, tableSchema.getSizeOfEntry(), destination.array());
-		return true;
+		if (position == -1)
+			return false;
+		return this.readFromData(position, tableSchema.getSizeOfEntry(), destination.array());
 	}
 	
 	/**
@@ -88,8 +90,8 @@ public class TableConnection extends DataConnection {
 	 * @param location where to write tuples
 	 * @return true if operation succeed (write a tuple), false otherwise
 	 */
-	public boolean min(byte[] location) throws Exception{
-		return this.readFromData(0, this.getTableSchema().getSizeOfEntry(), location);
+	public boolean min(ByteBuffer location) throws Exception{
+		return this.readFromData(0, this.getTableSchema().getSizeOfEntry(), location.array());
 	}
 	
 	/**
@@ -98,8 +100,8 @@ public class TableConnection extends DataConnection {
 	 * @param numberKeys the number of keys to read
 	 * @return true if operation succeed (delete at least one tuple), false otherwise
 	 */
-	public boolean delete(ByteBuffer keys, int numberKeys){
-		return false;
+	public boolean delete(ByteBuffer keys) throws Exception{
+		return this.structureConnection.deleteElement(keys);
 	}
 	
 	/**

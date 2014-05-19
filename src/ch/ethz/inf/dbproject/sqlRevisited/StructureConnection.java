@@ -45,7 +45,7 @@ public class StructureConnection extends DataConnection{
 	 */
 	public int getPositionsForKeys(ByteBuffer keys) throws Exception{
 		for (int i = 0; i < elementsPositions.size(); i++){
-			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema));
+			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))
 				return elementsPositions.get(i).second;
 		}
 		return -1;
@@ -56,7 +56,7 @@ public class StructureConnection extends DataConnection{
 	 */
 	public int getPositionsNextForKeys(ByteBuffer keys) throws Exception{
 		for (int i = 0; i < elementsPositions.size(); i++){
-			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema));
+			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))
 				if (i+1 < elementsPositions.size())
 					return elementsPositions.get(i+1).second;
 				else
@@ -68,8 +68,20 @@ public class StructureConnection extends DataConnection{
 	/**
 	 * Delete one element. Note that it's not really deleted, just freed place.
 	 */
-	public boolean deleteElement(ByteBuffer keys, int numberKeys){
-		return false;
+	public boolean deleteElement(ByteBuffer keys) throws Exception{
+		int position = -1;
+		for (int i = 0; i < elementsPositions.size(); i++){
+			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))
+				position = i;
+				break;
+		}
+		if (position == -1){
+			System.out.println("Key not found");
+			return false;
+		}
+		this.shiftData((this.KEYS_SIZE+8)*position+this.OFFSET_META_DATA, -(8+this.KEYS_SIZE));
+		elementsPositions.remove(position);
+		return true;
 	}
 	
 	/**
@@ -134,7 +146,7 @@ public class StructureConnection extends DataConnection{
 		}
 		elementsPositions.add(i, new Pair<byte[], Integer>(keyToInsert.array(), whereToWrite));
 		for (int k = 0; k < elementsPositions.size(); k++){
-			System.out.println("Fresh Key : "+serializer.getStringFromByteArray(elementsPositions.get(k).first));
+			System.out.println("Fresh Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first));
 		}
 		return 1024+i*(this.KEYS_SIZE+8);
 	}
@@ -146,12 +158,12 @@ public class StructureConnection extends DataConnection{
 		buf.get(bytes);
 		int i = 0;
 		while ((int)bytes[i+3] == 1){
-			elementsPositions.add(new Pair<byte[], Integer>(Arrays.copyOfRange(bytes, i+4, i+4+this.KEYS_SIZE), i*this.ELEMENT_SIZE));
+			elementsPositions.add(new Pair<byte[], Integer>(Arrays.copyOfRange(bytes, i+4, i+4+this.KEYS_SIZE), elementsPositions.size()*this.ELEMENT_SIZE));
 			i += this.KEYS_SIZE+8;
-			System.out.println("Keys at position "+i);
+			//System.out.println("Keys at position "+i);
 		}
 		for (int k = 0; k < elementsPositions.size(); k++){
-			System.out.println("Key : "+serializer.getStringFromByteArray(elementsPositions.get(k).first));
+			System.out.println("Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first)+" : "+elementsPositions.get(k).second);
 		}
 		return elementsPositions;
 	}

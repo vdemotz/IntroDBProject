@@ -23,7 +23,7 @@ public class SQLOperatorBase extends SQLOperator {
 	void open() throws SQLPhysicalException {
 		//TODO change exception type in PhysicalTable
 		try {
-			physicalTable.min(currentResult.array());
+			physicalTable.min(currentResult);
 		} catch (Exception e) {
 			throw new SQLPhysicalException();
 		} 
@@ -45,7 +45,11 @@ public class SQLOperatorBase extends SQLOperator {
 		nextResult.rewind();
 		//try to get the next tuple
 		//TODO this is only correct if primary keys are stored at the beginning of the tuple by convention
+		try{
 		hasNext = physicalTable.succ(currentResult, nextResult);
+		} catch (Exception ex){
+			ex.printStackTrace();
+		}
 		//swap next with current
 		ByteBuffer temp = currentResult;
 		currentResult = nextResult;

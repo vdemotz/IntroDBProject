@@ -59,9 +59,9 @@ public class SQLType {
 		} else if (this.type == BaseType.Varchar){
 			return (CHARACTER_BYTE_SIZE*this.size+INT_BYTE_SIZE);
 		} else if (this.type == BaseType.Date){
-			return (CHARACTER_BYTE_SIZE*CHAR_DATE);
+			return (CHARACTER_BYTE_SIZE*CHAR_DATE+INT_BYTE_SIZE);
 		} else if (this.type == BaseType.Datetime){
-			return (CHARACTER_BYTE_SIZE*CHAR_DATETIME);
+			return (CHARACTER_BYTE_SIZE*CHAR_DATETIME+INT_BYTE_SIZE);
 		} 
 		return -1;
 	}
