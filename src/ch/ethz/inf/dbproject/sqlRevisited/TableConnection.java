@@ -66,7 +66,7 @@ public class TableConnection extends DataConnection {
 	 */
 	public boolean get(ByteBuffer keys, ByteBuffer destination) throws Exception{
 		int position = this.structureConnection.getPositionsForKeys(keys);
-		System.out.println("Position to read data"+position);
+		//System.out.println("Position to read data"+position);
 		if (position == -1)
 			return false;
 		return this.readFromData(position, tableSchema.getSizeOfEntry(), destination.array());
@@ -112,7 +112,7 @@ public class TableConnection extends DataConnection {
 	public boolean insert(ByteBuffer object) {
 		try{
 			int position = structureConnection.insertElement(object);
-			System.out.println("Position to insert : "+position);
+			//System.out.println("Position to insert : "+position);
 			byte[] data = new byte[this.tableSchema.getSizeOfEntry()];
 			object.get(data);
 			this.writeToData(data, position);

@@ -76,7 +76,7 @@ public class StructureConnection extends DataConnection{
 				break;
 		}
 		if (position == -1){
-			System.out.println("Key not found");
+			System.err.println("Key not found");
 			return false;
 		}
 		this.shiftData((this.KEYS_SIZE+8)*position+this.OFFSET_META_DATA, -(8+this.KEYS_SIZE));
@@ -90,7 +90,7 @@ public class StructureConnection extends DataConnection{
 	public int insertElement(ByteBuffer object) throws Exception{
 		int whereToWrite = (elementsPositions.size()+1)*this.ELEMENT_SIZE;
 		int position = this.getPositionAndInsert(object, whereToWrite);
-		System.out.println("Returned position : "+position);
+		//System.out.println("Returned position : "+position);
 		this.shiftData(position, this.KEYS_SIZE+8);
 		this.writeToData(this.createKeysFromByteBufferAndPosition(object, whereToWrite).array(), position);
 		object.rewind();
@@ -110,7 +110,7 @@ public class StructureConnection extends DataConnection{
 		ret.putInt(positionToWrite);
 		ret.rewind();
 		object.rewind();
-		System.out.println("Number bytes wrote : "+ret.remaining());
+		//System.out.println("Number bytes wrote : "+ret.remaining());
 		return ret;
 	}
 	
@@ -120,11 +120,11 @@ public class StructureConnection extends DataConnection{
 		ByteBuffer buf = ByteBuffer.allocate(MAXIMAL_META_DATA_SIZE);
 		buf.rewind();
 		int a = channel.read(buf, position);
-		System.out.println("Bytes read : "+a);
+		//System.out.println("Bytes read : "+a);
 		buf.rewind();
-		System.out.println("Wrote at : "+(position+numberBytes));
+		//System.out.println("Wrote at : "+(position+numberBytes));
 		a = channel.write(buf, position+numberBytes);
-		System.out.println("Bytes wrote : "+a);
+		//System.out.println("Bytes wrote : "+a);
 		return;
 	}
 	
@@ -141,12 +141,12 @@ public class StructureConnection extends DataConnection{
 		int i = 0;
 		ByteBuffer keyToInsert = this.getKeysFromByteBuffer(object);
 		while((i < elementsPositions.size()) && !(serializer.compareKeys(keyToInsert, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))){
-			System.out.println("Enter loop search");	
+			//System.out.println("Enter loop search");	
 			i++;
 		}
 		elementsPositions.add(i, new Pair<byte[], Integer>(keyToInsert.array(), whereToWrite));
 		for (int k = 0; k < elementsPositions.size(); k++){
-			System.out.println("Fresh Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first));
+			//System.out.println("Fresh Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first));
 		}
 		return 1024+i*(this.KEYS_SIZE+8);
 	}
@@ -163,7 +163,7 @@ public class StructureConnection extends DataConnection{
 			//System.out.println("Keys at position "+i);
 		}
 		for (int k = 0; k < elementsPositions.size(); k++){
-			System.out.println("Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first)+" : "+elementsPositions.get(k).second);
+			//System.out.println("Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first)+" : "+elementsPositions.get(k).second);
 		}
 		return elementsPositions;
 	}
