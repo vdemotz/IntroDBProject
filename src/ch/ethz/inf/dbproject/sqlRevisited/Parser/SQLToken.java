@@ -84,14 +84,13 @@ public class SQLToken {
 		return result + "')";
 	}
 	
-	public String getQualifierForIdentifier() throws SQLSemanticException {
-		if (!(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID)) throw new SQLSemanticException(SQLSemanticException.Type.NotApplicableToTokenWithClass, toString());
+	public String getQualifierForIdentifier() {
 		assert(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID);
 		return getFragmentsForIdentifier().first;
 	}
 	
-	public Pair<String, String> getFragmentsForIdentifier() throws SQLSemanticException {
-		if (!(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID || tokenClass == SQLTokenClass.UID)) throw new SQLSemanticException(SQLSemanticException.Type.NotApplicableToTokenWithClass, toString());
+	public Pair<String, String> getFragmentsForIdentifier() {
+		assert(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID || tokenClass == SQLTokenClass.UID);
 		String[] fragments = content.split("\\.", 2);
 		if (fragments.length > 1) {
 			return new Pair<String, String>(fragments[0], fragments[1]);

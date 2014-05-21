@@ -73,9 +73,10 @@ public class StructureConnection extends DataConnection{
 	public boolean deleteElement(ByteBuffer keys) throws Exception{
 		int position = -1;
 		for (int i = 0; i < elementsPositions.size(); i++){
-			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))
+			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema)) {
 				position = i;
 				break;
+			}
 		}
 		if (position == -1){
 			System.err.println("Key not found");

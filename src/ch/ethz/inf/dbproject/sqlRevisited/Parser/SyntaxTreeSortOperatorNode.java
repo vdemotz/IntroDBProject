@@ -6,7 +6,7 @@ public class SyntaxTreeSortOperatorNode extends SyntaxTreeNode {
 
 	
 	@SuppressWarnings("unchecked")
-	SyntaxTreeListNode<SyntaxTreeOrderingNode> getOrderStatement()
+	public SyntaxTreeListNode<SyntaxTreeOrderingNode> getOrderStatement()
 	{
 		return (SyntaxTreeListNode<SyntaxTreeOrderingNode>) children.get(1);
 	}

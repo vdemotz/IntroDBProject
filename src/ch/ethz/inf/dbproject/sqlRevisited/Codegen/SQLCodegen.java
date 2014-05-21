@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,15 +163,7 @@ public class SQLCodegen {
 				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 			}
 			
-			if (leftConstant.getClass().equals(String.class)) {
-				return new MaterializingPredicate<String>(new MaterializerConstant<String>((String)leftConstant), new MaterializerConstant<String>((String)rightConstant), operator);
-			} else if (leftConstant.getClass().equals(Integer.class)) {
-				return new MaterializingPredicate<Integer>(new MaterializerConstant<Integer>((Integer)leftConstant), new MaterializerConstant<Integer>((Integer)rightConstant), operator);
-			} else if (leftConstant.getClass().equals(Boolean.class)) {
-				return new MaterializingPredicate<Boolean>(new MaterializerConstant<Boolean>((Boolean)leftConstant), new MaterializerConstant<Boolean>((Boolean)rightConstant), operator);
-			} else {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-			}
+			return new MaterializingPredicate(new MaterializerConstant(leftConstant), new MaterializerConstant(rightConstant), operator);
 		}
 
 		/**
@@ -188,33 +181,7 @@ public class SQLCodegen {
 		 */
 		private Predicate<byte[]> resolveOneSidedPredicate(TableSchema schema, Pair<String, String> identifier, SQLToken constantToken, PredicateFromComparison operator, boolean flipOperator) throws SQLSemanticException {
 			Object constant = resolveConstant(constantToken);
-			//TODO: flip order if necessary
-			int idIndex = schema.indexOf(identifier);
-			SQLType type = schema.getAttributesTypes()[idIndex];
-			int attributeByteOffset = schema.getSizeOfAttributes(idIndex);
-
-			//TODO other types
-			if (type.type == SQLType.BaseType.Varchar) {
-				return new MaterializingPredicate<String>(new VarcharMaterializer(attributeByteOffset), new MaterializerConstant<String>((String)constant), operator);
-				
-			} else if (type.type == SQLType.BaseType.Char) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-				
-			} else if (type.type == SQLType.BaseType.Integer) {
-				return new MaterializingPredicate<Integer>(new IntegerMaterializer(attributeByteOffset), new MaterializerConstant<Integer>((Integer)constant), operator);
-				
-			} else if (type.type == SQLType.BaseType.Date) {
-				return new MaterializingPredicate<String>(new VarcharMaterializer(attributeByteOffset), new MaterializerConstant<String>((String)constant), operator);
-				
-			} else if (type.type == SQLType.BaseType.Datetime) {
-				return new MaterializingPredicate<String>(new VarcharMaterializer(attributeByteOffset), new MaterializerConstant<String>((String)constant), operator);
-				
-			} else if (type.type == SQLType.BaseType.Boolean) {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-				
-			} else {
-				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
-			}
+			return new MaterializingPredicate(materializerForAttribute(schema, identifier), new MaterializerConstant(constant), operator);
 		}
 		
 		private Object resolveConstant(SQLToken token) throws SQLSemanticException {
@@ -264,45 +231,104 @@ public class SQLCodegen {
 		@Override
 		public SQLOperator transform(SyntaxTreeSortOperatorNode currentNode, SQLOperator childResult) throws SQLSemanticException {
 			// TODO resolve sort relation
+			Comparator<byte[]> comparator = resolveComparator(currentNode.schema, currentNode.getOrderStatement());
+
 			// TODO instantiate appropriate sort operator
 			return null;
 		}
+
+		private Comparator<byte[]> resolveComparator(TableSchema schema, SyntaxTreeListNode<SyntaxTreeOrderingNode> orderStatement) throws SQLSemanticException {
+
+			Pair<String, String> identifier = orderStatement.getNode().identifier;
+			Materializer materializer = materializerForAttribute(schema, identifier);
+			
+			Comparator<byte[]> comparator = new NaturalComparatorFromMaterializer(materializer, orderStatement.getNode().ascending);
+			
+			if (orderStatement.getNext() == null) {
+				return comparator;
+			} else {
+				return new CompositeLexicographicalComparator<byte[]>(comparator, resolveComparator(schema, orderStatement.getNext()));
+			}
+		}
+		
+	}
+	
+	////
+	//COMPARATOR IMPLEMENTATION
+	////
+	
+	class NaturalComparatorFromMaterializer implements Comparator<byte[]>
+	{
+		private final Materializer materializer;
+		private final boolean ascending;
+		
+		public NaturalComparatorFromMaterializer(Materializer materializer, boolean ascending) {
+			this.materializer = materializer;
+			this.ascending = ascending;
+		}
+
+		@Override
+		public int compare(byte[] o1, byte[] o2) {
+			int comparison = ((Comparable) materializer.get(o1)).compareTo(materializer.get(o2));
+			return ascending ? comparison : -comparison;
+		}
+		
+	}
+	
+	class  CompositeLexicographicalComparator<T> implements Comparator<T>
+	{
+		private final Comparator<T> current;
+		private final Comparator<T> next;
+		
+		public CompositeLexicographicalComparator(Comparator<T> current, Comparator<T> next) {
+			this.current = current;
+			this.next = next;
+		}
+
+		@Override
+		public int compare(T o1, T o2) {
+			int comparison = current.compare(o1, o2);
+			if (comparison == 0) {
+				comparison = next.compare(o1, o2);
+			}
+			return comparison;
+		}
+		
 	}
 	
 	/////
 	///PREDICATE INSTANCIATION
 	/////
 	
+
 	private Predicate<byte[]> resolveTwoSidedPredicate(TableSchema schema, Pair<String, String> leftIdentifier, Pair<String, String> rightIdentifier, PredicateFromComparison operator) throws SQLSemanticException {
+		return new MaterializingPredicate(materializerForAttribute(schema, leftIdentifier), materializerForAttribute(schema, rightIdentifier), operator);
+	}
+	
+	private Materializer materializerForAttribute(TableSchema schema, Pair<String, String> identifier) throws SQLSemanticException
+	{
+		int index = schema.indexOf(identifier);
+		SQLType type = schema.getAttributesTypes()[index];
 		
-		int leftIndex = schema.indexOf(leftIdentifier);
-		int rightIndex = schema.indexOf(rightIdentifier);
-		SQLType type = schema.getAttributesTypes()[leftIndex];
-		
-		if (!type.equals(schema.getAttributesTypes()[rightIndex])) {
-			throw new SQLSemanticException(SQLSemanticException.Type.TypeError, type.toString() + " != " + schema.getAttributesTypes()[rightIndex]);
-		}
-		
-		int leftAttributeByteOffset = schema.getSizeOfAttributes(leftIndex);
-		int rightAttributeByteOffset = schema.getSizeOfAttributes(rightIndex);
-		
+		int byteOffset = schema.getSizeOfAttributes(index);
+
 		if (type.type == SQLType.BaseType.Varchar) {
-			return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
+			return new VarcharMaterializer(byteOffset);
 			
 		} else if (type.type == SQLType.BaseType.Char) {
-			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);//TODO
 			
 		} else if (type.type == SQLType.BaseType.Integer) {
-			return new MaterializingPredicate<Integer>(new IntegerMaterializer(leftAttributeByteOffset), new IntegerMaterializer(rightAttributeByteOffset), operator);
+			return new IntegerMaterializer(byteOffset);
 			
 		} else if (type.type == SQLType.BaseType.Date) {
-			return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
+			return new VarcharMaterializer(byteOffset);
 			
 		} else if (type.type == SQLType.BaseType.Datetime) {
-			return new MaterializingPredicate<String>(new VarcharMaterializer(leftAttributeByteOffset), new VarcharMaterializer(rightAttributeByteOffset), operator);
+			return new VarcharMaterializer(byteOffset);
 			
 		} else if (type.type == SQLType.BaseType.Boolean) {
-			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);//TODO
 			
 		} else {
 			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
