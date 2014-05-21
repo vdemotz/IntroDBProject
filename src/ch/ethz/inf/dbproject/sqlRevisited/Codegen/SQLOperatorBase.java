@@ -5,49 +5,31 @@ import java.nio.ByteBuffer;
 import ch.ethz.inf.dbproject.sqlRevisited.PhysicalTableInterface;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableConnection;
+import ch.ethz.inf.dbproject.sqlRevisited.TableIterator;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SQLOperatorBase extends SQLOperator {
 
 	private final PhysicalTableInterface physicalTable;
-	private ByteBuffer currentResult;
-	private ByteBuffer nextResult;
+	private TableIterator iterator;
 	private boolean hasNext;
 	
 	public SQLOperatorBase(TableSchema schema, PhysicalTableInterface physicalTable) {
 		super(schema);
 		this.physicalTable = physicalTable;
-		this.nextResult = ByteBuffer.wrap(new byte[schema.getSizeOfEntry()]);
-		this.currentResult = ByteBuffer.wrap(new byte[schema.getSizeOfEntry()]);
 	}
 	
 	@Override
 	protected void internalOpen() throws SQLPhysicalException {
-		hasNext = physicalTable.min(currentResult);
+		internalRewind();
 	}
 
 	@Override
-	public boolean hasNext() {
-		return hasNext;
-	}
-
-	@Override
-	public void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException {
-		assert hasNext;
-		resultBuffer.put(currentResult.array());
-		findNext();
+	public boolean next(ByteBuffer resultBuffer) throws SQLPhysicalException {
+		return iterator.next(resultBuffer);
 	}
 	
-	private void findNext() throws SQLPhysicalException {
-		currentResult.rewind();
-		nextResult.rewind();
-		//try to get the next tuple
-		//TODO this is only correct if primary keys are stored at the beginning of the tuple by convention
-		hasNext = physicalTable.succ(currentResult, nextResult);
-		//swap next with current
-		ByteBuffer temp = currentResult;
-		currentResult = nextResult;
-		nextResult = temp;
+	protected void internalRewind() throws SQLPhysicalException {
+		iterator = physicalTable.getIteratorFirst();
 	}
-	
 }

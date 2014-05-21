@@ -31,21 +31,15 @@ public abstract class SQLOperator {
 			child.open();
 		}
 		internalOpen();
-	} 
-
-	/**
-	 * @return true if there is another result, false otherwise
-	 */
-	public abstract boolean hasNext();
+	}
 	
 	/**
-	 * Advance the iterator to the next position and write the next tuple into the resultBuffer.
-	 * The tuple is written at the current position of the buffer and the position is incremented so that it points just after the tuple that has been written
-	 * @param resultBuffer
-	 * @precondition hasNext()==true
-	 * @result the sizes of the attributes
+	 * If there is a next entry, write it to the resultBuffer, go to the next entry and return true.
+	 * Otherwise, do not modify the resultBuffer and return false.
+	 * @param destination a ByteBuffer to write the entry, holding enough space to hold an entry, whose size is given by the schema.
+	 * @return true if an entry was written, false otherwise
 	 */
-	public abstract void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException;
+	public abstract boolean next(ByteBuffer resultBuffer) throws SQLPhysicalException;
 	
 	/**
 	 * Resets the iterator to point just before the first tuple.

@@ -177,59 +177,25 @@ public class StructureConnection extends DataConnection{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-
-	@Override
-	public boolean get(ByteBuffer key, ByteBuffer destination)
-			throws SQLPhysicalException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public boolean succ(ByteBuffer value, ByteBuffer destination)
-			throws SQLPhysicalException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public boolean min(ByteBuffer destination) throws SQLPhysicalException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
+	
 	@Override
 	public boolean delete(ByteBuffer key) throws SQLPhysicalException {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-
-
+	
 	@Override
 	public boolean insert(ByteBuffer value) throws SQLPhysicalException {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-
-
+	
 	@Override
 	public TableIterator getIterator(ByteBuffer key)
 			throws SQLPhysicalException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 
 	@Override
 	public TableIterator getIteratorFirst() throws SQLPhysicalException {

@@ -75,8 +75,7 @@ public class SQLOperatorTest {
 			ByteBuffer resultBuffer = ByteBuffer.wrap(ResultData);
 			//get results
 			int i=0;
-			while (operator.hasNext()) {
-				operator.getNext(resultBuffer);
+			while (operator.next(resultBuffer)) {
 				System.out.println("has");
 				for (int j=0; j<User.getLength(); j++) {
 					if (User.getAttributesTypes()[j].type == SQLType.BaseType.Varchar || User.getAttributesTypes()[j].type == SQLType.BaseType.Date) {

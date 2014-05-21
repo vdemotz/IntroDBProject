@@ -19,38 +19,25 @@ public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 	}
 	
 	@Override
-	protected void internalOpen() throws SQLPhysicalException {
-		findNext();
-	}
-
-	@Override
-	public boolean hasNext() {
+	public boolean next(ByteBuffer resultBuffer) throws SQLPhysicalException {
+		boolean hasNext = false;
+		while (getChild().next(nextResult)) {
+			nextResult.rewind();
+			if (predicate.has(nextResult.array())) {
+				hasNext = true;
+				resultBuffer.put(nextResult.array());
+				break;
+			}
+		}
 		return hasNext;
 	}
-
+	
 	@Override
-	public void getNext(ByteBuffer resultBuffer) throws SQLPhysicalException {
-		assert(hasNext);
-		nextResult.rewind();
-		resultBuffer.put(nextResult);
-		findNext();
+	protected void internalOpen() throws SQLPhysicalException {
 	}
 	
 	@Override
 	protected void internalRewind() throws SQLPhysicalException {
-		findNext();
-	}
-
-	private void findNext() throws SQLPhysicalException {
-		hasNext = false;
-		while (getChild().hasNext()) {
-			nextResult.rewind();
-			getChild().getNext(nextResult);
-			if (predicate.has(nextResult.array())) {
-				hasNext = true;
-				break;
-			}
-		}
 	}
 }
 	
