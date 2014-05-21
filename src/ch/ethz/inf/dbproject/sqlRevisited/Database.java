@@ -63,6 +63,7 @@ public class Database {
 	//Public methods, meant accessed through a (singleton) connection
 	////
 	public TableSchema getTableSchema(String tableName) throws Exception{
+		tableName = tableName.toLowerCase();
 		for (int i = 0; i < tablesSchema.length; i++){
 			if (tablesSchema[i].getTableName().equals(tableName))
 				return tablesSchema[i];
@@ -71,7 +72,7 @@ public class Database {
 	}
 	
 	public TableConnection getTableConnection(String tableName) throws Exception{
-		return new TableConnection(this.getTableSchema(tableName), this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA);
+		return new TableConnection(this.getTableSchema(tableName.toLowerCase()), this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA);
 	}
 	
 	////

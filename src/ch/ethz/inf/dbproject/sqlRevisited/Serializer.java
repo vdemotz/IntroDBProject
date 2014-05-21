@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.sqlRevisited.Codegen.Materializer;
@@ -177,30 +178,24 @@ public class Serializer {
 				throw new Exception("The String "+type+" doesn't represent a SQLType");
 			}
 		}
-		/**
-		 * Create a new object of the class given by table name and written in ByteBuffer
-		 * @param data represents an object
-		 * @param tableName the type of the object
-		 * @return an object of type tableName.class
-		 */
-		public static Object createObjectFromByteBufferAndTableName(ByteBuffer data, String tableName){
-			return null;
-		}
 		
-		/**
-		 * Create a new object of the class given by table name and written in byte array
-		 * @param data represents an object
-		 * @param tableName the type of the object
-		 * @return an object of type tableName.class
-		 */
-		public static Object createObjectFromBytesArrayAndTableName(byte[] data, SQLType[] attributesTypes) throws Exception{
+		public static Object[] getObjectsFromBytes(byte[] data, TableSchema schema) {
 			List<Object> attributes = new ArrayList<Object>();
-			for (int i = 0; i < attributesTypes.length; i++){
-				
+			SQLType[] attributeTypes = schema.getAttributesTypes();
+			Object[] result = new Object[schema.getLength()];
+			for (int i = 0; i < attributeTypes.length; i++){
+				byte[] copyOfRange = Arrays.copyOfRange(data, schema.getSizeOfAttributes(i), schema.getSizeOfEntry());
+				if (attributeTypes[i].type == SQLType.BaseType.Varchar || attributeTypes[i].type == SQLType.BaseType.Date || attributeTypes[i].type == SQLType.BaseType.Datetime) {
+					result[i] = Serializer.getStringFromByteArray(copyOfRange);
+				} else if (attributeTypes[i].type == SQLType.BaseType.Integer) {
+					result[i] = Serializer.getIntegerFromByteArray(copyOfRange);
+				} else if (attributeTypes[i].type == SQLType.BaseType.Boolean) {
+					result[i] = Serializer.getBooleanFromByteArray(copyOfRange);
+				}
 			}
-			return null;
+			return result;
 		}
-		
+
 		/**
 		 * Transform an object into a byte array to write into the database
 		 * @param data the object to transform
@@ -251,6 +246,15 @@ public class Serializer {
 				destination.put(result);
 			} else {
 				throw new SQLPhysicalException();
+			}
+		}
+		
+		private static Boolean getBooleanFromByteArray(byte[] copyOfRange) {
+			String asString = new String(copyOfRange);
+			if (asString.equals("1")) {
+				return true;
+			} else {
+				return false;
 			}
 		}
 		

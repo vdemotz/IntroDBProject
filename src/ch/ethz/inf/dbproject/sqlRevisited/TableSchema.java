@@ -222,7 +222,7 @@ public class TableSchema {
 	}
 	
 	public int getSizeOfAttributes(int numberOfAttributes) {
-		assert (numberOfAttributes < getLength());
+		assert (numberOfAttributes <= getLength());
 		int size = 0;
 		for (int i = 0; i < numberOfAttributes; i++){
 			size = size + this.attributeTypes[i].byteSizeOfType();

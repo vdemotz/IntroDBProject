@@ -1,11 +1,13 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.util.Arrays;
+
 import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 
 	/*
 	 * Content of the database.
 	 * Its constructed as a bag, with a pointer to indicate which
-	 * element the bag currently point
+	 * element the bag currently points to
 	 * Changes to the array will directly influence the shape of the database
 	 * Note that if any change is made, you have to update (any change) SERIAL_NUMBER in Database.java
 	 * for the changes to be visible at next session
@@ -30,18 +32,18 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 		//position of the iterator
 		private int position;
 		//tables names
-		private String[] tablesNames = new String[]{"User", "CaseDetail", "CaseNote", "Person", "PersonNote", "Category", "CategoryForCase", "Suspected", "Conviction"};
+		private String[] tablesNames = new String[]{"user", "casedetail", "casenote", "person", "personnote", "category", "categoryforcase", "suspected", "conviction"};
 		//attributes names
 		private String[][] attributesNames = new String[][] {
-				{"username", "firstName", "lastName", "password"}, //User
-				{"caseId", "title", "street", "city", "zipCode", "isOpen", "date", "description", "authorName"}, //CaseDetail
-				{"caseId", "caseNoteId", "text", "date", "authorUsername"}, //CaseNote
-				{"personId", "firstName", "lastName", "birthdate"}, //Person
-				{"personId", "personNoteId", "text", "date", "authorUsername"}, //PersonNote
+				{"username", "firstname", "lastname", "password"}, //User
+				{"caseid", "title", "street", "city", "zipCode", "isopen", "date", "description", "authorname"}, //CaseDetail
+				{"caseid", "casenoteid", "text", "date", "authorusername"}, //CaseNote
+				{"personid", "firstname", "lastname", "birthdate"}, //Person
+				{"personid", "personnoteid", "text", "date", "authorusername"}, //PersonNote
 				{"name"}, //Category
-				{"caseId", "categoryName"}, //CategoryForCase
-				{"personId", "caseId"}, //Suspected
-				{"convictionId", "personId", "caseId", "startDate", "endDate"} //Conviction
+				{"caseId", "categoryname"}, //CategoryForCase
+				{"personid", "caseid"}, //Suspected
+				{"convictionid", "personid", "caseid", "startdate", "enddate"} //Conviction
 		};
 		//attributes types
 		private SQLType[][] attributesTypes = new SQLType[][] {
@@ -59,7 +61,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 		//attributes is primary key
 		private boolean[][] isPrimaryKey = new boolean[][] {
 				{true, false, false, false}, //User
-				{true, false, false, false, false, false, false, false}, //CaseDetail
+				{true, false, false, false, false, false, false, false, false}, //CaseDetail
 				{true, true, false, false, false}, //CaseNote
 				{true, false, false, false}, //Person
 				{true, true, false, false, false}, //PersonNote
@@ -86,7 +88,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 		 * @return the TableSchema pointed by TableSet
 		 */
 		public TableSchema getCurrent(){
-			return new TableSchema(tablesNames[position], attributesNames[position], attributesTypes[position], isPrimaryKey[position]);
+			return getSchemaForIndex(position);
 		}	
 		
 		/**
@@ -103,5 +105,14 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 		 */
 		public String[] getTablesNames(){
 			return this.tablesNames;
+		}
+		
+		public TableSchema getSchemaForName(String name) {
+			return getSchemaForIndex(Arrays.asList(getTablesNames()).indexOf(name));
+		}
+		
+		public TableSchema getSchemaForIndex(int index)
+		{
+			return new TableSchema(tablesNames[index], attributesNames[index], attributesTypes[index], isPrimaryKey[index]);
 		}
 	}
