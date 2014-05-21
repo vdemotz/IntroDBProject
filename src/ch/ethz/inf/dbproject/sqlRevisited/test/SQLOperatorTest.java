@@ -46,7 +46,7 @@ public class SQLOperatorTest {
 	String[] CaseDetailStreet = {"Gardenstreet 4", "Westmisterstreet 14"};
 	String[] CaseDetailZipCode = {"8042 D", "42990 CD"};
 	Boolean[] CaseDetailIsOpen = {true, false};
-	String[] CaseDetailDate = {"2001-11-12", "2004-10-01"};
+	String[] CaseDetailDate = {"2001-11-12", "2001-11-12"};
 	String[] CaseDetailDescription = {"Mysterious murder.", "Fascinating Incident."};
 	String[] CaseDetailAuthorName = {"sherlock", "watson"};
 	
@@ -55,11 +55,14 @@ public class SQLOperatorTest {
 	String query1 = "select * from CaseDetail where caseId=0";
 	String query2 = "select * from User, CaseDetail where caseId<10";
 	String query3 = "select * from User ua, User ub, User uc where ua.username=ub.username and ub.username=uc.username";
+	String query4 = "select * from User order by username desc";
+	String query5 = "select * from User order by username asc";
+	String query6 = "select * from CaseDetail order by date desc, caseId asc";
 	Object[] query0Args = {7, "sherlock"};
 	
 
-	String[] queries = {query0, query1, query2, query3};
-	Object[][] queryArgs = {query0Args, {}, {}, {}};
+	String[] queries = {query0, query1, query2, query3, query4, query5, query6};
+	Object[][] queryArgs = {query0Args, {}, {}, {}, {}, {}, {}};
 
 	byte[] UserData;
 	byte[] CaseDetailData;

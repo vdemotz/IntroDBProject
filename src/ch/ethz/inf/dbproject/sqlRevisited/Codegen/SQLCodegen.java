@@ -181,7 +181,11 @@ public class SQLCodegen {
 		 */
 		private Predicate<byte[]> resolveOneSidedPredicate(TableSchema schema, Pair<String, String> identifier, SQLToken constantToken, PredicateFromComparison operator, boolean flipOperator) throws SQLSemanticException {
 			Object constant = resolveConstant(constantToken);
-			return new MaterializingPredicate(materializerForAttribute(schema, identifier), new MaterializerConstant(constant), operator);
+			if (flipOperator) {
+				return new MaterializingPredicate(new MaterializerConstant(constant), materializerForAttribute(schema, identifier), operator);
+			} else {
+				return new MaterializingPredicate(materializerForAttribute(schema, identifier), new MaterializerConstant(constant), operator);
+			}
 		}
 		
 		private Object resolveConstant(SQLToken token) throws SQLSemanticException {
@@ -230,11 +234,11 @@ public class SQLCodegen {
 	{
 		@Override
 		public SQLOperator transform(SyntaxTreeSortOperatorNode currentNode, SQLOperator childResult) throws SQLSemanticException {
-			// TODO resolve sort relation
+			// resolve sort relation
 			Comparator<byte[]> comparator = resolveComparator(currentNode.schema, currentNode.getOrderStatement());
 
-			// TODO instantiate appropriate sort operator
-			return null;
+			// instantiate appropriate sort operator
+			return new SQLOperatorMergeSort(currentNode.schema, childResult, comparator);
 		}
 
 		private Comparator<byte[]> resolveComparator(TableSchema schema, SyntaxTreeListNode<SyntaxTreeOrderingNode> orderStatement) throws SQLSemanticException {
