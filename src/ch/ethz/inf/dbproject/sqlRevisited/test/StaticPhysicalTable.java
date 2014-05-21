@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import ch.ethz.inf.dbproject.sqlRevisited.PhysicalTableInterface;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
+import ch.ethz.inf.dbproject.sqlRevisited.TableIterator;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class StaticPhysicalTable implements PhysicalTableInterface {
@@ -102,6 +103,17 @@ public class StaticPhysicalTable implements PhysicalTableInterface {
 
 	@Override
 	public boolean insert(ByteBuffer value) throws SQLPhysicalException {
+		throw new SQLPhysicalException();
+	}
+
+	@Override
+	public TableIterator getIterator(ByteBuffer key)
+			throws SQLPhysicalException {
+		throw new SQLPhysicalException();
+	}
+
+	@Override
+	public TableIterator getIteratorFirst() throws SQLPhysicalException {
 		throw new SQLPhysicalException();
 	}
 

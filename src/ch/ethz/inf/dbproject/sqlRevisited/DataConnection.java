@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-public abstract class DataConnection {
+public abstract class DataConnection implements PhysicalTableInterface{
 	
 	protected FileChannel channel;
 	protected String DB_PATH;

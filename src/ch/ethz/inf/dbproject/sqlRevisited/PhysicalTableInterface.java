@@ -60,5 +60,20 @@ public interface PhysicalTableInterface {
 	 */
 	public boolean insert(ByteBuffer value) throws SQLPhysicalException;
 	
+	/**
+	 * Create an iterator to have sequential access to a table
+	 * @param key the key of the first object to search from
+	 * @return a TableIterator if key valid, null otherwise
+	 * @throws SQLPhysicalException
+	 */
+	public TableIterator getIterator(ByteBuffer key) throws SQLPhysicalException;
+	
+	/**
+	 * Create an iterator which points to the first entry of the table
+	 * @return a TableIterator which points on first entry of the table
+	 * @throws SQLPhysicalException
+	 */
+	public TableIterator getIteratorFirst() throws SQLPhysicalException;
+	
 	//public boolean update(ByteBuffer oldKey, ByteBuffer newValue);
 }

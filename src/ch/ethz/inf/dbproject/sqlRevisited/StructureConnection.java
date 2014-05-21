@@ -33,6 +33,8 @@ public class StructureConnection extends DataConnection{
 		this.elementsPositions = this.instantiateElementsPositions();
 	}
 	
+	
+	
 	@Override
 	protected void finalize() throws Throwable{
 		channel.close();
@@ -166,5 +168,72 @@ public class StructureConnection extends DataConnection{
 			//System.out.println("Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first)+" : "+elementsPositions.get(k).second);
 		}
 		return elementsPositions;
+	}
+
+
+
+	@Override
+	public TableSchema getTableSchema() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public boolean get(ByteBuffer key, ByteBuffer destination)
+			throws SQLPhysicalException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean succ(ByteBuffer value, ByteBuffer destination)
+			throws SQLPhysicalException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean min(ByteBuffer destination) throws SQLPhysicalException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean delete(ByteBuffer key) throws SQLPhysicalException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean insert(ByteBuffer value) throws SQLPhysicalException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public TableIterator getIterator(ByteBuffer key)
+			throws SQLPhysicalException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public TableIterator getIteratorFirst() throws SQLPhysicalException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
