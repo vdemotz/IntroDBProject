@@ -294,10 +294,11 @@ public class Serializer {
 		public static String getStringFromByteArray(byte[] data){
 			String ret = "";
 			int length = (int)data[3]+(int)data[2]*16;
-			for (int i = 4; i < length+4; i++){
+			/*for (int i = 4; i < length+4; i++){
 				ret = ret+(char)data[i];
 			}
-			return ret;
+			return ret;*/
+			return new String(Arrays.copyOfRange(data, 4, 4+length));
 		}
 		
 		

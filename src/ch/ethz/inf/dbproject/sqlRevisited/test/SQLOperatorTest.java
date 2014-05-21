@@ -100,10 +100,12 @@ public class SQLOperatorTest {
 			List<TableSchema> schemata = Arrays.asList(User, CaseDetail);
 			
 			for (int curQuery = 0; curQuery < queries.length; curQuery++) {
-	
+					
 					tokens = new SQLTokenStream(lex.tokenize(queries[curQuery]));
+					
 					SyntaxTreeDynamicNode parse = parser.parse(tokens);
 					SyntaxTreeNode instanciatedTree = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata);//infer schema for all nodes in the AST
+					
 					SyntaxTreeNode rewrittenTree = instanciatedTree.rewrite();
 					
 					//generate interpreter
@@ -114,11 +116,12 @@ public class SQLOperatorTest {
 					//get results
 					int i=0;
 					while (operator.next(resultBuffer)) {
-						System.out.println("has");
 						Object[] result = Serializer.getObjectsFromBytes(Arrays.copyOfRange(ResultData, i*operator.schema.getSizeOfEntry(), (i+1)*operator.schema.getSizeOfEntry()), operator.schema);
 						System.out.println(Arrays.deepToString(result));
 						i++;
 					}
+					System.out.println();
+					
 					
 			}
 		} catch (SQLParseException e) {

@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.Pair;
@@ -15,6 +16,7 @@ public class TableSchema {
 	private final String[] qualifiers;
 	private final SQLType[] attributeTypes;
 	private final boolean[] isPrimaryKey;
+	private List<TableSchemaAttributeDetail> attributes;
 	
 	////
 	//CONSTRUCTORS
@@ -48,6 +50,7 @@ public class TableSchema {
 		attributeTypes = new SQLType[length];
 		isPrimaryKey = new boolean[length];
 		qualifiers = new String[length];
+		this.attributes = Collections.unmodifiableList(attributes);
 		this.tableName = tableName;
 		initWithIterator(attributes);
 	}
@@ -129,9 +132,12 @@ public class TableSchema {
 	 */
 	public List<TableSchemaAttributeDetail> getAttributes()
 	{
-		List<TableSchemaAttributeDetail> attributes = new ArrayList<TableSchemaAttributeDetail>();
-		for (int i=0; i<getLength(); i++) {
-			attributes.add(new TableSchemaAttributeDetail(attributeNames[i], attributeTypes[i], isPrimaryKey[i], qualifiers[i]));
+		if (attributes == null) {
+			attributes = new ArrayList<TableSchemaAttributeDetail>();
+			for (int i=0; i<getLength(); i++) {
+				attributes.add(new TableSchemaAttributeDetail(attributeNames[i], attributeTypes[i], isPrimaryKey[i], qualifiers[i]));
+			}
+			attributes = Collections.unmodifiableList(attributes);
 		}
 		return attributes;
 	}
@@ -160,57 +166,46 @@ public class TableSchema {
 	/**
 	 * @param name of the attribute (unqualified)
 	 * @param startingFrom
-	 * @return the smallest index k such that startingFrom<=k and attributeNames[k] equals name
-	 * @throws SQLSemanticException if no such index exists
+	 * @return the smallest index k such that startingFrom<=k and attributeNames[k] equals name or -1 if no such index exists
 	 */
-	public int indexOfAttributeName(String name, int startingFrom) throws SQLSemanticException {
-		try {
-			while (!attributeNames[startingFrom].equals(name)) {
-				startingFrom++;
-			}
-		} catch (IndexOutOfBoundsException e) {
-			throw new SQLSemanticException(SQLSemanticException.Type.NoSuchAttributeException, name);
+	public int indexOfAttributeName(String name, int startingFrom) {
+		
+		while (startingFrom < attributeNames.length && !attributeNames[startingFrom].equals(name)) {
+			startingFrom++;
 		}
-		assert(attributeNames[startingFrom].equals(name));
-		return startingFrom;
+		
+		if (startingFrom < attributeNames.length) {
+			return startingFrom;
+		} else {
+			return -1;
+		}
 	}
 	
 	/**
 	 * @param qualifier the table that qualifies the attribute
 	 * @param attributeName the name of the attribute (unqualified)
-	 * @return the smallest index k such that qualifier[k] equals qualifier and attribute[k] equals attributeName
-	 * @throws SQLSemanticException if no such index exists
+	 * @return the smallest index k such that qualifier[k] equals qualifier and attribute[k] equals attributeName or -1 if no such index exists
 	 */
-	public int indexOfQualifiedAttributeName(String qualifier, String attributeName) throws SQLSemanticException {
+	public int indexOfQualifiedAttributeName(String qualifier, String attributeName) {
 		int cur = -1;
-		try {
-			do {
-				cur = indexOfAttributeName(attributeName, cur+1);
-			} while (!qualifiers[cur].equals(qualifier));
-			
-		} catch (SQLSemanticException e) {
-			throw new SQLSemanticException(SQLSemanticException.Type.NoSuchAttributeException, qualifier + "." + attributeName);
-		}
+		do {
+			cur = indexOfAttributeName(attributeName, cur+1);
+		} while (cur >= 0 && !qualifiers[cur].equals(qualifier));
+		
 		return cur;
 	}
 	
 	public boolean hasAttribute(Pair<String, String> attribute)
 	{
 		if (attribute == null) return false;
-		try {
-			indexOf(attribute);
-		} catch (SQLSemanticException e) {
-			return false;
-		}
-		return true;
+		return indexOf(attribute) >= 0;
 	}
 	
 	/**
 	 * @param identifier a qualified or unqualified identifier. If there are several attributes with the same identifier, searching for this attribute returns an unspecified result.
-	 * @return the index of the attribute with the identifier
-	 * @throws SQLSemanticException if there is no such attribute
+	 * @return the index of the attribute with the identifier, or -1 if no such index exists
 	 */
-	public int indexOf(Pair<String, String> identifier) throws SQLSemanticException
+	public int indexOf(Pair<String, String> identifier)
 	{
 		assert(identifier.second != null);
 		

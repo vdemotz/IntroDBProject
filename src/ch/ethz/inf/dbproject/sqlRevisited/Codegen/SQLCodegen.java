@@ -326,7 +326,7 @@ public class SQLCodegen {
 		int byteOffset = schema.getSizeOfAttributes(index);
 
 		if (type.type == SQLType.BaseType.Varchar) {
-			return new VarcharMaterializer(byteOffset);
+			return new VarcharMaterializer(byteOffset, type.byteSizeOfType());
 			
 		} else if (type.type == SQLType.BaseType.Char) {
 			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);//TODO
@@ -335,10 +335,10 @@ public class SQLCodegen {
 			return new IntegerMaterializer(byteOffset);
 			
 		} else if (type.type == SQLType.BaseType.Date) {
-			return new VarcharMaterializer(byteOffset);
+			return new VarcharMaterializer(byteOffset, type.byteSizeOfType());
 			
 		} else if (type.type == SQLType.BaseType.Datetime) {
-			return new VarcharMaterializer(byteOffset);
+			return new VarcharMaterializer(byteOffset, type.byteSizeOfType());
 			
 		} else if (type.type == SQLType.BaseType.Boolean) {
 			return new BooleanMaterializer(byteOffset);
@@ -355,27 +355,27 @@ public class SQLCodegen {
 	
 	public class VarcharMaterializer extends AttributeMaterializer<String>
 	{
-		VarcharMaterializer(int offsetOfAttributeInBytes) {
-			super(offsetOfAttributeInBytes);
+		VarcharMaterializer(int offsetOfAttributeInBytes, int width) {
+			super(offsetOfAttributeInBytes, width);
 		}
 		
 		@Override
 		public String get(byte[] bytes) {
 			//TODO (avoid copying all the time)
-			return Serializer.getStringFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
+			return Serializer.getStringFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, attributeByteEndOffset));
 		}
 	}
 	
 	public class IntegerMaterializer extends AttributeMaterializer<Integer>
 	{
 		IntegerMaterializer(int offsetOfAttributeInBytes) {
-			super(offsetOfAttributeInBytes);
+			super(offsetOfAttributeInBytes, SQLType.INT_BYTE_SIZE);
 		}
 		
 		@Override
 		public Integer get(byte[] bytes) {
 			//TODO (avoid copying all the time)
-			return Serializer.getIntegerFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
+			return Serializer.getIntegerFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, attributeByteEndOffset));
 		}
 	}
 	
@@ -383,12 +383,12 @@ public class SQLCodegen {
 	{
 
 		BooleanMaterializer(int offsetOfAttributeInBytes) {
-			super(offsetOfAttributeInBytes);
+			super(offsetOfAttributeInBytes, SQLType.CHARACTER_BYTE_SIZE);
 		}
 
 		@Override
 		public Boolean get(byte[] bytes) {
-			return Serializer.getBooleanFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
+			return Serializer.getBooleanFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, attributeByteEndOffset));
 		}
 		
 	}
@@ -396,8 +396,10 @@ public class SQLCodegen {
 	public abstract class AttributeMaterializer<T> implements Materializer<T>
 	{
 		int attributeByteOffset;
-		AttributeMaterializer(int offsetOfAttributeInBytes) {
+		int attributeByteEndOffset;
+		AttributeMaterializer(int offsetOfAttributeInBytes, int width) {
 			attributeByteOffset = offsetOfAttributeInBytes;
+			attributeByteEndOffset = attributeByteOffset+width;
 		}
 	}
 	
