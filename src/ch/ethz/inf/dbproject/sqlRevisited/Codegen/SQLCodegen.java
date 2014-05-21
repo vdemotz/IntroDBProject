@@ -115,8 +115,7 @@ public class SQLCodegen {
 	{
 		@Override
 		public SQLOperator transform(SyntaxTreeRenameTableNode currentNode, SQLOperator childResult) throws SQLSemanticException {
-			// TODO Copy childResult with new schema
-			return null;
+			return childResult.copyWithSchema(currentNode.schema);
 		}
 	}
 	

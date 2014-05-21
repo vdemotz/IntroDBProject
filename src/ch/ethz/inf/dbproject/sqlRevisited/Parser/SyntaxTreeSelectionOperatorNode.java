@@ -59,10 +59,12 @@ public class SyntaxTreeSelectionOperatorNode extends SyntaxTreeNode {
 	
 	/**
 	 * @param child
-	 * @return a shallow copy of this node, except that the the child is set to newChild
+	 * @return a shallow copy of this node, except that the the child is set to newChild, and the schema is copied from the child
 	 * @throws SQLSemanticException 
 	 */
 	SyntaxTreeSelectionOperatorNode copyWithChild(SyntaxTreeNode newChild) throws SQLSemanticException {
-		return new SyntaxTreeSelectionOperatorNode(schema, getLeftValue(), getOperator(), getRightValue(), newChild);
+		return new SyntaxTreeSelectionOperatorNode(newChild.schema, getLeftValue(), getOperator(), getRightValue(), newChild);
 	}
+	
+
 }

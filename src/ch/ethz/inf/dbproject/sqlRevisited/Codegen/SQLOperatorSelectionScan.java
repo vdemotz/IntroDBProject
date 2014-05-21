@@ -21,6 +21,7 @@ public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 	@Override
 	public boolean next(ByteBuffer resultBuffer) throws SQLPhysicalException {
 		boolean hasNext = false;
+		nextResult.rewind();
 		while (getChild().next(nextResult)) {
 			nextResult.rewind();
 			if (predicate.has(nextResult.array())) {
@@ -31,13 +32,10 @@ public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 		}
 		return hasNext;
 	}
-	
+
 	@Override
-	protected void internalOpen() throws SQLPhysicalException {
-	}
-	
-	@Override
-	protected void internalRewind() throws SQLPhysicalException {
+	public SQLOperator copyWithSchema(TableSchema schema) {
+		return new SQLOperatorSelectionScan(schema, getChild(), predicate);
 	}
 }
 	

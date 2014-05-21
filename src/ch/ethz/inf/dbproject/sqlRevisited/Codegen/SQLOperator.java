@@ -65,6 +65,14 @@ public abstract class SQLOperator {
 	protected void internalOpen() throws SQLPhysicalException {
 	}
 	
+	/**
+	 * Copies a closed operator, with a new schema.
+	 * Behavior is undefined if the operator has already been opened.
+	 * @param schema
+	 * @return
+	 */
+	public abstract SQLOperator copyWithSchema(TableSchema schema);
+	
 	////
 	//OVERRIDING OBJECT
 	////
@@ -73,6 +81,10 @@ public abstract class SQLOperator {
 	public String toString()
 	{
 		String result = this.getClass().getSimpleName().substring("SQLOperator".length());
+		String info = toStringInfo();
+		if (info != null && info.length() > 0) {
+			result = result + " (" + info + ")";
+		}
 		if (children.length > 0) {
 			result += "[ ";
 			for (SQLOperator child : children) {
@@ -83,5 +95,10 @@ public abstract class SQLOperator {
 			result += "]";
 		}
 		return  result;
+	}
+	
+	protected String toStringInfo()
+	{
+		return "";
 	}
 }

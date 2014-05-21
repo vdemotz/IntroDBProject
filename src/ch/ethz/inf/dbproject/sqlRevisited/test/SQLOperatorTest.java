@@ -53,8 +53,8 @@ public class SQLOperatorTest {
 	
 	String query0 = "select * from User where 5<? and 'f' <= 'f' and username=?";
 	String query1 = "select * from CaseDetail where caseId=0";
-	String query2 = "select * from User, CaseDetail where username=authorname";
-	String query3 = "select * from User ua, User ub, User uc where ua.username = ub.username and ub.username = uc.username";
+	String query2 = "select * from User, CaseDetail where caseId<10";
+	String query3 = "select * from User ua, User ub, User uc where ua.username=ub.username and ub.username=uc.username";
 	Object[] query0Args = {7, "sherlock"};
 	
 
@@ -63,7 +63,6 @@ public class SQLOperatorTest {
 
 	byte[] UserData;
 	byte[] CaseDetailData;
-	
 	
 	@Test
 	public void test() {
@@ -76,7 +75,7 @@ public class SQLOperatorTest {
 		UserData = new byte[UserUsername.length*User.getSizeOfEntry()];
 		CaseDetailData = new byte[CaseDetailCaseId.length*CaseDetail.getSizeOfEntry()];
 		
-		byte[] ResultData = new byte[UserData.length*CaseDetailData.length];
+		byte[] ResultData = new byte[UserData.length*CaseDetailData.length*100];
 		
 		try {
 			//write test data to buffer and create static table on it
