@@ -58,11 +58,12 @@ public class SQLOperatorTest {
 	String query4 = "select * from User order by username desc";
 	String query5 = "select * from User order by username asc";
 	String query6 = "select * from CaseDetail order by date desc, caseId asc";
+	String query7 = "select * from CaseDetail where isOpen=true and isOpen=?";
 	Object[] query0Args = {7, "sherlock"};
 	
 
-	String[] queries = {query0, query1, query2, query3, query4, query5, query6};
-	Object[][] queryArgs = {query0Args, {}, {}, {}, {}, {}, {}};
+	String[] queries = {query0, query1, query2, query3, query4, query5, query6, query7};
+	Object[][] queryArgs = {query0Args, {}, {}, {}, {}, {}, {}, {true}};
 
 	byte[] UserData;
 	byte[] CaseDetailData;

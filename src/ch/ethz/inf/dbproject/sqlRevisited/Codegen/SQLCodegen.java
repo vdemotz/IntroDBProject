@@ -263,6 +263,9 @@ public class SQLCodegen {
 	
 	class NaturalComparatorFromMaterializer implements Comparator<byte[]>
 	{
+		//Given a materializer of a comparable type, returns a comparator that uses compareTo
+		//if ascending is false, the order is reversed
+		
 		private final Materializer materializer;
 		private final boolean ascending;
 		
@@ -289,6 +292,12 @@ public class SQLCodegen {
 			this.next = next;
 		}
 
+		/**
+		 * If the current comparator returns a nonzero result, it is returned.
+		 * Otherwise the result of the next comparator is returned.
+		 * @param current
+		 * @param next
+		 */
 		@Override
 		public int compare(T o1, T o2) {
 			int comparison = current.compare(o1, o2);
@@ -332,7 +341,7 @@ public class SQLCodegen {
 			return new VarcharMaterializer(byteOffset);
 			
 		} else if (type.type == SQLType.BaseType.Boolean) {
-			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);//TODO
+			return new BooleanMaterializer(byteOffset);
 			
 		} else {
 			throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
@@ -344,36 +353,51 @@ public class SQLCodegen {
 	//MATERIALIZER IMPLEMENTATION
 	////
 	
-	public class VarcharMaterializer implements Materializer<String>
+	public class VarcharMaterializer extends AttributeMaterializer<String>
 	{
-		
-		int attributeByteOffset;
-		
 		VarcharMaterializer(int offsetOfAttributeInBytes) {
-			attributeByteOffset = offsetOfAttributeInBytes;
+			super(offsetOfAttributeInBytes);
 		}
 		
 		@Override
 		public String get(byte[] bytes) {
 			//TODO (avoid copying all the time)
 			return Serializer.getStringFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
-			//return Serializer.getVarcharFromByteArray(bytes, attributeByteOffset);
 		}
 	}
 	
-	public class IntegerMaterializer implements Materializer<Integer>
+	public class IntegerMaterializer extends AttributeMaterializer<Integer>
 	{
-		int attributeByteOffset;
-		
 		IntegerMaterializer(int offsetOfAttributeInBytes) {
-			attributeByteOffset = offsetOfAttributeInBytes;
+			super(offsetOfAttributeInBytes);
 		}
 		
 		@Override
 		public Integer get(byte[] bytes) {
 			//TODO (avoid copying all the time)
 			return Serializer.getIntegerFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
-			//return Serializer.getVarcharFromByteArray(bytes, attributeByteOffset);
+		}
+	}
+	
+	public class BooleanMaterializer  extends AttributeMaterializer<Boolean>
+	{
+
+		BooleanMaterializer(int offsetOfAttributeInBytes) {
+			super(offsetOfAttributeInBytes);
+		}
+
+		@Override
+		public Boolean get(byte[] bytes) {
+			return Serializer.getBooleanFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, bytes.length));
+		}
+		
+	}
+	
+	public abstract class AttributeMaterializer<T> implements Materializer<T>
+	{
+		int attributeByteOffset;
+		AttributeMaterializer(int offsetOfAttributeInBytes) {
+			attributeByteOffset = offsetOfAttributeInBytes;
 		}
 	}
 	

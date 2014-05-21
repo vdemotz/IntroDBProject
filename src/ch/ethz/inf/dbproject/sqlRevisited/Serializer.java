@@ -249,9 +249,9 @@ public class Serializer {
 			}
 		}
 		
-		private static Boolean getBooleanFromByteArray(byte[] copyOfRange) {
-			String asString = new String(copyOfRange);
-			if (asString.equals("1")) {
+		public static Boolean getBooleanFromByteArray(byte[] copyOfRange) {
+			String asString = new String(Arrays.copyOfRange(copyOfRange, 0, SQLType.CHARACTER_BYTE_SIZE));
+			if (asString.startsWith("1")) {
 				return true;
 			} else {
 				return false;
