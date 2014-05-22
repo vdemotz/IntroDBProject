@@ -7,7 +7,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 import ch.ethz.inf.dbproject.sqlRevisited.Serializer;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorAggregateCount extends SQLOperatorUnary implements SQLOperatorGrouping {
+public class SQLOperatorAggregateCount extends SQLOperatorAggregate {
 
 	private int groupCount;
 	

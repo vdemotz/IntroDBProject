@@ -59,10 +59,13 @@ public class SQLCodegen {
 				return new SQLOperatorAggregateCount(currentNode.schema, childResult);
 			} else if (currentNode.generatingToken.content.startsWith("max")) {
 				
+				AttributeMaterializer materializer = materializerForAttribute(childResult.schema, currentNode.attributeIdentifier);
+				Comparator<byte[]> comparator = new NaturalComparatorFromMaterializer(materializer, true);
+				
+				return new SQLOperatorAggregateMax(currentNode.schema, childResult, comparator, materializer.attributeByteOffset, materializer.attributeByteEndOffset);
 			} else {
 				throw new SQLSemanticException(SQLSemanticException.Type.InternalError);
 			}
-			return null;
 		}
 	}
 	
@@ -346,7 +349,7 @@ public class SQLCodegen {
 		return new MaterializingPredicate(materializerForAttribute(schema, leftIdentifier), materializerForAttribute(schema, rightIdentifier), operator);
 	}
 	
-	private Materializer materializerForAttribute(TableSchema schema, Pair<String, String> identifier) throws SQLSemanticException
+	private AttributeMaterializer materializerForAttribute(TableSchema schema, Pair<String, String> identifier) throws SQLSemanticException
 	{
 		int index = schema.indexOf(identifier);
 		SQLType type = schema.getAttributesTypes()[index];
@@ -423,8 +426,8 @@ public class SQLCodegen {
 	
 	public abstract class AttributeMaterializer<T> implements Materializer<T>
 	{
-		int attributeByteOffset;
-		int attributeByteEndOffset;
+		public final int attributeByteOffset;
+		public final int attributeByteEndOffset;
 		AttributeMaterializer(int offsetOfAttributeInBytes, int width) {
 			attributeByteOffset = offsetOfAttributeInBytes;
 			attributeByteEndOffset = attributeByteOffset+width;
