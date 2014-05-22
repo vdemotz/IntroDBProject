@@ -63,14 +63,15 @@ public class SQLOperatorTest {
 	String query9 = "select * from  CaseDetail a, CaseDetail b, CaseDetail c group by c.caseId";
 	String query10 = "select * from User where username='linus' group by username";
 	String query11 = "select * from User group by firstName";
-	String query12 = "select a.*, count(*) from User a, User b group by a.username";
+	String query12 = "select b.*, count(*) from User a, User b group by a.username";
 	String query13 = "select max(lastname) from User a";
+	String query14 = "select distinct a.* from User a, User b, User c, User d";
 	
 	Object[] query0Args = {7, "sherlock"};
 	
 
-	String[] queries = {query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12, query13};
-	Object[][] queryArgs = {query0Args, {}, {}, {}, {}, {}, {}, {true}, {"watson"}, {}, {}, {}, {}, {}};
+	String[] queries = {query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12, query13, query14};
+	Object[][] queryArgs = {query0Args, {}, {}, {}, {}, {}, {}, {true}, {"watson"}, {}, {}, {}, {}, {}, {}};
 
 	byte[] UserData;
 	byte[] CaseDetailData;

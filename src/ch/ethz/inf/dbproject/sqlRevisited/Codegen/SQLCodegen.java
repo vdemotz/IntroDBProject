@@ -12,6 +12,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 import ch.ethz.inf.dbproject.sqlRevisited.Serializer;
 import ch.ethz.inf.dbproject.sqlRevisited.TableConnection;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
+import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.*;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode.*;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
@@ -127,8 +128,24 @@ public class SQLCodegen {
 	{
 		@Override
 		public SQLOperator transform(SyntaxTreeNodeDistinct currentNode, SQLOperator childResult) throws SQLSemanticException {
-			// TODO Reduce to grouping, projecting onto self
-			return null;
+			// --Reduces to grouping
+			// resolve grouping list
+			Comparator<byte[]> comparator = resolveGroupByList(currentNode.schema, currentNode.schema.getAttributes());
+			// instantiate group operator (here merge sort group) and group reduction operator
+			return new SQLOperatorGroupReduction(currentNode.schema, new SQLOperatorSortGroup(currentNode.schema, childResult, comparator));
+		}
+
+		private Comparator<byte[]> resolveGroupByList(TableSchema schema, List<TableSchemaAttributeDetail> attributes) throws SQLSemanticException {
+			String attributeName =  attributes.get(0).attributeName;
+			String qualifier = attributes.get(0).qualifier;
+			Materializer materializer = materializerForAttribute(schema, new Pair<String, String>(qualifier, attributeName));
+			Comparator<byte[]> comparator = new NaturalComparatorFromMaterializer(materializer, true);
+			
+			if (attributes.size() == 1) {
+				return comparator;
+			} else {
+				return new CompositeLexicographicalComparator<byte[]>(comparator, resolveGroupByList(schema, attributes.subList(1, attributes.size())));
+			}
 		}
 	}
 	
