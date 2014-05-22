@@ -91,7 +91,12 @@ public class SQLToken {
 	
 	public Pair<String, String> getFragmentsForIdentifier() {
 		assert(tokenClass == SQLTokenClass.QID || tokenClass == SQLTokenClass.QSTARID || tokenClass == SQLTokenClass.UID);
-		String[] fragments = content.split("\\.", 2);
+		return getFragmentsForIdentifier(content);
+	}
+	
+	public static Pair<String, String> getFragmentsForIdentifier(String identifier)
+	{
+		String[] fragments = identifier.split("\\.", 2);
 		if (fragments.length > 1) {
 			return new Pair<String, String>(fragments[0], fragments[1]);
 		} else {

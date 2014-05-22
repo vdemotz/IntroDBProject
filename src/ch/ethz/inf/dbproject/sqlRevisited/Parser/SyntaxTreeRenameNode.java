@@ -6,7 +6,7 @@ import java.util.List;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
-public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
+public class SyntaxTreeRenameNode extends SyntaxTreeNode {
 	
 	public final String name;
 	
@@ -14,15 +14,21 @@ public class SyntaxTreeRenameTableNode extends SyntaxTreeNode {
 		return children.get(0);
 	}
 
-	SyntaxTreeRenameTableNode(SyntaxTreeNode table, String newName) {
+	SyntaxTreeRenameNode(SyntaxTreeNode table, String newName) {
 		super(table);
 		this.name = newName;
 	}
 
-	public SyntaxTreeRenameTableNode(TableSchema schema, SyntaxTreeNode child) {
+	public SyntaxTreeRenameNode(TableSchema schema, SyntaxTreeNode child) {
 		super(schema, child);
 		this.name = schema.tableName;
 		assert(schema != null);
+	}
+	
+	@Override
+	protected String infoToString()
+	{
+		return name.toUpperCase();
 	}
 	
 }
