@@ -2,11 +2,10 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.io.File;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-public abstract class DataConnection implements PhysicalTableInterface{
+public abstract class DataConnection {
 	
 	protected FileChannel channel;
 	protected String DB_PATH;
@@ -23,7 +22,7 @@ public abstract class DataConnection implements PhysicalTableInterface{
 	/**
 	 * Read length bytes from table at given position into the destination ByteBuffer
 	 */
-	protected boolean readFromData(int position, int length, byte[] destination) throws Exception{
+	protected boolean readFromData(int position, int length, byte[] destination) throws SQLPhysicalException{
 		try{
 			MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, length);
 			buf.get(destination);
@@ -36,12 +35,12 @@ public abstract class DataConnection implements PhysicalTableInterface{
 	}
 	
 	/**
-	 * Write a given piece of data into the database. It doesn't check size!
+	 * Write a given piece of data into the database.
 	 * @param data to be written
 	 * @param position the offset (take care of alignment!)
 	 * @return true if succeed, false otherwise
 	 */
-	protected boolean writeToData(byte[] data, int position) throws Exception{
+	protected boolean writeToData(byte[] data, int position) throws SQLPhysicalException{
 		try{
 			MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
 			buf.put(data);

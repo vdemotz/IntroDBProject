@@ -1,13 +1,10 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import ch.ethz.inf.dbproject.Pair;
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLSemanticException;
 
 public class TableSchema {
 	
@@ -159,8 +156,13 @@ public class TableSchema {
 		return isPrimaryKey.clone();
 	}
 	
+	/**
+	 * Test if the attribute at index i is primary key.
+	 * @param i index to test
+	 * @return true if i is in range and primary key, false otherwise
+	 */
 	public boolean isPrimaryKey(int i){
-		return isPrimaryKey[i];
+		return (i < isPrimaryKey.length) ? isPrimaryKey[i] : false;
 	}
 
 	/**
@@ -195,6 +197,9 @@ public class TableSchema {
 		return cur;
 	}
 	
+	/**
+	 * Test if tableSchema has attribute
+	 */
 	public boolean hasAttribute(Pair<String, String> attribute)
 	{
 		if (attribute == null) return false;
@@ -216,6 +221,11 @@ public class TableSchema {
 		}
 	}
 	
+	/**
+	 * Get the size, from 0, of a particular number of attributes
+	 * @param numberOfAttributes
+	 * @return
+	 */
 	public int getSizeOfAttributes(int numberOfAttributes) {
 		assert (numberOfAttributes <= getLength());
 		int size = 0;

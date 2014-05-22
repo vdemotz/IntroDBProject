@@ -1,7 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 
 public interface PhysicalTableInterface {
 	/*

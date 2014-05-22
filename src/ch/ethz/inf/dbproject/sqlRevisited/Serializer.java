@@ -2,12 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.CharBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-import ch.ethz.inf.dbproject.sqlRevisited.Codegen.Materializer;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 
 public class Serializer {
@@ -22,66 +17,25 @@ public class Serializer {
 		////
 		
 		/**
-		 * Get a int from a byte array
-		 */
-		public int getIntFromByteArray(byte[] bytes, int offset) {
-		     return (int)bytes[offset] << 24 | ((int)bytes[offset + 1] & 0xFF) << 16 | ((int)bytes[offset + 2] & 0xFF) << 8 | ((int)bytes[offset + 3] & 0xFF);
-		}
-		
-		/**
-		 * Compare two keys. Be aware of positions of pointer of key1 and key2
+		 * Compare two keys. Be aware of positions of pointer of key1 and key2, the method restore the position of
+		 * key1 and key2
 		 * @param numberKeys number of keys compared
-		 * @return true if key1 < key2, false otherwise
+		 * @return negative if key1 < key2, positive if key2 > key1, 0 otherwise
 		 */
-		private boolean compareKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
+		private int compareKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
 			int position1 = key1.position();
 			int position2 = key2.position();
-			boolean ret;
+			int ret = 0;
 			if (type.type == SQLType.BaseType.Integer){
-				ret = (key1.getInt() < key2.getInt()) ? true : false;
+				int key1I = key1.getInt();
+				int key2I = key2.getInt();
+				ret = key1I - key2I;
 			} else if (type.type == SQLType.BaseType.Varchar){
-				//O.o Long line
-				ret = (this.getStringFromByteBuffer(key1).compareTo(this.getStringFromByteBuffer(key2)) < 0) ? true : false;
+				String key1S = getStringFromByteBuffer(key1);
+				String key2S = getStringFromByteBuffer(key2);
+				ret = key1S.compareTo(key2S);
 			} else {
 				throw new Exception("Key type not supported " + type.toString());
-			}
-			key1.position(position1);
-			key2.position(position2);
-			return ret;
-		}
-		
-		private boolean compareEqualityKeys(ByteBuffer key1, ByteBuffer key2, SQLType type) throws Exception{
-			int position1 = key1.position();
-			int position2 = key2.position();
-			boolean ret;
-			if (type.type == SQLType.BaseType.Integer){
-				ret = (key1.getInt() == key2.getInt()) ? true : false;
-			} else if (type.type == SQLType.BaseType.Varchar){
-				//O.o Long line
-				ret = (this.getStringFromByteBuffer(key1).compareTo(this.getStringFromByteBuffer(key2)) == 0) ? true : false;
-			} else {
-				throw new Exception("Key type not supported " + type.toString());
-			}
-			key1.position(position1);
-			key2.position(position2);
-			return ret;
-		}
-		
-		/**
-		 * Compare equality of two keys of a table, based on the position of the bytebuffer and the tableSchema.
-		 * True if key1 == key2, false otherwise
-		 */
-		public boolean compareEqualityKeys(ByteBuffer key1, ByteBuffer key2, TableSchema tableSchema) throws Exception{
-			int position1 = key1.position();
-			int position2 = key2.position();
-			boolean ret = false;
-			if (tableSchema.getKeys().length == 1){
-				ret = this.compareEqualityKeys(key1, key2, tableSchema.getKeys()[0]);
-			} else{
-				ret = this.compareEqualityKeys(key1, key2, tableSchema.getKeys()[0]);
-				key1.position(position1+tableSchema.getKeys()[0].byteSizeOfType());
-				key2.position(position2+tableSchema.getKeys()[0].byteSizeOfType());
-				ret = ret && this.compareEqualityKeys(key1, key2, tableSchema.getKeys()[1]);
 			}
 			key1.position(position1);
 			key2.position(position2);
@@ -89,29 +43,22 @@ public class Serializer {
 		}
 
 		/**
-		 * Compare two keys of a table, based on the position of the bytebuffer and the tableSchema.
+		 * Compare two keys of a table, based on the position of the ByteBuffer and the tableSchema.
 		 * True if key1 < key2, false otherwise
 		 */
-		public boolean compareKeys(ByteBuffer key1, ByteBuffer key2, TableSchema tableSchema) throws Exception{
+		public int compareKeys(ByteBuffer key1, ByteBuffer key2, TableSchema tableSchema) throws Exception{
 			int position1 = key1.position();
 			int position2 = key2.position();
-			boolean ret = false;
-			if (tableSchema.getKeys().length == 1){
-				ret = this.compareKeys(key1, key2, tableSchema.getKeys()[0]);
-			} else{
-				boolean firstKey = this.compareKeys(key1, key2, tableSchema.getKeys()[0]);
-				if (firstKey){
-					return true;
-				} else {
-					key1.position(position1+tableSchema.getKeys()[0].byteSizeOfType());
-					key2.position(position2+tableSchema.getKeys()[0].byteSizeOfType());
-					boolean firstKeyEq = compareEqualityKeys(key1, key2, tableSchema.getKeys()[1]);
-					if (firstKeyEq)
-						ret = compareKeys(key1, key2, tableSchema.getKeys()[1]);
-					else
-						ret = false;
-				}
+			int ret = 0;
+			int i = 0;
+			while (tableSchema.getIfPrimaryKey().length > i && tableSchema.getIfPrimaryKey()[i]){
+				//System.out.println("Compare key");
+				ret = this.compareKeys(key1, key2, tableSchema.getAttributesTypes()[i]);
+				if (ret != 0)
+					break;
+				i++;
 			}
+			
 			key1.position(position1);
 			key2.position(position2);
 			return ret;
@@ -179,8 +126,13 @@ public class Serializer {
 			}
 		}
 		
+		/**
+		 * Get an array of object that were represented in data, interpreted regarding schema provided
+		 * @param data an abstract array of bytes representing an array of object
+		 * @param schema a way to interpret data
+		 * @return array of object interpreted
+		 */
 		public static Object[] getObjectsFromBytes(byte[] data, TableSchema schema) {
-			List<Object> attributes = new ArrayList<Object>();
 			SQLType[] attributeTypes = schema.getAttributesTypes();
 			Object[] result = new Object[schema.getLength()];
 			for (int i = 0; i < attributeTypes.length; i++){
@@ -249,6 +201,9 @@ public class Serializer {
 			}
 		}
 		
+		/**
+		 * Get a boolean from a byte array
+		 */
 		public static Boolean getBooleanFromByteArray(byte[] copyOfRange) {
 			String asString = new String(Arrays.copyOfRange(copyOfRange, 0, SQLType.CHARACTER_BYTE_SIZE));
 			if (asString.startsWith("1")) {
@@ -258,6 +213,28 @@ public class Serializer {
 			}
 		}
 		
+		/**
+		 * Get a boolean from a ByteBuffer
+		 */
+		public static Boolean getBooleanFromByteBuffer(ByteBuffer buf){
+			int position = buf.position();
+			char a = (char)buf.get();
+			boolean ret = false;
+			if (a == '1')
+				ret = true;
+			else
+				ret = false;
+			buf.position(position);
+			return ret;
+		}
+		
+		/**
+		 * Put bytes from a tuple into a ByteBuffer
+		 * @param schema a way to interpret data
+		 * @param destination ByteBuffer to write data
+		 * @param data object
+		 * @throws SQLPhysicalException
+		 */
 		public static void putBytesFromTuple(TableSchema schema, ByteBuffer destination, Object... data) throws SQLPhysicalException 
 		{
 			for (int i=0; i<schema.getLength(); i++) {
@@ -274,10 +251,11 @@ public class Serializer {
 		 * @param length number of character to read
 		 * @return a string
 		 */
-		public String getStringFromByteBuffer(ByteBuffer data){
+		public static String getStringFromByteBuffer(ByteBuffer data){
 			int position = data.position();
 			String ret = "";
 			int length = data.getInt();
+			//System.out.println("Serialize with length :"+length);
 			for (int i = 0; i < length; i++){
 				char a = (char)data.get();
 				ret = ret+a;
@@ -292,22 +270,98 @@ public class Serializer {
 		 * @return a string
 		 */
 		public static String getStringFromByteArray(byte[] data){
-			String ret = "";
 			int length = (int)data[3]+(int)data[2]*16;
-			/*for (int i = 4; i < length+4; i++){
-				ret = ret+(char)data[i];
-			}
-			return ret;*/
 			return new String(Arrays.copyOfRange(data, 4, 4+length));
 		}
 		
-		
+		/**
+		 * Get first integer from a byte buffer.
+		 */
+		@Deprecated
 		public static Integer getIntegerFromByteBuffer(ByteBuffer data) {
 			return data.getInt();
 		}
 		
+		/**
+		 * Get the first integer represented in a byte array
+		 * @param data a byte array of length at least 4, where 4 first entries represents an integer
+		 * @return an integer
+		 */
 		public static Integer getIntegerFromByteArray(byte[] data) {
 			ByteBuffer wrap = ByteBuffer.wrap(data);
-			return getIntegerFromByteBuffer(wrap);
+			return wrap.getInt();
+		}
+		
+		/**
+		 * Serialize a string, given a max length
+		 */
+		public static ByteBuffer serializerVarchar(String s, int l){
+			ByteBuffer buf = ByteBuffer.allocate(l);
+			if (s == null){
+				buf.putInt(0);
+			} else {
+				int length = s.length();
+				buf.putInt(length);
+				buf.put(s.getBytes());
+			}
+			buf.rewind();
+			return buf;
+		}
+		
+		/**
+		 * Serialize a boolean
+		 */
+		public static ByteBuffer serializerBoolean(boolean b){
+			ByteBuffer buf = ByteBuffer.allocate(1);
+			if (b)
+				buf.put("1".getBytes());
+			else 
+				buf.put("0".getBytes());
+			buf.rewind();
+			return buf;
+		}
+		
+		/**
+		 * Serialize a character
+		 */
+		public static ByteBuffer serializerCharacter(char c){
+			ByteBuffer buf = ByteBuffer.allocate(1);
+			buf.put((byte)c);
+			buf.rewind();
+			return buf;
+		}
+		
+		/**
+		 * Serialize an object regarding its type
+		 * @param object an object to serialize
+		 * @param type how to serialize
+		 * @return a ByteBuffer containing the object, set to position 0
+		 */
+		public static ByteBuffer serializerObject(Object object, SQLType type){
+			ByteBuffer buf = ByteBuffer.allocate(type.byteSizeOfType());
+			if(type.type == BaseType.Integer){
+				buf.putInt((int)object);
+			} else if (type.type == BaseType.Boolean){
+				buf = serializerBoolean((boolean)object);
+			} else if (type.type == BaseType.Char){
+				buf = serializerCharacter((char)object);
+			} else if (type.type == BaseType.Varchar || type.type == BaseType.Date || type.type == BaseType.Datetime){
+				buf = serializerVarchar((String)object, type.byteSizeOfType());
+			}  
+			return (ByteBuffer)buf.rewind();
+		}
+		
+		/**
+		 * Serialize an entire tuple stored in an array of objects
+		 * @param tableSchema serialize regarding types
+		 * @param objects an array containing objects to serialize
+		 * @return a ByteBuffer representing objects, set to position 0
+		 */
+		public static ByteBuffer serializerTuple(TableSchema tableSchema, Object[] objects){
+			ByteBuffer buf = ByteBuffer.allocate(tableSchema.getSizeOfEntry());
+			for (int i = 0; i < objects.length; i++){
+				buf.put(serializerObject(objects[i], tableSchema.getAttributesTypes()[i]));
+			}
+			return (ByteBuffer)buf.rewind();
 		}
 }

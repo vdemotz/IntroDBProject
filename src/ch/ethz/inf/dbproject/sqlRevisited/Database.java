@@ -33,12 +33,19 @@ public class Database {
 	//Very used values
 	////
 	private TableSchema[] tablesSchema;
-	private Serializer serializer;
 	
 
 	////
 	//Constructor -- may take some time (Principle based on SQLite)
 	////
+	/**
+	 * Create a new Database object. This object represents a whole database, with every table
+	 * declared in table set. It has a serial number to be changed if TableSet change. The change
+	 * will destroy every table and rebuild the whole database from scratch.
+	 * 
+	 * To access a particular table, try "getTableConnection". Please refer to TableConnection
+	 * documentation for more information on how to read/write to this particular table.
+	 */
 	public Database() throws Exception {
 		
 		if (this.newFolder()){
@@ -52,7 +59,6 @@ public class Database {
 					System.err.println("Failed to create database");
 				}
 			}
-			serializer = new Serializer();
 			tablesSchema = this.getTablesSchema();
 		} else {
 			throw new Exception("Cannot create folder of Database");
@@ -128,10 +134,10 @@ public class Database {
 	}
 	
 	/**
-	 * Drop (delete files) all tables of the database
+	 * Drop (delete files) all tables of the database. Public only for tests purposes.
 	 * @throws IOException 
 	 */
-	private void dropTables() throws IOException{
+	public void dropTables() throws IOException{
 		FileUtils.cleanDirectory(new File(DB_PATH));
 	}
 	

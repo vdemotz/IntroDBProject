@@ -18,8 +18,21 @@ public class StructureConnection extends DataConnection{
 	private final int KEYS_SIZE;
 	private int OFFSET_META_DATA = 1024;
 	private int MAXIMAL_META_DATA_SIZE = 4096;
+	private int HEADER_KEY_SIZE = 8;
+	private int INT_BYTES_SIZE;
 	private List<Pair<byte[], Integer>> elementsPositions;
 	
+	/**
+	 * Open a new connection to a structure of a table. This structure can be changed independently of the table
+	 * and you can have more than one structure per table. In that particular case, be aware of synchronization issues.
+	 * 
+	 * Inherits from DataConnection for particular ways of write/read to files.
+	 * 
+	 * @param tableSchema a tableSchema of the table
+	 * @param dbPath path to the repository of the database
+	 * @param extMetaData particular extension of meta data files for this database
+	 * @param extData particular extension of data files for this database
+	 */
 	public StructureConnection(TableSchema tableSchema, String dbPath, String extMetaData, String extData) throws Exception{
 		this.EXT_DATA = extData;
 		this.EXT_META_DATA = extMetaData;
@@ -43,24 +56,36 @@ public class StructureConnection extends DataConnection{
 	}
 	
 	/**
-	 * Get tuple matched by keys
+	 * Get the position of the first tuple of the table
+	 */
+	public int getFirstPosition() throws Exception{
+		if (elementsPositions.size() > 0){
+			return elementsPositions.get(0).second;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Get the position in the table of the tuple matched by keys
 	 */
 	public int getPositionsForKeys(ByteBuffer keys) throws Exception{
 		for (int i = 0; i < elementsPositions.size(); i++){
-			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))
+			if (serializer.compareKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema) == 0)
 				return elementsPositions.get(i).second;
 		}
 		return -1;
 	}
 	
 	/**
-	 * Get tuple matched by keys
+	 * Get the position in the table of the next tuple matched by keys
 	 */
 	public int getPositionsNextForKeys(ByteBuffer keys) throws Exception{
 		for (int i = 0; i < elementsPositions.size(); i++){
-			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))
-				if (i+1 < elementsPositions.size())
-					return elementsPositions.get(i+1).second;
+			if (serializer.compareKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema) == 0)
+				if (i+1 < elementsPositions.size()){
+					int returnPosition = elementsPositions.get(i+1).second;
+					return returnPosition;
+				}
 				else
 					break;
 		}
@@ -68,12 +93,12 @@ public class StructureConnection extends DataConnection{
 	}
 	
 	/**
-	 * Delete one element. Note that it's not really deleted, just freed place.
+	 * Delete one element. Note that it's not really deleted, just freed place in structure and no more accessible
 	 */
 	public boolean deleteElement(ByteBuffer keys) throws Exception{
 		int position = -1;
 		for (int i = 0; i < elementsPositions.size(); i++){
-			if (serializer.compareEqualityKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema)) {
+			if (serializer.compareKeys(keys, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema) == 0) {
 				position = i;
 				break;
 			}
@@ -82,30 +107,46 @@ public class StructureConnection extends DataConnection{
 			System.err.println("Key not found");
 			return false;
 		}
-		this.shiftData((this.KEYS_SIZE+8)*position+this.OFFSET_META_DATA, -(8+this.KEYS_SIZE));
+		this.shiftData((this.KEYS_SIZE+8)*position+this.OFFSET_META_DATA, -(this.HEADER_KEY_SIZE+this.KEYS_SIZE));
 		elementsPositions.remove(position);
 		return true;
 	}
 	
 	/**
-	 * Get the position of the table where to write this object
+	 * Get the position in the table where to write this object
 	 */
 	public int insertElement(ByteBuffer object) throws Exception{
-		int whereToWrite = (elementsPositions.size()+1)*this.ELEMENT_SIZE;
+		int whereToWrite = (elementsPositions.size())*this.ELEMENT_SIZE;
 		int position = this.getPositionAndInsert(object, whereToWrite);
-		//System.out.println("Returned position : "+position);
 		this.shiftData(position, this.KEYS_SIZE+8);
 		this.writeToData(this.createKeysFromByteBufferAndPosition(object, whereToWrite).array(), position);
 		object.rewind();
 		return whereToWrite;
 	}
 	
+	/**
+	 * Get an in-order array of all positions of elements in the table
+	 * @return in-order array of positions
+	 */
+	public int[] getPositionsInOrder(){
+		int size = this.elementsPositions.size();
+		if (size <= 0)
+			return null;
+		int[] ret = new int[size];
+		for (int i = 0; i < size; i++)
+			ret[i] = elementsPositions.get(i).second;
+		return ret;
+	}
+	
 	////
 	//Private methods
 	////
 	
+	/**
+	 * Create a writable key from an object
+	 */
 	private ByteBuffer createKeysFromByteBufferAndPosition(ByteBuffer object, int positionToWrite){
-		ByteBuffer ret = ByteBuffer.allocate(this.KEYS_SIZE+8);
+		ByteBuffer ret = ByteBuffer.allocate(this.KEYS_SIZE+this.HEADER_KEY_SIZE);
 		ret.putInt(1);
 		for (int i = 0; i < this.KEYS_SIZE; i++){
 			ret.put(object.get());
@@ -113,47 +154,61 @@ public class StructureConnection extends DataConnection{
 		ret.putInt(positionToWrite);
 		ret.rewind();
 		object.rewind();
-		//System.out.println("Number bytes wrote : "+ret.remaining());
 		return ret;
 	}
 	
-	
-	
-	private void shiftData(int position, int numberBytes) throws IOException{
+	/**
+	 * Shift Data of the structure from position to position + numberBytes
+	 * @param position a position in bytes where to get the data
+	 * @param numberBytes an offset (positive or negative) to add to position
+	 */
+	private void shiftData(int position, int numberBytes) throws SQLPhysicalException{
 		ByteBuffer buf = ByteBuffer.allocate(MAXIMAL_META_DATA_SIZE);
 		buf.rewind();
-		int a = channel.read(buf, position);
-		//System.out.println("Bytes read : "+a);
-		buf.rewind();
-		//System.out.println("Wrote at : "+(position+numberBytes));
-		a = channel.write(buf, position+numberBytes);
-		//System.out.println("Bytes wrote : "+a);
+		try{
+			channel.read(buf, position);
+			buf.rewind();
+			channel.write(buf, position+numberBytes);
+		} catch (IOException ex){
+			throw new SQLPhysicalException();
+		}
 		return;
 	}
 	
+	/**
+	 * Truncate an object to get only keys, according to the tableSchema entries
+	 * @param object ByteBuffer
+	 * @return a ByteBuffer which contains key of object
+	 */
 	private ByteBuffer getKeysFromByteBuffer(ByteBuffer object){
+		int position = object.position();
 		ByteBuffer ret = ByteBuffer.allocate(this.KEYS_SIZE);
-		for (int i = 0; i < this.KEYS_SIZE-8;i++)
+		for (int i = 0; i < this.KEYS_SIZE;i++)
 			ret.put(object.get());
 		ret.rewind();
-		object.rewind();
+		object.position(position);
 		return ret;
 	}
 	
+	/**
+	 * Get the physical position in the structure of an entry and insert it into the structure
+	 * @param object an object to write into the database
+	 * @param whereToWrite the position in the table
+	 * @return a position where to write this entry in the structure
+	 * @throws Exception
+	 */
 	private int getPositionAndInsert(ByteBuffer object, int whereToWrite) throws Exception{
 		int i = 0;
 		ByteBuffer keyToInsert = this.getKeysFromByteBuffer(object);
-		while((i < elementsPositions.size()) && !(serializer.compareKeys(keyToInsert, ByteBuffer.wrap(elementsPositions.get(i).first), this.tableSchema))){
-			//System.out.println("Enter loop search");	
+		while(i < elementsPositions.size() && serializer.compareKeys(keyToInsert, ByteBuffer.wrap(elementsPositions.get(i).first), tableSchema) > 0)
 			i++;
-		}
 		elementsPositions.add(i, new Pair<byte[], Integer>(keyToInsert.array(), whereToWrite));
-		for (int k = 0; k < elementsPositions.size(); k++){
-			//System.out.println("Fresh Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first));
-		}
-		return 1024+i*(this.KEYS_SIZE+8);
+		return 1024+i*(this.KEYS_SIZE+this.HEADER_KEY_SIZE);
 	}
 	
+	/**
+	 * Cache elements positions
+	 */
 	private List<Pair<byte[], Integer>> instantiateElementsPositions() throws IOException{
 		List<Pair<byte[], Integer>> elementsPositions = new ArrayList<Pair<byte[], Integer>>();
 		MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, this.OFFSET_META_DATA, this.MAXIMAL_META_DATA_SIZE);
@@ -161,46 +216,9 @@ public class StructureConnection extends DataConnection{
 		buf.get(bytes);
 		int i = 0;
 		while ((int)bytes[i+3] == 1){
-			elementsPositions.add(new Pair<byte[], Integer>(Arrays.copyOfRange(bytes, i+4, i+4+this.KEYS_SIZE), elementsPositions.size()*this.ELEMENT_SIZE));
-			i += this.KEYS_SIZE+8;
-			//System.out.println("Keys at position "+i);
-		}
-		for (int k = 0; k < elementsPositions.size(); k++){
-			//System.out.println("Key : "+Serializer.getStringFromByteArray(elementsPositions.get(k).first)+" : "+elementsPositions.get(k).second);
+			elementsPositions.add(new Pair<byte[], Integer>(Arrays.copyOfRange(bytes, i+this.INT_BYTES_SIZE, i+this.INT_BYTES_SIZE+this.KEYS_SIZE), Serializer.getIntegerFromByteArray(Arrays.copyOfRange(bytes, i+4+this.KEYS_SIZE, i+8+this.KEYS_SIZE))));
+			i += this.KEYS_SIZE+this.HEADER_KEY_SIZE;
 		}
 		return elementsPositions;
-	}
-
-
-
-	@Override
-	public TableSchema getTableSchema() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public boolean delete(ByteBuffer key) throws SQLPhysicalException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public boolean insert(ByteBuffer value) throws SQLPhysicalException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public TableIterator getIterator(ByteBuffer key)
-			throws SQLPhysicalException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TableIterator getIteratorFirst() throws SQLPhysicalException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

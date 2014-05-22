@@ -37,13 +37,4 @@ public class Connection {
 	public PreparedStatement prepareStatement(String stringQuery){
 		return null;
 	}
-	
-	/**
-	 * Open and get a connection to a table of the database
-	 * @param tableName the name of the table
-	 * @return an object TableConnection which represents a table
-	 */
-	private TableConnection getTable(String tableName) throws Exception{
-		return db.getTableConnection(tableName);
-	}
 }
