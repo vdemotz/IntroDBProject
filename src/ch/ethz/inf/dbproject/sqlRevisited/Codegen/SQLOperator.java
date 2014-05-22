@@ -75,7 +75,7 @@ public abstract class SQLOperator {
 	
 	/**
 	 * Specifies the group of the last result returned by next()
-	 * Between a call to open or rewind and the first next call thereafter, getGroup may have an arbitrary result.
+	 * Between a call to open or rewind and the first next call thereafter, getGroup has the result 0.
 	 * @return the group number of the last result returned by next
 	 */
 	protected int getGroup() {

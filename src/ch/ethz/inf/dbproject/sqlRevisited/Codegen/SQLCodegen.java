@@ -20,7 +20,7 @@ public class SQLCodegen {
 
 	public SQLOperator generateSelectStatement(SyntaxTreeNode node, List<PhysicalTableInterface> tables, Object [] arguments) throws SQLSemanticException {
 		return node.fold(new GeneratorBase(tables), new GeneratorCross(), new GeneratorJoin(arguments), new GeneratorGroup(), new GeneratorDistinct(),
-						 new GeneratorProject(), new GeneratorRename(), new GeneratorSelection(arguments), new GeneratorSort(), null);	
+						 new GeneratorProject(), new GeneratorRename(), new GeneratorSelection(arguments), new GeneratorSort(), new GeneratorAggregate());	
 	}
 	
 	////
@@ -49,6 +49,21 @@ public class SQLCodegen {
 			return new SQLOperatorBase(currentNode.schema, table);
 		}
 		
+	}
+	
+	class GeneratorAggregate implements TransformUnary<SyntaxTreeAggregateNode, SQLOperator>
+	{
+		@Override
+		public SQLOperator transform(SyntaxTreeAggregateNode currentNode, SQLOperator childResult) throws SQLSemanticException {
+			if (currentNode.generatingToken.content.startsWith("count")) {
+				return new SQLOperatorAggregateCount(currentNode.schema, childResult);
+			} else if (currentNode.generatingToken.content.startsWith("max")) {
+				
+			} else {
+				throw new SQLSemanticException(SQLSemanticException.Type.InternalError);
+			}
+			return null;
+		}
 	}
 	
 	class GeneratorCross implements TransformBinary<SyntaxTreeCrossNode, SQLOperator>
