@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 
 import ch.ethz.inf.dbproject.Pair;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
@@ -38,7 +40,7 @@ public class SyntaxTreeNode {
 	 */
 	public SyntaxTreeNode instanciateWithSchemata(List<TableSchema> schemata) throws SQLSemanticException {
 		return fold(new InstanciateSchemaBase(schemata), new InstanciateSchemaCross(), new InstanciateSchemaJoin(), new InstanciateSchemaGroup(), new InstanciateSchemaDistinct(),
-					new InstanciateSchemaProjectAggregate(), new InstanciateSchemaRename(), new InstanciateSchemaSelection(), new InstanciateSchemaSort());
+					new InstanciateSchemaProject(), new InstanciateSchemaRename(), new InstanciateSchemaSelection(), new InstanciateSchemaSort(), new InstanciateSchemaAggregate());
 	}
 	
 	/**
@@ -50,7 +52,7 @@ public class SyntaxTreeNode {
 	public SyntaxTreeNode rewrite() throws SQLSemanticException
 	{
 		return fold(new RewriteBase(), new RewriteCross(), new RewriteJoin(), new RewriteGroup(), new RewriteDistinct(),
-					new RewriteProjectAndAggregate(), new RewriteRename(), new RewriteSelection(), new RewriteSort());
+					new RewriteProject(), new RewriteRename(), new RewriteSelection(), new RewriteSort(), new RewriteAggregate());
 	}
 	
 	////
@@ -123,17 +125,17 @@ public class SyntaxTreeNode {
 		}
 	}
 	
-	private class RewriteRename implements TransformUnary<SyntaxTreeRenameTableNode, SyntaxTreeNode> {
+	private class RewriteRename implements TransformUnary<SyntaxTreeRenameNode, SyntaxTreeNode> {
 		@Override
-		public SyntaxTreeNode transform(SyntaxTreeRenameTableNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
-			return new SyntaxTreeRenameTableNode(currentNode.schema, childResult);
+		public SyntaxTreeNode transform(SyntaxTreeRenameNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeRenameNode(currentNode.schema, childResult);
 		}
 	}
 	
-	private class RewriteProjectAndAggregate implements TransformUnary<SyntaxTreeProjectAndAggregateOperatorNode, SyntaxTreeNode> {
+	private class RewriteProject implements TransformUnary<SyntaxTreeProjectOperatorNode, SyntaxTreeNode> {
 		@Override
-		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
-			return new SyntaxTreeProjectAndAggregateOperatorNode(currentNode.schema, childResult, currentNode.getProjectionList());
+		public SyntaxTreeNode transform(SyntaxTreeProjectOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeProjectOperatorNode(currentNode.schema, childResult, currentNode.getProjectionList());
 		}
 	}
 	
@@ -165,6 +167,13 @@ public class SyntaxTreeNode {
 		}
 	}
 	
+	private class RewriteAggregate implements TransformUnary<SyntaxTreeAggregateNode, SyntaxTreeNode> {
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeAggregateNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			return new SyntaxTreeAggregateNode(currentNode.schema, currentNode.generatingToken, currentNode.aggregateName, childResult);
+		}
+	}
+	
 	////
 	//PSEUDO-FOLD OPERATORS
 	////
@@ -188,7 +197,7 @@ public class SyntaxTreeNode {
 	 * @param join
 	 * @param group
 	 * @param distinct
-	 * @param projectAggregate
+	 * @param project
 	 * @param rename
 	 * @param selection
 	 * @param sort
@@ -200,16 +209,17 @@ public class SyntaxTreeNode {
 					  TransformBinary<SyntaxTreeJoinNode, T> join,
 					  TransformUnary<SyntaxTreeGroupByNode, T> group,
 					  TransformUnary<SyntaxTreeNodeDistinct, T> distinct,
-					  TransformUnary<SyntaxTreeProjectAndAggregateOperatorNode, T> projectAggregate,
-					  TransformUnary<SyntaxTreeRenameTableNode, T> rename,
+					  TransformUnary<SyntaxTreeProjectOperatorNode, T> project,
+					  TransformUnary<SyntaxTreeRenameNode, T> rename,
 					  TransformUnary<SyntaxTreeSelectionOperatorNode, T> selection,
-					  TransformUnary<SyntaxTreeSortOperatorNode, T> sort
+					  TransformUnary<SyntaxTreeSortOperatorNode, T> sort,
+					  TransformUnary<SyntaxTreeAggregateNode, T> aggregate
 					  ) throws SQLSemanticException
 	{
 		ArrayList<T> childResults = new ArrayList<T>();
 		for (SyntaxTreeNode child : children) {
 			if (!child.getClass().equals(SyntaxTreeListNode.class) && !child.getClass().equals(SyntaxTreeIdentifierNode.class)) {//do not fold over list nodes, identifiers
-				childResults.add (child.fold(base, cross, join, group, distinct, projectAggregate, rename, selection, sort));
+				childResults.add (child.fold(base, cross, join, group, distinct, project, rename, selection, sort, aggregate));
 			}
 		}
 		
@@ -226,11 +236,11 @@ public class SyntaxTreeNode {
 		} else if (this.getClass().equals(SyntaxTreeNodeDistinct.class) ) {
 			result = distinct.transform((SyntaxTreeNodeDistinct) this, childResults.get(0));
 			
-		} else if (this.getClass().equals(SyntaxTreeProjectAndAggregateOperatorNode.class) ) {
-			result = projectAggregate.transform((SyntaxTreeProjectAndAggregateOperatorNode) this, childResults.get(0));
+		} else if (this.getClass().equals(SyntaxTreeProjectOperatorNode.class) ) {
+			result = project.transform((SyntaxTreeProjectOperatorNode) this, childResults.get(0));
 			
-		} else if (this.getClass().equals(SyntaxTreeRenameTableNode.class) ) {
-			result = rename.transform((SyntaxTreeRenameTableNode) this, childResults.get(0));
+		} else if (this.getClass().equals(SyntaxTreeRenameNode.class) ) {
+			result = rename.transform((SyntaxTreeRenameNode) this, childResults.get(0));
 			
 		} else if (this.getClass().equals(SyntaxTreeSortOperatorNode.class) ) {
 			result = sort.transform((SyntaxTreeSortOperatorNode) this, childResults.get(0));
@@ -241,7 +251,10 @@ public class SyntaxTreeNode {
 		} else if (this.getClass().equals(SyntaxTreeJoinNode.class)){
 			result = join.transform((SyntaxTreeJoinNode) this, childResults.get(0), childResults.get(1));
 			
-		} else {
+		} else if (this.getClass().equals(SyntaxTreeAggregateNode.class)){
+			result = aggregate.transform((SyntaxTreeAggregateNode)this, childResults.get(0));
+			
+		}else {
 			throw new SQLSemanticException(SQLSemanticException.Type.InternalError, this.toString());
 		}
 		
@@ -288,11 +301,11 @@ public class SyntaxTreeNode {
 		}
 	}
 	
-	private class InstanciateSchemaRename implements TransformUnary<SyntaxTreeRenameTableNode, SyntaxTreeNode>
+	private class InstanciateSchemaRename implements TransformUnary<SyntaxTreeRenameNode, SyntaxTreeNode>
 	{
 		@Override
-		public SyntaxTreeNode transform(SyntaxTreeRenameTableNode currentNode, SyntaxTreeNode childResult) {
-			return new SyntaxTreeRenameTableNode(childResult.schema.renameSchema(currentNode.name), childResult);
+		public SyntaxTreeNode transform(SyntaxTreeRenameNode currentNode, SyntaxTreeNode childResult) {
+			return new SyntaxTreeRenameNode(childResult.schema.renameSchema(currentNode.name), childResult);
 		}
 	}
 	
@@ -312,13 +325,43 @@ public class SyntaxTreeNode {
 		}
 	}
 	
-	private class InstanciateSchemaProjectAggregate implements TransformUnary<SyntaxTreeProjectAndAggregateOperatorNode, SyntaxTreeNode>
+	private class InstanciateSchemaProject implements TransformUnary<SyntaxTreeProjectOperatorNode, SyntaxTreeNode>
 	{
 		@Override
-		public SyntaxTreeNode transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+		public SyntaxTreeNode transform(SyntaxTreeProjectOperatorNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
 			assert(childResult != null);
-			List<TableSchemaAttributeDetail> resolvedProjectionList = SyntaxTreeProjectAndAggregateOperatorNode.resolve(currentNode.getProjectionList(), childResult.schema);
-			return new SyntaxTreeProjectAndAggregateOperatorNode(new TableSchema("", resolvedProjectionList), childResult, currentNode.getProjectionList());
+			List<TableSchemaAttributeDetail> resolvedProjectionList = SyntaxTreeProjectOperatorNode.resolve(currentNode.getProjectionList(), childResult.schema);
+			return new SyntaxTreeProjectOperatorNode(new TableSchema("", resolvedProjectionList), childResult, currentNode.getProjectionList());
+		}
+	}
+	
+	private class InstanciateSchemaAggregate implements TransformUnary<SyntaxTreeAggregateNode, SyntaxTreeNode>
+	{
+		@Override
+		public SyntaxTreeNode transform(SyntaxTreeAggregateNode currentNode, SyntaxTreeNode childResult) throws SQLSemanticException {
+			assert(childResult != null);
+			
+			SQLType type;
+			
+			//Case 1 Count
+			if (currentNode.generatingToken.content.startsWith("count")) {
+				//append with type int
+				type = SQLType.INTEGER;
+			//Case 2 Max
+			} else if (currentNode.generatingToken.content.startsWith("max")) {
+				//append with type of the column maximizing  over
+				int index = childResult.schema.indexOf(currentNode.attributeIdentifier);
+				type = childResult.schema.getAttributesTypes()[index];
+				
+			} else {
+				throw new SQLSemanticException(SQLSemanticException.Type.InternalError);
+			}
+			
+			TableSchemaAttributeDetail attribute = new TableSchemaAttributeDetail(currentNode.aggregateName, type, false, "");
+			TableSchema extra = new TableSchema("", Arrays.asList(attribute));
+			
+			return new SyntaxTreeAggregateNode(childResult.schema.append(extra), currentNode.generatingToken, currentNode.aggregateName, childResult);
+
 		}
 	}
 	

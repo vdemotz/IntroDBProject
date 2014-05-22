@@ -290,8 +290,9 @@ public class SQLParser {
 		if (groupByList != null) {
 			result = new SyntaxTreeGroupByNode(result, groupByList);
 		}
+		result = resolveAggregates(projectOnto, result);
 		
-		result = new SyntaxTreeProjectAndAggregateOperatorNode(result, projectOnto);
+		result = new SyntaxTreeProjectOperatorNode(result, projectOnto);
 		
 		return result;
 	}
@@ -308,6 +309,25 @@ public class SQLParser {
 			}
 		}
 		return result;
+	}
+	
+	
+	/**
+	 * Utility method that, given a selectionList and a base node, returns a new tree with the aggregates from the selectionList and the base as leaf
+	 */
+	private SyntaxTreeNode resolveAggregates(SyntaxTreeListNode<SyntaxTreeNode> selectionList, SyntaxTreeNode base) {
+		if (selectionList == null) {//base case : return the base node
+			return base;
+		}
+		//recursively resolve the list
+		if (selectionList.getNode().getClass().equals(SyntaxTreeRenameNode.class)) {
+			SyntaxTreeIdentifierNode aggregateNode = (SyntaxTreeIdentifierNode) ((SyntaxTreeRenameNode)selectionList.getNode()).getChild();
+			if (aggregateNode.generatingToken.tokenClass == SQLToken.SQLTokenClass.AGGREGATE) {//Case 1: aggregate node : create new aggregate with rest of resolution as child
+				return new SyntaxTreeAggregateNode(aggregateNode.generatingToken, ((SyntaxTreeRenameNode)selectionList.getNode()).name, resolveAggregates(selectionList.getNext(), base));
+			}
+		}
+		//Case 2 : not an aggregate node: continue
+		return resolveAggregates(selectionList.getNext(), base);
 	}
 	
 	////
@@ -347,10 +367,10 @@ public class SQLParser {
 		} else if (tokens.getTokenClass() == SQLToken.SQLTokenClass.AGGREGATE) {
 			node = new SyntaxTreeIdentifierNode(tokens.getToken());
 			tokens.advance();
-			String newName = renamable(tokens);
-			if (newName != null) {
-				node = new SyntaxTreeRenameTableNode(node, newName);
-			}
+			String newName = renamable(tokens);//get the name of the aggregate, if no new name was given, use the token content as name
+			if (newName == null) newName = ((SyntaxTreeIdentifierNode)node).generatingToken.content;
+			node = new SyntaxTreeRenameNode(node, newName);
+			
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
@@ -367,7 +387,7 @@ public class SQLParser {
 			tokens.advance();
 			String newName = renamable(tokens);
 			if (newName != null) {
-				return new SyntaxTreeRenameTableNode(relation, newName);
+				return new SyntaxTreeRenameNode(relation, newName);
 			} else {
 				return relation;
 			}
@@ -376,7 +396,7 @@ public class SQLParser {
 			SyntaxTreeNode subquery = subSelectStatement(tokens);
 			String newName = renamable(tokens);
 			if (newName != null) {
-				return new SyntaxTreeRenameTableNode(subquery, newName);
+				return new SyntaxTreeRenameNode(subquery, newName);
 			} else {
 				throw new SQLParseException(tokens.getPosition());
 			}

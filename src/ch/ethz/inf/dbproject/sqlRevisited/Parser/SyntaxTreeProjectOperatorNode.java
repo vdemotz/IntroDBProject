@@ -9,21 +9,21 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
-public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
+public class SyntaxTreeProjectOperatorNode extends SyntaxTreeNode {
 	
 	@SuppressWarnings("unchecked")
-	SyntaxTreeListNode<SyntaxTreeNode> getProjectionList()
+	public SyntaxTreeListNode<SyntaxTreeNode> getProjectionList()
 	{
 		return (SyntaxTreeListNode<SyntaxTreeNode>) children.get(1);
 	}
 	
-	public SyntaxTreeProjectAndAggregateOperatorNode(SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectOnto) {
+	public SyntaxTreeProjectOperatorNode(SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectOnto) {
 		super(child, projectOnto);
 		assert(child != null);
 		assert(projectOnto != null);
 	}
 
-	public SyntaxTreeProjectAndAggregateOperatorNode(TableSchema schema, SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectionList) {
+	public SyntaxTreeProjectOperatorNode(TableSchema schema, SyntaxTreeNode child, SyntaxTreeListNode<SyntaxTreeNode> projectionList) {
 		super(schema, child, projectionList);
 		assert(schema != null);
 		assert(child != null);
@@ -33,11 +33,16 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 	public static List<TableSchemaAttributeDetail> resolve(SyntaxTreeListNode<SyntaxTreeNode> projectionList, TableSchema schema) throws SQLSemanticException {
 		SyntaxTreeNode node = projectionList.getNode();
 		List<TableSchemaAttributeDetail> result = new LinkedList<TableSchemaAttributeDetail>();
-		if (node.getClass().equals(SyntaxTreeRenameTableNode.class)) {//Case 0 :: renamed aggregate
-			SyntaxTreeRenameTableNode rdnode = (SyntaxTreeRenameTableNode)node;
+		if (node.getClass().equals(SyntaxTreeRenameNode.class)) {//Case 0 :: renamed aggregate
+			SyntaxTreeRenameNode rdnode = (SyntaxTreeRenameNode)node;
 			if (rdnode.getChild().getClass().equals(SyntaxTreeIdentifierNode.class)) {
 				SyntaxTreeIdentifierNode inode = (SyntaxTreeIdentifierNode)rdnode.getChild();
-				result.add(new TableSchemaAttributeDetail(rdnode.name, new SQLType(SQLType.BaseType.Integer), false));
+				if (inode.generatingToken.tokenClass == SQLToken.SQLTokenClass.AGGREGATE) {//aggregates are not renamed in the projection, but in the aggregation
+					int index = schema.indexOfAttributeName(rdnode.name, 0);
+					result.add(schema.getAttributes().get(index));
+				} else {
+					throw new SQLSemanticException(SQLSemanticException.Type.InternalError);//only rename aggregates
+				}
 			} else {
 				throw new SQLSemanticException(SQLSemanticException.Type.InternalError);
 			}
@@ -69,9 +74,6 @@ public class SyntaxTreeProjectAndAggregateOperatorNode extends SyntaxTreeNode {
 				Pair<String, String> nameParts = idnode.generatingToken.getFragmentsForIdentifier();
 				int index = schema.indexOfAttributeName(nameParts.second, 0);
 				result.add(schema.getAttributes().get(index));
-				
-			} else if (idnode.generatingToken.tokenClass == SQLToken.SQLTokenClass.AGGREGATE) {//Case 1d unnamed aggregate :: add a new aggregate attribute without renaming
-				result.add(new TableSchemaAttributeDetail(idnode.generatingToken.content, new SQLType(SQLType.BaseType.Integer), false));
 				
 			} else {
 				throw new SQLSemanticException(SQLSemanticException.Type.InternalError);

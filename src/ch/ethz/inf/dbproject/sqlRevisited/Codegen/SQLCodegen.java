@@ -20,7 +20,7 @@ public class SQLCodegen {
 
 	public SQLOperator generateSelectStatement(SyntaxTreeNode node, List<PhysicalTableInterface> tables, Object [] arguments) throws SQLSemanticException {
 		return node.fold(new GeneratorBase(tables), new GeneratorCross(), new GeneratorJoin(arguments), new GeneratorGroup(), new GeneratorDistinct(),
-						 new GeneratorProjectAndAggregate(), new GeneratorRename(), new GeneratorSelection(arguments), new GeneratorSort());	
+						 new GeneratorProject(), new GeneratorRename(), new GeneratorSelection(arguments), new GeneratorSort(), null);	
 	}
 	
 	////
@@ -100,22 +100,21 @@ public class SQLCodegen {
 		}
 	}
 	
-	class GeneratorProjectAndAggregate implements TransformUnary<SyntaxTreeProjectAndAggregateOperatorNode, SQLOperator>
+	class GeneratorProject implements TransformUnary<SyntaxTreeProjectOperatorNode, SQLOperator>
 	{
 		@Override
-		public SQLOperator transform(SyntaxTreeProjectAndAggregateOperatorNode currentNode, SQLOperator childResult) throws SQLSemanticException {
-			// TODO
+		public SQLOperator transform(SyntaxTreeProjectOperatorNode currentNode, SQLOperator childResult) throws SQLSemanticException {
 			if (currentNode.schema.equals(childResult.schema)) {
 				return childResult;
 			}
-			return null;
+			return new SQLOperatorProjection(currentNode.schema, childResult);
 		}
 	}
 	
-	class GeneratorRename implements TransformUnary<SyntaxTreeRenameTableNode, SQLOperator>
+	class GeneratorRename implements TransformUnary<SyntaxTreeRenameNode, SQLOperator>
 	{
 		@Override
-		public SQLOperator transform(SyntaxTreeRenameTableNode currentNode, SQLOperator childResult) throws SQLSemanticException {
+		public SQLOperator transform(SyntaxTreeRenameNode currentNode, SQLOperator childResult) throws SQLSemanticException {
 			return childResult.copyWithSchema(currentNode.schema);
 		}
 	}

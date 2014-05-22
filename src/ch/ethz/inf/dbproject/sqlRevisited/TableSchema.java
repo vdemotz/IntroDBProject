@@ -205,14 +205,23 @@ public class TableSchema {
 	 * @param identifier a qualified or unqualified identifier. If there are several attributes with the same identifier, searching for this attribute returns an unspecified result.
 	 * @return the index of the attribute with the identifier, or -1 if no such index exists
 	 */
-	public int indexOf(Pair<String, String> identifier)
-	{
-		assert(identifier.second != null);
+	public int indexOf(Pair<String, String> identifier) {
+		return indexOf(identifier.first, identifier.second);
+	}
+	
+	/**
+	 * Returns the index of an attribute.
+	 * If qualifier is null or empty, use indexOfAttributeName.
+	 * Otherwise use indexOfQualifiedAttributeName.
+	 * @return the index of the attribute with the identifier, or -1 if no such index exists
+	 */
+	public int indexOf(String qualifier, String attributeName){
+		assert(attributeName != null);
 		
-		if (identifier.first == null) {
-			return indexOfAttributeName(identifier.second, 0);
+		if (qualifier == null || qualifier.length() == 0) {
+			return indexOfAttributeName(attributeName, 0);
 		} else {
-			return indexOfQualifiedAttributeName(identifier.first, identifier.second);
+			return indexOfQualifiedAttributeName(qualifier, attributeName);
 		}
 	}
 	
