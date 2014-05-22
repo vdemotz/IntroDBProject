@@ -73,6 +73,15 @@ public abstract class SQLOperator {
 	 */
 	public abstract SQLOperator copyWithSchema(TableSchema schema);
 	
+	/**
+	 * Specifies the group of the last result returned by next()
+	 * Between a call to open or rewind and the first next call thereafter, getGroup may have an arbitrary result.
+	 * @return the group number of the last result returned by next
+	 */
+	protected int getGroup() {
+		return 0;
+	}
+	
 	////
 	//OVERRIDING OBJECT
 	////

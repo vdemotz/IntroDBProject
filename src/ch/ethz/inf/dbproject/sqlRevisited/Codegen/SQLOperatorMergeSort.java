@@ -11,10 +11,10 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SQLOperatorMergeSort extends SQLOperatorUnary {
 
-	private final Comparator<byte[]> comparator;
+	protected final Comparator<byte[]> comparator;
 
-	private final ArrayList<byte[]> elementList = new ArrayList<byte[]>();
-	private int currentIndex = 0;
+	protected final ArrayList<byte[]> elementList = new ArrayList<byte[]>();
+	protected int currentIndex = 0;
 	
 	public SQLOperatorMergeSort(TableSchema schema, SQLOperator child, Comparator<byte[]> comparator) {
 		super(schema, child);

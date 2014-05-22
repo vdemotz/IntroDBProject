@@ -85,9 +85,23 @@ public class SQLCodegen {
 	{
 		@Override
 		public SQLOperator transform(SyntaxTreeGroupByNode currentNode, SQLOperator childResult) throws SQLSemanticException {
-			// TODO resolve grouping list
-			// TODO instantiate group operator
-			return null;
+			// resolve grouping list
+			Comparator<byte[]> comparator = resolveGroupByList(currentNode.schema, currentNode.groupByList());
+			// instantiate group operator (here merge sort group)
+			return new SQLOperatorSortGroup(currentNode.schema, childResult, comparator);
+		}
+
+		private Comparator<byte[]> resolveGroupByList(TableSchema schema, SyntaxTreeListNode<SyntaxTreeIdentifierNode> groupByList) throws SQLSemanticException {
+			Pair<String, String> identifier = groupByList.getNode().generatingToken.getFragmentsForIdentifier();
+			Materializer materializer = materializerForAttribute(schema, identifier);
+			
+			Comparator<byte[]> comparator = new NaturalComparatorFromMaterializer(materializer, true);
+			
+			if (groupByList.getNext() == null) {
+				return comparator;
+			} else {
+				return new CompositeLexicographicalComparator<byte[]>(comparator, resolveGroupByList(schema, groupByList.getNext()));
+			}
 		}
 	}
 	
@@ -104,8 +118,8 @@ public class SQLCodegen {
 	{
 		@Override
 		public SQLOperator transform(SyntaxTreeProjectOperatorNode currentNode, SQLOperator childResult) throws SQLSemanticException {
-			if (currentNode.schema.equals(childResult.schema)) {
-				return childResult;
+			if (SQLOperatorGrouping.class.isAssignableFrom(childResult.getClass())) {
+				childResult = new SQLOperatorGroupReduction(childResult.schema, childResult);
 			}
 			return new SQLOperatorProjection(currentNode.schema, childResult);
 		}

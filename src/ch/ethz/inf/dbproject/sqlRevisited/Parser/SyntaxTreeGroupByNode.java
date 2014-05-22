@@ -4,12 +4,12 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
 public class SyntaxTreeGroupByNode extends SyntaxTreeNode {
 
-	SyntaxTreeNode child() {
+	public SyntaxTreeNode child() {
 		return children.get(0);
 	}
 	
 	@SuppressWarnings("unchecked")
-	SyntaxTreeListNode<SyntaxTreeIdentifierNode> groupByList(){
+	public SyntaxTreeListNode<SyntaxTreeIdentifierNode> groupByList(){
 		return (SyntaxTreeListNode<SyntaxTreeIdentifierNode>) children.get(1);
 	}
 	
