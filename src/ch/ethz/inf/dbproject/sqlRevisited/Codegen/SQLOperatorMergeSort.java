@@ -47,11 +47,6 @@ public class SQLOperatorMergeSort extends SQLOperatorUnary {
 	}
 
 	@Override
-	public SQLOperator copyWithSchema(TableSchema schema) {
-		return new SQLOperatorMergeSort(schema, getChild(), comparator);
-	}
-	
-	@Override
 	protected void internalRewind() {
 		currentIndex = 0;
 	}

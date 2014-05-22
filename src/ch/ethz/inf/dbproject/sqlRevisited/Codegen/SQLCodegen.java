@@ -164,7 +164,7 @@ public class SQLCodegen {
 	{
 		@Override
 		public SQLOperator transform(SyntaxTreeRenameNode currentNode, SQLOperator childResult) throws SQLSemanticException {
-			return childResult.copyWithSchema(currentNode.schema);
+			return new SQLOperatorRename(currentNode.schema, childResult);
 		}
 	}
 	
@@ -409,7 +409,6 @@ public class SQLCodegen {
 		
 		@Override
 		public String get(byte[] bytes) {
-			//TODO (avoid copying all the time)
 			return Serializer.getStringFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, attributeByteEndOffset));
 		}
 	}
@@ -422,7 +421,6 @@ public class SQLCodegen {
 		
 		@Override
 		public Integer get(byte[] bytes) {
-			//TODO (avoid copying all the time)
 			return Serializer.getIntegerFromByteArray(Arrays.copyOfRange(bytes, attributeByteOffset, attributeByteEndOffset));
 		}
 	}

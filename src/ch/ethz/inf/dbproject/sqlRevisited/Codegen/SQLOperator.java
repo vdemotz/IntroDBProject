@@ -66,14 +66,6 @@ public abstract class SQLOperator {
 	}
 	
 	/**
-	 * Copies a closed operator, with a new schema.
-	 * Behavior is undefined if the operator has already been opened.
-	 * @param schema
-	 * @return
-	 */
-	public abstract SQLOperator copyWithSchema(TableSchema schema);
-	
-	/**
 	 * Specifies the group of the last result returned by next()
 	 * Between a call to open or rewind and the first next call thereafter, getGroup has the result 0.
 	 * @return the group number of the last result returned by next

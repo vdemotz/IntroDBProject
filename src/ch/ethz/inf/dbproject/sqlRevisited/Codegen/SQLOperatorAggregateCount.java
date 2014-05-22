@@ -41,9 +41,4 @@ public class SQLOperatorAggregateCount extends SQLOperatorAggregate {
 		return hasNext;
 	}
 
-	@Override
-	public SQLOperator copyWithSchema(TableSchema schema) {
-		return new SQLOperatorAggregateCount(schema, getChild());
-	}
-
 }

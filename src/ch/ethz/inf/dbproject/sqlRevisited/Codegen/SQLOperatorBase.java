@@ -32,11 +32,6 @@ public class SQLOperatorBase extends SQLOperator {
 	protected void internalRewind() throws SQLPhysicalException {
 		iterator = physicalTable.getIteratorFirst();
 	}
-
-	@Override
-	public SQLOperator copyWithSchema(TableSchema schema) {
-		return new SQLOperatorBase(schema, physicalTable);
-	}
 	
 	@Override
 	protected String toStringInfo()

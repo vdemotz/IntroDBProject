@@ -32,11 +32,7 @@ public class SQLOperatorSelectionScan extends SQLOperatorUnary {
 		}
 		return hasNext;
 	}
-
-	@Override
-	public SQLOperator copyWithSchema(TableSchema schema) {
-		return new SQLOperatorSelectionScan(schema, getChild(), predicate);
-	}
+	
 }
 	
 

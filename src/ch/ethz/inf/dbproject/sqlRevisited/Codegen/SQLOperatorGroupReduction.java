@@ -50,10 +50,5 @@ public class SQLOperatorGroupReduction extends SQLOperatorUnary {
 		lastResult = nextResult;
 		nextResult = temp;
 	}
-
-	@Override
-	public SQLOperator copyWithSchema(TableSchema schema) {
-		return new SQLOperatorGroupReduction(schema, getChild());
-	}
-
+	
 }

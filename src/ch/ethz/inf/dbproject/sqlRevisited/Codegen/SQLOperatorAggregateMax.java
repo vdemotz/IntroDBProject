@@ -50,9 +50,4 @@ public class SQLOperatorAggregateMax extends SQLOperatorAggregate implements SQL
 		return hasNext;
 	}
 
-	@Override
-	public SQLOperator copyWithSchema(TableSchema schema) {
-		return new SQLOperatorAggregateMax(schema, getChild(), comparator, startByteOffset, endByteOffset);
-	}
-
 }

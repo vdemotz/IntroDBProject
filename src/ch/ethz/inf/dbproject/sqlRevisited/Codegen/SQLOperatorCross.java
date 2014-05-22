@@ -52,11 +52,6 @@ public class SQLOperatorCross  extends SQLOperatorBinary {
 		}
 	}
 	
-	@Override
-	public SQLOperator copyWithSchema(TableSchema schema) {
-		return new SQLOperatorCross(schema, getLeftChild(), getRightChild());
-	}
-	
 	////
 	//INTERNAL
 	////

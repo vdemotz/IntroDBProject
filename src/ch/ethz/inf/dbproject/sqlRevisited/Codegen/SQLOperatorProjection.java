@@ -34,9 +34,4 @@ public class SQLOperatorProjection extends SQLOperatorUnary {
 		return hasNext;
 	}
 
-	@Override
-	public SQLOperator copyWithSchema(TableSchema schema) {
-		return new SQLOperatorProjection(schema, getChild());
-	}
-
 }
