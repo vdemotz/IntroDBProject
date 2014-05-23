@@ -11,81 +11,12 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLTokenStream;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeDynamicNode;
 
-public class InsertPreparedStatement implements PreparedStatement {
+public class InsertPreparedStatement  extends AbstractPreparedStatement {
 
 	/**
 	 * Create a new PrepareStatement insert
 	 * @param insertTokensStream
 	 */
 	InsertPreparedStatement(ArrayList<SQLToken> insertTokensStream){
-		SyntaxTreeDynamicNode stdn = null;
-		try {
-			stdn = new SQLParser().parse(new SQLTokenStream(insertTokensStream));
-		} catch (SQLParseException e) {
-			e.printStackTrace();
-		}
 	}
-	
-	@Override
-	public ResultSet executeQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean execute() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public ResultSet getResultSet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setInt(int index, int value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setString(int index, String value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setDate(int index, Date value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setTimeStamp(int index, Timestamp value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setNull(int index, Types value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setObject(int index, Object value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setBoolean(int index, boolean value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-
 }

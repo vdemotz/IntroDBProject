@@ -3,19 +3,10 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.ArrayList;
 
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
+public class AbstractPreparedStatement implements PreparedStatement {
 
-public class DeletePreparedStatement implements PreparedStatement {
-
-	/**
-	 * Create a new PrepareStatement update
-	 * @param deleteTokensStream
-	 */
-	public DeletePreparedStatement(ArrayList<SQLToken> deleteTokensStream){
-		
-	}
+	private Object[] args; 
 	
 	@Override
 	public ResultSet executeQuery() {
@@ -76,7 +67,6 @@ public class DeletePreparedStatement implements PreparedStatement {
 		// TODO Auto-generated method stub
 		
 	}
-
 
 
 }

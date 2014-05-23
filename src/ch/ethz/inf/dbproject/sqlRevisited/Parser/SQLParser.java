@@ -9,16 +9,16 @@ public class SQLParser {
 	/**
 	 * Rewinds the token stream and tries to parse it
 	 * @param tokenStream
-	 * @return true if the stream parsed, false otherwise
+	 * @return A ParsedQuery
 	 * @throws SQLParseException if a parsing error occurs
 	 */
-	public SyntaxTreeDynamicNode parse(SQLTokenStream tokenStream) throws SQLParseException {
+	public ParsedQuery parse(SQLTokenStream tokenStream) throws SQLParseException {
 		tokenStream.rewind();
-		SyntaxTreeDynamicNode ast = statement(tokenStream);
+		ParsedQuery pq = statement(tokenStream);
 		if (tokenStream.getToken() != null) {//If not the whole stream was consumed, an error occurred
 			throw new SQLParseException(tokenStream.getPosition());
 		} else {
-			return ast;
+			return pq;
 		}
 	}
 	
@@ -29,27 +29,29 @@ public class SQLParser {
 	//Since the grammar is LL(1) no backtracking is needed
 	////
 	
-	private SyntaxTreeDynamicNode statement(SQLTokenStream tokens) throws SQLParseException {
+	private ParsedQuery statement(SQLTokenStream tokens) throws SQLParseException {
 		
 		SyntaxTreeDynamicNode droot = new SyntaxTreeDynamicNode(tokens.getToken());
 		
 		if (SQLToken.SQLTokenClass.INSERTINTO == tokens.getTokenClass()) {
 			tokens.advance();
 			insertStatement(tokens, droot);
+			return new ParsedQuery(ParsedQuery.TypeParsedQuery.INSERT, droot);
 		} else if (SQLToken.SQLTokenClass.SELECT == tokens.getTokenClass()) {
 			SyntaxTreeNode root = selectStatement(tokens);
 			droot.addChildren(root);
+			return new ParsedQuery(ParsedQuery.TypeParsedQuery.SELECT, droot);
 		} else if (SQLToken.SQLTokenClass.UPDATE == tokens.getTokenClass()) {
 			tokens.advance();
 			updateStatement(tokens, droot);
+			return new ParsedQuery(ParsedQuery.TypeParsedQuery.UPDATE, droot);
 		} else if (SQLToken.SQLTokenClass.DELETE == tokens.getTokenClass()) {
 			tokens.advance();
 			deleteStatement(tokens, droot);
+			return new ParsedQuery(ParsedQuery.TypeParsedQuery.DELETE, droot);
 		} else {
 			throw new SQLParseException(tokens.getPosition());
 		}
-		
-		return droot;
 	}
 	
 	
