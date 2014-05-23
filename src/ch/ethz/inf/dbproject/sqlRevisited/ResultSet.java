@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
 
@@ -27,7 +28,7 @@ public class ResultSet {
 	 * @return a java boolean
 	 */
 	public boolean getBoolean(String fieldname){
-		return (boolean) currentTuple[schema.indexOf(SQLToken.getFragmentsForIdentifier(fieldname))];
+		return (boolean) getObject(fieldname);
 	}
 	
 	/**
@@ -37,7 +38,7 @@ public class ResultSet {
 	 */
 	public Object getObject(String fieldname){
 		//TODO handle dates (currently returns their string representation)
-		return currentTuple[schema.indexOf(SQLToken.getFragmentsForIdentifier(fieldname))];
+		return currentTuple[schema.indexOf(SQLToken.getFragmentsForIdentifier(fieldname.toLowerCase()))];
 	}
 	
 	/**
@@ -56,6 +57,10 @@ public class ResultSet {
 	 */
 	public int getInt(int index){
 		return (int) currentTuple[index];
+	}
+	
+	public Object[] getObjects() {
+		return Arrays.copyOf(currentTuple, currentTuple.length);
 	}
 	
 	/**
