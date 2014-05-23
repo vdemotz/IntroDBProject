@@ -1,5 +1,9 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.util.ArrayList;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLLexer;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
+
 public class Connection {
 	
 	private static Database db;
@@ -34,7 +38,20 @@ public class Connection {
 	 * @param stringQuery : a sql query
 	 * @return a prepared statement to be set and executed.
 	 */
-	public PreparedStatement prepareStatement(String stringQuery){
-		return null;
+	public PreparedStatement prepareStatement(String stringQuery) throws SQLException{
+		ArrayList<SQLToken> tokensStream = new SQLLexer().tokenize(stringQuery);
+		SQLToken type = tokensStream.get(0);
+		
+		if (type.tokenClass == SQLToken.SQLTokenClass.DELETE){
+			return new DeletePreparedStatement(tokensStream);
+		} else if (type.tokenClass == SQLToken.SQLTokenClass.INSERTINTO){
+			return new InsertPreparedStatement(tokensStream);
+		} else if (type.tokenClass == SQLToken.SQLTokenClass.UPDATE){
+			return new UpdatePreparedStatement(tokensStream);
+		} else if (type.tokenClass == SQLToken.SQLTokenClass.SELECT){
+			return new SelectPreparedStatement(tokensStream);
+		} else {
+			throw new SQLException();
+		}
 	}
 }
