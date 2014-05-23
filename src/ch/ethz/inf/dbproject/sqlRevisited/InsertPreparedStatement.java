@@ -4,11 +4,17 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 
 public class InsertPreparedStatement  extends AbstractPreparedStatement {
 
+	private TableConnection tc;
+	
 	/**
 	 * Create a new PrepareStatement insert
 	 * @param pq ParsedQuery of type INSERT
 	 */
 	InsertPreparedStatement(ParsedQuery pq){
+		System.out.println(pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0).toString());
+		System.out.println(pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1).toString());
+		//System.out.println(pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0).toString());
+		
 	}
 
 	@Override

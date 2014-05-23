@@ -20,7 +20,7 @@ public class PhysicalTableIterator implements TableIterator{
 		this.tableConnection = tc;
 		this.positionsEntries = this.getPositionsEntries(tc.getStructureConnection());
 		if (keys == null)
-			this.position = (this.positionsEntries.length > 1) ? 0 : -1;
+			this.position = 0;
 		else
 			this.position = this.getInitialPosition(tc.getStructureConnection(), keys);
 	}

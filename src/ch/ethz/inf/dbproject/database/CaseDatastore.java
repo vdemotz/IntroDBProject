@@ -48,11 +48,11 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	private static final String nextCaseNoteIdForCaseQuery = "select coalesce (max(caseNoteId)+1, 1) from CaseNote where caseId=?";//if there is no caseNote yet, max returns null, coalesce selects the first non-null argument
 	//template add a new note
 	private static final String insertIntoCaseNoteQuery = "insert into CaseNote " +
-								"values (?, " +//caseId
-								"?, " +//caseNoteId
-								"?, " +//text
-								"?, " +//date
-								"?)";//authorUsername
+			"values (?, " +//caseId
+			"?, " +//caseNoteId
+			"?, " +//text
+			"?, " +//date
+			"?)";//authorUsername
 	//template set case is open
 	private static final String updateCaseIsOpenQuery = "update CaseDetail set isOpen = ? where caseId = ?";
 	//template add Suspec
