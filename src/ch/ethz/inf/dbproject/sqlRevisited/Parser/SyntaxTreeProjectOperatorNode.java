@@ -68,11 +68,13 @@ public class SyntaxTreeProjectOperatorNode extends SyntaxTreeNode {
 			} else if (idnode.generatingToken.tokenClass == SQLToken.SQLTokenClass.QID) {//Case 1c :: add the first attribute that has the right name and right qualifier
 				Pair<String, String> nameParts = idnode.generatingToken.getFragmentsForIdentifier();
 				int currentIndex = schema.indexOfQualifiedAttributeName(nameParts.first, nameParts.second);
+				if (currentIndex < 0) throw new SQLSemanticException(SQLSemanticException.Type.NoSuchAttributeException, nameParts.second);
 				result.add(schema.getAttributes().get(currentIndex));
 				
 			} else if (idnode.generatingToken.tokenClass == SQLToken.SQLTokenClass.UID) {//Case 1d :: add the first attribute that has the right name
 				Pair<String, String> nameParts = idnode.generatingToken.getFragmentsForIdentifier();
 				int index = schema.indexOfAttributeName(nameParts.second, 0);
+				if (index < 0) throw new SQLSemanticException(SQLSemanticException.Type.NoSuchAttributeException, nameParts.second);
 				result.add(schema.getAttributes().get(index));
 				
 			} else {

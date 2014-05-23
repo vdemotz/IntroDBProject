@@ -2,6 +2,8 @@ package ch.ethz.inf.dbproject.sqlRevisited.test;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 import ch.ethz.inf.dbproject.sqlRevisited.Connection;
 import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
@@ -22,11 +24,11 @@ public class SQLSelectPreparedStatementTest {
 		}
 		
 		try {
-			PreparedStatement statement = connection.prepareStatement("select * from User");
+			PreparedStatement statement = connection.prepareStatement("select CaseDetail.* from User, CaseDetail where authorname=username and username='sherlock'");
 			ResultSet rs = statement.executeQuery();
 			
 			while (rs.next()) {
-				System.out.println(rs.getObject("username"));
+				System.out.println(Arrays.deepToString(rs.getObjects()));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

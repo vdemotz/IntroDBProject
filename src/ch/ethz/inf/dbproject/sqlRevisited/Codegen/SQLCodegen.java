@@ -374,6 +374,7 @@ public class SQLCodegen {
 	private AttributeMaterializer materializerForAttribute(TableSchema schema, Pair<String, String> identifier) throws SQLSemanticException
 	{
 		int index = schema.indexOf(identifier);
+		if (index < 0) throw new SQLSemanticException(SQLSemanticException.Type.NoSuchAttributeException, identifier.second);
 		SQLType type = schema.getAttributesTypes()[index];
 		
 		int byteOffset = schema.getSizeOfAttributes(index);
