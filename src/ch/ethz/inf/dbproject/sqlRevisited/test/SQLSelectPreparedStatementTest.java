@@ -13,7 +13,13 @@ public class SQLSelectPreparedStatementTest {
 	@Test
 	public void test() {
 		
-		Connection connection = Connection.getConnection();
+		Connection connection = null;
+		try {
+			connection = Connection.getConnection();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		try {
 			PreparedStatement statement = connection.prepareStatement("select * from User");

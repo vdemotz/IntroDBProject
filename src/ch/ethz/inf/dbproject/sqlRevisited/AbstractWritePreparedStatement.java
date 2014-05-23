@@ -11,7 +11,7 @@ public abstract class AbstractWritePreparedStatement extends AbstractPreparedSta
 	protected TableConnection tc;
 	
 	AbstractWritePreparedStatement(ParsedQuery pq, WriteLock l, List<PhysicalTableInterface> listTablesConnections) throws SQLPhysicalException{
-		
+		super(l);
 		String tableName = ((SyntaxTreeIdentifierNode)pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0)).generatingToken.content;
 		
 		try {
@@ -23,7 +23,6 @@ public abstract class AbstractWritePreparedStatement extends AbstractPreparedSta
 		
 		int numbArgs = this.getNumberArguments((SyntaxTreeDynamicNode) pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1))+1;
 		args = new Object[numbArgs];
-		lock = l;
 
 		//System.out.println(tableName);
 		//System.out.println("Number arguments : "+(1+this.getNumberArguments((SyntaxTreeDynamicNode) pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1))));
