@@ -10,6 +10,7 @@ public interface PreparedStatement {
 	
 	/**
 	 * Execute any kind of sql query of this PreparedStatement
+	 * @throws SQLException 
 	 */
 	public boolean execute() throws SQLException;
 	

@@ -7,6 +7,7 @@ import java.util.List;
 
 import ch.ethz.inf.dbproject.sqlRevisited.Codegen.SQLCodegen;
 import ch.ethz.inf.dbproject.sqlRevisited.Codegen.SQLOperator;
+import java.util.concurrent.locks.Lock;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;
 
@@ -20,8 +21,10 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 	 * Create a new PreparedStatement query
 	 * @param db 
 	 * @param pq ParsedQuery of type SELECT
+	 * @param l a Read Lock
+	 * @param db Database to acquire connection to tables
 	 */
-	public SelectPreparedStatement(List<PhysicalTableInterface> tables, ParsedQuery pq){
+	public SelectPreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> tables){
 		syntaxTree = pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0);
 		this.tables = tables;
 	}

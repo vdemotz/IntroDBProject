@@ -3,6 +3,9 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLLexer;
@@ -15,6 +18,7 @@ public class Connection {
 	private static Connection instance;
 	private List<PhysicalTableInterface> tables;
 	private TableSet tableDefinitions;
+	private ReadWriteLock readWriteLock;
 	
 	/**
 	 * Get a new connection
@@ -32,7 +36,7 @@ public class Connection {
 	 */
 	private Connection() {
 		if (db == null) {
-			try {
+			try{
 				db = new Database();
 				tableDefinitions = new TableSet(); //TODO hard coded for now
 				tables = instanciateTables();
@@ -41,6 +45,7 @@ public class Connection {
 				System.err.println("Failed to create new Database");
 			}
 		}
+		readWriteLock = new ReentrantReadWriteLock();
 	}
 
 	/**
@@ -55,13 +60,13 @@ public class Connection {
 		ParsedQuery pq = new SQLParser().parse(sqlTokenStream);
 		
 		if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.DELETE){
-			return new DeletePreparedStatement(pq);
+			return new DeletePreparedStatement(pq, readWriteLock.writeLock(), db);
 		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.INSERT){
-			return new InsertPreparedStatement(pq);
+			return new InsertPreparedStatement(pq, readWriteLock.writeLock(), db);
 		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.UPDATE){
-			return new UpdatePreparedStatement(pq);
+			return new UpdatePreparedStatement(pq, readWriteLock.writeLock(), db);
 		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.SELECT){
-			return new SelectPreparedStatement(tables, pq);
+			return new SelectPreparedStatement(pq, readWriteLock.readLock(), tables);
 		} else {
 			throw new SQLException();
 		}
