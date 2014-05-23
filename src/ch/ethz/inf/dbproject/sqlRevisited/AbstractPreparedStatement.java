@@ -3,13 +3,13 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.Lock;
 
 public abstract class AbstractPreparedStatement implements PreparedStatement {
 
-	private Object[] args; 
-	private SQLType[] typeArgs;
-	private ReadWriteLock lock;
+	protected Object[] args; 
+	protected SQLType[] typeArgs;
+	protected Lock lock;
 
 	@Override
 	public ResultSet getResultSet() throws SQLException {

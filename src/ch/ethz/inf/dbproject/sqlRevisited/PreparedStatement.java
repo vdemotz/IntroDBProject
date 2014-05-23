@@ -5,8 +5,9 @@ public interface PreparedStatement {
 	/**
 	 * Execute a search in DB and return the generated ResultSet
 	 * @return The generated ResultSet
+	 * @throws SQLException 
 	 */
-	public ResultSet executeQuery();
+	public ResultSet executeQuery() throws SQLException;
 	
 	/**
 	 * Execute any kind of sql query of this PreparedStatement

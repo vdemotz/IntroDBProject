@@ -63,7 +63,6 @@ public class SQLParser {
 	private void insertStatement(SQLTokenStream tokens, SyntaxTreeDynamicNode root) throws SQLParseException {
 		if (SQLToken.SQLTokenClass.UID == tokens.getTokenClass()) {
 			root.addChildren(new SyntaxTreeIdentifierNode(tokens.getToken()));
-			System.out.println("I'm parsing and token is : "+tokens.getToken().toString());
 			tokens.advance();
 			insertBody(tokens, root);
 		} else {
@@ -534,7 +533,7 @@ public class SQLParser {
 	
 	private void updateStatement(SQLTokenStream tokens, SyntaxTreeDynamicNode root) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
-			root.addChildren(new SyntaxTreeDynamicNode(tokens.getToken()));
+			root.addChildren(new SyntaxTreeIdentifierNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.SET) {
 				root.addChildren(assignmentList(tokens));
@@ -582,7 +581,7 @@ public class SQLParser {
 	
 	private void deleteStatement(SQLTokenStream tokens, SyntaxTreeDynamicNode root) throws SQLParseException {
 		if (tokens.getTokenClass() == SQLToken.SQLTokenClass.UID) {
-			root.addChildren(new SyntaxTreeDynamicNode(tokens.getToken()));
+			root.addChildren(new SyntaxTreeIdentifierNode(tokens.getToken()));
 			tokens.advance();
 			if (tokens.getTokenClass() == SQLToken.SQLTokenClass.WHERE) {
 				tokens.advance();

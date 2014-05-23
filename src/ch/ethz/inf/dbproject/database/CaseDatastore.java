@@ -63,7 +63,7 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	//template get the next id for the case detail
 	private static final String nextCaseDetailIdQuery = "select max(caseId) from CaseDetail";
 	//template remove a suspect from a case
-	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where caseId=? and personId=?";
+	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where personId=? and caseId=?";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;

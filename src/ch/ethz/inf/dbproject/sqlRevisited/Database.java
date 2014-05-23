@@ -68,6 +68,12 @@ public class Database {
 	////
 	//Public methods, meant accessed through a (singleton) connection
 	////
+	/**
+	 * Return a table schema providing the name of this table (without extension)
+	 * @param tableName
+	 * @return
+	 * @throws Exception
+	 */
 	public TableSchema getTableSchema(String tableName) throws Exception{
 		tableName = tableName.toLowerCase();
 		for (int i = 0; i < tablesSchema.length; i++){
@@ -77,6 +83,25 @@ public class Database {
 		return null;
 	}
 	
+	/**
+	 * Open new connections to all tables in database
+	 * @return a list of all table connections
+	 * @throws Exception
+	 */
+	public List<PhysicalTableInterface> getAllTablesConnections() throws Exception {
+		List<PhysicalTableInterface> ret = new ArrayList<PhysicalTableInterface>();
+		for (int i = 0; i < tablesSchema.length; i++){
+			ret.add(new TableConnection(tablesSchema[i], this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA));
+		}
+		return ret;
+	}
+	
+	/**
+	 * Open one TableConnection, given the name of this table (without extension)
+	 * @param tableName
+	 * @return a new direct connection to the table
+	 * @throws Exception
+	 */
 	public TableConnection getTableConnection(String tableName) throws Exception{
 		return new TableConnection(this.getTableSchema(tableName.toLowerCase()), this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA);
 	}
