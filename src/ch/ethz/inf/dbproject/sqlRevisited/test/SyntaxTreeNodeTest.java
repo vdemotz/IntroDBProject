@@ -78,7 +78,7 @@ public class SyntaxTreeNodeTest {
 		for (int i=0; i<testQueries.length; i++) {
 			tokens = new SQLTokenStream(lex.tokenize(testQueries[i]));
 			try {
-				SyntaxTreeDynamicNode parse = parser.parse(tokens);
+				SyntaxTreeDynamicNode parse = parser.parse(tokens).getSyntaxTreeDynamicNode();
 				SyntaxTreeNode instanciatedTree = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));//infer schema for all nodes in the AST
 				SyntaxTreeNode rewrittenTree = instanciatedTree.rewrite();
 				
@@ -109,7 +109,7 @@ public class SyntaxTreeNodeTest {
 		for (int i=0; i<testQueries.length; i++) {
 			try {
 				tokens = new SQLTokenStream(lex.tokenize(testQueries[i]));
-				SyntaxTreeDynamicNode parse = parser.parse(tokens);
+				SyntaxTreeDynamicNode parse = parser.parse(tokens).getSyntaxTreeDynamicNode();
 				System.out.println(parse.dynamicChildren.get(0));//print abstract syntax tree
 				
 				SyntaxTreeNode result = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));//infer schema for all nodes in the AST
@@ -134,7 +134,7 @@ public class SyntaxTreeNodeTest {
 		for (int i=0; i<testQueries.length; i++) {
 			try {
 				tokens = new SQLTokenStream(lex.tokenize(testQueries[i]));
-				SyntaxTreeDynamicNode parse = parser.parse(tokens);
+				SyntaxTreeDynamicNode parse = parser.parse(tokens).getSyntaxTreeDynamicNode();
 				parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));
 				System.out.println(parse.dynamicChildren.get(0));
 				fail("instanciation succeeded unexpectedly " + tokens);

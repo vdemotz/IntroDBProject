@@ -133,7 +133,7 @@ public class SQLParserTest {
 			try {
 				assertNotNull(parser.parse(tokens));
 				//System.out.println(tokens);
-				System.out.println(parser.parse(tokens).dynamicChildren.get(0));
+				System.out.println(parser.parse(tokens).getSyntaxTreeDynamicNode().dynamicChildren.get(0));
 				System.out.println(tokens);
 			} catch (SQLParseException e) {
 				System.out.println(tokens);

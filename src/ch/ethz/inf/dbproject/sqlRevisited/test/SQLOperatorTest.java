@@ -112,7 +112,7 @@ public class SQLOperatorTest {
 					
 					tokens = new SQLTokenStream(lex.tokenize(queries[curQuery]));
 					
-					SyntaxTreeDynamicNode parse = parser.parse(tokens);
+					SyntaxTreeDynamicNode parse = parser.parse(tokens).getSyntaxTreeDynamicNode();
 					SyntaxTreeNode instanciatedTree = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata);//infer schema for all nodes in the AST
 					
 					SyntaxTreeNode rewrittenTree = instanciatedTree.rewrite();
