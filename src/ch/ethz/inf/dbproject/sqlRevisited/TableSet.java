@@ -36,12 +36,12 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType.BaseType;
 		//attributes names
 		private String[][] attributesNames = new String[][] {
 				{"username", "firstname", "lastname", "password"}, //User
-				{"caseid", "title", "street", "city", "zipCode", "isopen", "date", "description", "authorname"}, //CaseDetail
+				{"caseid", "title", "street", "city", "zipcode", "isopen", "date", "description", "authorname"}, //CaseDetail
 				{"caseid", "casenoteid", "text", "date", "authorusername"}, //CaseNote
 				{"personid", "firstname", "lastname", "birthdate"}, //Person
 				{"personid", "personnoteid", "text", "date", "authorusername"}, //PersonNote
 				{"name"}, //Category
-				{"caseId", "categoryname"}, //CategoryForCase
+				{"caseid", "categoryname"}, //CategoryForCase
 				{"personid", "caseid"}, //Suspected
 				{"convictionid", "personid", "caseid", "startdate", "enddate"} //Conviction
 		};
