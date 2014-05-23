@@ -33,7 +33,6 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 			schemata.add(table.getTableSchema());
 		}
 		syntaxTree = pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0).instanciateWithSchemata(schemata).rewrite();
-		this.typeArgs = syntaxTree.schema.getAttributesTypes();
 		this.args = new Object[8];//TODO : properly count number of arguments!
 		this.tables = tables;
 	}

@@ -24,7 +24,7 @@ public class SQLLexer {
 		ArrayList<SQLToken> tokenStream = new ArrayList<SQLToken>();
 		
 		Matcher matcher = pattern.matcher(statement);
-		int argumentCount = 0;//keeps track of how many arguments (?) have been encountered
+		int argumentCount = 0;//keeps track of how many arguments ('?') have been encountered
 		while (matcher.find()) {
 			
 			for (SQLTokenClass tokenClass : SQLToken.SQLTokenClass.values()) {

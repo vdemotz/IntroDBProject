@@ -3,6 +3,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.test;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import org.junit.Test;
 import ch.ethz.inf.dbproject.sqlRevisited.Connection;
@@ -33,10 +34,12 @@ public class SQLSelectPreparedStatementTest {
 	private static final String openCasesQuery = "select * from CaseDetail where isOpen = ? order by date desc";
 	
 	private static final String getAllPersonsString = "select * from Person order by lastName desc, firstName desc";
-
-	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, categoriesForCaseQuery, getAllPersonsString, allCasesQuery, openCasesQuery, openCasesQuery};
 	
-	private Object[][] arguments = {{9},{"Suicide"},{10},{}, {}, {true}, {false}};
+	private static final String getAllCasesInRange = "select * from CaseDetail where date >= ? and date <= ?";
+	
+	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, categoriesForCaseQuery, getAllPersonsString, allCasesQuery, openCasesQuery, openCasesQuery, getAllCasesInRange};
+	
+	private Object[][] arguments = {{9},{"Suicide"},{10},{}, {}, {true}, {false}, {new Date(0), new Date()}};
 	
 	@Test
 	public void test() {
@@ -55,7 +58,11 @@ public class SQLSelectPreparedStatementTest {
 				System.out.println(query);
 				PreparedStatement statement = connection.prepareStatement(query);
 				for (int j=0; j<arguments[i].length; j++) {
-					statement.setObject(j, arguments[i][j]);
+					if (arguments[i][j].getClass().equals(Date.class)) {
+						statement.setDate(j, (Date)arguments[i][j]);
+					} else {
+						statement.setObject(j, arguments[i][j]);
+					}
 				}
 				ResultSet rs = statement.executeQuery();
 				

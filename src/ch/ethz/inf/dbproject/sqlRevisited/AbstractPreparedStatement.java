@@ -1,8 +1,10 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.locks.Lock;
 
 public abstract class AbstractPreparedStatement implements PreparedStatement {
@@ -10,7 +12,9 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 	protected Object[] args; 
 	protected SQLType[] typeArgs;
 	protected final Lock lock;
-
+	protected final DateFormat dateFormatter = new SimpleDateFormat("yyyy-mm-dd");
+	protected final DateFormat datetimeFormatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+	
 	AbstractPreparedStatement(Lock lock) {
 		this.lock = lock;
 	}
@@ -22,7 +26,7 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 
 	@Override
 	public void setInt(int index, int value) throws SQLException {
-		if (typeArgs[index].type == SQLType.BaseType.Integer)
+		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Integer)
 			args[index] = value;
 		else
 			throw new SQLTypeCheckException(typeArgs[index], new SQLType(SQLType.BaseType.Integer));
@@ -30,7 +34,7 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 
 	@Override
 	public void setString(int index, String value) throws SQLException {
-		if (typeArgs[index].type == SQLType.BaseType.Varchar)
+		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Varchar)
 			args[index] = value;
 		else
 			throw new SQLTypeCheckException(typeArgs[index], new SQLType(SQLType.BaseType.Varchar));
@@ -38,16 +42,16 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 
 	@Override
 	public void setDate(int index, Date value) throws SQLException {
-		if (typeArgs[index].type == SQLType.BaseType.Date)
-			args[index] = value;
+		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Date)
+			args[index] = dateFormatter.format(value);
 		else
 			throw new SQLTypeCheckException(typeArgs[index], new SQLType(SQLType.BaseType.Date));	
 	}
 
 	@Override
 	public void setTimeStamp(int index, Timestamp value) throws SQLException {
-		if (typeArgs[index].type == SQLType.BaseType.Date || typeArgs[index].type == SQLType.BaseType.Datetime)
-			args[index] = value;
+		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Date || typeArgs[index].type == SQLType.BaseType.Datetime)
+			args[index] = datetimeFormatter.format(value);
 		else
 			throw new SQLTypeCheckException(typeArgs[index], new SQLType(SQLType.BaseType.Date));	
 	}
@@ -66,7 +70,7 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 
 	@Override
 	public void setBoolean(int index, boolean value) throws SQLException {
-		if (typeArgs[index].type == SQLType.BaseType.Boolean)
+		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Boolean)
 			args[index] = value;
 		else
 			throw new SQLTypeCheckException(typeArgs[index], new SQLType(SQLType.BaseType.Boolean));

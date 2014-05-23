@@ -44,7 +44,7 @@ public interface PreparedStatement {
 	 * @param value - the parameter value
 	 * @throws SQLException 
 	 */
-	public void setDate(int index, java.sql.Date value) throws SQLException;
+	public void setDate(int index, java.util.Date value) throws SQLException;
 	
 	/**
 	 * Sets the designated parameter to the given java.sql TimeStamp
