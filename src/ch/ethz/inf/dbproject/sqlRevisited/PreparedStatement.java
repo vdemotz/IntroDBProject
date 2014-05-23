@@ -6,12 +6,12 @@ public interface PreparedStatement {
 	 * Execute a search in DB and return the generated ResultSet
 	 * @return The generated ResultSet
 	 */
-	public ResultSet executeQuery();
+	public ResultSet executeQuery() throws SQLException;
 	
 	/**
 	 * Execute any kind of sql query of this PreparedStatement
 	 */
-	public boolean execute();
+	public boolean execute() throws SQLException;
 	
 	/**
 	 * Retrieves the current result as a ResultSet object. This method should be called only once per result.

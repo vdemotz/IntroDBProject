@@ -1,14 +1,22 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.util.ArrayList;
+
 public class ResultSet {
 
+	private int cursor;
+	private final TableSchema schema;
+	private final ArrayList<byte[]> results;
+	
 	/**
 	 * A new ResultSet
 	 */
-	public ResultSet(){
-		
+	public ResultSet(TableSchema schema, ArrayList<byte[]> results) {
+		this.schema = schema;
+		this.results = results;
+		cursor = -1;
 	}
-	
+
 	/**
 	 * Return the boolean stored at the column pointed by fieldname
 	 * @param fieldname - the column name
@@ -43,6 +51,15 @@ public class ResultSet {
 	 */
 	public int getInt(int index){
 		return -1;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean next() {
+		cursor++;
+		return cursor < results.size();
 	}
 
 }

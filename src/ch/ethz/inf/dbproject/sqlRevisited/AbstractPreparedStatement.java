@@ -6,8 +6,8 @@ import java.sql.Types;
 
 public abstract class AbstractPreparedStatement implements PreparedStatement {
 
-	private Object[] args; 
-	private SQLType[] typeArgs;
+	protected Object[] args; 
+	protected SQLType[] typeArgs;
 
 	@Override
 	public ResultSet getResultSet() throws SQLException {

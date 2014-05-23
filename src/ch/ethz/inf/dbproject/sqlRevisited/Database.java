@@ -77,8 +77,12 @@ public class Database {
 		return null;
 	}
 	
-	public TableConnection getTableConnection(String tableName) throws Exception{
-		return new TableConnection(this.getTableSchema(tableName.toLowerCase()), this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA);
+	public TableConnection getTableConnection(String tableName) throws SQLException{
+		try {
+			return new TableConnection(this.getTableSchema(tableName.toLowerCase()), this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA);
+		} catch (Exception e) {
+			throw new SQLPhysicalException();
+		}
 	}
 	
 	////
@@ -259,7 +263,7 @@ public class Database {
 	 * Get all tables schemas from database -- Maybe to be removed
 	 * @return an array of TableSchema
 	 */
-	private TableSchema[] getTablesSchema(){
+	private TableSchema[] getTablesSchema() throws SQLPhysicalException {
 		try{
 			TableSet ts = new TableSet();
 			String[] tablesNames = ts.getTablesNames();
@@ -271,9 +275,7 @@ public class Database {
 			}
 			return ret;
 		} catch (Exception ex){
-			System.err.println("Failed to get all tables schemas.");
-			ex.printStackTrace();
-			return null;
+			throw new SQLPhysicalException();
 		}
 	}
 	

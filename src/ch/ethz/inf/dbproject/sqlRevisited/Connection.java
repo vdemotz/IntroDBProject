@@ -1,5 +1,9 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLLexer;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParser;
@@ -9,6 +13,8 @@ public class Connection {
 	
 	private static Database db;
 	private static Connection instance;
+	private List<PhysicalTableInterface> tables;
+	private TableSet tableDefinitions;
 	
 	/**
 	 * Get a new connection
@@ -25,15 +31,18 @@ public class Connection {
 	 * Create a new connection to the database.
 	 */
 	private Connection() {
-		if (db == null)
-			try{
+		if (db == null) {
+			try {
 				db = new Database();
-			} catch (Exception ex){
+				tableDefinitions = new TableSet(); //TODO hard coded for now
+				tables = instanciateTables();
+			} catch (Exception ex) {//TODO error handling
 				ex.printStackTrace();
 				System.err.println("Failed to create new Database");
 			}
+		}
 	}
-	
+
 	/**
 	 * Prepare a prepared statement from a string which represents a sql query.
 	 * @param stringQuery : a sql query
@@ -52,9 +61,18 @@ public class Connection {
 		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.UPDATE){
 			return new UpdatePreparedStatement(pq);
 		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.SELECT){
-			return new SelectPreparedStatement(pq);
+			return new SelectPreparedStatement(tables, pq);
 		} else {
 			throw new SQLException();
 		}
 	}
+	
+	private List<PhysicalTableInterface> instanciateTables() throws SQLException {
+		ArrayList<PhysicalTableInterface> tables = new ArrayList<PhysicalTableInterface>();
+		for (String name : tableDefinitions.getTablesNames()) {
+			tables.add(db.getTableConnection(name));
+		}
+		return Collections.unmodifiableList(tables);
+	}
+	
 }

@@ -1,6 +1,8 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-public class SQLSemanticException extends Exception {
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+
+public class SQLSemanticException extends SQLException {
 
 	public enum Type
 	{
