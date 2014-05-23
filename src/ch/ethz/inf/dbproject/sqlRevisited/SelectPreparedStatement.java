@@ -16,6 +16,7 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 	private final List<PhysicalTableInterface> tables;
 	private static final SQLCodegen codegen = new SQLCodegen();
 	private final SyntaxTreeNode syntaxTree;
+	private ResultSet lastResult = null;
 	
 	/**
 	 * Create a new PreparedStatement query
@@ -43,13 +44,19 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 		}
 		//release lock
 		lock.unlock();
-		return new ResultSet(operator.schema, results);
+		lastResult =  new ResultSet(operator.schema, results);
+		return lastResult;
 	}
 
 	@Override
 	public boolean execute() throws SQLException {
 		executeQuery();
-		return false;
+		return true;
+	}
+	
+	@Override
+	public ResultSet getResultSet() {
+		return lastResult;
 	}
 
 	@Override

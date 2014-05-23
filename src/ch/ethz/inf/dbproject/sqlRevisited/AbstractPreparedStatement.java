@@ -18,7 +18,7 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 	
 	@Override
 	public ResultSet getResultSet() throws SQLException {
-		throw new SQLException();
+		return null;
 	}
 
 	@Override
