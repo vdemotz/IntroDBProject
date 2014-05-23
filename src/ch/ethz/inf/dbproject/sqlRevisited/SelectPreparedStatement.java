@@ -5,11 +5,8 @@ import java.util.concurrent.locks.Lock;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
 import ch.ethz.inf.dbproject.sqlRevisited.Codegen.SQLCodegen;
 import ch.ethz.inf.dbproject.sqlRevisited.Codegen.SQLOperator;
-import java.util.concurrent.locks.Lock;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLSemanticException;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;

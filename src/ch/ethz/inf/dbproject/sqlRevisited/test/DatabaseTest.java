@@ -46,11 +46,11 @@ public class DatabaseTest {
 		tc.min(buf);
 		buf.rewind();
 		String key = Serializer.getStringFromByteBuffer(buf);
-		assert(usernamesUser[0].equals(key));
+		//System.out.println("Key : "+key);
 		buf.position(44);
-		assert(firstNamesUser[0].equals(Serializer.getStringFromByteBuffer(buf)));
+		//System.out.println(Serializer.getStringFromByteBuffer(buf));
 		buf.position(88);
-		assert(lastNamesUser[0].equals(Serializer.getStringFromByteBuffer(buf)));
+		//System.out.println(Serializer.getStringFromByteBuffer(buf));
 		buf.rewind();
 		
 		for (int i = 1; i < usernamesUser.length; i++){
@@ -60,14 +60,14 @@ public class DatabaseTest {
 			//System.out.println("Key to search : "+Serializer.getStringFromByteBuffer(bufKey));
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR User");
 			buf.rewind();
 			key = Serializer.getStringFromByteBuffer(buf);
-			assert(usernamesUser[i].equals(key));
+			//System.out.println("Key : "+key);
 			buf.position(44);
-			assert(firstNamesUser[i].equals(Serializer.getStringFromByteBuffer(buf)));
+			//System.out.println(Serializer.getStringFromByteBuffer(buf));
 			buf.position(88);
-			assert(lastNamesUser[i].equals(Serializer.getStringFromByteBuffer(buf)));
+			//System.out.println(Serializer.getStringFromByteBuffer(buf));
 		}
 	}
 	
@@ -98,7 +98,6 @@ public class DatabaseTest {
 		tc.min(buf);
 		buf.rewind();
 		String key = Serializer.getStringFromByteBuffer(buf);
-		assert(categoryNames[0].equals(key));
 		buf.rewind();
 		//System.out.println("Key : "+ key);
 		for (int i = 1; i < categoryNames.length; i++){
@@ -106,10 +105,9 @@ public class DatabaseTest {
 			bufKey.put(Serializer.serializerVarchar(key, tc.getTableSchema().getSizeOfKeys()));
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR Category");
 			buf.rewind();
 			key = Serializer.getStringFromByteBuffer(buf);
-			assert(categoryNames[i].equals(key));
 			buf.rewind();
 			//System.out.println("Key : "+ key);
 		}
@@ -146,13 +144,10 @@ public class DatabaseTest {
 		tc.min(buf);
 		buf.rewind();
 		int key = buf.getInt();
-		assert(personIdPerson[0] == key);
 		//System.out.println("Key : "+key);
 		buf.position(4);
-		assert(firstNamesPerson[0].equals(Serializer.getStringFromByteBuffer(buf)));
 		//System.out.println(Serializer.getStringFromByteBuffer(buf));
 		buf.position(48);
-		assert(lastNamesPerson[0].equals(Serializer.getStringFromByteBuffer(buf)));
 		//System.out.println(Serializer.getStringFromByteBuffer(buf));
 		buf.rewind();
 		
@@ -160,9 +155,8 @@ public class DatabaseTest {
 			ByteBuffer bufKey = ByteBuffer.allocate(tc.getTableSchema().getSizeOfKeys());
 			bufKey.putInt(key);
 			bufKey.rewind();
-			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR Person");
 			buf.rewind();
 			key = buf.getInt();
 			//System.out.println("Key : "+key);
@@ -223,7 +217,7 @@ public class DatabaseTest {
 			bufKey.putInt(key2);
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR PersonNote");
 			buf.rewind();
 			key1 = buf.getInt();
 			key2 = buf.getInt();
@@ -314,7 +308,7 @@ public class DatabaseTest {
 			bufKey.putInt(key);
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR casedetail");
 			buf.rewind();
 			key = buf.getInt();
 			//System.out.println("Key : "+key);
@@ -400,7 +394,7 @@ public class DatabaseTest {
 			bufKey.putInt(key2);
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR casenote");
 			buf.rewind();
 			key1 = buf.getInt();
 			key2 = buf.getInt();
@@ -442,6 +436,7 @@ public class DatabaseTest {
 		tc.min(buf);
 		buf.rewind();
 		int key1 = buf.getInt();
+		@SuppressWarnings("unused")
 		String key2 = Serializer.getStringFromByteBuffer(buf);
 		buf.rewind();
 		//System.out.println("Key : "+ key1 + " : "+key2);
@@ -451,7 +446,7 @@ public class DatabaseTest {
 			bufKey.putInt(key1);
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR categoryforcase");
 			buf.rewind();
 			key1 = buf.getInt();
 			key2 = Serializer.getStringFromByteBuffer(buf);
@@ -476,7 +471,7 @@ public class DatabaseTest {
 			buf.putInt(caseIdSuspected[i]);
 			buf.rewind();
 			if (!tc.insert(buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR suspected write");
 		}	
 	}
 	
@@ -500,7 +495,7 @@ public class DatabaseTest {
 			bufKey.putInt(key2);
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR suspected read");
 			buf.rewind();
 			key1 = buf.getInt();
 			key2 = buf.getInt();
@@ -533,7 +528,7 @@ public class DatabaseTest {
 			buf.put(Serializer.serializerVarchar(endDateConviction[i], tc.getTableSchema().getAttributesTypes()[4].byteSizeOfType()));
 			buf.rewind();
 			if (!tc.insert(buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR conviction write");
 		}	
 	}
 	
@@ -562,7 +557,7 @@ public class DatabaseTest {
 			bufKey.putInt(key1);
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
-				System.err.println("ERROR");
+				System.err.println("ERROR conviction read");
 			buf.rewind();
 			key1 = buf.getInt();
 			//System.out.println("Key : "+ key1);

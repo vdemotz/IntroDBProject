@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
 
 public abstract class AbstractPreparedStatement implements PreparedStatement {
 	

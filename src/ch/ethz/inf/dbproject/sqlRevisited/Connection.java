@@ -1,9 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
@@ -17,8 +14,6 @@ public class Connection {
 	
 	private static Database db;
 	private static Connection instance;
-	private List<PhysicalTableInterface> tables;
-	private TableSet tableDefinitions;
 	private ReadWriteLock readWriteLock;
 	private List<PhysicalTableInterface> listTablesConnections;
 	
@@ -77,14 +72,6 @@ public class Connection {
 		} else {
 			throw new SQLException();
 		}
-	}
-	
-	private List<PhysicalTableInterface> instanciateTables() throws SQLException {
-		ArrayList<PhysicalTableInterface> tables = new ArrayList<PhysicalTableInterface>();
-		for (String name : tableDefinitions.getTablesNames()) {
-			tables.add(db.getTableConnection(name));
-		}
-		return Collections.unmodifiableList(tables);
 	}
 	
 }

@@ -19,7 +19,7 @@ public class StructureConnection extends DataConnection{
 	private int OFFSET_META_DATA = 1024;
 	private int MAXIMAL_META_DATA_SIZE = 4096;
 	private int HEADER_KEY_SIZE = 8;
-	private int INT_BYTES_SIZE;
+	private int INT_BYTES_SIZE = 4;
 	private List<Pair<byte[], Integer>> elementsPositions;
 	
 	/**

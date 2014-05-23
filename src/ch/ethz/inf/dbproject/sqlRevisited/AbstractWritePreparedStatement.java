@@ -9,13 +9,19 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeIdentifierNode;
 public abstract class AbstractWritePreparedStatement extends AbstractPreparedStatement {
 
 	protected TableConnection tc;
+	protected int countChanged;
 	
 	AbstractWritePreparedStatement(ParsedQuery pq, WriteLock l, List<PhysicalTableInterface> listTablesConnections) throws SQLPhysicalException{
 		super(l);
 		String tableName = ((SyntaxTreeIdentifierNode)pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0)).generatingToken.content;
 		
 		try {
-			//tc = db.getTableConnection(tableName);
+			for (int i = 0; i < listTablesConnections.size(); i++){
+				if(((TableConnection)listTablesConnections.get(i)).getTableSchema().getTableName().equals(tableName)){
+					tc = ((TableConnection)listTablesConnections.get(i));
+				}
+				
+			}
 		} catch (Exception e) {
 			System.err.println("Unable to open table "+tableName);
 			throw new SQLPhysicalException();
@@ -23,14 +29,17 @@ public abstract class AbstractWritePreparedStatement extends AbstractPreparedSta
 		
 		int numbArgs = this.getNumberArguments((SyntaxTreeDynamicNode) pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1))+1;
 		args = new Object[numbArgs];
-
-		//System.out.println(tableName);
-		//System.out.println("Number arguments : "+(1+this.getNumberArguments((SyntaxTreeDynamicNode) pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1))));
+		countChanged = 0;
 	}
 	
 	@Override
 	public ResultSet executeQuery() throws SQLException {
 		throw new SQLException();
+	}
+	
+	@Override
+	public int getUpdateCount(){
+		return countChanged;
 	}
 	
 	////

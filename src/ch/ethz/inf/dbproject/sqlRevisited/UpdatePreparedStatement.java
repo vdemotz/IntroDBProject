@@ -31,20 +31,19 @@ public class UpdatePreparedStatement extends AbstractWritePreparedStatement {
 				modifyObject((ByteBuffer)objToUpdate.rewind(), args[0], -1);
 				objToUpdate.rewind();
 				ret = tc.update(objToUpdate);
+				if (ret)
+					countChanged = 1;
+				else
+					countChanged = 0;
 			}
 		} catch (Exception ex){
 			lock.unlock();
 			ex.printStackTrace();
+			countChanged = 0;
 			throw new SQLException();
 		}
 		lock.unlock();
 		return ret;
-	}
-
-	@Override
-	public int getUpdateCount() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 	
 	////
