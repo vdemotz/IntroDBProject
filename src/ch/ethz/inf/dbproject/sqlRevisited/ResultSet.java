@@ -2,11 +2,14 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.ArrayList;
 
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
+
 public class ResultSet {
 
 	private int cursor;
 	private final TableSchema schema;
 	private final ArrayList<byte[]> results;
+	private Object[] currentTuple;
 	
 	/**
 	 * A new ResultSet
@@ -15,6 +18,7 @@ public class ResultSet {
 		this.schema = schema;
 		this.results = results;
 		cursor = -1;
+		currentTuple = null;
 	}
 
 	/**
@@ -23,7 +27,7 @@ public class ResultSet {
 	 * @return a java boolean
 	 */
 	public boolean getBoolean(String fieldname){
-		return false;
+		return (boolean) currentTuple[schema.indexOf(SQLToken.getFragmentsForIdentifier(fieldname))];
 	}
 	
 	/**
@@ -32,7 +36,8 @@ public class ResultSet {
 	 * @return a java Object
 	 */
 	public Object getObject(String fieldname){
-		return null;
+		//TODO handle dates (currently returns their string representation)
+		return currentTuple[schema.indexOf(SQLToken.getFragmentsForIdentifier(fieldname))];
 	}
 	
 	/**
@@ -41,7 +46,7 @@ public class ResultSet {
 	 * @return a java String
 	 */
 	public String getString(int index){
-		return null;
+		return (String) currentTuple[index];
 	}
 	
 	/**
@@ -50,7 +55,7 @@ public class ResultSet {
 	 * @return a java integer
 	 */
 	public int getInt(int index){
-		return -1;
+		return (int) currentTuple[index];
 	}
 	
 	/**
@@ -59,7 +64,11 @@ public class ResultSet {
 	 */
 	public boolean next() {
 		cursor++;
-		return cursor < results.size();
+		boolean hasNext = cursor < results.size();
+		if (hasNext) {
+			currentTuple = Serializer.getObjectsFromBytes(results.get(cursor), schema);
+		}
+		return hasNext;
 	}
 
 }
