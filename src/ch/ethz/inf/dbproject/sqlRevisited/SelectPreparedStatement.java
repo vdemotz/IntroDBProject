@@ -24,14 +24,16 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 	 * @param l a Read Lock
 	 * @param db Database to acquire connection to tables
 	 */
-	public SelectPreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> tables){
+	public SelectPreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> tables) {
+		super(l);
 		syntaxTree = pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0);
 		this.tables = tables;
 	}
 
 	@Override
 	public ResultSet executeQuery() throws SQLException {
-		//TODO acquire lock
+		//acquire lock
+		lock.lock();
 		SQLOperator operator = codegen.generateSelectStatement(syntaxTree, tables, args);
 		ArrayList<byte[]> results = new ArrayList<byte[]>();
 		ByteBuffer resultBuffer = ByteBuffer.wrap(new byte[operator.schema.getSizeOfEntry()]);
@@ -39,7 +41,8 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 			results.add(Arrays.copyOf(resultBuffer.array(), resultBuffer.array().length));
 			resultBuffer.rewind();
 		}
-		//TODO release lock
+		//release lock
+		lock.unlock();
 		return new ResultSet(operator.schema, results);
 	}
 

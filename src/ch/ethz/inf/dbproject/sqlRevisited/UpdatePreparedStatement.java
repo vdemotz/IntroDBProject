@@ -13,7 +13,7 @@ public class UpdatePreparedStatement extends AbstractPreparedStatement {
 	 * @param db Database to acquire connection to tables
 	 */
 	UpdatePreparedStatement(ParsedQuery pq, Lock l, Database db){
-		
+		super(l);
 	}
 
 	@Override

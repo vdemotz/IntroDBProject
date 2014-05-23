@@ -18,9 +18,9 @@ public class InsertPreparedStatement  extends AbstractPreparedStatement {
 	 * @throws SQLPhysicalException 
 	 */
 	InsertPreparedStatement(ParsedQuery pq, Lock l, Database db) throws SQLPhysicalException{
+		super(l);
+		
 		String tableName = ((SyntaxTreeIdentifierNode)pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0)).generatingToken.content;
-		
-		
 		try {
 			db.getTableConnection(tableName);
 		} catch (Exception e) {

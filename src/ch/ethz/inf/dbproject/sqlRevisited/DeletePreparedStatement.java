@@ -13,7 +13,7 @@ public class DeletePreparedStatement  extends AbstractPreparedStatement {
 	 * @param db Database to acquire connection to tables
 	 */
 	public DeletePreparedStatement(ParsedQuery pq, Lock l, Database db){
-		
+		super(l);
 	}
 
 	@Override
