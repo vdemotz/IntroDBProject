@@ -62,7 +62,8 @@ public class SQLParser {
 
 	private void insertStatement(SQLTokenStream tokens, SyntaxTreeDynamicNode root) throws SQLParseException {
 		if (SQLToken.SQLTokenClass.UID == tokens.getTokenClass()) {
-			root.addChildren(new SyntaxTreeDynamicNode(tokens.getToken()));
+			root.addChildren(new SyntaxTreeIdentifierNode(tokens.getToken()));
+			System.out.println("I'm parsing and token is : "+tokens.getToken().toString());
 			tokens.advance();
 			insertBody(tokens, root);
 		} else {

@@ -10,8 +10,9 @@ public interface PreparedStatement {
 	
 	/**
 	 * Execute any kind of sql query of this PreparedStatement
+	 * @throws SQLException 
 	 */
-	public boolean execute();
+	public boolean execute() throws SQLException;
 	
 	/**
 	 * Retrieves the current result as a ResultSet object. This method should be called only once per result.

@@ -1,5 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.util.concurrent.locks.Lock;
+
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 
 public class SelectPreparedStatement  extends AbstractPreparedStatement {
@@ -7,8 +9,10 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 	/**
 	 * Create a new PreparedStatement query
 	 * @param pq ParsedQuery of type SELECT
+	 * @param l a Read Lock
+	 * @param db Database to acquire connection to tables
 	 */
-	public SelectPreparedStatement(ParsedQuery pq){
+	public SelectPreparedStatement(ParsedQuery pq, Lock l, Database db){
 		
 	}
 
