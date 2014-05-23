@@ -81,7 +81,7 @@ public class SQLCodegen {
 	class GeneratorJoin implements TransformBinary<SyntaxTreeJoinNode, SQLOperator>
 	{
 		private final Object[] arguments;
-		private final PredicateFromComparison equalComparator = new PredicateFromComparison(false, true, false);
+		private final PredicateFromComparison equalComparator = new PredicateFromNaturalComparison(false, true, false);
 		
 		public GeneratorJoin(Object[] arguments) {
 			this.arguments = arguments;
@@ -260,20 +260,25 @@ public class SQLCodegen {
 		private PredicateFromComparison resolveOperatorToken(SQLToken operatorToken) {
 			//TODO : handle like
 			String cur = operatorToken.content;
-			boolean allowsLess = false;
-			boolean allowsGreater = false;
-			boolean allowsEqual = false;
-			if (cur.charAt(0) == '<') {
-				allowsLess = true;
-				cur = cur.substring(1);
-			} else if (cur.charAt(0) == '>') {
-				allowsGreater = true;
-				cur = cur.substring(1);
+			if (cur.equals("like")) {
+				return new PredicateFromLikeExpression();
+				
+			} else {
+				boolean allowsLess = false;
+				boolean allowsGreater = false;
+				boolean allowsEqual = false;
+				if (cur.charAt(0) == '<') {
+					allowsLess = true;
+					cur = cur.substring(1);
+				} else if (cur.charAt(0) == '>') {
+					allowsGreater = true;
+					cur = cur.substring(1);
+				}
+				if (cur.length() > 0 && cur.charAt(0) == '=') {
+					allowsEqual = true;
+				}
+				return new PredicateFromNaturalComparison(allowsLess, allowsEqual, allowsGreater);
 			}
-			if (cur.length() > 0 && cur.charAt(0) == '=') {
-				allowsEqual = true;
-			}
-			return new PredicateFromComparison(allowsLess, allowsEqual, allowsGreater);
 		}
 
 	}
