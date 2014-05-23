@@ -5,7 +5,11 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParseException;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParser;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLTokenStream;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeDynamicNode;
 
 public class InsertPreparedStatement implements PreparedStatement {
 
@@ -14,7 +18,12 @@ public class InsertPreparedStatement implements PreparedStatement {
 	 * @param insertTokensStream
 	 */
 	InsertPreparedStatement(ArrayList<SQLToken> insertTokensStream){
-		
+		SyntaxTreeDynamicNode stdn = null;
+		try {
+			stdn = new SQLParser().parse(new SQLTokenStream(insertTokensStream));
+		} catch (SQLParseException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
