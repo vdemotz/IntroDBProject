@@ -42,17 +42,20 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 	public ResultSet executeQuery() throws SQLException {
 		//acquire lock
 		lock.lock();
-		SQLOperator operator = codegen.generateSelectStatement(syntaxTree, tables, args);
-		ArrayList<byte[]> results = new ArrayList<byte[]>();
-		ByteBuffer resultBuffer = ByteBuffer.wrap(new byte[operator.schema.getSizeOfEntry()]);
-		operator.open();
-		while (operator.next(resultBuffer)) {
-			results.add(Arrays.copyOf(resultBuffer.array(), resultBuffer.array().length));
-			resultBuffer.rewind();
+		try {
+			SQLOperator operator = codegen.generateSelectStatement(syntaxTree, tables, args);
+			ArrayList<byte[]> results = new ArrayList<byte[]>();
+			ByteBuffer resultBuffer = ByteBuffer.wrap(new byte[operator.schema.getSizeOfEntry()]);
+			operator.open();
+			while (operator.next(resultBuffer)) {
+				results.add(Arrays.copyOf(resultBuffer.array(), resultBuffer.array().length));
+				resultBuffer.rewind();
+			}
+			lastResult =  new ResultSet(operator.schema, results);
+		} finally {
+			//release lock
+			lock.unlock();
 		}
-		//release lock
-		lock.unlock();
-		lastResult =  new ResultSet(operator.schema, results);
 		return lastResult;
 	}
 
