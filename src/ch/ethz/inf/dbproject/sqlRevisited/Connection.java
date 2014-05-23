@@ -1,8 +1,9 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
-import java.util.ArrayList;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLLexer;
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParser;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLTokenStream;
 
 public class Connection {
 	
@@ -39,17 +40,19 @@ public class Connection {
 	 * @return a prepared statement to be set and executed.
 	 */
 	public PreparedStatement prepareStatement(String stringQuery) throws SQLException{
-		ArrayList<SQLToken> tokensStream = new SQLLexer().tokenize(stringQuery);
-		SQLToken type = tokensStream.get(0);
+		//Tokenize
+		SQLTokenStream sqlTokenStream = new SQLTokenStream(new SQLLexer().tokenize(stringQuery));
+		//Parse
+		ParsedQuery pq = new SQLParser().parse(sqlTokenStream);
 		
-		if (type.tokenClass == SQLToken.SQLTokenClass.DELETE){
-			return new DeletePreparedStatement(tokensStream);
-		} else if (type.tokenClass == SQLToken.SQLTokenClass.INSERTINTO){
-			return new InsertPreparedStatement(tokensStream);
-		} else if (type.tokenClass == SQLToken.SQLTokenClass.UPDATE){
-			return new UpdatePreparedStatement(tokensStream);
-		} else if (type.tokenClass == SQLToken.SQLTokenClass.SELECT){
-			return new SelectPreparedStatement(tokensStream);
+		if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.DELETE){
+			return new DeletePreparedStatement(pq);
+		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.INSERT){
+			return new InsertPreparedStatement(pq);
+		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.UPDATE){
+			return new UpdatePreparedStatement(pq);
+		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.SELECT){
+			return new SelectPreparedStatement(pq);
 		} else {
 			throw new SQLException();
 		}

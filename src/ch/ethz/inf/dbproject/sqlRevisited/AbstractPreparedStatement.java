@@ -4,21 +4,9 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-public class AbstractPreparedStatement implements PreparedStatement {
+public abstract class AbstractPreparedStatement implements PreparedStatement {
 
 	private Object[] args; 
-	
-	@Override
-	public ResultSet executeQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean execute() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public ResultSet getResultSet() {

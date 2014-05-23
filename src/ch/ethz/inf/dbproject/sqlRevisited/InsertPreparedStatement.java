@@ -1,22 +1,31 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParseException;
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParser;
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken;
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLTokenStream;
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeDynamicNode;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 
 public class InsertPreparedStatement  extends AbstractPreparedStatement {
 
 	/**
 	 * Create a new PrepareStatement insert
-	 * @param insertTokensStream
+	 * @param pq ParsedQuery of type INSERT
 	 */
-	InsertPreparedStatement(ArrayList<SQLToken> insertTokensStream){
+	InsertPreparedStatement(ParsedQuery pq){
+	}
+
+	@Override
+	public ResultSet executeQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean execute() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getUpdateCount() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

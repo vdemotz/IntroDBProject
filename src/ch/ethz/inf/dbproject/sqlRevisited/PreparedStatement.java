@@ -67,4 +67,10 @@ public interface PreparedStatement {
 	 * @param value - the parameter value
 	 */
 	public void setBoolean(int index, boolean value);
+	
+	/**
+	 * Return the number of tuples changed by last execute call
+	 * @return
+	 */
+	public int getUpdateCount();
 }
