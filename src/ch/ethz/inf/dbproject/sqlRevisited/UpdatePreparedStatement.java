@@ -24,9 +24,10 @@ public class UpdatePreparedStatement implements PreparedStatement {
 	}
 
 	@Override
-	public void execute() {
+	public boolean execute() {
 		// TODO Auto-generated method stub
 		
+		return false;
 	}
 
 	@Override

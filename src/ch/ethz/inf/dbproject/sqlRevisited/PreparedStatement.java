@@ -11,7 +11,7 @@ public interface PreparedStatement {
 	/**
 	 * Execute any kind of sql query of this PreparedStatement
 	 */
-	public void execute();
+	public boolean execute();
 	
 	/**
 	 * Retrieves the current result as a ResultSet object. This method should be called only once per result.
