@@ -11,6 +11,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.Codegen.SQLCodegen;
 import ch.ethz.inf.dbproject.sqlRevisited.Codegen.SQLOperator;
 import java.util.concurrent.locks.Lock;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLSemanticException;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeNode;
 
 public class SelectPreparedStatement  extends AbstractPreparedStatement {
@@ -26,10 +27,15 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 	 * @param pq ParsedQuery of type SELECT
 	 * @param l a Read Lock
 	 * @param db Database to acquire connection to tables
+	 * @throws SQLSemanticException 
 	 */
-	public SelectPreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> tables) {
+	public SelectPreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> tables) throws SQLSemanticException {
 		super(l);
-		syntaxTree = pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0);
+		List<TableSchema> schemata = new ArrayList<TableSchema>(tables.size());
+		for (PhysicalTableInterface table : tables) {
+			schemata.add(table.getTableSchema());
+		}
+		syntaxTree = pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0).instanciateWithSchemata(schemata).rewrite();
 		this.tables = tables;
 	}
 
@@ -40,6 +46,7 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 		SQLOperator operator = codegen.generateSelectStatement(syntaxTree, tables, args);
 		ArrayList<byte[]> results = new ArrayList<byte[]>();
 		ByteBuffer resultBuffer = ByteBuffer.wrap(new byte[operator.schema.getSizeOfEntry()]);
+		operator.open();
 		while (operator.next(resultBuffer)) {
 			results.add(Arrays.copyOf(resultBuffer.array(), resultBuffer.array().length));
 			resultBuffer.rewind();

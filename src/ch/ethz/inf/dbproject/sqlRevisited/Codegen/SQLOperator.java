@@ -18,6 +18,7 @@ public abstract class SQLOperator {
 	
 	public SQLOperator(TableSchema schema, SQLOperator ... children)
 	{
+		assert(schema != null);
 		this.schema = schema;
 		this.children = new ImmutableArray<SQLOperator>(children);
 	}
