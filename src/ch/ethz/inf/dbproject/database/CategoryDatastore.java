@@ -14,9 +14,9 @@ public class CategoryDatastore extends Datastore implements CategoryDatastoreInt
 									"from CaseDetail caseDetail, CategoryForCase categoryForCase, Category category " +
 								    "where caseDetail.caseId = ? and categoryForCase.caseId = caseDetail.caseId and categoryForCase.categoryName = category.Name";
 	//template add a new category for a case
-	private static final String insertIntoCategoryForCaseQuery = "insert into CategoryForCase(caseId, categoryName) values(?, ?)";
+	private static final String insertIntoCategoryForCaseQuery = "insert into CategoryForCase values(?, ?)";
 	//template add a new category
-	private static final String insertIntoCategoryQuery = "insert into Category(name) values(?)";
+	private static final String insertIntoCategoryQuery = "insert into Category values(?)";
 	//template get a category for a name
 	private static final String getCategoryForNameQuery = "select * from Category where name = ?";
 	//template get all categories

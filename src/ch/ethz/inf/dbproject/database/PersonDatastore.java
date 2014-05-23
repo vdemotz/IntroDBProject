@@ -1,13 +1,10 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.sql.*;
-import java.util.Date;
 import java.util.List;
 import java.sql.Timestamp;
 import java.text.ParseException;
-
 import ch.ethz.inf.dbproject.model.CaseDetail;
-import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
 
@@ -59,17 +56,17 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 	private static final String getAllPersonsString = "select * from Person order by lastName desc, firstName desc";
 	
 	//add a personNote
-	private static final String addPersonNoteString = "insert into PersonNote(PersonId, PersonNoteId, text, date, authorUsername) values(?, ?, ?, ?, ?)";
+	private static final String addPersonNoteString = "insert into PersonNote values(?, ?, ?, ?, ?)";
 	//get the max Id for person notes for a particular person
 	private static final String getMaxPersonNoteIdForPersonIdString = "select max(personNoteId) from PersonNote where personId = ?";
 	
 	//add a person
-	private static final String addPersonString = "insert into Person(personId, firstName, lastName, birthdate) values(?, ?, ?, ?)";
+	private static final String addPersonString = "insert into Person values(?, ?, ?, ?)";
 	//get the max Id for person
 	private static final String getMaxPersonIdString = "select max(PersonId) from Person";
 	
 	//set a person as suspected
-	private static final String setPersonSuspectedString = "insert into Suspected(personId, caseId) values(?, ?)";
+	private static final String setPersonSuspectedString = "insert into Suspected values(?, ?)";
 	
 	////
 	//Prepared Statements

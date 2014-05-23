@@ -1,12 +1,6 @@
 package ch.ethz.inf.dbproject.database;
 
 import java.util.List;
-
-import ch.ethz.inf.dbproject.model.CaseDetail;
-import ch.ethz.inf.dbproject.model.CaseNote;
-import ch.ethz.inf.dbproject.model.Category;
-import ch.ethz.inf.dbproject.model.CategorySummary;
-import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.StatsNode;
 
 

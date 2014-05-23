@@ -8,6 +8,7 @@ import java.sql.SQLException;
  */
 public final class User extends ModelObject{
 
+	private static final long serialVersionUID = 1L;
 	private String username;
 	private String firstName;
 	private String lastName;

@@ -1,20 +1,14 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
-import ch.ethz.inf.dbproject.model.Category;
 import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.model.ConvictionJoinPerson;
-import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.Person;
 
 
@@ -64,7 +58,7 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	//template add Suspec
 	private static final String addSuspectQuery = "insert into Suspected values (?, ?)";
 	//template add new case
-	private static final String insertIntoCaseDetailQuery = "insert into CaseDetail (caseId, title, street, city, zipCode, isOpen, date, description, authorName) " +
+	private static final String insertIntoCaseDetailQuery = "insert into CaseDetail " +
 							"values(?, ?, ?, ?, ? ,? ,? ,? ,?)";
 	//template get the next id for the case detail
 	private static final String nextCaseDetailIdQuery = "select max(caseId) from CaseDetail";
@@ -131,9 +125,9 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	public CaseDetail getCaseForId(int id) {
 		try {
 			setCaseId(caseForIdStatement, id);
-			caseForIdStatement.execute();
-			if (caseForIdStatement.getResultSet().next()) {
-				return new CaseDetail(caseForIdStatement.getResultSet());
+			ResultSet rs = caseForIdStatement.executeQuery();
+			if (rs.next()) {
+				return new CaseDetail(rs);
 			}
 			return null;
 		} catch (SQLException e) {
@@ -286,9 +280,9 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	{
 		try {
 			nextCaseNoteIdForCaseStatement.setInt(1, caseId);
-			nextCaseNoteIdForCaseStatement.execute();
-			nextCaseNoteIdForCaseStatement.getResultSet().next();
-			return nextCaseNoteIdForCaseStatement.getResultSet().getInt(1);
+			ResultSet rs = nextCaseNoteIdForCaseStatement.executeQuery();
+			rs.next();
+			return rs.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;

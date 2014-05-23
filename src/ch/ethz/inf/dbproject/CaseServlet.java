@@ -172,7 +172,8 @@ public final class CaseServlet extends HttpServlet {
 
 	private CaseDetail handleActionsForRequest(final HttpServletRequest request, final CaseDetail caseDetail, User loggedUser)
 	{
-		final HttpSession session = request.getSession(true);
+		//final HttpSession session = 
+		request.getSession(true);
 		final int id = caseDetail.getCaseId();
 		
 		final String username = request.getParameter(EXTERNAL_USERNAME_PARAMETER);
@@ -186,7 +187,8 @@ public final class CaseServlet extends HttpServlet {
 			
 			if (INTERNAL_ACTION_ADD_NOTE_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {//cannot add comments to closed cases
 				final String comment = request.getParameter(INTERNAL_COMMENT_PARAMETER);
-				CaseNote cn = dbInterface.insertIntoCaseNote(id, comment, username);
+				//CaseNote cn = 
+				dbInterface.insertIntoCaseNote(id, comment, username);
 				
 			} else if (INTERNAL_ACTION_CLOSE_CASE_PARAMETER_VALUE.equals(action) && caseDetail.getIsOpen()) {
 				boolean success = didUpdateCase = dbInterface.updateCaseIsOpen(id, false);

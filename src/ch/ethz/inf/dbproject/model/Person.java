@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 
 public class Person extends ModelObject{
 
+	private static final long serialVersionUID = 1L;
 	private int personId;
 	private String firstName;
 	private String lastName;

@@ -1,15 +1,9 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import ch.ethz.inf.dbproject.model.Conviction;
 
@@ -39,9 +33,9 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 	{
 		try {
 			getConvictionForIdStatement.setInt(1, convictionId);
-			getConvictionForIdStatement.execute();
-			if (getConvictionForIdStatement.getResultSet().next()) {
-				return new Conviction (getConvictionForIdStatement.getResultSet());
+			ResultSet rs = getConvictionForIdStatement.executeQuery();
+			if (rs.next()) {
+				return new Conviction (rs);
 			}
 		} catch (SQLException e) {
 		}
@@ -82,9 +76,9 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 	
 	private int getNextConvictionId() throws SQLException
 	{
-		nextConvictionIdStatement.execute();
-		nextConvictionIdStatement.getResultSet().next();
-		return nextConvictionIdStatement.getResultSet().getInt(1);
+		ResultSet rs = nextConvictionIdStatement.executeQuery();
+		rs.next();
+		return rs.getInt(1);
 	}
 
 }

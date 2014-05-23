@@ -1,9 +1,5 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 
-import java.util.ArrayList;
-import ch.ethz.inf.dbproject.sqlRevisited.*;
-import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLToken.SQLTokenClass;
-
 public class SQLParser {
 
 	////

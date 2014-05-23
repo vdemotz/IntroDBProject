@@ -1,6 +1,5 @@
 package ch.ethz.inf.dbproject.model;
 
-import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -9,6 +8,7 @@ import java.sql.SQLException;
  */
 public final class Category extends ModelObject {
 
+	private static final long serialVersionUID = 1L;
 	private final String name;
 
 	////

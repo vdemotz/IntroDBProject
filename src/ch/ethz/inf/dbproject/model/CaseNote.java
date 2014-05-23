@@ -1,14 +1,12 @@
 package ch.ethz.inf.dbproject.model;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.sql.Date;
-import java.util.List;
 import java.sql.SQLException;
 import java.text.DateFormat;
 
 public final class CaseNote extends ModelObject{
 	
+	private static final long serialVersionUID = 1L;
 	private int caseId;
 	private int caseNoteId;
 	private String text;

@@ -8,6 +8,7 @@ import java.sql.SQLException;
  */
 public final class StatsNode extends ModelObject{
 
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private int value;
 	

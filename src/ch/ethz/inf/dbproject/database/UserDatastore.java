@@ -4,7 +4,6 @@ import java.sql.*;
 import java.util.List;
 import java.sql.PreparedStatement;
 import ch.ethz.inf.dbproject.model.CaseDetail;
-import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.model.User;
 
 public class UserDatastore extends Datastore implements UserDatastoreInterface {
@@ -23,7 +22,7 @@ public class UserDatastore extends Datastore implements UserDatastoreInterface {
 			"union "+
 			"(select CaseDetail.* from CaseDetail caseDetail where caseDetail.authorName = ?))as P order by date desc";
 	//add User
-	private static final String addUserString = "insert into User(username, firstName, lastName, password) values(?, ?, ?, ?)";
+	private static final String addUserString = "insert into User values(?, ?, ?, ?)";
 	//check if username is available
 	private static final String isUsernameAvailableString = "select * from User where username = ?";
 	

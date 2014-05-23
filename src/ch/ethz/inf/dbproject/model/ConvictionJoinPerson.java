@@ -5,6 +5,7 @@ import java.text.DateFormat;
 
 public class ConvictionJoinPerson extends ModelObject {
 
+	private static final long serialVersionUID = 1L;
 	private int convictionId;
 	private java.sql.Date startDate;
 	private java.sql.Date endDate;

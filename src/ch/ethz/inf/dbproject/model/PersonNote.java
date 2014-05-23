@@ -7,6 +7,7 @@ import java.text.DateFormat;
 
 public final class PersonNote extends ModelObject {
 	
+	private static final long serialVersionUID = 1L;
 	private int personId;
 	private int personNoteId;
 	private String text;

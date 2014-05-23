@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 public class CategorySummary extends ModelObject {
 
+	private static final long serialVersionUID = 1L;
 	private String categoryName;
 	private long numberOfCases;
 	

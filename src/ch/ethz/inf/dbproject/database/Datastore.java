@@ -2,6 +2,7 @@ package ch.ethz.inf.dbproject.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -34,8 +35,8 @@ public class Datastore {
 	protected <T extends ModelObject> List<T> getResults(Class<T> modelClass, PreparedStatement statement)
 	{
 		 try {
-			statement.execute();
-			return ModelObject.getAllModelObjectsWithClassFromResultSet(modelClass, statement.getResultSet());
+			 ResultSet rs = statement.executeQuery();
+			return ModelObject.getAllModelObjectsWithClassFromResultSet(modelClass, rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

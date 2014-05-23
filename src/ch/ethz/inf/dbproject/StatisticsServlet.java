@@ -6,8 +6,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import ch.ethz.inf.dbproject.database.DatastoreInterface;
 import ch.ethz.inf.dbproject.model.CategorySummary;
 import ch.ethz.inf.dbproject.model.StatsNode;
@@ -28,8 +26,8 @@ public final class StatisticsServlet extends HttpServlet {
 	private static final String NUMBER_OF_CASES = "Number of Cases";
 	private static final String DATE = "Date";
 	private static final String NAME_OF_CATEGORY = "Name of Category";
-	private static final String NAME_OF_USER = "Name of User";
-	private static final String NUMBER_OF_NOTES = "Number of Notes";
+	//private static final String NAME_OF_USER = "Name of User";
+	//private static final String NUMBER_OF_NOTES = "Number of Notes";
 	
 	private BeanTableHelper<CategorySummary> getCategorySummaryTable()
 	{
