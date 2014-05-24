@@ -301,15 +301,14 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 			int caseNoteId = getNextCaseNoteIdForCase(caseId);
 			if (caseNoteId == -1) return null;
 			java.util.Date date = new java.util.Date();
-			java.sql.Timestamp datesql = new java.sql.Timestamp(date.getTime());
 			try {
 				insertIntoCaseNoteStatement.setInt(1, caseId);
 				insertIntoCaseNoteStatement.setInt(2, caseNoteId);
 				insertIntoCaseNoteStatement.setString(3, text);
-				insertIntoCaseNoteStatement.setObject(4, datesql);
+				insertIntoCaseNoteStatement.setDate(4, date);
 				insertIntoCaseNoteStatement.setString(5, authorUsername);
 				insertIntoCaseNoteStatement.execute();
-				return new CaseNote(caseId, caseNoteId, text, datesql, authorUsername);
+				return new CaseNote(caseId, caseNoteId, text, date, authorUsername);
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;
