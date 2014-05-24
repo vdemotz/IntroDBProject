@@ -1,8 +1,8 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.model.Category;

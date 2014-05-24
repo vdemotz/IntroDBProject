@@ -1,8 +1,8 @@
 package ch.ethz.inf.dbproject.model;
 
-import java.sql.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 import java.sql.Timestamp;
-import java.sql.SQLException;
 import java.text.DateFormat;
 
 public final class PersonNote extends ModelObject {

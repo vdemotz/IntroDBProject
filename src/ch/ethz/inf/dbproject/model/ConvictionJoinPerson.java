@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.model;
 
-import java.sql.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
 import java.text.DateFormat;
 
 public class ConvictionJoinPerson extends ModelObject {

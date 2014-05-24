@@ -97,5 +97,15 @@ public class ResultSet {
 		}
 		return hasNext;
 	}
+	
+	public boolean first() {
+		// TODO implement first
+		return false;
+	}
+	
+	public int getInt(String fieldName){
+		//TODO Implement getInt by field name
+		return -1;
+	}
 
 }

@@ -22,9 +22,13 @@ public class Connection {
 	 * @return a connection to database
 	 * @throws SQLException 
 	 */
-	public static Connection getConnection() throws SQLException{
+	public static Connection getConnection() {
 		if (instance == null){
-			instance = new Connection();
+			try {
+				instance = new Connection();
+			} catch (SQLException ex){
+				ex.printStackTrace();
+			}
 		}
 		return instance;
 	}

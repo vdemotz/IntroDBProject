@@ -45,12 +45,7 @@ public class SQLSelectPreparedStatementTest {
 	public void test() {
 		
 		Connection connection = null;
-		try {
-			connection = Connection.getConnection();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-			fail("could not establish connection");
-		}
+		connection = Connection.getConnection();
 		
 		for (int i=0; i<testSelectSucceeds.length; i++) {
 			try {

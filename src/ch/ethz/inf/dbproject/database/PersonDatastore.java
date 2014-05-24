@@ -1,6 +1,8 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.*;
+import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 import java.util.List;
 import java.sql.Timestamp;
 import java.text.ParseException;
