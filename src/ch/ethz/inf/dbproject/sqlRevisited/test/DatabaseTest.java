@@ -230,17 +230,20 @@ public class DatabaseTest {
 	}
 
 	//CaseDetail
-	int[] caseIdCaseDetail = new int[]{10, 8, 9};
-	String[] titleCaseDetail = new String[]{"Death of Jeffrey Patterson", "Death of James Philmore", "Death of Beth Davenport"};
-	String[] streetCaseDetail = new String[]{null, "Westminsterstreet 5", null};
-	String[] cityCaseDetail = new String[]{"London", "London", "London"};
-	String[] zipCodeCaseDetail = new String[]{null, null, null};
-	boolean[] isOpenCaseDetail = new boolean[]{true, true, true};
-	String[] dateCaseDetail = new String[]{"2010-12-10 16-00-00", "2010-11-26 21-00-00", "2010-11-26 23-00-00"};
+	int[] caseIdCaseDetail = new int[]{10, 8, 9, 3, 5, 4};
+	String[] titleCaseDetail = new String[]{"Death of Jeffrey Patterson", "Death of James Philmore", "Death of Beth Davenport", "Death of Jennifer Wilson", "Brutal Murder", "Cab Driver is shot"};
+	String[] streetCaseDetail = new String[]{null, "Westminsterstreet 5", null, "Gardenstreet 5", null, null};
+	String[] cityCaseDetail = new String[]{"London", "London", "London", "London", "Florida", "London"};
+	String[] zipCodeCaseDetail = new String[]{null, null, null, "SW2 5HG", null, "CF10 3AT"};
+	boolean[] isOpenCaseDetail = new boolean[]{true, true, true, true, false, true};
+	String[] dateCaseDetail = new String[]{"2010-12-10 16.00.00", "2010-11-26 21.00.00", "2010-11-26 23.00.00", "2010-11-28 18.00.00", "2005-05-05 00.00.00", "2010-11-28 00.00.00"};
 	String[] descriptionCaseDetail = new String[]{"Sir John found dead in office building. Case of death: poisoning",
 			"18 year old James Philmore found dead in a sports centre",
-			"Beth Davenport, Junior Minister of Transport found dead at building Site"};
-	String[] authorNameCaseDetail = new String[]{"sherlock", "watson", "watson"};
+			"Beth Davenport, Junior Minister of Transport found dead at building Site",
+			"Jennifer Wilson found dead in a shabby empty apartment at Lauriston Gardens",
+			null,
+			"The cab driver got shot from someone standing outside the window at Roland-Kerr Further Education College."};
+	String[] authorNameCaseDetail = new String[]{"sherlock", "watson", "watson", "sherlock", "sherlock", "watson"};
 	
 	@Test
 	public void testWriteCaseDetai() throws Exception{
@@ -576,8 +579,7 @@ public class DatabaseTest {
 	//If we're motivated, we can include these data above. (Just be careful to not add consistent stuff)
 
 /*
-insert into CaseDetail (caseId, title, city, street, zipCode, isOpen, date, description, authorName)
-values(3, 'Death of Jennifer Wilson', 'London', 'Gardenstreet 5', 'SW2 5HG', true, '2010-11-28-18-00', 'Jennifer Wilson found dead in a shabby empty apartment at Lauriston Gardens', 'sherlock');
+
 
 insert into CategoryForCase
     values(3, 'Suicide');
