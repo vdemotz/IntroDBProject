@@ -1,7 +1,8 @@
 package ch.ethz.inf.dbproject.model;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+
 
 /**
  * Object that represents a type of crime (i.e. Theft, Assault...) 
