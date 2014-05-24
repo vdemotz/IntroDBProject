@@ -69,7 +69,8 @@ public final class HomeServlet extends HttpServlet {
 		if (loggedUser == null) {
 			// Not logged in!
 			//set the most active users
-			request.setAttribute(HOME_MOST_ACTIVE_USER, this.getMostActiveUser());
+			//TODO DISABLED
+			//request.setAttribute(HOME_MOST_ACTIVE_USER, this.getMostActiveUser());
 		} else {
 			// Logged in
 			//set the details of the user
@@ -77,7 +78,8 @@ public final class HomeServlet extends HttpServlet {
 			//set the table of cases modified by user
 			request.setAttribute(REQUEST_USER_CASES, getTableCasesUserModified(loggedUser.getUsername()));
 			//set table most active cases by user
-			request.setAttribute(HOME_MOST_ACTIVE_CAT_FOR_USER, this.getMostActiveCategoriesForUser(loggedUser.getUsername()));
+			//TODO DISABLED
+			//request.setAttribute(HOME_MOST_ACTIVE_CAT_FOR_USER, this.getMostActiveCategoriesForUser(loggedUser.getUsername()));
 		}
 		
 		// Finally, proceed to the Home.jsp page which will render the profile
@@ -200,7 +202,9 @@ public final class HomeServlet extends HttpServlet {
 		}
 		return table;
 	}
-	
+	//TODO
+	//DISABLED
+	/*
 	private BeanTableHelper<StatsNode> getMostActiveUser(){
 		BeanTableHelper<StatsNode> table = new BeanTableHelper<StatsNode>("mostActiveUserTable", "contentTable", StatsNode.class);
 		table.addBeanColumn("User Name", "name");
@@ -223,6 +227,6 @@ public final class HomeServlet extends HttpServlet {
 			ex.printStackTrace();
 		}
 		return table;
-	}
+	}*/
 }
 

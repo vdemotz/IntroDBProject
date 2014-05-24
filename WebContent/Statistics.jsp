@@ -10,7 +10,7 @@
 <%= request.getAttribute(StatisticsServlet.REQUEST_CATEGORY_SUMMARY_TABLE) %>
 
 <br><br>
-
+ 
 <h3> Available tables </h3>
 
 <form method="get" action="Statistics">

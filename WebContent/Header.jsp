@@ -32,7 +32,7 @@
 					<div class="menuDiv2"><a href="Cases?filter=closed">Closed</a></div>
 					<div class="menuDiv2"><a href="Cases?filter=recent">Recent</a></div>
 					<div class="menuDiv2"><a href="Cases?filter=oldest">Oldest Unsolved</a></div>
-					<div class="menuDiv1"><a href ="Statistics">Statistics</a></div>
+					<!-- DISABLED <div class="menuDiv1"><a href ="Statistics">Statistics</a></div> -->
 					<div class="menuDiv1"><a href="Search">Search</a></div>
 					<div class="menuDiv1"><a href=<%= "PersonSelection?" + 
 							PersonSelectionServlet.EXTERNAL_TITLE_PARAMETER + "=Select+the+convict+for+the+conviction&" +

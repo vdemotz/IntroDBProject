@@ -41,6 +41,10 @@ public final class StatisticsServlet extends HttpServlet {
 		return table;
 	}
 	
+	//TODO
+	//DISABLED
+	/*
+	
 	private Object getStatsTable(String filter) {
 		BeanTableHelper<StatsNode> table = new BeanTableHelper<StatsNode>("statsSummary", "contentTable", StatsNode.class);
 		
@@ -70,18 +74,21 @@ public final class StatisticsServlet extends HttpServlet {
 			return "Sorry, these stats are unavaible";
 		}
 		return table;
-	}
+	}*/
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		final String filter = request.getParameter("filter");
 		
 		request.setAttribute(REQUEST_CATEGORY_SUMMARY_TABLE, getCategorySummaryTable());
+		//TODO
+		//DISABLED
+		/*
 		try {
 			request.setAttribute(REQUEST_STATISTICS_STATS_TABLE, this.getStatsTable(filter));
 		} catch (Exception ex){
 			request.setAttribute(REQUEST_STATISTICS_STATS_TABLE, "A problem occured");
-		}
+		}*/
 		
 		this.getServletContext().getRequestDispatcher("/Statistics.jsp").forward(request, response);
 	}
