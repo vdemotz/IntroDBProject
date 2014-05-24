@@ -23,10 +23,12 @@ public class Connection {
 	 * @throws SQLException 
 	 */
 	public static Connection getConnection() throws SQLException{
-		if (instance == null){
-			instance = new Connection();
+		synchronized(Connection.class) {
+			if (instance == null){
+				instance = new Connection();
+			}
+			return instance;
 		}
-		return instance;
 	}
 	
 	/**

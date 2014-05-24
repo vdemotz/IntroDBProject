@@ -1,5 +1,6 @@
 package ch.ethz.inf.dbproject.database;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import ch.ethz.inf.dbproject.sqlRevisited.*;
 import ch.ethz.inf.dbproject.model.CaseDetail;
@@ -25,12 +26,10 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	private static final String oldestUnresolvedCasesQuery = "select * from CaseDetail where isOpen = true order by date asc";
 	//template: cases for a specific category
 	private static final String casesForCategoryQuery = "select CaseDetail.* from CaseDetail caseDetail, CategoryForCase categoryForCase where categoryName = ? and caseDetail.caseId = categoryForCase.caseId";
-	//template: cases for a specific date
-	private static final String casesForDateQuery = "select * from CaseDetail where Date(date) = ?";
 	//template: cases for an approximate date
 	private static final String casesForDateLikeQuery = "select * from CaseDetail where date like ?";
 	//template: cases for a date in rage
-	private static final String casesForDatesQuery = "select * from CaseDetail where date between ? and ?";
+	private static final String casesForDatesQuery = "select * from CaseDetail where date >= ? and date <= ?";
 	//template: suspected persons for a specific case
 	private static final String suspectsForCaseQuery = "select person.* " +
 								  "from Person person, Suspected suspected " +
@@ -41,8 +40,8 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 								  "where conviction.caseId = ? and conviction.personId = person.personId";
 	//template: category summary
 	private static final String categorySummaryQuery = "select categoryName, count(*) as numberOfCases from CategoryForCase group by categoryName order by numberOfCases desc";
-	//template: get the next id for the case note of a particular case
-	private static final String nextCaseNoteIdForCaseQuery = "select coalesce (max(caseNoteId)+1, 1) from CaseNote where caseId=?";//if there is no caseNote yet, max returns null, coalesce selects the first non-null argument
+	//template: get the max id for the case note of a particular case
+	private static final String maxCaseNoteIdForCaseQuery = "select max(caseNoteId) from CaseNote where caseId=?";
 	//template add a new note
 	private static final String insertIntoCaseNoteQuery = "insert into CaseNote " +
 			"values (?, " +//caseId
@@ -57,8 +56,8 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	//template add new case
 	private static final String insertIntoCaseDetailQuery = "insert into CaseDetail " +
 							"values(?, ?, ?, ?, ? ,? ,? ,? ,?)";
-	//template get the next id for the case detail
-	private static final String nextCaseDetailIdQuery = "select max(caseId) from CaseDetail";
+	//template get the max id for the case detail
+	private static final String maxCaseDetailIdQuery = "select max(caseId) from CaseDetail";
 	//template remove a suspect from a case
 	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where personId=? and caseId=?";
 	
@@ -69,19 +68,20 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	PreparedStatement oldestUnresolvedCasesStatement;
 	PreparedStatement recentCasesStatement;
 	PreparedStatement casesForCategoryStatement;
-	PreparedStatement casesForDateStatement;
 	PreparedStatement suspectsForCaseStatement;
 	PreparedStatement convictsForCaseStatement;
 	PreparedStatement categorySummaryStatement;
 	PreparedStatement casesForDateLikeStatement;
 	PreparedStatement casesForDatesStatement;
-	PreparedStatement nextCaseNoteIdForCaseStatement;
+	PreparedStatement maxCaseNoteIdForCaseStatement;
 	PreparedStatement insertIntoCaseNoteStatement;
 	PreparedStatement updateCaseIsOpenStatement;
 	PreparedStatement addSuspectStatement;
 	PreparedStatement insertIntoCaseDetailStatement;
-	PreparedStatement nextCaseDetailIdStatement;
+	PreparedStatement maxCaseDetailIdStatement;
 	PreparedStatement deleteSuspectFromCaseStatement;
+	
+	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Override
 	protected void prepareStatements() throws SQLException
@@ -93,15 +93,14 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 		recentCasesStatement = sqlConnection.prepareStatement(recentCasesQuery);
 		oldestUnresolvedCasesStatement = sqlConnection.prepareStatement(oldestUnresolvedCasesQuery);
 		casesForCategoryStatement = sqlConnection.prepareStatement(casesForCategoryQuery);
-		casesForDateStatement = sqlConnection.prepareStatement(casesForDateQuery);
 		suspectsForCaseStatement = sqlConnection.prepareStatement(suspectsForCaseQuery);
 		convictsForCaseStatement = sqlConnection.prepareStatement(convictsForCaseQuery);
 		categorySummaryStatement = sqlConnection.prepareStatement(categorySummaryQuery);
 		casesForDateLikeStatement = sqlConnection.prepareStatement(casesForDateLikeQuery);
 		casesForDatesStatement = sqlConnection.prepareStatement(casesForDatesQuery);
 		
-		nextCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(nextCaseNoteIdForCaseQuery);
-		nextCaseDetailIdStatement = sqlConnection.prepareStatement(nextCaseDetailIdQuery);
+		maxCaseNoteIdForCaseStatement = sqlConnection.prepareStatement(maxCaseNoteIdForCaseQuery);
+		maxCaseDetailIdStatement = sqlConnection.prepareStatement(maxCaseDetailIdQuery);
 		
 		insertIntoCaseNoteStatement = sqlConnection.prepareStatement(insertIntoCaseNoteQuery);
 		updateCaseIsOpenStatement = sqlConnection.prepareStatement(updateCaseIsOpenQuery);
@@ -175,13 +174,7 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	
 	@Override
 	public List<CaseDetail> getCasesForDate(java.util.Date date) {
-		try {
-			casesForDateStatement.setDate(1, new java.sql.Date(date.getTime()));
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return getResults(CaseDetail.class, casesForDateStatement);
+		return getCasesForDateLike(dateFormatter.format(date));
 	}
 	
 	@Override
@@ -276,10 +269,10 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	private int getNextCaseNoteIdForCase(int caseId)
 	{
 		try {
-			nextCaseNoteIdForCaseStatement.setInt(1, caseId);
-			ResultSet rs = nextCaseNoteIdForCaseStatement.executeQuery();
-			rs.next();
-			return rs.getInt(1);
+			maxCaseNoteIdForCaseStatement.setInt(1, caseId);
+			ResultSet rs = maxCaseNoteIdForCaseStatement.executeQuery();
+			if (!rs.first()){ return 0; }
+			return (rs.getInt(1)+1);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;
@@ -289,9 +282,9 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	private int getNextCaseDetailId()
 	{
 		try {
-			ResultSet rs = nextCaseDetailIdStatement.executeQuery();
+			ResultSet rs = maxCaseDetailIdStatement.executeQuery();
 			if (!rs.first()){ return 0; }
-			return (rs.getInt("max(caseId)")+1);
+			return (rs.getInt(1)+1);
 		} catch (SQLException ex){
 			ex.printStackTrace();
 			return -1;
