@@ -10,7 +10,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 public final class Category extends ModelObject {
 
 	private static final long serialVersionUID = 1L;
-	private final String name;
+	private String name;
 
 	////
 	//CONSTRUCTOR
@@ -22,7 +22,7 @@ public final class Category extends ModelObject {
 	
 	public Category(ResultSet rs) throws SQLException
 	{
-		this(rs.getString("name"));
+		super();
 	}
 
 	////

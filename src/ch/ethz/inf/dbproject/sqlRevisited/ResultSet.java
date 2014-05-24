@@ -113,5 +113,4 @@ public class ResultSet {
 	public int getInt(String string) throws SQLException {
 		return (int)getObject(string);
 	}
-
 }
