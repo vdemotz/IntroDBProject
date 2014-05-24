@@ -61,7 +61,7 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 	}
 
 	@Override
-	public void setNull(int index, Types value) throws SQLException {
+	public void setNull(int index, SQLType.BaseType value) throws SQLException {
 		index--;
 		args[index] = null;
 		

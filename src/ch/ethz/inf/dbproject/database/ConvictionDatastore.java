@@ -4,24 +4,25 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 import java.util.Date;
 import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
 import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 
 import ch.ethz.inf.dbproject.model.Conviction;
 
 public class ConvictionDatastore extends Datastore implements ConvictionDatastoreInterface {
 
 	private static final String insertIntoConvictionQuery = "insert into Conviction values (?, ?, ?, ?, ?)";
-	private static final String nextConvictionIdQuery = "select coalesce (max(convictionId)+1, 1) from Conviction";
+	private static final String maxConvictionIdQuery = "select max(convictionId) from Conviction";
 	private static final String getConvictionForIdQuery = "select * from Conviction where convictionId=?";
 	
 	private PreparedStatement insertIntoConvictionStatement;
-	private PreparedStatement nextConvictionIdStatement;
+	private PreparedStatement maxConvictionIdStatement;
 	private PreparedStatement getConvictionForIdStatement;
 	
 	@Override
 	protected void prepareStatements() throws SQLException
 	{
 		insertIntoConvictionStatement = sqlConnection.prepareStatement(insertIntoConvictionQuery);
-		nextConvictionIdStatement = sqlConnection.prepareStatement(nextConvictionIdQuery);
+		maxConvictionIdStatement = sqlConnection.prepareStatement(maxConvictionIdQuery);
 		getConvictionForIdStatement = sqlConnection.prepareStatement(getConvictionForIdQuery);
 	}
 	
@@ -54,7 +55,7 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 				if (caseId != null) {
 					insertIntoConvictionStatement.setInt(3, caseId);
 				} else {
-					insertIntoConvictionStatement.setNull(3, java.sql.Types.INTEGER);
+					insertIntoConvictionStatement.setNull(3, SQLType.BaseType.Integer);
 				}
 				insertIntoConvictionStatement.setDate(4, new java.sql.Date(startDate.getTime()));
 				insertIntoConvictionStatement.setDate(5, new java.sql.Date(endDate.getTime()));
@@ -74,11 +75,15 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 	//HELPERS
 	////
 	
-	private int getNextConvictionId() throws SQLException
-	{
-		ResultSet rs = nextConvictionIdStatement.executeQuery();
-		rs.next();
-		return rs.getInt(1);
+	private int getNextConvictionId() {
+		try{
+			ResultSet rs = maxConvictionIdStatement.executeQuery();
+			if (!rs.first()){ return 0; }
+			return (rs.getInt("max(convictionId)")+1);
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return -1;
+		}
 	}
 
 }

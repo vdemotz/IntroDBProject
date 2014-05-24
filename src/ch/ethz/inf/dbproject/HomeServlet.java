@@ -69,15 +69,17 @@ public final class HomeServlet extends HttpServlet {
 		if (loggedUser == null) {
 			// Not logged in!
 			//set the most active users
-			request.setAttribute(HOME_MOST_ACTIVE_USER, this.getMostActiveUser());
+			//TODO
+			//DISABLED
+			//request.setAttribute(HOME_MOST_ACTIVE_USER, this.getMostActiveUser());
 		} else {
 			// Logged in
 			//set the details of the user
 			request.setAttribute(REQUEST_USER_DETAILS, getTableUserDetails(loggedUser));
-			//set the table of cases modified by user
-			request.setAttribute(REQUEST_USER_CASES, getTableCasesUserModified(loggedUser.getUsername()));
 			//set table most active cases by user
-			request.setAttribute(HOME_MOST_ACTIVE_CAT_FOR_USER, this.getMostActiveCategoriesForUser(loggedUser.getUsername()));
+			//TODO
+			//DISABLED
+			//request.setAttribute(HOME_MOST_ACTIVE_CAT_FOR_USER, this.getMostActiveCategoriesForUser(loggedUser.getUsername()));
 		}
 		
 		// Finally, proceed to the Home.jsp page which will render the profile
@@ -139,27 +141,6 @@ public final class HomeServlet extends HttpServlet {
 	}
 	
 	/**
-	 * Provide a table of all cases open by a user
-	 * @param username
-	 * @return a table of cases
-	 */
-	protected BeanTableHelper<CaseDetail> getTableCasesUserModified(String username) {
-		final BeanTableHelper<CaseDetail> casesUserModified = new BeanTableHelper<CaseDetail>("cases", "contentTable", CaseDetail.class);
-		// Add columns to the new table
-		casesUserModified.addBeanColumn("Case ID", "caseId");
-		casesUserModified.addBeanColumn("Title", "title");
-		casesUserModified.addBeanColumn("Location", "location");
-		casesUserModified.addBeanColumn("Open", "isOpen");
-		casesUserModified.addBeanColumn("Date", "dateTimeFormated");
-		casesUserModified.addBeanColumn("Author Name", "authorName");
-			
-		casesUserModified.addLinkColumn("", "View Case", "Case?caseId=", "id");
-
-		casesUserModified.addObjects(this.dbInterface.getCurrentCasesForUser(username));
-		return casesUserModified;
-	}
-	
-	/**
 	 * Handle the action 'categoryCreation' and add, if not already exists a new category in DB
 	 * @param request the action
 	 * @return a message which says if category has been added or not
@@ -200,7 +181,7 @@ public final class HomeServlet extends HttpServlet {
 		}
 		return table;
 	}
-	
+	/*
 	private BeanTableHelper<StatsNode> getMostActiveUser(){
 		BeanTableHelper<StatsNode> table = new BeanTableHelper<StatsNode>("mostActiveUserTable", "contentTable", StatsNode.class);
 		table.addBeanColumn("User Name", "name");
@@ -223,6 +204,6 @@ public final class HomeServlet extends HttpServlet {
 			ex.printStackTrace();
 		}
 		return table;
-	}
+	}*/
 }
 

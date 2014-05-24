@@ -16,9 +16,11 @@ if (user != null) {
 	
 	You can <a href="CaseCreation">create a new case</a> or <a href="PersonCreation">add a new person</a>.
 	<br><br>
+	<!--  
 	The cases you modified / created :
 	
-	<%= request.getAttribute(HomeServlet.REQUEST_USER_CASES) %>
+	< %= request.getAttribute(HomeServlet.REQUEST_USER_CASES) %>
+	-->
 	
 	<form method="get" action="Home">
 		<div>
@@ -56,10 +58,7 @@ if (user != null) {
 	New User ? Create an <a href="UserCreation">account</a>.
 	
 	<br><br>
-	
-	The most active users : 
-	
-	<%= request.getAttribute(HomeServlet.HOME_MOST_ACTIVE_USER) %>
+
 <%
 }
 %>

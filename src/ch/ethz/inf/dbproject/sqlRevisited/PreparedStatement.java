@@ -62,7 +62,7 @@ public interface PreparedStatement {
 	 * @param value - the parameter value
 	 * @throws SQLException 
 	 */
-	public void setNull(int index, java.sql.Types value) throws SQLException;
+	public void setNull(int index, SQLType.BaseType value) throws SQLException;
 	
 	/**
 	 * Sets the designated parameter to the given Java Object
