@@ -85,17 +85,14 @@ public class ConvictionCreationServlet extends HttpServlet {
 			Integer caseIdParsed = null;
 			if (caseId != null && caseId.length() > 0) {//caseId is optional
 				caseIdParsed = Integer.parseInt(caseId);
-			}
-			if (caseIdParsed == null || dbInterface.getCaseForId(caseIdParsed) != null) {
-				Conviction conviction = dbInterface.insertIntoConviction(personIdParsed, caseIdParsed, startDateParsed, endDateParsed);
-				if (conviction != null) {
+			} 
+			Conviction conviction = dbInterface.insertIntoConviction(personIdParsed, caseIdParsed, startDateParsed, endDateParsed);
+			if (conviction != null) {
+				if (caseIdParsed != null)
 					dbInterface.insertIntoCaseNote(caseIdParsed, UI_CONVICTED_PERSON + personId, UserManagement.getCurrentlyLoggedInUser(session).getUsername());
-					request.setAttribute(REQUEST_MESSAGE, REQUEST_MESSAGE_CREATED);
-				} else {
-					request.setAttribute(REQUEST_ERROR_MESSAGE, REQUEST_ERROR_MESSAGE_PROCESSING_ERROR);
-				}
+				request.setAttribute(REQUEST_MESSAGE, REQUEST_MESSAGE_CREATED);
 			} else {
-				request.setAttribute(REQUEST_ERROR_MESSAGE, REQUEST_ERROR_MESSAGE_INVALID_ID_VALUE);
+				request.setAttribute(REQUEST_ERROR_MESSAGE, REQUEST_ERROR_MESSAGE_PROCESSING_ERROR);
 			}
 		}
 		

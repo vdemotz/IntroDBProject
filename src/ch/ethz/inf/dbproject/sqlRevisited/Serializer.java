@@ -340,7 +340,10 @@ public class Serializer {
 		public static ByteBuffer serializerObject(Object object, SQLType type){
 			ByteBuffer buf = ByteBuffer.allocate(type.byteSizeOfType());
 			if(type.type == BaseType.Integer){
-				buf.putInt((int)object);
+				if (object == null) 
+					buf.putInt(0);
+				else
+					buf.putInt((int)object);
 			} else if (type.type == BaseType.Boolean){
 				buf = serializerBoolean((boolean)object);
 			} else if (type.type == BaseType.Char){
