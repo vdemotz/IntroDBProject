@@ -59,7 +59,7 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	//template get the max id for the case detail
 	private static final String maxCaseDetailIdQuery = "select max(caseId) from CaseDetail";
 	//template remove a suspect from a case
-	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where personId=? and caseId=?";
+	private static final String deleteSuspectFromCaseQuery = "delete from Suspected where caseId=? and personId=?";
 	
 	PreparedStatement caseForIdStatement;
 	PreparedStatement allCasesStatement;
@@ -370,8 +370,8 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	@Override
 	public boolean deleteSuspectFromCase(int caseId, int personId) {
 		try {
-			deleteSuspectFromCaseStatement.setInt(1, personId);
-			deleteSuspectFromCaseStatement.setInt(2, caseId);
+			deleteSuspectFromCaseStatement.setInt(1, caseId);
+			deleteSuspectFromCaseStatement.setInt(2, personId);
 			deleteSuspectFromCaseStatement.execute();
 			return deleteSuspectFromCaseStatement.getUpdateCount() > 0;
 		} catch (SQLException e) {
