@@ -53,7 +53,7 @@ public class Connection {
 			try {
 				db = new Database(databaseDirectory);
 			} catch (Exception ex){
-				System.err.println("Failed to open new database");
+				ex.printStackTrace();
 				throw new SQLPhysicalException();
 			}
 		}
@@ -61,7 +61,7 @@ public class Connection {
 		try {
 			listTablesConnections = db.getAllTablesConnections();
 		} catch (Exception e) {
-			System.err.println("Failed to get all tables connections");
+			e.printStackTrace();
 			throw new SQLPhysicalException();
 		}
 	}

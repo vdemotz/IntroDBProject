@@ -53,7 +53,11 @@ public class Database {
 	}
 	
 	public Database(String baseDirectory) throws Exception {
-		directoryPath = baseDirectory + File.separator + DB_PATH;
+		if (baseDirectory == null || baseDirectory.length() == 0) {
+			directoryPath = DB_PATH;
+		} else {
+			directoryPath = baseDirectory + File.separator + DB_PATH;
+		}
 		init();
 		
 	}
@@ -72,7 +76,7 @@ public class Database {
 			}
 			tablesSchema = this.getTablesSchema();
 		} else {
-			throw new Exception("Cannot create folder of Database");
+			throw new Exception("Cannot create folder of Database at" + directoryPath );
 		}
 	}
 	
