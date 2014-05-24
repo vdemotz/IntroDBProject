@@ -11,18 +11,21 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 
 	private static final String insertIntoConvictionQuery = "insert into Conviction values (?, ?, ?, ?, ?)";
 	private static final String nextConvictionIdQuery = "select coalesce (max(convictionId)+1, 1) from Conviction";
+	private static final String getMaxConvictionIdQuery = "select max(convictionId) from Conviction";
 	private static final String getConvictionForIdQuery = "select * from Conviction where convictionId=?";
 	
 	private PreparedStatement insertIntoConvictionStatement;
 	private PreparedStatement nextConvictionIdStatement;
 	private PreparedStatement getConvictionForIdStatement;
+	private PreparedStatement getMaxConvictionIdStatement;
 	
 	@Override
 	protected void prepareStatements() throws SQLException
 	{
 		insertIntoConvictionStatement = sqlConnection.prepareStatement(insertIntoConvictionQuery);
-		nextConvictionIdStatement = sqlConnection.prepareStatement(nextConvictionIdQuery);
+		//nextConvictionIdStatement = sqlConnection.prepareStatement(nextConvictionIdQuery);
 		getConvictionForIdStatement = sqlConnection.prepareStatement(getConvictionForIdQuery);
+		getMaxConvictionIdStatement = sqlConnection.prepareStatement(getMaxConvictionIdQuery);
 	}
 	
 	////
@@ -47,7 +50,7 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 		synchronized(this.getClass()) {//prevent race on next conviction id
 			try {
 				//get and set next id
-				int id = getNextConvictionId();
+				int id = getMaxConvictionId();
 				insertIntoConvictionStatement.setInt(1, id);
 				//set parameters
 				insertIntoConvictionStatement.setInt(2, personId);
@@ -79,6 +82,17 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 		ResultSet rs = nextConvictionIdStatement.executeQuery();
 		rs.next();
 		return rs.getInt(1);
+	}
+	
+	private int getMaxConvictionId() {
+		try{
+			ResultSet rs = getMaxConvictionIdStatement.executeQuery();
+			if (!rs.first()){ return 0; }
+			return (rs.getInt("max(convictionId)")+1);
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return -1;
+		}
 	}
 
 }

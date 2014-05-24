@@ -76,7 +76,8 @@ public final class HomeServlet extends HttpServlet {
 			//set the details of the user
 			request.setAttribute(REQUEST_USER_DETAILS, getTableUserDetails(loggedUser));
 			//set the table of cases modified by user
-			request.setAttribute(REQUEST_USER_CASES, getTableCasesUserModified(loggedUser.getUsername()));
+			//TODO DISABLED
+			//request.setAttribute(REQUEST_USER_CASES, getTableCasesUserModified(loggedUser.getUsername()));
 			//set table most active cases by user
 			//TODO DISABLED
 			//request.setAttribute(HOME_MOST_ACTIVE_CAT_FOR_USER, this.getMostActiveCategoriesForUser(loggedUser.getUsername()));
