@@ -15,8 +15,8 @@ public class ResultSet {
 	private final TableSchema schema;
 	private final ArrayList<byte[]> results;
 	private Object[] currentTuple;
-	protected final DateFormat dateFormatter = new SimpleDateFormat("yyyy-mm-dd");
-	protected final DateFormat datetimeFormatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+	protected final DateFormat dateFormatter = new SimpleDateFormat(SQLType.DATE_FORMAT_STRING);
+	protected final DateFormat datetimeFormatter = new SimpleDateFormat(SQLType.DATETIME_FORMAT_STRING);
 	
 	/**
 	 * A new ResultSet
@@ -43,20 +43,19 @@ public class ResultSet {
 	 * @return a java Object
 	 */
 	public Object getObject(String fieldname) throws SQLException{
-		//TODO handle dates (currently returns their string representation)
 		int index = schema.indexOf(SQLToken.getFragmentsForIdentifier(fieldname.toLowerCase()));
 		if (index < 0) throw new SQLSemanticException(SQLSemanticException.Type.NoSuchAttributeException, fieldname);
 		if (schema.getAttributesTypes()[index].type == SQLType.BaseType.Date) {
 			try {
 				return this.dateFormatter.parseObject((String) currentTuple[index]);
 			} catch (ParseException e) {
-				throw new SQLException();
+				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 			}
 		} else if (schema.getAttributesTypes()[index].type == SQLType.BaseType.Datetime) {
 			try {
 				return this.datetimeFormatter.parseObject((String) currentTuple[index]);
 			} catch (ParseException e) {
-				throw new SQLException();
+				throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
 			}
 		} else {
 			return currentTuple[index];
@@ -81,13 +80,17 @@ public class ResultSet {
 		return (int) currentTuple[index];
 	}
 	
+	/**
+	 * @return An array of raw objects representing the current result.
+	 * 		   There is no guarantee as to what sub-type the results have, however calling toString on them gives a meaningful result.
+	 */
 	public Object[] getObjects() {
 		return Arrays.copyOf(currentTuple, currentTuple.length);
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Advances the cursor by one.
+	 * @return true if there is a current tuple, false otherwise
 	 */
 	public boolean next() {
 		cursor++;
