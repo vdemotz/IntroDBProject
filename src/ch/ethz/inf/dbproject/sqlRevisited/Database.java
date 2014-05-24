@@ -19,10 +19,11 @@ public class Database {
 	////
 	//Extensions and names
 	////
-	private String EXT_META_DATA = ".md";
-	private String EXT_DATA = ".data";
-	private String DB_NAME = "SQLRevisited";
-	private String DB_PATH = "Database"+File.separator;
+	private static final String EXT_META_DATA = ".md";
+	private static final String EXT_DATA = ".data";
+	private final String DB_NAME = "SQLRevisited";
+	private static final String DB_PATH = "Database"+File.separator;
+	private final String directoryPath;
 	
 	////
 	//Constants
@@ -47,7 +48,21 @@ public class Database {
 	 * documentation for more information on how to read/write to this particular table.
 	 */
 	public Database() throws Exception {
+		directoryPath = DB_PATH;
+		init();
+	}
+	
+	public Database(String baseDirectory) throws Exception {
+		if (baseDirectory == null || baseDirectory.length() == 0) {
+			directoryPath = DB_PATH;
+		} else {
+			directoryPath = baseDirectory + File.separator + DB_PATH;
+		}
+		init();
 		
+	}
+	
+	private void init() throws Exception {
 		if (this.newFolder()){
 			if(!checkSerialNumber()){
 				try {
@@ -61,7 +76,7 @@ public class Database {
 			}
 			tablesSchema = this.getTablesSchema();
 		} else {
-			throw new Exception("Cannot create folder of Database");
+			throw new Exception("Cannot create folder of Database at" + directoryPath );
 		}
 	}
 	
@@ -91,7 +106,7 @@ public class Database {
 	public List<PhysicalTableInterface> getAllTablesConnections() throws Exception {
 		List<PhysicalTableInterface> ret = new ArrayList<PhysicalTableInterface>();
 		for (int i = 0; i < tablesSchema.length; i++){
-			ret.add(new TableConnection(tablesSchema[i], this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA));
+			ret.add(new TableConnection(tablesSchema[i], this.directoryPath, this.EXT_META_DATA, this.EXT_DATA));
 		}
 		return ret;
 	}
@@ -104,7 +119,7 @@ public class Database {
 	 */
 	public TableConnection getTableConnection(String tableName) throws SQLException{
 		try {
-			return new TableConnection(this.getTableSchema(tableName.toLowerCase()), this.DB_PATH, this.EXT_META_DATA, this.EXT_DATA);
+			return new TableConnection(this.getTableSchema(tableName.toLowerCase()), this.directoryPath, this.EXT_META_DATA, this.EXT_DATA);
 		} catch (Exception e) {
 			throw new SQLPhysicalException();
 		}
@@ -121,7 +136,7 @@ public class Database {
 	 * @throws IOException
 	 */
 	private boolean checkSerialNumber() throws IOException{
-		File f = new File(DB_PATH + DB_NAME + EXT_META_DATA);
+		File f = new File(directoryPath + DB_NAME + EXT_META_DATA);
 		if(f.exists() && !f.isDirectory()) { 
 			if (this.getSerialNumber() == SERIAL_NUMBER)
 				return true;
@@ -139,7 +154,7 @@ public class Database {
 	 */
 	private int getSerialNumber() throws IOException{
 		FileInputStream in;
-		in = new FileInputStream(DB_PATH + DB_NAME + EXT_META_DATA);
+		in = new FileInputStream(directoryPath + DB_NAME + EXT_META_DATA);
 		FileChannel channel = in.getChannel();
         ByteBuffer buf = ByteBuffer.allocateDirect(Integer.SIZE);
         channel.read(buf);
@@ -153,7 +168,7 @@ public class Database {
 	 */
 	private void setSerialNumber() throws IOException{
 		FileOutputStream out;
-		out = new FileOutputStream(DB_PATH + DB_NAME + EXT_META_DATA);
+		out = new FileOutputStream(directoryPath + DB_NAME + EXT_META_DATA);
 		FileChannel channel = out.getChannel();
 		ByteBuffer buf = ByteBuffer.allocateDirect(Integer.SIZE);
 		buf.putInt(SERIAL_NUMBER);
@@ -167,7 +182,7 @@ public class Database {
 	 * @throws IOException 
 	 */
 	public void dropTables() throws IOException{
-		FileUtils.cleanDirectory(new File(DB_PATH));
+		FileUtils.cleanDirectory(new File(directoryPath));
 	}
 	
 	/**
@@ -183,7 +198,7 @@ public class Database {
 			TableSchema tableSchema = ts.getCurrent();
 			
 			//file for data
-			File fileData = new File(DB_PATH + tableSchema.getTableName() + EXT_DATA);
+			File fileData = new File(directoryPath + tableSchema.getTableName() + EXT_DATA);
 			try {
 				boolean createdFileData = fileData.createNewFile();
 				if (!createdFileData)
@@ -193,7 +208,7 @@ public class Database {
 			}
 			
 			//file for metadata
-			FileOutputStream out = new FileOutputStream(DB_PATH + tableSchema.getTableName() + EXT_META_DATA, true);
+			FileOutputStream out = new FileOutputStream(directoryPath + tableSchema.getTableName() + EXT_META_DATA, true);
 			FileChannel channel = out.getChannel();
 			
 			//Get attributes names, types and if they are keys
@@ -273,14 +288,15 @@ public class Database {
 	}
 	
 	/**
-	 * Create a new directory where to put the database if not exist
-	 * @return true if success, false otherwise
+	 * Create a new directory where to put the database if it does not exist yet
+	 * @precondition directoryPath is set to a valid directory string
+	 * @return true if successful, false otherwise
 	 */
 	private boolean newFolder(){
-		if (new File(DB_PATH).exists()) {
+		if (new File(directoryPath).exists()) {
 		    return true;
 		} else {
-			return (new File(DB_PATH)).mkdirs();
+			return (new File(directoryPath)).mkdirs();
 		}
 	}
 	
@@ -311,10 +327,10 @@ public class Database {
 	 * @throws Exception
 	 */
 	private TableSchema getTableSchemaFromDB(String tableName) throws Exception{
-		File f = new File(DB_PATH + tableName + EXT_META_DATA);
+		File f = new File(directoryPath + tableName + EXT_META_DATA);
 		if(f.exists() && !f.isDirectory()) {
 			//open connection to file
-			FileInputStream in = new FileInputStream(DB_PATH + tableName + EXT_META_DATA);
+			FileInputStream in = new FileInputStream(directoryPath + tableName + EXT_META_DATA);
 			FileChannel channel = in.getChannel();
 			ByteBuffer buf = ByteBuffer.allocateDirect(MAX_MD_FILE_SIZE);
 			if (channel.read(buf) == -1) {

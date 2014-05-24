@@ -1,8 +1,8 @@
 package ch.ethz.inf.dbproject.model;
 
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.sql.SQLException;
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+import java.util.Date;
 import java.text.DateFormat;
 
 public final class PersonNote extends ModelObject {
@@ -11,14 +11,14 @@ public final class PersonNote extends ModelObject {
 	private int personId;
 	private int personNoteId;
 	private String text;
-	private Timestamp date;
+	private Date date;
 	private String authorUsername;
 	
 	////
 	// CONSTRUCTORS
 	////
 	
-	public PersonNote(final int personId, final int personNoteId, final String text, final Timestamp date, final String authorUsername){
+	public PersonNote(final int personId, final int personNoteId, final String text, final Date date, final String authorUsername){
 		this.personId = personId;
 		this.text = text;
 		this.date = date;
@@ -46,7 +46,7 @@ public final class PersonNote extends ModelObject {
 		return text;
 	}
 
-	public Timestamp getDate() {
+	public Date getDate() {
 		return date;
 	}
 

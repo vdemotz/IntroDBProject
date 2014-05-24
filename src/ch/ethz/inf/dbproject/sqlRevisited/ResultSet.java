@@ -68,7 +68,7 @@ public class ResultSet {
 	 * @return a java String
 	 */
 	public String getString(int index){
-		return (String) currentTuple[index];
+		return (String) currentTuple[index-1];
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class ResultSet {
 	 * @return a java integer
 	 */
 	public int getInt(int index){
-		return (int) currentTuple[index];
+		return (int) currentTuple[index-1];
 	}
 	
 	/**
@@ -101,4 +101,16 @@ public class ResultSet {
 		return hasNext;
 	}
 
+	/**
+	 * Moves the pointer to position 0
+	 * @return true if there is at least one result, false otherwise
+	 */
+	public boolean first() {
+		cursor = -1;
+		return next();
+	}
+
+	public int getInt(String string) throws SQLException {
+		return (int)getObject(string);
+	}
 }

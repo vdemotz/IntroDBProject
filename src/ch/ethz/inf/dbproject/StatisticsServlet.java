@@ -41,41 +41,6 @@ public final class StatisticsServlet extends HttpServlet {
 		return table;
 	}
 	
-	//TODO
-	//DISABLED
-	/*
-	
-	private Object getStatsTable(String filter) {
-		BeanTableHelper<StatsNode> table = new BeanTableHelper<StatsNode>("statsSummary", "contentTable", StatsNode.class);
-		
-		if (filter == null){
-			return "Please choose which statistics to display";
-		} else if (filter.equals("casesCity")){
-			table.addBeanColumn(NAME_OF_CITY, "name");
-			table.addBeanColumn(NUMBER_OF_CASES, "value");
-			table.addObjects(dbInterface.getCasesPerCity());
-		} else if (filter.equals("casesMonth")){
-			table.addBeanColumn(DATE, "month");
-			table.addBeanColumn(NUMBER_OF_CASES, "value");
-			table.addObjects(dbInterface.getCasesPerMonth());
-		} else if (filter.equals("convictionsCity")){
-			table.addBeanColumn(NAME_OF_CITY, "name");
-			table.addBeanColumn(NUMBER_OF_CONVICTIONS, "value");
-			table.addObjects(dbInterface.getConvictionsPerCity());
-		} else if (filter.equals("convictionsMonth")){
-			table.addBeanColumn(NAME_OF_CITY, "month");
-			table.addBeanColumn(NUMBER_OF_CONVICTIONS, "value");
-			table.addObjects(dbInterface.getConvictionsPerMonth());
-		} else if (filter.equals("convictionsCategory")){
-			table.addBeanColumn(NAME_OF_CATEGORY, "name");
-			table.addBeanColumn(NUMBER_OF_CONVICTIONS, "value");
-			table.addObjects(dbInterface.getConvictionsPerCategory());
-		} else {
-			return "Sorry, these stats are unavaible";
-		}
-		return table;
-	}*/
-	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		final String filter = request.getParameter("filter");
@@ -85,7 +50,9 @@ public final class StatisticsServlet extends HttpServlet {
 		//DISABLED
 		/*
 		try {
-			request.setAttribute(REQUEST_STATISTICS_STATS_TABLE, this.getStatsTable(filter));
+			//TODO
+			//DISABLED
+			//request.setAttribute(REQUEST_STATISTICS_STATS_TABLE, this.getStatsTable(filter));
 		} catch (Exception ex){
 			request.setAttribute(REQUEST_STATISTICS_STATS_TABLE, "A problem occured");
 		}*/

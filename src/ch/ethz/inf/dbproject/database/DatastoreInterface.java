@@ -19,13 +19,10 @@ import ch.ethz.inf.dbproject.model.User;
  */
 
 public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface, ConvictionDatastoreInterface, CategoryDatastoreInterface {
-	
 	private CaseDatastoreInterface caseDatastore = new CaseDatastore();
 	private PersonDatastoreInterface personDatastore = new PersonDatastore();
 	private UserDatastoreInterface userDatastore = new UserDatastore();
 	private ConvictionDatastoreInterface convictionDatastore = new ConvictionDatastore();
-	//private StatisticsDatastoreInterface statisticsDatastore = new StatisticsDatastore();
-	//Since StatisticsDatastore use some fancy sql function, it's disabled
 	private CategoryDatastoreInterface categoryDatastore = new CategoryDatastore();
 	
 	////
@@ -40,11 +37,6 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	@Override
 	public User getUserForUsernameAndPassword(String username, String password) {
 		return userDatastore.getUserForUsernameAndPassword(username, password);
-	}
-	
-	@Override
-	public List<CaseDetail> getCurrentCasesForUser(String username) {
-		return userDatastore.getCurrentCasesForUser(username);
 	}
 	
 	@Override
@@ -331,6 +323,6 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	@Override
 	public List<StatsNode> getMostActiveCategoriesForUser(String username) {
 		return statisticsDatastore.getMostActiveCategoriesForUser(username);
-	}*/
-	
+	}
+	*/
 }

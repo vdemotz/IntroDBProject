@@ -1,6 +1,10 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.*;
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
+
+import java.util.Date;
 import java.util.List;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -40,7 +44,7 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 			"conviction.personId = person.personId order by lastName, firstName";
 	//persons for particular dates range of conviction
 	private static final String getPersonsForConvictionDatesString = "select person.* from Conviction conviction, Person person "+
-			"where conviction.startDate between ? and ? and "+
+			"where conviction.startDate >= ? and conviction.startDate <= ? and "+
 			"conviction.personId = person.personId order by lastName, firstName";
 	//person for particular birthdates range
 	private static final String getPersonsForBirthdatesLikeString = "select * from person where birthdate >= ? and birthdate <= ?";
@@ -307,14 +311,14 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 		synchronized (this.getClass()){
 			try{
 				int personNoteId = getMaxPersonNoteIdForPersonId(personId);
-				Timestamp t = new Timestamp(new java.util.Date().getTime());
+				Date d = new Date();
 				addPersonNoteStatement.setInt(1, personId);
 				addPersonNoteStatement.setInt(2, personNoteId);
 				addPersonNoteStatement.setString(3, text);
-				addPersonNoteStatement.setTimestamp(4, t);
+				addPersonNoteStatement.setDate(4, d);
 				addPersonNoteStatement.setString(5, authorUsername);
 				addPersonNoteStatement.execute();
-				return new PersonNote(personId, personNoteId, text, t, authorUsername);
+				return new PersonNote(personId, personNoteId, text, d, authorUsername);
 			} catch (final SQLException ex){
 				ex.printStackTrace();
 				return null;

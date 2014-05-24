@@ -12,41 +12,57 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLTokenStream;
 
 public class Connection {
 	
-	private static Database db;
+	private Database db;
 	private static Connection instance;
 	private ReadWriteLock readWriteLock;
 	private List<PhysicalTableInterface> listTablesConnections;
 	
 	/**
-	 * Get a new connection
-	 * @return a connection to database
+	 * Get the connection to the database at the default relative location.
+	 * @return the connection to the default database
 	 * @throws SQLException 
 	 */
 	public static Connection getConnection() throws SQLException{
-		if (instance == null){
-			instance = new Connection();
+		synchronized(Connection.class) {
+			if (instance == null){
+				instance = new Connection();
+			}
+			return instance;
 		}
-		return instance;
 	}
 	
 	/**
 	 * Create a new connection to the database.
+	 * Between different connection instances, there are no synchronization guarantees.
 	 */
 	private Connection() throws SQLException {
+		init("");
+	}
+	
+	/**
+	 * Create a new connection to the database.
+	 * Between different connection instances, there are no synchronization guarantees.
+	 * This means that you should never create two Connection instances with the same databaseDirectory
+	 */
+	public Connection(String databaseDirectory) throws SQLException {
+		init(databaseDirectory);
+	}
+	
+	private void init(String databaseDirectory) throws SQLPhysicalException {
 		if (db == null) {
-			try{
-				db = new Database();
+			try {
+				db = new Database(databaseDirectory);
 			} catch (Exception ex){
-				System.err.println("Failed to open new database");
-				throw new SQLException();
+				ex.printStackTrace();
+				throw new SQLPhysicalException();
 			}
 		}
 		readWriteLock = new ReentrantReadWriteLock();
 		try {
 			listTablesConnections = db.getAllTablesConnections();
 		} catch (Exception e) {
-			System.err.println("Failed to get all tables connections");
-			throw new SQLException();
+			e.printStackTrace();
+			throw new SQLPhysicalException();
 		}
 	}
 

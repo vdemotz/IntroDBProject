@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 import com.mysql.jdbc.Driver;
 
 /**
- * A Wrapper around an SQL Connection
+ * A Wrapper around an SQL Connection :: OBSOLETE
  */
 public final class MySQLConnection {
 

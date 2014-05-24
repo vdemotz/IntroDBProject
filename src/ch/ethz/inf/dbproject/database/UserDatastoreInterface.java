@@ -26,14 +26,6 @@ public interface UserDatastoreInterface {
 	 */
 	User getUserForUsernameAndPassword(String username, String password);
 	
-	/**
-	 * Given a username, returns a list of recently created and commented on cases, ordered by descending recentness.
-	 * If the username doesn't exits, null is returned. If the user has no Cases, the empty list is returned
-	 * @param username
-	 * @return the list of current cases if applicable
-	 */
-	List<CaseDetail> getCurrentCasesForUser(String username);
-	
 	////
 	//MODIFY
 	////

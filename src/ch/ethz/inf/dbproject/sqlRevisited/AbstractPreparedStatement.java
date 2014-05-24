@@ -1,8 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.Date;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.locks.Lock;
@@ -36,7 +34,7 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 	@Override
 	public void setString(int index, String value) throws SQLException {
 		index--;
-		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Varchar)
+		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Varchar || typeArgs[index].type == SQLType.BaseType.Date || typeArgs[index].type == SQLType.BaseType.Datetime)
 			args[index] = value;
 		else
 			throw new SQLTypeCheckException(typeArgs[index], new SQLType(SQLType.BaseType.Varchar));
@@ -45,14 +43,17 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 	@Override
 	public void setDate(int index, Date value) throws SQLException {
 		index--;
-		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Date)
+		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Date){
 			args[index] = dateFormatter.format(value);
+		} else if(typeArgs[index].type == SQLType.BaseType.Datetime){
+			args[index] = datetimeFormatter.format(value);
+		}
 		else
 			throw new SQLTypeCheckException(typeArgs[index], new SQLType(SQLType.BaseType.Date));	
 	}
 
 	@Override
-	public void setTimeStamp(int index, Timestamp value) throws SQLException {
+	public void setTimestamp(int index, Date value) throws SQLException {
 		index--;
 		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Date || typeArgs[index].type == SQLType.BaseType.Datetime)
 			args[index] = datetimeFormatter.format(value);
@@ -61,7 +62,7 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 	}
 
 	@Override
-	public void setNull(int index, Types value) throws SQLException {
+	public void setNull(int index, SQLType.BaseType value) throws SQLException {
 		index--;
 		args[index] = null;
 		

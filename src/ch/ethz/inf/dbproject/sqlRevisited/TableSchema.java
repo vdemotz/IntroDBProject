@@ -272,7 +272,7 @@ public class TableSchema {
 	 */
 	public SQLType[] getKeys(){
 		int i = 0;
-		while (this.isPrimaryKey[i])
+		while (i<isPrimaryKey.length && this.isPrimaryKey[i])
 			i++;
 		return Arrays.copyOf(this.attributeTypes.clone(), i);
 		

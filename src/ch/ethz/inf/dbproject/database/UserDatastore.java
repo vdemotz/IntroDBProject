@@ -1,8 +1,9 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.*;
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
 import java.util.List;
-import java.sql.PreparedStatement;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.User;
 
@@ -14,13 +15,6 @@ public class UserDatastore extends Datastore implements UserDatastoreInterface {
 	
 	//particular user for an username and a password
 	private static final String getUserForUsernameAndPasswordString = "select * from User where username = ? and password = ?";
-	//cases for a particular user
-	/*private static final String getCurrentCasesForUserString = "(select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername like ? and caseNote.caseId = caseDetail.caseId) "+
-	"union "+
-	"(select caseDetail2.* from CaseDetail caseDetail2 where authorName like ?) order by date desc";*/
-	private static final String getCurrentCasesForUserString = "select caseId, title, street, city, zipCode, isOpen, date, description, authorName from ((select caseDetail.* from CaseDetail caseDetail, CaseNote caseNote where caseNote.authorUsername = ? and caseNote.caseId = caseDetail.caseId) "+
-			"union "+
-			"(select CaseDetail.* from CaseDetail caseDetail where caseDetail.authorName = ?))as P order by date desc";
 	//add User
 	private static final String addUserString = "insert into User values(?, ?, ?, ?)";
 	//check if username is available
@@ -31,7 +25,6 @@ public class UserDatastore extends Datastore implements UserDatastoreInterface {
 	////
 	
 	private PreparedStatement getUserForUsernameAndPasswordStatement;
-	private PreparedStatement getCurrentCasesForUserStatement;
 	private PreparedStatement addUserStatement;
 	private PreparedStatement isUsernameAvailableStatement;
 	
@@ -42,7 +35,6 @@ public class UserDatastore extends Datastore implements UserDatastoreInterface {
 	@Override
 	protected void prepareStatements() throws SQLException {
 		getUserForUsernameAndPasswordStatement = sqlConnection.prepareStatement(getUserForUsernameAndPasswordString);
-		getCurrentCasesForUserStatement = sqlConnection.prepareStatement(getCurrentCasesForUserString);
 		addUserStatement = sqlConnection.prepareStatement(addUserString);
 		isUsernameAvailableStatement = sqlConnection.prepareStatement(isUsernameAvailableString);
 	}
@@ -64,23 +56,6 @@ public class UserDatastore extends Datastore implements UserDatastoreInterface {
 			return null;
 		}
 	}
-
-	////
-	//Return type List<CaseDetail>
-	////
-	@Override
-	public List<CaseDetail> getCurrentCasesForUser(String username) {
-		try{
-			getCurrentCasesForUserStatement.setString(1, username);
-			getCurrentCasesForUserStatement.setString(2, username);
-			return getResults(CaseDetail.class, getCurrentCasesForUserStatement);
-		} catch (final SQLException ex){
-			System.err.println("failed to retrieve cases from user");
-			ex.printStackTrace();
-			return null;
-		}
-	}
-	
 	
 	////
 	//Add

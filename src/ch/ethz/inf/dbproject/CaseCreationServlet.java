@@ -1,7 +1,6 @@
 package ch.ethz.inf.dbproject;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,7 +73,7 @@ public final class CaseCreationServlet extends HttpServlet {
 				final String[] categories = request.getParameterValues("categories");
 				//date and username
 				String authorUsername = loggedUser.getUsername();
-				Timestamp timestamp = this.getValidDate(dateString);
+				Date timestamp = this.getValidDate(dateString);
 				
 				if (title != null && !title.isEmpty()){
 					//try to create the case
@@ -112,13 +111,12 @@ public final class CaseCreationServlet extends HttpServlet {
 	 * @param date a date to test
 	 * @return true if the date has format yyyy-mm-dd, else false
 	 */
-	private Timestamp getValidDate(String date){
+	private Date getValidDate(String date){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try{
-			java.util.Date DateParsed = sdf.parse(date);
-			return new Timestamp(DateParsed.getTime());
+			return sdf.parse(date);
 		} catch (Exception ex){
-			return new Timestamp(new Date().getTime());
+			return new Date();
 		}
 	}
 }

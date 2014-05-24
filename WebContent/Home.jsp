@@ -16,11 +16,19 @@ if (user != null) {
 	
 	You can <a href="CaseCreation">create a new case</a> or <a href="PersonCreation">add a new person</a>.
 	<br><br>
+<<<<<<< HEAD
+	<!--  
+=======
 	<!-- DISABLED
+>>>>>>> master
 	The cases you modified / created :
 	
 	< %= request.getAttribute(HomeServlet.REQUEST_USER_CASES) %>
 	-->
+<<<<<<< HEAD
+	
+=======
+>>>>>>> master
 	<form method="get" action="Home">
 		<div>
 			<input type="hidden" name="action" value="logout" />
@@ -57,11 +65,15 @@ if (user != null) {
 	New User ? Create an <a href="UserCreation">account</a>.
 	
 	<br><br>
+<<<<<<< HEAD
+
+=======
 	<!--  DISABLED
 	The most active users : 
 	
 	< %= request.getAttribute(HomeServlet.HOME_MOST_ACTIVE_USER) %>
 	-->
+>>>>>>> master
 <%
 }
 %>
@@ -80,9 +92,13 @@ if (user != null) {%>
 		<input type="submit" value="Creation" title="Add new category" />
 	</div>
 	</form>
+<<<<<<< HEAD
+	
+=======
 	<!-- DISABLED 
 	< %= request.getAttribute(HomeServlet.HOME_MOST_ACTIVE_CAT_FOR_USER) %>
 	-->
+>>>>>>> master
 <% } %>
 
 <br /><br />

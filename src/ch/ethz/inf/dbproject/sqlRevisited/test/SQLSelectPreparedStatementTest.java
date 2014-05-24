@@ -37,9 +37,11 @@ public class SQLSelectPreparedStatementTest {
 	
 	private static final String getAllCasesInRange = "select * from CaseDetail where date >= ? and date <= ?";
 	
-	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, categoriesForCaseQuery, getAllPersonsString, allCasesQuery, openCasesQuery, openCasesQuery, getAllCasesInRange};
+	private static final String allCategories = "select * from Category";
 	
-	private Object[][] arguments = {{9},{"Suicide"},{10},{}, {}, {true}, {false}, {new Date(0), new Date()}};
+	private String[] testSelectSucceeds = {suspectsForCaseQuery, getPersonsForConvictionTypeString, categoriesForCaseQuery, getAllPersonsString, allCasesQuery, openCasesQuery, openCasesQuery, getAllCasesInRange, allCategories};
+	
+	private Object[][] arguments = {{9},{"Suicide"},{10},{}, {}, {true}, {false}, {new Date(0), new Date()}, {}};
 	
 	@Test
 	public void test() {
