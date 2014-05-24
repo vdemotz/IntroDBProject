@@ -26,7 +26,10 @@ public final class User extends ModelObject{
 	}
 	
 	public User(final ResultSet rs) throws SQLException {
-		super(rs);
+		this.username = rs.getString(0);
+		this.firstName = rs.getString(1);
+		this.lastName = rs.getString(2);
+		this.password = rs.getString(3);
 	}
 	
 	////

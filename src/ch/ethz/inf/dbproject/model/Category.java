@@ -22,7 +22,8 @@ public final class Category extends ModelObject {
 	
 	public Category(ResultSet rs) throws SQLException
 	{
-		super();
+		name = rs.getString(0);
+		
 	}
 
 	////

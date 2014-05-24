@@ -3,6 +3,8 @@ package ch.ethz.inf.dbproject.database;
 import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
+
+import java.util.Date;
 import java.util.List;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -309,14 +311,14 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 		synchronized (this.getClass()){
 			try{
 				int personNoteId = getMaxPersonNoteIdForPersonId(personId);
-				Timestamp t = new Timestamp(new java.util.Date().getTime());
+				Date d = new Date();
 				addPersonNoteStatement.setInt(1, personId);
 				addPersonNoteStatement.setInt(2, personNoteId);
 				addPersonNoteStatement.setString(3, text);
-				addPersonNoteStatement.setTimestamp(4, t);
+				addPersonNoteStatement.setDate(4, d);
 				addPersonNoteStatement.setString(5, authorUsername);
 				addPersonNoteStatement.execute();
-				return new PersonNote(personId, personNoteId, text, t, authorUsername);
+				return new PersonNote(personId, personNoteId, text, d, authorUsername);
 			} catch (final SQLException ex){
 				ex.printStackTrace();
 				return null;
