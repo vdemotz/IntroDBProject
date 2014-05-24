@@ -101,4 +101,17 @@ public class ResultSet {
 		return hasNext;
 	}
 
+	/**
+	 * Moves the pointer to position 0
+	 * @return true if there is at least one result, false otherwise
+	 */
+	public boolean first() {
+		cursor = -1;
+		return next();
+	}
+
+	public int getInt(String string) throws SQLException {
+		return (int)getObject(string);
+	}
+
 }

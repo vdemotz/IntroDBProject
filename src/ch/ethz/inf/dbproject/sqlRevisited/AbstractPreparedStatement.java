@@ -52,7 +52,7 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 	}
 
 	@Override
-	public void setTimeStamp(int index, Timestamp value) throws SQLException {
+	public void setTimestamp(int index, Date value) throws SQLException {
 		index--;
 		if (typeArgs == null || typeArgs[index].type == SQLType.BaseType.Date || typeArgs[index].type == SQLType.BaseType.Datetime)
 			args[index] = datetimeFormatter.format(value);
