@@ -68,18 +68,10 @@ public final class HomeServlet extends HttpServlet {
 		//set other attributes depending on if the user is logged in or not
 		if (loggedUser == null) {
 			// Not logged in!
-			//set the most active users
-			//TODO
-			//DISABLED
-			//request.setAttribute(HOME_MOST_ACTIVE_USER, this.getMostActiveUser());
 		} else {
 			// Logged in
 			//set the details of the user
 			request.setAttribute(REQUEST_USER_DETAILS, getTableUserDetails(loggedUser));
-			//set table most active cases by user
-			//TODO
-			//DISABLED
-			//request.setAttribute(HOME_MOST_ACTIVE_CAT_FOR_USER, this.getMostActiveCategoriesForUser(loggedUser.getUsername()));
 		}
 		
 		// Finally, proceed to the Home.jsp page which will render the profile
@@ -181,29 +173,5 @@ public final class HomeServlet extends HttpServlet {
 		}
 		return table;
 	}
-	/*
-	private BeanTableHelper<StatsNode> getMostActiveUser(){
-		BeanTableHelper<StatsNode> table = new BeanTableHelper<StatsNode>("mostActiveUserTable", "contentTable", StatsNode.class);
-		table.addBeanColumn("User Name", "name");
-		table.addBeanColumn("Number of changes", "value");
-		try{
-			table.addObjects(dbInterface.getNumberNotesPerUser());
-		} catch (Exception ex){
-			ex.printStackTrace();
-		}
-		return table;
-	}
-	
-	private BeanTableHelper<StatsNode> getMostActiveCategoriesForUser(String username){
-		BeanTableHelper<StatsNode> table = new BeanTableHelper<StatsNode>("mostActiveCategoriesUserTable", "contentTable", StatsNode.class);
-		table.addBeanColumn("Categories you changed", "name");
-		table.addBeanColumn("Number of changes", "value");
-		try{
-			table.addObjects(dbInterface.getMostActiveCategoriesForUser(username));
-		} catch (Exception ex){
-			ex.printStackTrace();
-		}
-		return table;
-	}*/
 }
 

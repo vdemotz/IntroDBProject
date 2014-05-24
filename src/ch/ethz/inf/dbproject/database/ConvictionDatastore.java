@@ -17,6 +17,7 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 	private PreparedStatement insertIntoConvictionStatement;
 	private PreparedStatement maxConvictionIdStatement;
 	private PreparedStatement getConvictionForIdStatement;
+	private PreparedStatement getMaxConvictionIdStatement;
 	
 	@Override
 	protected void prepareStatements() throws SQLException
@@ -24,6 +25,7 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 		insertIntoConvictionStatement = sqlConnection.prepareStatement(insertIntoConvictionQuery);
 		maxConvictionIdStatement = sqlConnection.prepareStatement(maxConvictionIdQuery);
 		getConvictionForIdStatement = sqlConnection.prepareStatement(getConvictionForIdQuery);
+		getMaxConvictionIdStatement = sqlConnection.prepareStatement(maxConvictionIdQuery);
 	}
 	
 	////
@@ -48,7 +50,7 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 		synchronized(this.getClass()) {//prevent race on next conviction id
 			try {
 				//get and set next id
-				int id = getNextConvictionId();
+				int id = getMaxConvictionId();
 				insertIntoConvictionStatement.setInt(1, id);
 				//set parameters
 				insertIntoConvictionStatement.setInt(2, personId);
@@ -78,6 +80,17 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 	private int getNextConvictionId() {
 		try{
 			ResultSet rs = maxConvictionIdStatement.executeQuery();
+			if (!rs.first()){ return 0; }
+			return (rs.getInt("max(convictionId)")+1);
+		} catch (final SQLException ex){
+			ex.printStackTrace();
+			return -1;
+		}
+	}
+	
+	private int getMaxConvictionId() {
+		try{
+			ResultSet rs = getMaxConvictionIdStatement.executeQuery();
 			if (!rs.first()){ return 0; }
 			return (rs.getInt("max(convictionId)")+1);
 		} catch (final SQLException ex){

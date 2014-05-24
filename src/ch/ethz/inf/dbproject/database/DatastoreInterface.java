@@ -19,7 +19,6 @@ import ch.ethz.inf.dbproject.model.User;
  */
 
 public final class DatastoreInterface implements CaseDatastoreInterface, PersonDatastoreInterface, UserDatastoreInterface, ConvictionDatastoreInterface, CategoryDatastoreInterface {
-
 	private CaseDatastoreInterface caseDatastore = new CaseDatastore();
 	private PersonDatastoreInterface personDatastore = new PersonDatastore();
 	private UserDatastoreInterface userDatastore = new UserDatastore();
@@ -288,9 +287,9 @@ public final class DatastoreInterface implements CaseDatastoreInterface, PersonD
 	}
 	
 	////
-	//STATISTICS
+	//STATISTICS (DISABLED)
 	////
-/*
+	/*
 	@Override
 	public List<StatsNode> getCasesPerCity() {
 		return statisticsDatastore.getCasesPerCity();
