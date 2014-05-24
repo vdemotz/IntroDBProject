@@ -23,14 +23,14 @@ public final class CaseDetail extends ModelObject {
 	//CONSTRUCTORS
 	////
 	
-	public CaseDetail(final int id, final String tit, final String city, final String street, final String zipCode, final boolean isOp, final Date date2, final String desc, final String authorN) {
+	public CaseDetail(final int id, final String tit, final String city, final String street, final String zipCode, final boolean isOp, final Date date, final String desc, final String authorN) {
 		this.caseId = id;
 		this.title = tit;
 		this.city = city;
 		this.street = street;
 		this.zipCode = zipCode;
 		this.isOpen = isOp;
-		this.date = date2;
+		this.date = date;
 		this.description = desc;
 		this.authorName = authorN;
 	}
