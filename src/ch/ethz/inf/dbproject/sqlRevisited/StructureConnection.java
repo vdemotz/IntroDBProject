@@ -107,7 +107,7 @@ public class StructureConnection extends DataConnection{
 			System.err.println("Key not found");
 			return false;
 		}
-		this.shiftData((this.KEYS_SIZE+8)*position+this.OFFSET_META_DATA, -(this.HEADER_KEY_SIZE+this.KEYS_SIZE));
+		this.shiftData((this.KEYS_SIZE+8)*(position+1)+this.OFFSET_META_DATA, -(this.HEADER_KEY_SIZE+this.KEYS_SIZE));
 		elementsPositions.remove(position);
 		return true;
 	}
@@ -116,7 +116,12 @@ public class StructureConnection extends DataConnection{
 	 * Get the position in the table where to write this object
 	 */
 	public int insertElement(ByteBuffer object) throws Exception{
-		int whereToWrite = (elementsPositions.size())*this.ELEMENT_SIZE;
+		int whereToWrite = 0;
+		for (int i = 0; i < elementsPositions.size(); i++){
+			if ((int)elementsPositions.get(i).second >= whereToWrite){
+				whereToWrite = elementsPositions.get(i).second+this.ELEMENT_SIZE;
+			}
+		}
 		int position = this.getPositionAndInsert(object, whereToWrite);
 		this.shiftData(position, this.KEYS_SIZE+8);
 		this.writeToData(this.createKeysFromByteBufferAndPosition(object, whereToWrite).array(), position);

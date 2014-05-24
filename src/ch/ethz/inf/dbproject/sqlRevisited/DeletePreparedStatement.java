@@ -1,8 +1,12 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeDynamicNode;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeIdentifierNode;
+import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeSelectionOperatorNode;
 
 public class DeletePreparedStatement  extends AbstractWritePreparedStatement {
 
@@ -15,15 +19,15 @@ public class DeletePreparedStatement  extends AbstractWritePreparedStatement {
 	 */
 	public DeletePreparedStatement(ParsedQuery pq, WriteLock l, List<PhysicalTableInterface> lTables) throws SQLPhysicalException{
 		super(pq, l, lTables);
+		int numbArgs = this.getNumberArguments((SyntaxTreeSelectionOperatorNode)pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1));
+		args = new Object[numbArgs];
 		typeArgs = tc.getTableSchema().getKeys();
 	}
 
 	@Override
 	public boolean execute() throws SQLException {
 		boolean ret = false;
-		while(lock.tryLock()){
-			;
-		}
+		lock.lock();
 		try{
 			ret = tc.delete(Serializer.serializerTuple(tc.getTableSchema(), args));
 			if (ret)
@@ -31,12 +35,21 @@ public class DeletePreparedStatement  extends AbstractWritePreparedStatement {
 			else
 				countChanged = 0;
 		} catch (Exception ex){
-			lock.unlock();
 			countChanged = 0;
 			ex.printStackTrace();
 			throw new SQLException();
+		} finally {
+			lock.unlock();
 		}
-		lock.unlock();
 		return ret;
+	}
+	
+	
+	protected int getNumberArguments(SyntaxTreeSelectionOperatorNode stdn){
+		if (stdn.getChild() != null){
+			return this.getNumberArguments((SyntaxTreeSelectionOperatorNode)stdn.getChild())+1;
+		} else {
+			return 1;
+		}
 	}
 }

@@ -26,9 +26,6 @@ public abstract class AbstractWritePreparedStatement extends AbstractPreparedSta
 			System.err.println("Unable to open table "+tableName);
 			throw new SQLPhysicalException();
 		}
-		
-		int numbArgs = this.getNumberArguments((SyntaxTreeDynamicNode) pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1))+1;
-		args = new Object[numbArgs];
 		countChanged = 0;
 	}
 	
@@ -51,7 +48,7 @@ public abstract class AbstractWritePreparedStatement extends AbstractPreparedSta
 			SyntaxTreeDynamicNode child = (SyntaxTreeDynamicNode)stdn.dynamicChildren.get(0);
 			return (this.getNumberArguments(child) + 1);
 		} catch (Exception ex){
-			return 0;
+			return 1;
 		}
 	}
 }

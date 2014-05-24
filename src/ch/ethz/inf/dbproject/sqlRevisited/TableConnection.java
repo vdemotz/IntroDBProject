@@ -102,6 +102,9 @@ public class TableConnection extends DataConnection implements PhysicalTableInte
 	public boolean update(ByteBuffer object) throws SQLPhysicalException{
 		if (!(this.delete(object)))
 				return false;
+		object.rewind();
+		int a = object.getInt();
+		object.rewind();
 		if (!(this.insert(object)))
 			return false;
 		return true;

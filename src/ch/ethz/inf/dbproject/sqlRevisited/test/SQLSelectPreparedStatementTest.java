@@ -59,9 +59,9 @@ public class SQLSelectPreparedStatementTest {
 				PreparedStatement statement = connection.prepareStatement(query);
 				for (int j=0; j<arguments[i].length; j++) {
 					if (arguments[i][j].getClass().equals(Date.class)) {
-						statement.setDate(j, (Date)arguments[i][j]);
+						statement.setDate(j+1, (Date)arguments[i][j]);
 					} else {
-						statement.setObject(j, arguments[i][j]);
+						statement.setObject(j+1, arguments[i][j]);
 					}
 				}
 				ResultSet rs = statement.executeQuery();
