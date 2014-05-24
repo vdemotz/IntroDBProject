@@ -7,8 +7,8 @@ public class ConvictionJoinPerson extends ModelObject {
 
 	private static final long serialVersionUID = 1L;
 	private int convictionId;
-	private java.sql.Date startDate;
-	private java.sql.Date endDate;
+	private java.util.Date startDate;
+	private java.util.Date endDate;
 	private int caseId;
 	private int personId;
 	private String firstName;
@@ -48,11 +48,11 @@ public class ConvictionJoinPerson extends ModelObject {
 		return convictionId;
 	}
 
-	public java.sql.Date getStartDate() {
+	public java.util.Date getStartDate() {
 		return startDate;
 	}
 
-	public java.sql.Date getEndDate() {
+	public java.util.Date getEndDate() {
 		return endDate;
 	}
 
