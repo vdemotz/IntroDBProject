@@ -10,10 +10,10 @@ public final class CaseNote extends ModelObject{
 	private int caseId;
 	private int caseNoteId;
 	private String text;
-	private java.sql.Timestamp date;
+	private java.util.Date date;
 	private String authorUsername;
 	
-	public CaseNote(final int caseId, final int caseNoteId, final String text, final java.sql.Timestamp date, final String authorUsername){
+	public CaseNote(final int caseId, final int caseNoteId, final String text, final java.util.Date date, final String authorUsername){
 		this.caseId = caseId;
 		this.text = text;
 		this.date = date;
