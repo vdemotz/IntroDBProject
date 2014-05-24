@@ -11,12 +11,14 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 
 public class Datastore {
 
-	protected Connection sqlConnection;
+	protected static Connection sqlConnection;
 	// TODO Change this line to point to the homemade DB. (New instance of ch.ethz.inf.dbproject.sqlRevisited.Connection)
 
 	public Datastore() {
 		try {
-			sqlConnection = Connection.getConnection();
+			synchronized (this.getClass()) {
+				sqlConnection = new Connection(System.getProperty("user.home")+ "/SQLRevisited");
+			}
 			prepareStatements();
 		} catch (SQLException e) {
 			e.printStackTrace();
