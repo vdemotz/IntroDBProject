@@ -1,8 +1,10 @@
 package ch.ethz.inf.dbproject.model;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
+import java.util.Date;
+
+import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 
 public final class CaseDetail extends ModelObject {
 
@@ -15,20 +17,20 @@ public final class CaseDetail extends ModelObject {
 	private boolean isOpen;
 	private String description;
 	private String authorName;
-	private java.sql.Timestamp date;
+	private java.util.Date date;
 	
 	////
 	//CONSTRUCTORS
 	////
 	
-	public CaseDetail(final int id, final String tit, final String city, final String street, final String zipCode, final boolean isOp, final java.sql.Timestamp da, final String desc, final String authorN) {
+	public CaseDetail(final int id, final String tit, final String city, final String street, final String zipCode, final boolean isOp, final Date date2, final String desc, final String authorN) {
 		this.caseId = id;
 		this.title = tit;
 		this.city = city;
 		this.street = street;
 		this.zipCode = zipCode;
 		this.isOpen = isOp;
-		this.date = da;
+		this.date = date2;
 		this.description = desc;
 		this.authorName = authorN;
 	}
