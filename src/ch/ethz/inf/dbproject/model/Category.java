@@ -20,10 +20,8 @@ public final class Category extends ModelObject {
 		this.name = name;
 	}
 	
-	public Category(ResultSet rs) throws SQLException
-	{
-		name = rs.getString(0);
-		
+	public Category(ResultSet rs) throws SQLException {
+		super(rs);
 	}
 
 	////
