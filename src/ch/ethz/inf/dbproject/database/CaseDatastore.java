@@ -26,8 +26,6 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	private static final String oldestUnresolvedCasesQuery = "select * from CaseDetail where isOpen = true order by date asc";
 	//template: cases for a specific category
 	private static final String casesForCategoryQuery = "select CaseDetail.* from CaseDetail caseDetail, CategoryForCase categoryForCase where categoryName = ? and caseDetail.caseId = categoryForCase.caseId";
-	//template: cases for a specific date TODO
-	private static final String casesForDateQuery = "select * from CaseDetail where Date(date) = ?";
 	//template: cases for an approximate date
 	private static final String casesForDateLikeQuery = "select * from CaseDetail where date like ?";
 	//template: cases for a date in rage
@@ -70,7 +68,6 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	PreparedStatement oldestUnresolvedCasesStatement;
 	PreparedStatement recentCasesStatement;
 	PreparedStatement casesForCategoryStatement;
-	PreparedStatement casesForDateStatement;
 	PreparedStatement suspectsForCaseStatement;
 	PreparedStatement convictsForCaseStatement;
 	PreparedStatement categorySummaryStatement;
@@ -96,7 +93,6 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 		recentCasesStatement = sqlConnection.prepareStatement(recentCasesQuery);
 		oldestUnresolvedCasesStatement = sqlConnection.prepareStatement(oldestUnresolvedCasesQuery);
 		casesForCategoryStatement = sqlConnection.prepareStatement(casesForCategoryQuery);
-		casesForDateStatement = sqlConnection.prepareStatement(casesForDateQuery);
 		suspectsForCaseStatement = sqlConnection.prepareStatement(suspectsForCaseQuery);
 		convictsForCaseStatement = sqlConnection.prepareStatement(convictsForCaseQuery);
 		categorySummaryStatement = sqlConnection.prepareStatement(categorySummaryQuery);
