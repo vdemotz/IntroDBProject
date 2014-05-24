@@ -12,8 +12,8 @@ public abstract class AbstractPreparedStatement implements PreparedStatement {
 	protected Object[] args; 
 	protected SQLType[] typeArgs;
 	protected final Lock lock;
-	protected final DateFormat dateFormatter = new SimpleDateFormat("yyyy-mm-dd");
-	protected final DateFormat datetimeFormatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+	protected final DateFormat dateFormatter = new SimpleDateFormat(SQLType.DATE_FORMAT_STRING);
+	protected final DateFormat datetimeFormatter = new SimpleDateFormat(SQLType.DATETIME_FORMAT_STRING);
 	
 	AbstractPreparedStatement(Lock lock) {
 		this.lock = lock;

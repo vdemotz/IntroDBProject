@@ -258,7 +258,6 @@ public class SQLCodegen {
 		}
 		
 		private PredicateFromComparison resolveOperatorToken(SQLToken operatorToken) {
-			//TODO : handle like
 			String cur = operatorToken.content;
 			if (cur.equals("like")) {
 				return new PredicateFromLikeExpression();
@@ -314,22 +313,22 @@ public class SQLCodegen {
 	//COMPARATOR IMPLEMENTATION
 	////
 	
-	class NaturalComparatorFromMaterializer implements Comparator<byte[]>
+	class NaturalComparatorFromMaterializer<T extends Comparable<T>> implements Comparator<byte[]>
 	{
 		//Given a materializer of a comparable type, returns a comparator that uses compareTo
 		//if ascending is false, the order is reversed
 		
-		private final Materializer materializer;
+		private final Materializer<T> materializer;
 		private final boolean ascending;
 		
-		public NaturalComparatorFromMaterializer(Materializer materializer, boolean ascending) {
+		public NaturalComparatorFromMaterializer(Materializer<T> materializer, boolean ascending) {
 			this.materializer = materializer;
 			this.ascending = ascending;
 		}
 
 		@Override
 		public int compare(byte[] o1, byte[] o2) {
-			int comparison = ((Comparable) materializer.get(o1)).compareTo(materializer.get(o2));
+			int comparison = ((Comparable<T>) materializer.get(o1)).compareTo(materializer.get(o2));
 			return ascending ? comparison : -comparison;
 		}
 		
