@@ -68,7 +68,7 @@ public class ResultSet {
 	 * @return a java String
 	 */
 	public String getString(int index){
-		return (String) currentTuple[index];
+		return (String) currentTuple[index-1];
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class ResultSet {
 	 * @return a java integer
 	 */
 	public int getInt(int index){
-		return (int) currentTuple[index];
+		return (int) currentTuple[index-1];
 	}
 	
 	/**
