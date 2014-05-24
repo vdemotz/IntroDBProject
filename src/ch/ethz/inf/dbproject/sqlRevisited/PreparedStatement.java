@@ -1,7 +1,5 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
-import java.sql.Timestamp;
-
 public interface PreparedStatement {
 	
 	/**
@@ -54,7 +52,7 @@ public interface PreparedStatement {
 	 * @param value - the parameter value
 	 * @throws SQLException 
 	 */
-	public void setTimestamp(int index, java.sql.Timestamp value) throws SQLException;
+	public void setTimeStamp(int index, java.sql.Timestamp value) throws SQLException;
 	
 	/**
 	 * Sets the designated parameter to sql NULL
@@ -62,7 +60,7 @@ public interface PreparedStatement {
 	 * @param value - the parameter value
 	 * @throws SQLException 
 	 */
-	public void setNull(int index, SQLType.BaseType value) throws SQLException;
+	public void setNull(int index, java.sql.Types value) throws SQLException;
 	
 	/**
 	 * Sets the designated parameter to the given Java Object

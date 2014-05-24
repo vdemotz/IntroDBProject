@@ -1,10 +1,9 @@
 package ch.ethz.inf.dbproject.database;
 
-import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+import java.sql.SQLException;
 import java.util.Date;
-import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
-import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
-import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import ch.ethz.inf.dbproject.model.Conviction;
 
@@ -55,7 +54,7 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 				if (caseId != null) {
 					insertIntoConvictionStatement.setInt(3, caseId);
 				} else {
-					insertIntoConvictionStatement.setNull(3, SQLType.BaseType.Integer);
+					insertIntoConvictionStatement.setNull(3, java.sql.Types.INTEGER);
 				}
 				insertIntoConvictionStatement.setDate(4, new java.sql.Date(startDate.getTime()));
 				insertIntoConvictionStatement.setDate(5, new java.sql.Date(endDate.getTime()));

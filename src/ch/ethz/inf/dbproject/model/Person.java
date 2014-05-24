@@ -1,7 +1,7 @@
 package ch.ethz.inf.dbproject.model;
 
-import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
-import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

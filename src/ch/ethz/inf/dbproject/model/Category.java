@@ -1,8 +1,7 @@
 package ch.ethz.inf.dbproject.model;
 
-import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
-import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
-import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Object that represents a type of crime (i.e. Theft, Assault...) 
@@ -10,7 +9,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 public final class Category extends ModelObject {
 
 	private static final long serialVersionUID = 1L;
-	private String name;
+	private final String name;
 
 	////
 	//CONSTRUCTOR
@@ -22,7 +21,7 @@ public final class Category extends ModelObject {
 	
 	public Category(ResultSet rs) throws SQLException
 	{
-		super();
+		this(rs.getString("name"));
 	}
 
 	////

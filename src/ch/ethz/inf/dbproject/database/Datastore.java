@@ -1,18 +1,16 @@
 package ch.ethz.inf.dbproject.database;
 
-import ch.ethz.inf.dbproject.sqlRevisited.Connection;
-import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
-import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
-import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import ch.ethz.inf.dbproject.model.ModelObject;
 
 public class Datastore {
 
-	//protected Connection sqlConnection =  MySQLConnection.getInstance().getConnection();
-	protected Connection sqlConnection = Connection.getConnection();
-
+	protected Connection sqlConnection =  MySQLConnection.getInstance().getConnection();
 	// TODO Change this line to point to the homemade DB. (New instance of ch.ethz.inf.dbproject.sqlRevisited.Connection)
 
 	public Datastore() {
