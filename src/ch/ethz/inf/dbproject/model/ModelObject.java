@@ -33,6 +33,7 @@ public class ModelObject implements Serializable {
 			fields[i].setAccessible(true);//in case the field is final, this makes it possible to assign it anyway
 			try {
 				String fieldname = fields[i].getName();
+				if (fieldname.equals("serialVersionUID")) continue;
 				Object value;
 				if (fields[i].getType().equals(boolean.class)) {
 					value = rs.getBoolean(fieldname);
