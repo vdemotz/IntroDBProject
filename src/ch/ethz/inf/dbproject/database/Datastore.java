@@ -9,22 +9,24 @@ import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
 import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 
-public class Datastore {
+public abstract class Datastore {
 
-	protected Connection sqlConnection;
-	// TODO Change this line to point to the homemade DB. (New instance of ch.ethz.inf.dbproject.sqlRevisited.Connection)
+	protected static Connection sqlConnection;
 
 	public Datastore() {
 		try {
-			sqlConnection = Connection.getConnection();
+			synchronized (this.getClass()) {
+				if (sqlConnection == null) {
+					sqlConnection = new Connection(System.getProperty("user.home")+ "/SQLRevisited");
+				}
+			}
 			prepareStatements();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	protected void prepareStatements() throws SQLException
-	{
+	protected void prepareStatements() throws SQLException {
 		
 	}
 	
