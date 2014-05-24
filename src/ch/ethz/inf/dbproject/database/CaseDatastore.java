@@ -1,10 +1,7 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
+import ch.ethz.inf.dbproject.sqlRevisited.*;
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.CaseNote;
 import ch.ethz.inf.dbproject.model.CategorySummary;
@@ -346,18 +343,17 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 			try {
 				int caseId = getNextCaseDetailId();
 				if (caseId == -1) return null;
-				Timestamp timestamp = new Timestamp(date.getTime());
 				insertIntoCaseDetailStatement.setInt(1, caseId);
 				insertIntoCaseDetailStatement.setString(2, title);
 				insertIntoCaseDetailStatement.setString(3, street);
 				insertIntoCaseDetailStatement.setString(4, city);
 				insertIntoCaseDetailStatement.setString(5, zipCode);
 				insertIntoCaseDetailStatement.setBoolean(6, true);
-				insertIntoCaseDetailStatement.setTimestamp(7, timestamp);
+				insertIntoCaseDetailStatement.setTimestamp(7, date);
 				insertIntoCaseDetailStatement.setString(8, description);
 				insertIntoCaseDetailStatement.setString(9, authorUsername);
 				insertIntoCaseDetailStatement.execute();
-				return new CaseDetail(caseId, title, city, street, zipCode, true, timestamp, description, authorUsername);
+				return new CaseDetail(caseId, title, city, street, zipCode, true, date, description, authorUsername);
 			} catch (SQLException ex){
 				ex.printStackTrace();
 				return null;
