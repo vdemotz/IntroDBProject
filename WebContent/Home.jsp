@@ -78,7 +78,6 @@ if (user != null) {%>
 	</div>
 	</form>
 	
-	<%= request.getAttribute(HomeServlet.HOME_MOST_ACTIVE_CAT_FOR_USER) %>
 <% } %>
 
 <br /><br />

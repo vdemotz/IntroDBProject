@@ -42,7 +42,7 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 			"conviction.personId = person.personId order by lastName, firstName";
 	//persons for particular dates range of conviction
 	private static final String getPersonsForConvictionDatesString = "select person.* from Conviction conviction, Person person "+
-			"where conviction.startDate between ? and ? and "+
+			"where conviction.startDate >= ? and conviction.startDate <= ? and "+
 			"conviction.personId = person.personId order by lastName, firstName";
 	//person for particular birthdates range
 	private static final String getPersonsForBirthdatesLikeString = "select * from person where birthdate >= ? and birthdate <= ?";
