@@ -47,9 +47,9 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 			"where conviction.startDate >= ? and conviction.startDate <= ? and "+
 			"conviction.personId = person.personId order by lastName, firstName";
 	//person for particular birthdates range
-	private static final String getPersonsForBirthdatesLikeString = "select * from person where birthdate >= ? and birthdate <= ?";
+	private static final String getPersonsForBirthdatesString = "select * from person where birthdate >= ? and birthdate <= ?";
 	//person for particular birthdate range
-	private static final String getPersonsForBirthdateString = "select * from person where birthdate like ?";
+	private static final String getPersonsForBirthdateLikeString = "select * from person where birthdate like ?";
 	//particular person for an Id
 	private static final String getPersonForIdString = "select * from Person where personId =?";
 	//all convicted persons
@@ -120,8 +120,8 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 		getPersonsForFirstNameStatement = sqlConnection.prepareStatement(getPersonsForFirstNameString);
 		getPersonsForLastNameStatement = sqlConnection.prepareStatement(getPersonsForLastNameString);
 		getPersonsForConvictionDatesStatement = sqlConnection.prepareStatement(getPersonsForConvictionDatesString);
-		getPersonsForBirthdateLikeStatement = sqlConnection.prepareStatement(getPersonsForBirthdateString);
-		getPersonsForBirthdatesStatement = sqlConnection.prepareStatement(getPersonsForBirthdatesLikeString);
+		getPersonsForBirthdateLikeStatement = sqlConnection.prepareStatement(getPersonsForBirthdateLikeString);
+		getPersonsForBirthdatesStatement = sqlConnection.prepareStatement(getPersonsForBirthdatesString);
 	}
 	
 	////
@@ -172,8 +172,8 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 	@Override
 	public List<Person> getPersonsForBirthdates(java.util.Date startDate, java.util.Date endDate){
 		try{
-			getPersonsForBirthdatesStatement.setString(1, dateFormatter.format(startDate));
-			getPersonsForBirthdatesStatement.setString(2, dateFormatter.format(startDate));
+			getPersonsForBirthdatesStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+			getPersonsForBirthdatesStatement.setDate(2, new java.sql.Date(endDate.getTime()));
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
@@ -195,8 +195,8 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 	@Override
 	public List<Person> getPersonsForConvictionDates(java.util.Date startDate, java.util.Date endDate){
 		try{
-			getPersonsForConvictionDatesStatement.setString(1, dateFormatter.format(startDate)+"%");
-			getPersonsForConvictionDatesStatement.setString(2, dateFormatter.format(startDate)+"%");
+			getPersonsForConvictionDatesStatement.setDate(1, new java.sql.Date(startDate.getTime()));
+			getPersonsForConvictionDatesStatement.setDate(2, new java.sql.Date(endDate.getTime()));
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
