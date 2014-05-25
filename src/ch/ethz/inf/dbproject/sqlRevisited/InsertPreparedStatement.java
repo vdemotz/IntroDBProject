@@ -23,15 +23,15 @@ public class InsertPreparedStatement extends AbstractWritePreparedStatement {
 	public boolean execute() throws SQLException {
 		boolean ret = false;
 		lock.lock();
+		countChanged = 0;
 		try{
 			ret = tc.insert(Serializer.serializerTuple(tc.getTableSchema(), args));
-			if (ret)
+			if (ret) {
 				countChanged = 1;
-			else
-				countChanged = 0;
+			}
+		} catch (SQLException sqlEx) {
+			throw sqlEx;
 		} catch (Exception ex){
-			countChanged = 0;
-			ex.printStackTrace();
 			throw new SQLException();
 		} finally {
 			lock.unlock();

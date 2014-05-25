@@ -211,7 +211,7 @@ public class StructureConnection extends DataConnection{
 			
 		}
 		else if (serializer.compareKeys(keyToInsert, ByteBuffer.wrap(elementsPositions.get(i).first), tableSchema) == 0)
-			throw new SQLPhysicalException();
+			throw new SQLIntegrityConstraintViolationException();
 		elementsPositions.add(i, new Pair<byte[], Integer>(keyToInsert.array(), whereToWrite));
 		return i*(this.KEYS_SIZE+this.HEADER_KEY_SIZE);
 	}

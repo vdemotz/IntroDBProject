@@ -90,16 +90,19 @@ public class TableConnection extends DataConnection implements PhysicalTableInte
 		}
 	}
 	
-	public boolean insert(ByteBuffer object) {
+	public boolean insert(ByteBuffer object) throws SQLPhysicalException {
 		try{
 			int position = structureConnection.insertElement(object);
 			byte[] data = new byte[this.tableSchema.getSizeOfEntry()];
 			object.get(data);
 			this.writeToData(data, position);
 			return true;
-		} catch (Exception ex){
-			ex.printStackTrace();
+		} catch (SQLIntegrityConstraintViolationException e) {
 			return false;
+		} catch (SQLPhysicalException ex) { 
+			throw ex;
+		} catch (Exception ex){
+			throw new SQLPhysicalException();
 		}
 	}
 	
