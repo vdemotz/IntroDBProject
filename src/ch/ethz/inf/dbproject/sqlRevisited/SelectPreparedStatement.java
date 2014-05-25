@@ -5,6 +5,8 @@ import java.util.concurrent.locks.Lock;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+
 import ch.ethz.inf.dbproject.sqlRevisited.Codegen.SQLCodegen;
 import ch.ethz.inf.dbproject.sqlRevisited.Codegen.SQLOperator;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
@@ -33,7 +35,8 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 			schemata.add(table.getTableSchema());
 		}
 		syntaxTree = pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0).instanciateWithSchemata(schemata).rewrite();
-		this.args = new Object[8];//TODO : properly count number of arguments!
+		Map<Integer, SQLType> argumentTypes = syntaxTree.inferArgumentTypes();
+		this.args = new Object[argumentTypes.size()];
 		this.tables = tables;
 	}
 

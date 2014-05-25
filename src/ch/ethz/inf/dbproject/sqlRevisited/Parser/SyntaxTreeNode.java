@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 
 import ch.ethz.inf.dbproject.Pair;
@@ -53,6 +54,28 @@ public class SyntaxTreeNode {
 	{
 		return fold(new RewriteBase(), new RewriteCross(), new RewriteJoin(), new RewriteGroup(), new RewriteDistinct(),
 					new RewriteProject(), new RewriteRename(), new RewriteSelection(), new RewriteSort(), new RewriteAggregate());
+	}
+	
+	/**
+	 * Returns a map containing the types of the arguments of a query.
+	 * Currently supports arguments of the form id (op) ? or ? (op) id
+	 * @return a map containing the types of the arguments of this query.
+	 * @throws SQLSemanticException other types of arguments, in particular comparisons of the form ?=? or comparisons with literals raise an exception
+	 */
+	public Map<Integer, SQLType> inferArgumentTypes() throws SQLSemanticException {
+		Map<Integer, SQLType> inferredArguments = fold(new NullTransform<SyntaxTreeBaseRelationNode, Map<Integer, SQLType>>(),
+														new AppendMapsTransform<SyntaxTreeCrossNode, Integer, SQLType>(),
+														new AppendMapsTransform<SyntaxTreeJoinNode, Integer, SQLType>(),
+														new IdentityTransform<SyntaxTreeGroupByNode ,Map<Integer, SQLType>>(),
+														new IdentityTransform<SyntaxTreeNodeDistinct, Map<Integer,SQLType>>(),
+														new IdentityTransform<SyntaxTreeProjectOperatorNode, Map<Integer, SQLType>>(),
+														new IdentityTransform<SyntaxTreeRenameNode, Map<Integer, SQLType>>(),
+														new SelectionArgumentTypeInference(),
+														new IdentityTransform<SyntaxTreeSortOperatorNode, Map<Integer,SQLType>>(),
+														new IdentityTransform<SyntaxTreeAggregateNode, Map<Integer,SQLType>>()
+														);
+		
+		return appendMaps(new TreeMap<Integer, SQLType>(), inferredArguments); //Make sure result is non-null by appending to empty map
 	}
 	
 	////
@@ -380,6 +403,75 @@ public class SyntaxTreeNode {
 			return new SyntaxTreeSortOperatorNode(childResult.schema, childResult, currentNode.getOrderStatement());
 		}
 	}
+	
+	////
+	//TYPE INFERENCE IMPLEMENTATION
+	////
+	
+	private class SelectionArgumentTypeInference implements TransformUnary<SyntaxTreeSelectionOperatorNode, Map<Integer, SQLType>> {
+
+		@Override
+		//Infers types of arguments of the form id=? or ?=id
+		//If a selection between an argument and a literal occurs, or between two arguments, for now, a TypeError is thrown
+		public Map<Integer, SQLType> transform(SyntaxTreeSelectionOperatorNode currentNode, Map<Integer, SQLType> childResult) throws SQLSemanticException {
+			
+			Map<Integer,SQLType> newArguments = new TreeMap<Integer,SQLType>();
+			
+			if (currentNode.getLeftValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.ARGUMENT) {//Case ?=A
+				if (currentNode.schema.hasAttribute(currentNode.rightIdentifier)) {
+					SQLType argumentType = currentNode.schema.getAttributesTypes()[currentNode.schema.indexOf(currentNode.rightIdentifier)];
+					assert(argumentType != null);
+					newArguments.put(currentNode.getLeftValue().generatingToken.identifier, argumentType);
+				} else {
+					throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+				}
+			}
+			if (currentNode.getRightValue().generatingToken.tokenClass == SQLToken.SQLTokenClass.ARGUMENT) {//Case A=?
+				if (currentNode.schema.hasAttribute(currentNode.leftIdentifier)) {
+					SQLType argumentType = currentNode.schema.getAttributesTypes()[currentNode.schema.indexOf(currentNode.leftIdentifier)];
+					assert(argumentType != null);
+					newArguments.put(currentNode.getRightValue().generatingToken.identifier, argumentType);	
+				} else {
+					throw new SQLSemanticException(SQLSemanticException.Type.TypeError);
+				}
+			}
+			return appendMaps(newArguments, childResult);
+		}
+
+		
+	}
+	
+	private class NullTransform<S, T> implements TransformBase<S, T> {
+		@Override
+		public T transform(S currentNode) throws SQLSemanticException {
+			return null;
+		}	
+	}
+	
+	private class AppendMapsTransform<S, K, V> implements TransformBinary <S, Map<K, V>> {
+
+		@Override
+		public Map<K, V> transform(S currentNode, Map<K, V> leftChildResult, Map<K, V> rightChildResult) throws SQLSemanticException {
+			return appendMaps(leftChildResult, rightChildResult);
+		}
+	}
+	
+	private class IdentityTransform<S, T> implements TransformUnary <S, T> {
+		@Override
+		public T transform(S currentNode, T childResult) throws SQLSemanticException {
+			return childResult;
+		}
+	}
+	
+	private <K,V>  Map<K, V> appendMaps(Map<K, V> leftChildResult, Map<K, V> rightChildResult) throws SQLSemanticException {
+		if (leftChildResult == null) return rightChildResult;
+		if (rightChildResult == null) return leftChildResult;
+		Map<K, V> result =  new TreeMap<K, V>();
+		result.putAll(leftChildResult);
+		result.putAll(rightChildResult);
+		return result;
+	}
+	
 	
 	////
 	//OVERRIDING OBJECT

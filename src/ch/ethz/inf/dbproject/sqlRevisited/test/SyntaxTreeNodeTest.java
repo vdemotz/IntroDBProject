@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -39,6 +40,8 @@ public class SyntaxTreeNodeTest {
 	String q11 = "select C.c from B, C where ?=b";
 	String q12 = "select B.b from B, C where 5=? and ?=C.c and B.c=C.c";
 	
+	String q14 = "select * from A, B, C where a.a=? and b.c=c.c and ?=b.b";
+	
 	TableSchemaAttributeDetail[] qA = {new TableSchemaAttributeDetail("a", new SQLType(SQLType.BaseType.Integer), true)};
 	TableSchemaAttributeDetail[] qB = {new TableSchemaAttributeDetail("b", new SQLType(SQLType.BaseType.Char, 8), true), new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Datetime), true)};
 	TableSchemaAttributeDetail[] qC = {new TableSchemaAttributeDetail("c", new SQLType(SQLType.BaseType.Date), true)};
@@ -60,6 +63,8 @@ public class SyntaxTreeNodeTest {
  	
  	String[] rewriteTests = {q9, q10, q11, q12};
  	
+ 	String[] argumentInferenceTests = {q9, q10, q11, q14};
+ 	
 	SQLLexer lex = new SQLLexer();
 	SQLParser parser = new SQLParser();
  	
@@ -70,7 +75,7 @@ public class SyntaxTreeNodeTest {
 	}
 	
 	@Test
-	public void TestSelectRewrite() {
+	public void testSelectRewrite() {
 		SQLTokenStream tokens = null;
 		String[] testQueries = rewriteTests;
 		List<List<TableSchema>> schemata = Arrays.asList(ABClist, ABClist, ABClist, ABClist);
@@ -101,6 +106,35 @@ public class SyntaxTreeNodeTest {
 		}
 		System.out.println();
 		
+	}
+	
+	@Test
+	public void testSelectTypeInference() {
+		SQLTokenStream tokens = null;
+		String[] testQueries = argumentInferenceTests;
+		List<List<TableSchema>> schemata = Arrays.asList(ABClist, ABClist, ABClist, ABClist);
+		
+		for (int i=0; i<testQueries.length; i++) {
+			tokens = new SQLTokenStream(lex.tokenize(testQueries[i]));
+			try {
+				SyntaxTreeDynamicNode parse = parser.parse(tokens).getSyntaxTreeDynamicNode();
+				SyntaxTreeNode instanciatedTree = parse.dynamicChildren.get(0).instanciateWithSchemata(schemata.get(i));//infer schema for all nodes in the AST
+				
+				System.out.println(tokens);
+				Map<Integer, SQLType> arguments = instanciatedTree.inferArgumentTypes();
+				
+				System.out.println(arguments);
+				
+			} catch (SQLParseException e) {
+				e.printStackTrace();
+				fail("unexpected parse error");
+			} catch (SQLSemanticException e) {
+				e.printStackTrace();
+				fail("unexpected semantic exception");
+			}
+			
+		}
+		System.out.println();
 	}
 	
 	private void testSucceedsInstantiation(String[] testQueries, List<List<TableSchema>> schemata) {
