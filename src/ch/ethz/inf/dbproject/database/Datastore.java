@@ -1,15 +1,20 @@
 package ch.ethz.inf.dbproject.database;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import ch.ethz.inf.dbproject.model.ModelObject;
 import ch.ethz.inf.dbproject.sqlRevisited.Connection;
 import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
 import ch.ethz.inf.dbproject.sqlRevisited.ResultSet;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
+import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 
 public abstract class Datastore {
 
 	protected static Connection sqlConnection;
+	protected final DateFormat dateFormatter = new SimpleDateFormat(SQLType.DATE_FORMAT_STRING);
+	protected final DateFormat datetimeFormatter = new SimpleDateFormat(SQLType.DATETIME_FORMAT_STRING);
 
 	public Datastore() {
 		try {

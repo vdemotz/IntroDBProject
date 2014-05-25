@@ -6,6 +6,8 @@ import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
 import java.util.Date;
 import java.util.List;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
@@ -170,8 +172,8 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 	@Override
 	public List<Person> getPersonsForBirthdates(java.util.Date startDate, java.util.Date endDate){
 		try{
-			getPersonsForBirthdatesStatement.setDate(1, new java.sql.Date(startDate.getTime()));
-			getPersonsForBirthdatesStatement.setDate(2, new java.sql.Date(endDate.getTime()));
+			getPersonsForBirthdatesStatement.setString(1, dateFormatter.format(startDate));
+			getPersonsForBirthdatesStatement.setString(2, dateFormatter.format(startDate));
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
@@ -193,8 +195,8 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 	@Override
 	public List<Person> getPersonsForConvictionDates(java.util.Date startDate, java.util.Date endDate){
 		try{
-			getPersonsForConvictionDatesStatement.setDate(1, new java.sql.Date(startDate.getTime()));
-			getPersonsForConvictionDatesStatement.setDate(2, new java.sql.Date(endDate.getTime()));
+			getPersonsForConvictionDatesStatement.setString(1, dateFormatter.format(startDate)+"%");
+			getPersonsForConvictionDatesStatement.setString(2, dateFormatter.format(startDate)+"%");
 		} catch (Exception ex){
 			ex.printStackTrace();
 			return null;
@@ -309,14 +311,15 @@ public class PersonDatastore extends Datastore implements PersonDatastoreInterfa
 		synchronized (this.getClass()){
 			try{
 				int personNoteId = getMaxPersonNoteIdForPersonId(personId);
-				Date d = new Date();
+				Date date = new Date();
+				
 				addPersonNoteStatement.setInt(1, personId);
 				addPersonNoteStatement.setInt(2, personNoteId);
 				addPersonNoteStatement.setString(3, text);
-				addPersonNoteStatement.setDate(4, d);
+				addPersonNoteStatement.setString(4, datetimeFormatter.format(date));
 				addPersonNoteStatement.setString(5, authorUsername);
 				addPersonNoteStatement.execute();
-				return new PersonNote(personId, personNoteId, text, d, authorUsername);
+				return new PersonNote(personId, personNoteId, text, date, authorUsername);
 			} catch (final SQLException ex){
 				ex.printStackTrace();
 				return null;

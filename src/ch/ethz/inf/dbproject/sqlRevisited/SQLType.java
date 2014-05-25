@@ -9,8 +9,8 @@ public class SQLType {
 	public static final int CHARACTER_BYTE_SIZE = 1;
 	public static final int INT_BYTE_SIZE = 4;
 	
-	public static final String DATE_FORMAT_STRING = "yyyy-mm-dd";
-	public static final String DATETIME_FORMAT_STRING = "yyyy-mm-dd HH.mm.ss";
+	public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
+	public static final String DATETIME_FORMAT_STRING = "yyyy-MM-dd HH.mm.ss";
 	
 	public enum BaseType {
 		Integer,

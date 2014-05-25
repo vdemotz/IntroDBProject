@@ -19,6 +19,7 @@ public class DatabaseTest {
 	String[] usernamesUser = new String[]{"holmes", "sherlock", "watson"};
 	String[] lastNamesUser = new String[]{"Sherlock", "Sherlock", "Watson"};
 	String[] firstNamesUser = new String[]{"Holmes", "Holmes", "John"};
+	String[] passwordUser = new String[]{"baskervilles", "baskervilles", "mary"};
 	
 	@Test
 	public void testWriteUser() throws Exception{
@@ -31,6 +32,7 @@ public class DatabaseTest {
 			buf.put(Serializer.serializerVarchar(usernamesUser[i], tc.getTableSchema().getAttributesTypes()[0].byteSizeOfType()));
 			buf.put(Serializer.serializerVarchar(lastNamesUser[i], tc.getTableSchema().getAttributesTypes()[1].byteSizeOfType()));
 			buf.put(Serializer.serializerVarchar(firstNamesUser[i], tc.getTableSchema().getAttributesTypes()[2].byteSizeOfType()));
+			buf.put(Serializer.serializerVarchar(firstNamesUser[i], tc.getTableSchema().getAttributesTypes()[3].byteSizeOfType()));
 			buf.rewind();
 			tc.insert(buf);
 		}
@@ -117,6 +119,7 @@ public class DatabaseTest {
 	int[] personIdPerson = new int[]{5, 1};
 	String[] firstNamesPerson = new String[]{"Mike", "Georges"};
 	String[] lastNamesPerson = new String[]{"Stamford", "Sarans"};
+	String[] birthdatesPerson = new String[]{"1969-07-02", "1980-01-05"};
 	
 	@Test
 	public void testWritePerson() throws Exception{
@@ -129,6 +132,7 @@ public class DatabaseTest {
 			buf.putInt(personIdPerson[i]);
 			buf.put(Serializer.serializerVarchar(firstNamesPerson[i], tc.getTableSchema().getAttributesTypes()[1].byteSizeOfType()));
 			buf.put(Serializer.serializerVarchar(lastNamesPerson[i], tc.getTableSchema().getAttributesTypes()[2].byteSizeOfType()));
+			buf.put(Serializer.serializerVarchar(birthdatesPerson[i], tc.getTableSchema().getAttributesTypes()[3].byteSizeOfType()));
 			buf.rewind();
 			tc.insert(buf);
 		}
@@ -171,6 +175,7 @@ public class DatabaseTest {
 	int[] personIdPersonNote = new int[]{5, 5, 1};
 	int[] personNoteIdPersonNote = new int[]{0, 1, 1};
 	String[] textPersonNote = new String[]{"Old friend from school", "Well, never mind", "First note"};
+	String[] datePersonNote = new String[]{"2010-01-01 00.00.00","2010-01-01 00.00.00","2010-01-01 00.00.00"};
 	String[] authorUsernamePersonNote = new String[]{"watson", "holmes", "xxx"};
 	
 	@Test
@@ -184,7 +189,8 @@ public class DatabaseTest {
 			buf.putInt(personIdPersonNote[i]);
 			buf.putInt(personNoteIdPersonNote[i]);
 			buf.put(Serializer.serializerVarchar(textPersonNote[i], tc.getTableSchema().getAttributesTypes()[2].byteSizeOfType()));
-			buf.put(Serializer.serializerVarchar(authorUsernamePersonNote[i], tc.getTableSchema().getAttributesTypes()[3].byteSizeOfType()));
+			buf.put(Serializer.serializerVarchar(datePersonNote[i], tc.getTableSchema().getAttributesTypes()[3].byteSizeOfType()));
+			buf.put(Serializer.serializerVarchar(authorUsernamePersonNote[i], tc.getTableSchema().getAttributesTypes()[4].byteSizeOfType()));
 			buf.rewind();
 			tc.insert(buf);
 		}
@@ -349,10 +355,12 @@ public class DatabaseTest {
 	//CaseNote
 	int[] caseIdCaseNote = new int[]{10};
 	int[] caseNoteIdCaseNote = new int[]{0};
-	String[] textCaseNote = new String[]
+	/*String[] textCaseNote = new String[]
 			{"Wife: my husband was a pround and happy man. He loved his family and his work. And that he should have taken "+
 					"his life in this way is a mistery and a shock to all who knew him"
-			};
+			};*/
+	String[] textCaseNote = new String[]{"Comment"};
+	String[] dateCaseNote = new String[]{"2010-12-12 00.00.00"};
 	String[] authorUsernameCaseNote = new String[]{"watson"};
 	
 	@Test
@@ -366,7 +374,8 @@ public class DatabaseTest {
 			buf.putInt(caseIdCaseNote[i]);
 			buf.putInt(caseNoteIdCaseNote[i]);
 			buf.put(Serializer.serializerVarchar(textCaseNote[i], tc.getTableSchema().getAttributesTypes()[2].byteSizeOfType()));
-			buf.put(Serializer.serializerVarchar(authorUsernameCaseNote[i], tc.getTableSchema().getAttributesTypes()[3].byteSizeOfType()));
+			buf.put(Serializer.serializerVarchar(dateCaseNote[i], tc.getTableSchema().getAttributesTypes()[3].byteSizeOfType()));
+			buf.put(Serializer.serializerVarchar(authorUsernameCaseNote[i], tc.getTableSchema().getAttributesTypes()[4].byteSizeOfType()));
 			buf.rewind();
 			tc.insert(buf);
 		}
@@ -574,130 +583,4 @@ public class DatabaseTest {
 			buf.rewind();
 		}
 	}
-	
-	
-	//If we're motivated, we can include these data above. (Just be careful to not add consistent stuff)
-
-/*
-
-
-insert into CategoryForCase
-    values(3, 'Suicide');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 0, 'Victim is wearing pink dress, shoes and nailpolish', 'sherlock');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 1, 'Rache (German for revenge) is etched onto the floor. The nailpolish of the victim is heavily worn off. The victim probably ment to write Rachel, but could not finish in time.', 'sherlock');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 2, 'The victim lies with the face towards the floor.', 'sherlock');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 3, 'The victim is left handed. In her mid 30s.', 'sherlock');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 4, 'The victims wears a marriage ring, which is not clean on the outside, but clean on the inside. The other jewelry she is wearing is speckless. This may indicate that the victim takes off the marriage ring frequently, but does not take care of it. Probably 10 or more years unhappily married, serial adulterer', 'sherlock');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 5, 'The victims hair is messed up and her blazer is wet. No rain and strong wind in London or vicinity. The victims was just staying for one night in London, before returning home to Cardiff. She probably did not get to the hotel', 'sherlock');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 6, 'The victims must have carried a pink bag, but it is missing. The murderer must have still got it.', 'sherlock');
-
-insert into CategoryForCase
-    values(10, 'Mass Murder');
-
-insert into CategoryForCase
-    values(1, 'Mass Murder');
-
-insert into CategoryForCase
-    values(2, 'Mass Murder');
-
-insert into CategoryForCase
-    values(3, 'Mass Murder');
-
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 7, 'The phone of the victim is not in the bag. Probably the murderer has her phone.', 'sherlock');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-values(3, 8, 'The police says Rachel is the  stillborn daughter of the victim. Why would she write her daughters name?', 'sherlock');
-
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 9, 'Rachel is not a name. Its the password for her email account!', 'sherlock');
-
-
-
-insert into Person (personId)
-    values(4);
-
-insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values(4, 0, 'Husband of the landlady', 'watson');
-
-insert into CaseDetail (caseId, title, city, isOpen, date, authorName)
-    values(5, 'Brutal Murder', 'Florida', false, '2005-05-05-00-00', 'sherlock');
-
-insert into CategoryForCase
-    values(5, 'Murder');
-
-insert into Conviction
-    values(1, 4, 5, '2005-10-10', null);
-
-insert into ConvictionType
-    values(1, 'Murder');
-
-
-
-
-insert into Person (personId, firstName, lastName)
-    values (1, 'Hank', 'Smith');
-
-insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 0, 'Cab Driver', 'sherlock');
-
-insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 1, 'Middle aged', 'sherlock');
-
-insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 2, 'Two children. Divorced.', 'sherlock');
-
-insert into Suspected
-    values (1, 3);
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(3, 10, 'Ok its the taxi driver...and I will just go with him', 'sherlock');
-
-insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 3, 'Terminal illness, desperate, bored, bitter', 'sherlock');
-
-insert into PersonNote (personId, personNoteId, text, authorUsername)
-    values (1, 4, 'Was commisioned by someone or something called Moriarty', 'sherlock');
-
-insert into Person (personId, LastName)
-    values (2, "Moriarty");
-
-insert into CaseDetail (caseId, title, city, zipCode, isOpen, date, description, authorName)
-    values(4, 'Cab Driver is shot', 'London', 'CF10 3AT', true, '2010-11-28-00-00', 'The cab driver got shot from someone standing outside the window at Roland-Kerr Further Education College.', 'watson');
-
-insert into CategoryForCase
-    values(4, 'Manslaughter');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(4, 0, 'Shots fired from a handgun from a large distance. Must have been acclimatised to violence. He only fired when I was in clear danger, so strong moral principles. You are looking for a man with a history of military service, nerves of steel and...', 'sherlock');
-
-insert into Person (personId, firstName, lastName)
-    values (3, 'John', 'Watson');
-
-insert into Suspected
-    values (2, 4);
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(4, 1, 'Actually, you know what: ignore me. Its just the shock talking', 'sherlock');
-
-insert into CaseNote (caseId, caseNoteId, text, authorUsername)
-    values(4, 2, 'He was not a very nice man', 'watson');*/
-	
-	
 }

@@ -98,7 +98,6 @@ public final class SearchServlet extends HttpServlet {
 		} else if (filter.equals("convictionType")) {	
 			table.addObjects(this.dbInterface.getPersonsForConvictionType(description));
 		} else if (filter.equals("convictionDate")) {
-			System.err.println("I'm here! (convictionDate)");
 			if (date != null){
 				table.addObjects(this.dbInterface.getPersonsForConvictionDates(date.first, date.second));
 			} else if (!startDateRaw.isEmpty() && endDateRaw.isEmpty()){

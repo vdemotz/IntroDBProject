@@ -1,6 +1,5 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import ch.ethz.inf.dbproject.sqlRevisited.*;
 import ch.ethz.inf.dbproject.model.CaseDetail;
@@ -80,8 +79,6 @@ public class CaseDatastore extends Datastore implements CaseDatastoreInterface {
 	PreparedStatement insertIntoCaseDetailStatement;
 	PreparedStatement maxCaseDetailIdStatement;
 	PreparedStatement deleteSuspectFromCaseStatement;
-	
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Override
 	protected void prepareStatements() throws SQLException

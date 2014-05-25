@@ -3,9 +3,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.test;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 import ch.ethz.inf.dbproject.sqlRevisited.Connection;
-import ch.ethz.inf.dbproject.sqlRevisited.Database;
 import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLException;
 
