@@ -77,6 +77,7 @@ public class ConvictionDatastore extends Datastore implements ConvictionDatastor
 	//HELPERS
 	////
 	
+	@SuppressWarnings("unused")
 	private int getNextConvictionId() {
 		try{
 			ResultSet rs = maxConvictionIdStatement.executeQuery();

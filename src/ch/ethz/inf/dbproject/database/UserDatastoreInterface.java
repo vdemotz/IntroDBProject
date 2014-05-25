@@ -1,8 +1,5 @@
 package ch.ethz.inf.dbproject.database;
 
-import java.util.List;
-
-import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.User;
 
 

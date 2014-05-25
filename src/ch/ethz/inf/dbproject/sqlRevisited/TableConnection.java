@@ -103,8 +103,6 @@ public class TableConnection extends DataConnection implements PhysicalTableInte
 		if (!(this.delete(object)))
 				return false;
 		object.rewind();
-		int a = object.getInt();
-		object.rewind();
 		if (!(this.insert(object)))
 			return false;
 		return true;

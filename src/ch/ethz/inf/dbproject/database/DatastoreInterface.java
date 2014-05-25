@@ -10,7 +10,6 @@ import ch.ethz.inf.dbproject.model.Conviction;
 import ch.ethz.inf.dbproject.model.ConvictionJoinPerson;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;
-import ch.ethz.inf.dbproject.model.StatsNode;
 import ch.ethz.inf.dbproject.model.User;
 
 /**

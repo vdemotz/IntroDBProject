@@ -1,6 +1,5 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
-import java.util.Date;
 
 public interface PreparedStatement {
 	

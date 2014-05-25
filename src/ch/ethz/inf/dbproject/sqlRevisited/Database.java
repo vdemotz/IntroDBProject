@@ -106,7 +106,7 @@ public class Database {
 	public List<PhysicalTableInterface> getAllTablesConnections() throws Exception {
 		List<PhysicalTableInterface> ret = new ArrayList<PhysicalTableInterface>();
 		for (int i = 0; i < tablesSchema.length; i++){
-			ret.add(new TableConnection(tablesSchema[i], this.directoryPath, this.EXT_META_DATA, this.EXT_DATA));
+			ret.add(new TableConnection(tablesSchema[i], this.directoryPath, EXT_META_DATA, EXT_DATA));
 		}
 		return ret;
 	}
@@ -119,7 +119,7 @@ public class Database {
 	 */
 	public TableConnection getTableConnection(String tableName) throws SQLException{
 		try {
-			return new TableConnection(this.getTableSchema(tableName.toLowerCase()), this.directoryPath, this.EXT_META_DATA, this.EXT_DATA);
+			return new TableConnection(this.getTableSchema(tableName.toLowerCase()), this.directoryPath, EXT_META_DATA, EXT_DATA);
 		} catch (Exception e) {
 			throw new SQLPhysicalException();
 		}
