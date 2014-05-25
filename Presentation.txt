@@ -1,0 +1,29 @@
+DMDB PRESENTATION
+
+Project : Database Design and Coding
+Authors : Lukas Gianinazzi and Vincent Demotz
+
+TODO : 
+Define what will be in the presentation
+-Process steps
+   -SQL grammar defined
+   -Regex, Parsing, rewriting
+   -Database, Datastructure, PreparedStatements
+   -Insertion in client level
+   -Done
+
+
+Demo steps :
+-Creation user
+-Log in
+-Category Creation
+-Case Creation
+-Person Creation
+-Define person as suspected
+-remove person from suspected
+-create new conviction with that person
+-search
+-close case
+-logout
+
+Checked : everything seems to work! =D
