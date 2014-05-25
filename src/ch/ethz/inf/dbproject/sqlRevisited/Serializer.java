@@ -52,13 +52,14 @@ public class Serializer {
 			int ret = 0;
 			int i = 0;
 			while (tableSchema.getIfPrimaryKey().length > i && tableSchema.getIfPrimaryKey()[i]){
-				//System.out.println("Compare key");
 				ret = this.compareKeys(key1, key2, tableSchema.getAttributesTypes()[i]);
-				if (ret != 0)
+				if (ret != 0){
 					break;
+				}
+				key1.position(position1+tableSchema.getAttributesTypes()[i].byteSizeOfType());
+				key2.position(position2+tableSchema.getAttributesTypes()[i].byteSizeOfType());
 				i++;
 			}
-			
 			key1.position(position1);
 			key2.position(position2);
 			return ret;

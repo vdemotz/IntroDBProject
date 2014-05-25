@@ -456,6 +456,7 @@ public class DatabaseTest {
 			ByteBuffer bufKey = ByteBuffer.allocate(tc.getTableSchema().getSizeOfKeys());
 			bufKey.rewind();
 			bufKey.putInt(key1);
+			bufKey.put(Serializer.serializerVarchar(key2, tc.getTableSchema().getAttributesTypes()[1].byteSizeOfType()));
 			bufKey.rewind();
 			if (!tc.succ(bufKey, buf))
 				System.err.println("ERROR categoryforcase");

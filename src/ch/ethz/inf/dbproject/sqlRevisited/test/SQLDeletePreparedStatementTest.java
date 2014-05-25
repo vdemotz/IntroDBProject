@@ -16,7 +16,7 @@ public class SQLDeletePreparedStatementTest {
 	public void testDeletePreparedStatement() throws SQLException{
 		Connection connection = Connection.getConnection();
 		PreparedStatement deleteFromPersonStmt = connection.prepareStatement(deleteFromPersonQuery);
-		deleteFromPersonStmt.setInt(1, 5);
+		deleteFromPersonStmt.setInt(1, 2);
 		deleteFromPersonStmt.execute();
 		assertTrue(deleteFromPersonStmt.getUpdateCount() > 0);
 		
