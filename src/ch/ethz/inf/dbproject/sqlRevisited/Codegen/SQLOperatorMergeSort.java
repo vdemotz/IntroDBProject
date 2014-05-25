@@ -9,7 +9,7 @@ import java.util.Comparator;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorMergeSort extends SQLOperatorUnary {
+class SQLOperatorMergeSort extends SQLOperatorUnary {
 
 	protected final Comparator<byte[]> comparator;
 

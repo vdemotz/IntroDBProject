@@ -15,7 +15,7 @@ public class PhysicalTableIterator implements TableIterator{
 	 * @param tc a particular connection to a table;
 	 * @param positionsEntries in order array of position of the entries in table connection
 	 */
-	public PhysicalTableIterator(ByteBuffer keys, TableConnection tc){
+	PhysicalTableIterator(ByteBuffer keys, TableConnection tc){
 		this.tableSchema = tc.getTableSchema();
 		this.tableConnection = tc;
 		this.positionsEntries = this.getPositionsEntries(tc.getStructureConnection());

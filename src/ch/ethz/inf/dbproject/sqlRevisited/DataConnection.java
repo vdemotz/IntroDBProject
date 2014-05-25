@@ -5,7 +5,7 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-public abstract class DataConnection {
+abstract class DataConnection {
 	
 	protected FileChannel channel;
 	protected String DB_PATH;

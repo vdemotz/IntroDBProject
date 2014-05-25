@@ -406,7 +406,7 @@ public class SQLCodegen {
 	//MATERIALIZER IMPLEMENTATION
 	////
 	
-	public class VarcharMaterializer extends AttributeMaterializer<String>
+	class VarcharMaterializer extends AttributeMaterializer<String>
 	{
 		VarcharMaterializer(int offsetOfAttributeInBytes, int width) {
 			super(offsetOfAttributeInBytes, width);
@@ -418,7 +418,7 @@ public class SQLCodegen {
 		}
 	}
 	
-	public class IntegerMaterializer extends AttributeMaterializer<Integer>
+	class IntegerMaterializer extends AttributeMaterializer<Integer>
 	{
 		IntegerMaterializer(int offsetOfAttributeInBytes) {
 			super(offsetOfAttributeInBytes, SQLType.INT_BYTE_SIZE);
@@ -430,7 +430,7 @@ public class SQLCodegen {
 		}
 	}
 	
-	public class BooleanMaterializer  extends AttributeMaterializer<Boolean>
+	class BooleanMaterializer  extends AttributeMaterializer<Boolean>
 	{
 
 		BooleanMaterializer(int offsetOfAttributeInBytes) {
@@ -444,7 +444,7 @@ public class SQLCodegen {
 		
 	}
 	
-	public abstract class AttributeMaterializer<T> implements Materializer<T>
+	abstract class AttributeMaterializer<T> implements Materializer<T>
 	{
 		public final int attributeByteOffset;
 		public final int attributeByteEndOffset;
@@ -454,7 +454,7 @@ public class SQLCodegen {
 		}
 	}
 	
-	public class MaterializerConstant<T> implements Materializer<T> {
+	class MaterializerConstant<T> implements Materializer<T> {
 
 		private final T constant;
 		

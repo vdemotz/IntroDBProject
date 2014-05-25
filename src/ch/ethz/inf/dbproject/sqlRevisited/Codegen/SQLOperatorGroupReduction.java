@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorGroupReduction extends SQLOperatorUnary {
+class SQLOperatorGroupReduction extends SQLOperatorUnary {
 
 	private ByteBuffer lastResult;
 	private ByteBuffer nextResult;

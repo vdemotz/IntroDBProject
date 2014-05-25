@@ -9,7 +9,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLType;
 import ch.ethz.inf.dbproject.sqlRevisited.Serializer;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorAggregateMax extends SQLOperatorAggregate implements SQLOperatorGrouping {
+class SQLOperatorAggregateMax extends SQLOperatorAggregate implements SQLOperatorGrouping {
 
 	private final int startByteOffset;
 	private final int endByteOffset;

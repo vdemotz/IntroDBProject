@@ -7,7 +7,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchemaAttributeDetail;
 
-public class SQLOperatorProjection extends SQLOperatorUnary {
+class SQLOperatorProjection extends SQLOperatorUnary {
 
 	private final ByteBuffer temporaryBuffer;
 	private final TableSchema childSchema;

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorCross  extends SQLOperatorBinary {
+class SQLOperatorCross  extends SQLOperatorBinary {
 
 	private final ByteBuffer currentLefthandTuple;
 	private final ByteBuffer currentRighthandTuple;

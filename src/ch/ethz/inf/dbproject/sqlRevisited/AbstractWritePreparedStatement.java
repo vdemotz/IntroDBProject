@@ -6,7 +6,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeDynamicNode;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeIdentifierNode;
 
-public abstract class AbstractWritePreparedStatement extends AbstractPreparedStatement {
+abstract class AbstractWritePreparedStatement extends AbstractPreparedStatement {
 
 	protected TableConnection tc;
 	protected int countChanged;

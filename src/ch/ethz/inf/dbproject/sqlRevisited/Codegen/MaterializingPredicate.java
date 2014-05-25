@@ -3,7 +3,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 import java.util.Comparator;
 
 
-public class MaterializingPredicate <T extends Comparable<T>> implements Predicate<byte[]> {
+class MaterializingPredicate <T extends Comparable<T>> implements Predicate<byte[]> {
 
 	public final PredicateFromComparison<T> comparator;
 	public final Materializer<T> materializerLeft;

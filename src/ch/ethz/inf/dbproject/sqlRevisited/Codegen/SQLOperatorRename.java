@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorRename extends SQLOperatorUnary {
+class SQLOperatorRename extends SQLOperatorUnary {
 
 	public SQLOperatorRename(TableSchema schema, SQLOperator child) {
 		super(schema, child);

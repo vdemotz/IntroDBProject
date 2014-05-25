@@ -6,7 +6,7 @@ import java.util.Comparator;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorSelectionScan extends SQLOperatorUnary {
+class SQLOperatorSelectionScan extends SQLOperatorUnary {
 
 	public final Predicate<byte[]> predicate;
 	public final ByteBuffer nextResult;

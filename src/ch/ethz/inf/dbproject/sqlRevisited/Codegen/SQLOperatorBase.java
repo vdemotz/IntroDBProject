@@ -8,7 +8,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.TableConnection;
 import ch.ethz.inf.dbproject.sqlRevisited.TableIterator;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorBase extends SQLOperator {
+class SQLOperatorBase extends SQLOperator {
 
 	private final PhysicalTableInterface physicalTable;
 	private TableIterator iterator;

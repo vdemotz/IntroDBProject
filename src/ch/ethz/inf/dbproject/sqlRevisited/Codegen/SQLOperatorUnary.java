@@ -2,7 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public abstract class SQLOperatorUnary extends SQLOperator{
+abstract class SQLOperatorUnary extends SQLOperator{
 
 	
 	public SQLOperatorUnary(TableSchema schema, SQLOperator child)

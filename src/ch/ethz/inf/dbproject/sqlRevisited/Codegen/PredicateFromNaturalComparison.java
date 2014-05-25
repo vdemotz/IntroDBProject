@@ -1,6 +1,6 @@
 package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
-public class PredicateFromNaturalComparison<T extends Comparable<T>> implements PredicateFromComparison<T> {
+class PredicateFromNaturalComparison<T extends Comparable<T>> implements PredicateFromComparison<T> {
 
 	public final boolean allowLess;
 	public final boolean allowEqual;

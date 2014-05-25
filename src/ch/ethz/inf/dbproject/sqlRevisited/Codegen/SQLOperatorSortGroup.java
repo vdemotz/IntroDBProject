@@ -6,7 +6,7 @@ import java.util.Comparator;
 import ch.ethz.inf.dbproject.sqlRevisited.SQLPhysicalException;
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public class SQLOperatorSortGroup extends SQLOperatorMergeSort implements SQLOperatorGrouping {
+class SQLOperatorSortGroup extends SQLOperatorMergeSort implements SQLOperatorGrouping {
 	
 	private int groupCount = 0;
 	

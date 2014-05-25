@@ -2,7 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.Codegen;
 
 import ch.ethz.inf.dbproject.sqlRevisited.TableSchema;
 
-public abstract class SQLOperatorBinary extends SQLOperator{
+abstract class SQLOperatorBinary extends SQLOperator{
 	
 	public SQLOperatorBinary (TableSchema schema, SQLOperator left, SQLOperator right)
 	{

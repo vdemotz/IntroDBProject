@@ -5,7 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.locks.Lock;
 
-public abstract class AbstractPreparedStatement implements PreparedStatement {
+abstract class AbstractPreparedStatement implements PreparedStatement {
 	
 	protected Object[] args; 
 	protected SQLType[] typeArgs;
