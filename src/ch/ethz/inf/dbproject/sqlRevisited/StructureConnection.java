@@ -2,7 +2,6 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,10 +15,10 @@ public class StructureConnection extends DataConnection{
 	 */
 	private final int ELEMENT_SIZE;	
 	private final int KEYS_SIZE;
-	private int OFFSET_META_DATA = 1024;
-	private int MAXIMAL_META_DATA_SIZE = 4096;
-	private int HEADER_KEY_SIZE = 8;
-	private int INT_BYTES_SIZE = 4;
+	private final int OFFSET_META_DATA = 1024;
+	private final int MAXIMAL_META_DATA_SIZE = 8192;
+	private final int HEADER_KEY_SIZE = 8;
+	private final int INT_BYTES_SIZE = 4;
 	private List<Pair<byte[], Integer>> elementsPositions;
 	
 	/**
@@ -38,11 +37,12 @@ public class StructureConnection extends DataConnection{
 		this.EXT_META_DATA = extMetaData;
 		this.DB_PATH = dbPath;
 		this.serializer = new Serializer();
-		this.ELEMENT_SIZE = tableSchema.getSizeOfEntry()+4;
+		this.ELEMENT_SIZE = tableSchema.getSizeOfEntry()+INT_BYTES_SIZE;
 		this.KEYS_SIZE = tableSchema.getSizeOfKeys();
 		this.tableSchema = tableSchema;
 		this.raf = this.getRandomAccesFile(this.tableSchema.getTableName(), "rw", true);
 		this.channel = raf.getChannel();
+		this.buf = this.channel.map(FileChannel.MapMode.READ_WRITE, OFFSET_META_DATA, MAXIMAL_META_DATA_SIZE);
 		this.elementsPositions = this.instantiateElementsPositions();
 	}
 	
@@ -113,7 +113,7 @@ public class StructureConnection extends DataConnection{
 	}
 	
 	/**
-	 * Get the position in the table where to write this object
+	 * Get the position in the table where to write this object and update the index accordingly
 	 */
 	public int insertElement(ByteBuffer object) throws Exception{
 		int whereToWrite = 0;
@@ -168,13 +168,13 @@ public class StructureConnection extends DataConnection{
 	 * @param numberBytes an offset (positive or negative) to add to position
 	 */
 	private void shiftData(int position, int numberBytes) throws SQLPhysicalException{
-		ByteBuffer buf = ByteBuffer.allocate(MAXIMAL_META_DATA_SIZE);
-		buf.rewind();
+		byte[] tmp = new byte[MAXIMAL_META_DATA_SIZE-(KEYS_SIZE+8+position)];
 		try{
-			channel.read(buf, position);
-			buf.rewind();
-			channel.write(buf, position+numberBytes);
-		} catch (IOException ex){
+			buf.position(position);
+			buf.get(tmp, 0, tmp.length);
+			buf.position(position+numberBytes);
+			buf.put(tmp);
+		} catch (Exception ex){
 			throw new SQLPhysicalException();
 		}
 		return;
@@ -208,7 +208,7 @@ public class StructureConnection extends DataConnection{
 		while(i < elementsPositions.size() && serializer.compareKeys(keyToInsert, ByteBuffer.wrap(elementsPositions.get(i).first), tableSchema) > 0)
 			i++;
 		elementsPositions.add(i, new Pair<byte[], Integer>(keyToInsert.array(), whereToWrite));
-		return 1024+i*(this.KEYS_SIZE+this.HEADER_KEY_SIZE);
+		return i*(this.KEYS_SIZE+this.HEADER_KEY_SIZE);
 	}
 	
 	/**
@@ -216,14 +216,15 @@ public class StructureConnection extends DataConnection{
 	 */
 	private List<Pair<byte[], Integer>> instantiateElementsPositions() throws IOException{
 		List<Pair<byte[], Integer>> elementsPositions = new ArrayList<Pair<byte[], Integer>>();
-		MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, this.OFFSET_META_DATA, this.MAXIMAL_META_DATA_SIZE);
+		buf.rewind();
 		byte[] bytes = new byte[buf.capacity()];
 		buf.get(bytes);
 		int i = 0;
 		while ((int)bytes[i+3] == 1){
-			elementsPositions.add(new Pair<byte[], Integer>(Arrays.copyOfRange(bytes, i+this.INT_BYTES_SIZE, i+this.INT_BYTES_SIZE+this.KEYS_SIZE), Serializer.getIntegerFromByteArray(Arrays.copyOfRange(bytes, i+4+this.KEYS_SIZE, i+8+this.KEYS_SIZE))));
-			i += this.KEYS_SIZE+this.HEADER_KEY_SIZE;
+			elementsPositions.add(new Pair<byte[], Integer>(Arrays.copyOfRange(bytes, i+INT_BYTES_SIZE, i+INT_BYTES_SIZE+KEYS_SIZE), Serializer.getIntegerFromByteArray(Arrays.copyOfRange(bytes, i+INT_BYTES_SIZE+KEYS_SIZE, i+HEADER_KEY_SIZE+KEYS_SIZE))));
+			i += KEYS_SIZE+HEADER_KEY_SIZE;
 		}
+		buf.rewind();
 		return elementsPositions;
 	}
 }

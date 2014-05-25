@@ -6,8 +6,6 @@ import ch.ethz.inf.dbproject.sqlRevisited.PreparedStatement;
 import java.util.Date;
 import java.util.List;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import ch.ethz.inf.dbproject.model.CaseDetail;
 import ch.ethz.inf.dbproject.model.Person;
 import ch.ethz.inf.dbproject.model.PersonNote;

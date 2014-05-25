@@ -14,18 +14,20 @@ public abstract class DataConnection {
 	protected RandomAccessFile raf;
 	protected TableSchema tableSchema;
 	protected Serializer serializer;
+	protected MappedByteBuffer buf;
 	
 	////
 	//Read / write related methods
 	////
 	
 	/**
-	 * Read length bytes from table at given position into the destination ByteBuffer
+	 * Read length bytes from table at given position and write them into the destination ByteBuffer
 	 */
 	protected boolean readFromData(int position, int length, byte[] destination) throws SQLPhysicalException{
 		try{
-			MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, length);
-			buf.get(destination);
+			//MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, length);
+			buf.position(position);
+			buf.get(destination, 0, length);
 			return true;
 		} catch (Exception ex){
 			System.err.println("Unable to read data from "+this.tableSchema.getTableName());
@@ -42,8 +44,9 @@ public abstract class DataConnection {
 	 */
 	protected boolean writeToData(byte[] data, int position) throws SQLPhysicalException{
 		try{
-			MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
-			buf.put(data);
+			//MappedByteBuffer buf = this.channel.map(FileChannel.MapMode.READ_WRITE, position, data.length);
+			buf.position(position);
+			buf.put(data, 0, data.length);
 			return true;
 		} catch (Exception ex){
 			System.err.println("Unable to write data to "+this.tableSchema.getTableName());

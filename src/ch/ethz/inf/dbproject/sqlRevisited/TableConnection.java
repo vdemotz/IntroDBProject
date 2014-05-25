@@ -9,6 +9,8 @@ public class TableConnection extends DataConnection implements PhysicalTableInte
 	//Fields
 	////
 	private StructureConnection structureConnection;
+	private final int PAGE_BYTES_SIZE = 8192;
+	private final int DATA_OFFSET = 0;
 	
 	////
 	//Constructor, finalize
@@ -29,6 +31,7 @@ public class TableConnection extends DataConnection implements PhysicalTableInte
 		this.channel = raf.getChannel();
 		this.structureConnection = new StructureConnection(this.tableSchema, dbPath, extMetaData, extData);
 		this.serializer = new Serializer();
+		this.buf = this.channel.map(FileChannel.MapMode.READ_WRITE, DATA_OFFSET, PAGE_BYTES_SIZE);
 	}
 	
 	@Override
@@ -66,6 +69,7 @@ public class TableConnection extends DataConnection implements PhysicalTableInte
 	public boolean succ(ByteBuffer keys, ByteBuffer destination) throws Exception{
 		int position = this.structureConnection.getPositionsNextForKeys(keys);
 		if (position == -1){
+			System.out.println("Shortcuted");
 			return false;
 		}
 		return this.readFromData(position, tableSchema.getSizeOfEntry(), destination.array());
