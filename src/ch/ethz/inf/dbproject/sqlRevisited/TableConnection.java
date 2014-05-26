@@ -131,4 +131,13 @@ public class TableConnection extends DataConnection implements PhysicalTableInte
 	public TableIterator getIteratorFirst() throws SQLPhysicalException {
 		return new PhysicalTableIterator(null, this);
 	}
+	
+	////
+	//OVERRIDING OBJECT
+	////
+	
+	@Override
+	public String toString() {
+		return this.tableSchema.toString();
+	}
 }

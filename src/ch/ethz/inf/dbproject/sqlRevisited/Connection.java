@@ -60,6 +60,7 @@ public class Connection {
 		readWriteLock = new ReentrantReadWriteLock();
 		try {
 			listTablesConnections = db.getAllTablesConnections();
+			//PRESENTATION :: System.out.println(listTablesConnections);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SQLPhysicalException();
