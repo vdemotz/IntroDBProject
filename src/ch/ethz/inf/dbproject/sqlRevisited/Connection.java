@@ -79,13 +79,13 @@ public class Connection {
 		ParsedQuery pq = new SQLParser().parse(sqlTokenStream);
 		
 		if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.DELETE){
-			return new DeletePreparedStatement(pq, (WriteLock)readWriteLock.writeLock(), listTablesConnections);
+			return new DeletePreparedStatement(pq, readWriteLock.writeLock(), listTablesConnections);
 		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.INSERT){
-			return new InsertPreparedStatement(pq, (WriteLock)readWriteLock.writeLock(), listTablesConnections);
+			return new InsertPreparedStatement(pq, readWriteLock.writeLock(), listTablesConnections);
 		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.UPDATE){
-			return new UpdatePreparedStatement(pq, (WriteLock)readWriteLock.writeLock(), listTablesConnections);
+			return new UpdatePreparedStatement(pq, readWriteLock.writeLock(), listTablesConnections);
 		} else if (pq.typeParsedQuery == ParsedQuery.TypeParsedQuery.SELECT){
-			return new SelectPreparedStatement(pq, (ReadLock)readWriteLock.readLock(), listTablesConnections);
+			return new SelectPreparedStatement(pq, readWriteLock.readLock(), listTablesConnections);
 		} else {
 			throw new SQLException();
 		}

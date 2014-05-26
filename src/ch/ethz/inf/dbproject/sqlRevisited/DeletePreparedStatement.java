@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeSelectionOperatorNode;
@@ -14,7 +15,7 @@ public class DeletePreparedStatement  extends AbstractWritePreparedStatement {
 	 * @param db Database to acquire connection to tables
 	 * @throws SQLPhysicalException 
 	 */
-	public DeletePreparedStatement(ParsedQuery pq, WriteLock l, List<PhysicalTableInterface> lTables) throws SQLPhysicalException{
+	public DeletePreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> lTables) throws SQLPhysicalException{
 		super(pq, l, lTables);
 		int numbArgs = this.getNumberArguments((SyntaxTreeSelectionOperatorNode)pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1));
 		args = new Object[numbArgs];
