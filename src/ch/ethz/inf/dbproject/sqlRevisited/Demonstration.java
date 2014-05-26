@@ -21,7 +21,7 @@ public class Demonstration {
 		
 		statement = connection.prepareStatement(suspectsForCaseQuery);
 		
-		statement.setInt(1, 0);
+		statement.setInt(1, 3);
 		
 		ResultSet result = statement.executeQuery();
 		
