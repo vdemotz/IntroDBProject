@@ -74,6 +74,7 @@ public class Connection {
 	public PreparedStatement prepareStatement(String stringQuery) throws SQLException{
 		//Tokenize
 		SQLTokenStream sqlTokenStream = new SQLTokenStream(new SQLLexer().tokenize(stringQuery));
+		//DEMONSTRATION :: System.out.println(sqlTokenStream);
 		//Parse
 		ParsedQuery pq = new SQLParser().parse(sqlTokenStream);
 		
