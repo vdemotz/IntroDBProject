@@ -3,7 +3,7 @@ package ch.ethz.inf.dbproject.sqlRevisited.Parser;
 import ch.ethz.inf.dbproject.Pair;
 
 public class SQLToken {
-
+	
 	public enum SQLTokenClass {
 		//keywords
 		SELECT ("\\bselect\\b"),

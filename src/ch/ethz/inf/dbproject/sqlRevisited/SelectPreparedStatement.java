@@ -30,14 +30,14 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 	 */
 	public SelectPreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> tables) throws SQLSemanticException {
 		super(l);
-		//PRESENATION: System.out.println(pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0));
+		//PRESENTATION: System.out.println(pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0));
 		//get the schemata
 		List<TableSchema> schemata = new ArrayList<TableSchema>(tables.size());
 		for (PhysicalTableInterface table : tables) {
 			schemata.add(table.getTableSchema());
 		}
 		syntaxTree = pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0).instanciateWithSchemata(schemata).rewrite();
-		//PRESENATION: System.out.println(syntaxTree);
+		//PRESENTATION: System.out.println(syntaxTree);
 		Map<Integer, SQLType> argumentTypes = syntaxTree.inferArgumentTypes();
 		this.args = new Object[argumentTypes.size()];
 		this.tables = tables;
@@ -49,7 +49,7 @@ public class SelectPreparedStatement  extends AbstractPreparedStatement {
 		lock.lock();
 		try {
 			SQLOperator operator = codegen.generateSelectStatement(syntaxTree, tables, args);
-			//PRESENATION: System.out.println(operator);
+			//PRESENTATION: System.out.println(operator);
 			ArrayList<byte[]> results = new ArrayList<byte[]>();
 			ByteBuffer resultBuffer = ByteBuffer.wrap(new byte[operator.schema.getSizeOfEntry()]);
 			operator.open();

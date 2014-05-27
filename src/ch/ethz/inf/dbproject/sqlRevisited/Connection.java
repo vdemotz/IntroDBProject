@@ -3,8 +3,6 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLLexer;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SQLParser;
