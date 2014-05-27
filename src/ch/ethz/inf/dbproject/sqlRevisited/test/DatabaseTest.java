@@ -32,7 +32,7 @@ public class DatabaseTest {
 			buf.put(Serializer.serializerVarchar(usernamesUser[i], tc.getTableSchema().getAttributesTypes()[0].byteSizeOfType()));
 			buf.put(Serializer.serializerVarchar(lastNamesUser[i], tc.getTableSchema().getAttributesTypes()[1].byteSizeOfType()));
 			buf.put(Serializer.serializerVarchar(firstNamesUser[i], tc.getTableSchema().getAttributesTypes()[2].byteSizeOfType()));
-			buf.put(Serializer.serializerVarchar(firstNamesUser[i], tc.getTableSchema().getAttributesTypes()[3].byteSizeOfType()));
+			buf.put(Serializer.serializerVarchar(passwordUser[i], tc.getTableSchema().getAttributesTypes()[3].byteSizeOfType()));
 			buf.rewind();
 			tc.insert(buf);
 		}

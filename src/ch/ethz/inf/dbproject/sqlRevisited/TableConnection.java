@@ -9,7 +9,7 @@ public class TableConnection extends DataConnection implements PhysicalTableInte
 	//Fields
 	////
 	private StructureConnection structureConnection;
-	private final int PAGE_BYTES_SIZE = 8192;
+	private final int PAGE_BYTES_SIZE = 80192;
 	private final int DATA_OFFSET = 0;
 	
 	////
