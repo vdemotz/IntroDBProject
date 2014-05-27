@@ -2,6 +2,7 @@ package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeDynamicNode;
@@ -16,7 +17,7 @@ public class UpdatePreparedStatement extends AbstractWritePreparedStatement {
 	 * @param db Database to acquire connection to tables
 	 * @throws SQLPhysicalException 
 	 */
-	UpdatePreparedStatement(ParsedQuery pq, WriteLock l, List<PhysicalTableInterface> lTables) throws SQLPhysicalException{
+	UpdatePreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> lTables) throws SQLPhysicalException{
 		super(pq, l,lTables);
 		SQLType[] setTypes = this.getTypesSet((SyntaxTreeDynamicNode)pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1));
 		int numbId = this.getNumberArguments((SyntaxTreeSelectionOperatorNode)pq.getSyntaxTreeDynamicNode().dynamicChildren.get(2));

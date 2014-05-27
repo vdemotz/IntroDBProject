@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
@@ -8,7 +9,7 @@ import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeDynamicNode;
 
 public class InsertPreparedStatement extends AbstractWritePreparedStatement {
 	
-	InsertPreparedStatement(ParsedQuery pq, WriteLock l, List<PhysicalTableInterface> lTables) throws SQLPhysicalException{
+	InsertPreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> lTables) throws SQLPhysicalException{
 		super(pq, l, lTables);
 		int numbArgs = this.getNumberArguments((SyntaxTreeDynamicNode) pq.getSyntaxTreeDynamicNode().dynamicChildren.get(1));
 		args = new Object[numbArgs];

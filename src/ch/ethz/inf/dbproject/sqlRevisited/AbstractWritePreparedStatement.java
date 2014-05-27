@@ -1,6 +1,7 @@
 package ch.ethz.inf.dbproject.sqlRevisited;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.ParsedQuery;
 import ch.ethz.inf.dbproject.sqlRevisited.Parser.SyntaxTreeDynamicNode;
@@ -11,7 +12,7 @@ abstract class AbstractWritePreparedStatement extends AbstractPreparedStatement 
 	protected TableConnection tc;
 	protected int countChanged;
 	
-	AbstractWritePreparedStatement(ParsedQuery pq, WriteLock l, List<PhysicalTableInterface> listTablesConnections) throws SQLPhysicalException{
+	AbstractWritePreparedStatement(ParsedQuery pq, Lock l, List<PhysicalTableInterface> listTablesConnections) throws SQLPhysicalException{
 		super(l);
 		String tableName = ((SyntaxTreeIdentifierNode)pq.getSyntaxTreeDynamicNode().dynamicChildren.get(0)).generatingToken.content;
 		

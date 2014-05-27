@@ -309,7 +309,7 @@ public class TableSchema {
 	@Override
 	public String toString()
 	{
-		return this.tableName + " " + this.getAttributes().toString();
+		return this.tableName.toUpperCase() + " " + this.getAttributes().toString();
 	}
 	
 	@Override
